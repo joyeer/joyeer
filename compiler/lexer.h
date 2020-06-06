@@ -2,6 +2,8 @@
 #define __joyeer_compiler_lexer_h__
 
 #include <string>
+#include <vector>
+#include "token.h"
 
 class LexParser {
 
@@ -13,11 +15,16 @@ public:
 private:
   void open(const std::string& filepath);
 
+  void parseStringLiteral();
+  
 private:
+  std::vector<Token> tokens;
+
   std::wstring content;
   std::wstring::const_iterator iterator;
   std::wstring::const_iterator endIterator;
-  size_t curLineNumber;
+
+  size_t lineNumber;
   std::wstring::const_iterator lineStartAtPosition;
 };
 
