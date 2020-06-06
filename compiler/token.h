@@ -1,0 +1,4 @@
+#ifndef __joyeer_compiler_token_h__
+#define __joyeer_compiler_token_h__
+
+#endif

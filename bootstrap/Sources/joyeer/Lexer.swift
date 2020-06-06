@@ -1,11 +1,5 @@
 import Foundation
 
-
-struct LexToken {
-    let line: Int
-    let column: Int
-}
-
 class LexParser {
     let reader: StringReader
     var lineNumber = 0
