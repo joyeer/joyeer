@@ -1,0 +1,31 @@
+import Foundation
+
+class ListNode {
+    var previous: Node?
+    var next: Node?
+    var value: Any
+
+    init(previous: Node?, next: Node?, value: Any)  {
+        self.previous = previous
+        self.next = next
+        self.value = value
+    }
+}
+
+class List {
+    var root: ListNode? = nil
+    var cur: ListNode? = nil
+
+    func append(node: ListNode) {
+        if root == nil {
+            root = node
+            cur = root
+        } else {
+            cur.next = node
+            cur = node
+        }
+    }
+}
+
+let list = List()
+
