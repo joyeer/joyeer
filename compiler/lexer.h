@@ -19,7 +19,8 @@ private:
   void parseNumberLiteral(std::wstring::const_iterator startAt);
   void parseHexLiteral(std::wstring::const_iterator startAt);
   void parseOperator(std::wstring::const_iterator startIterator);
-  
+  void parsePunctuation(std::wstring::const_iterator startIterator);
+
 private:
   std::vector<Token> tokens;
 

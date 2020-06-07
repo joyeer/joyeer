@@ -17,6 +17,12 @@ void LexParser::parse() {
 
   while (iterator != endIterator) {
     switch (*iterator ++) {
+    case '\u0000':
+    case '\u0009':
+    case '\u000B':
+    case '\u000C':
+    case '\u0020':
+      break;
     case '\u000A':
       lineNumber ++;
       lineStartAtPosition = (iterator - 1);
@@ -78,8 +84,30 @@ void LexParser::parse() {
     case '?':
       parseOperator(iterator - 1);
       break;
-    default:
+    case '(':
       break;
+    case ')':
+      break;
+    case '{':
+      break;
+    case '}':
+      break;
+    case '[':
+      break;
+    case ']':
+      break;
+    case '.':
+      break;
+    case ',':
+      break;
+    case ':':
+      break;
+    case '@':
+      break;
+    case '#':
+      break;
+    default:
+      assert(false);
     }
   }
 }
@@ -132,6 +160,12 @@ void LexParser::parseHexLiteral(std::wstring::const_iterator startAt) {
 }
 
 void LexParser::parseOperator(std::wstring::const_iterator startIterator) {
+  std::wstring operators(startIterator, startIterator + 1);
+  Token token(TokenKind::operators, operators, lineNumber, iterator - startIterator);
+  tokens.push_back(token);
+}
+
+void LexParser::parsePunctuation(std::wstring::const_iterator startIterator) {
   std::wstring punctuation(startIterator, startIterator + 1);
   Token token(TokenKind::punctuation, punctuation, lineNumber, iterator - startIterator);
   tokens.push_back(token);
