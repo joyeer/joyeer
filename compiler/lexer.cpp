@@ -36,7 +36,47 @@ void LexParser::parse() {
     case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8': case '9':
       parseNumberLiteral(iterator - 1);
       break;
-    case '0':
+    case '/':
+      parseOperator(iterator - 1);
+      break;
+    case '=':
+      parseOperator(iterator - 1);
+      break;
+    case '-':
+      parseOperator(iterator - 1);
+      break;
+    case '+':
+      parseOperator(iterator - 1);
+      break;
+    case '!':
+      parseOperator(iterator - 1);
+      break;
+    case '*':
+      parseOperator(iterator - 1);
+      break;
+    case '%':
+      parseOperator(iterator - 1);
+      break;
+    case '<':
+      parseOperator(iterator - 1);
+      break;
+    case '>':
+      parseOperator(iterator - 1);
+      break;
+    case '&':
+      parseOperator(iterator - 1);
+      break;
+    case '|':
+      parseOperator(iterator - 1);
+      break;
+    case '^':
+      parseOperator(iterator - 1);
+      break;
+    case '~':
+      parseOperator(iterator - 1);
+      break;
+    case '?':
+      parseOperator(iterator - 1);
       break;
     default:
       break;
@@ -89,6 +129,12 @@ void LexParser::parseNumberLiteral(std::wstring::const_iterator startAt) {
 
 void LexParser::parseHexLiteral(std::wstring::const_iterator startAt) {
 
+}
+
+void LexParser::parseOperator(std::wstring::const_iterator startIterator) {
+  std::wstring punctuation(startIterator, startIterator + 1);
+  Token token(TokenKind::punctuation, punctuation, lineNumber, iterator - startIterator);
+  tokens.push_back(token);
 }
 
 void LexParser::parseStringLiteral() {

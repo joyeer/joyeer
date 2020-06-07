@@ -6,6 +6,7 @@
 enum TokenKind {
   identifier,
   keyword,
+  punctuation,
   floatLiteral,
   decimalLiteral
 };
