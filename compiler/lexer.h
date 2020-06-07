@@ -16,6 +16,8 @@ private:
   void open(const std::string& filepath);
 
   void parseStringLiteral();
+  void parseNumberLiteral(std::wstring::const_iterator startAt);
+  void parseHexLiteral(std::wstring::const_iterator startAt);
   
 private:
   std::vector<Token> tokens;

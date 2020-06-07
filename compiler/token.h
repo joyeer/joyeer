@@ -5,7 +5,9 @@
 
 enum TokenKind {
   identifier,
-  keyword
+  keyword,
+  floatLiteral,
+  decimalLiteral
 };
 
 struct Token {

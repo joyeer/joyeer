@@ -19,17 +19,76 @@ void LexParser::parse() {
     switch (*iterator ++) {
     case '\u000A':
       lineNumber ++;
-      lineStartAtPosition = iterator;
+      lineStartAtPosition = (iterator - 1);
+      break;
+    case '\u000D':
+      lineNumber ++;
+      lineStartAtPosition = iterator - 1;
+      if(iterator != endIterator && *iterator == '\u000A') {
+        iterator ++;  
+      }
       break;
     case 'a': case 'b': case 'c': case 'd': case 'e': case 'f': case 'g': case 'h': case 'i': case 'j': case 'k': case 'l': case 'm': case 'n': case 'o': case 'p': case 'q': case 'r': case 's': case 't': case 'u': case 'v': case 'w': case 'x': case 'y': case 'z':
     case 'A': case 'B': case 'C': case 'D': case 'E': case 'F': case 'G': case 'H': case 'I': case 'J': case 'K': case 'L': case 'M': case 'N': case 'O': case 'P': case 'Q': case 'R': case 'S': case 'T': case 'U': case 'V': case 'W': case 'X': case 'Y': case 'Z':
     case '_':
       parseStringLiteral();
       break;
+    case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8': case '9':
+      parseNumberLiteral(iterator - 1);
+      break;
+    case '0':
+      break;
     default:
       break;
     }
   }
+}
+
+void LexParser::parseNumberLiteral(std::wstring::const_iterator startAt) {
+
+  bool isFloatingLiteral = false;
+  while (iterator != endIterator) {
+    switch (*iterator ++)
+    {
+    case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8': case '9': case '0':
+      break;
+    default:
+      iterator --;
+      goto break_label_1;
+    }
+  }
+
+  break_label_1:
+
+  bool hasFraction = false;
+  if(*iterator == '.') {
+    iterator ++ ;
+    std::wstring::const_iterator fractionStartIterator = iterator;          
+    while(iterator != endIterator ) {
+      switch (*iterator ++)
+      {
+      case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8': case '9': case '0':
+        hasFraction = true;
+        isFloatingLiteral = true;
+        break;
+      default:
+        iterator --;
+        break;
+      }
+    }
+    if(!hasFraction) {
+      iterator --;
+    } 
+  }
+
+  std::wstring identifier(startAt, iterator);
+  Token token(TokenKind::decimalLiteral, identifier, lineNumber, iterator - startAt);
+  tokens.push_back(token);
+  std::wcout << identifier << std::endl ;
+}
+
+void LexParser::parseHexLiteral(std::wstring::const_iterator startAt) {
+
 }
 
 void LexParser::parseStringLiteral() {
@@ -52,7 +111,6 @@ void LexParser::parseStringLiteral() {
   
   Token token(isKeyword(identifier) ? TokenKind::keyword : TokenKind::identifier, identifier, lineNumber, iterator - startAt);
   tokens.push_back(token);
-  std::wcout << identifier << " " << isKeyword(identifier) << std::endl;
 }
 
 void LexParser::open(const std::string& filename) {
