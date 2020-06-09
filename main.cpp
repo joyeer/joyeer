@@ -1,5 +1,6 @@
 #include <iostream>
 #include "compiler/lexer.h"
+#include "compiler/syntax/syntax.h"
 
 int main(int argc, char** argv) {
   if(argc < 2) {
@@ -11,5 +12,8 @@ int main(int argc, char** argv) {
   LexParser parser(filepath);
   parser.parse();
 
+  SyntaxParser syntaxParser(parser.tokens);
+  syntaxParser.parse();
+  
   return 0;
 }

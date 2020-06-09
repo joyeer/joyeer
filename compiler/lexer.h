@@ -21,9 +21,10 @@ private:
   void parseOperator(std::wstring::const_iterator startIterator);
   void parsePunctuation(std::wstring::const_iterator startIterator);
 
-private:
+public:
   std::vector<Token> tokens;
 
+private:
   std::wstring content;
   std::wstring::const_iterator iterator;
   std::wstring::const_iterator endIterator;
