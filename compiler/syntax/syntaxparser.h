@@ -10,17 +10,24 @@ public:
   std::shared_ptr<SourceFile> parse();
 
 private:
-  void parseDecl();
-  void tryParseConstDecl();
-  void tryParseVarDecl();
+  void parseDecl();  
 
   void tryParseClassDecl();
-  void tryParseClassName();
 
+  // Parse the constant declaration, e.g. let constValue = "10"
+  void tryParseConstDecl();
+  // Parse the variable declaration, e.g. var varValue = "10"
+  void tryParseVarDecl();
+
+  void tryParseExpr();
+  void tryParsePrefixExpr();
+  void tryParsePostfixExpr()
+  
   void tryParseType();
+  std::shared_ptr<Token> tryParseIdentifier();
 
-  bool tryEat(TokenKind kind, const std::wstring& value);
-  const Token& tryEatAndReturn(TokenKind kind);
+  std::shared_ptr<Token> tryEat(TokenKind kind, const std::wstring& value);
+  std::shared_ptr<Token> tryEat(TokenKind kind);
 
   std::shared_ptr<Token> curToken() const;
 

@@ -35,3 +35,14 @@ std::unordered_set<std::wstring> initKeywordMap() {
 bool isKeyword(const std::wstring& keyword) {
   return Keyword::map.find(keyword) != Keyword::map.end();
 }
+
+/// Punctuation
+const std::wstring Punctuation::OPEN_CURLY_BRACKET = L"{";
+const std::wstring Punctuation::CLOSE_CURLY_BRACKET = L"}";
+const std::wstring Punctuation::OPEN_ROUND_BRACKET = L"(";
+const std::wstring Punctuation::CLOSE_ROUND_BRACKET = L")";
+const std::wstring Punctuation::OPEN_SQUARE_BRACKET = L"[";
+const std::wstring Punctuation::CLOSE_SQUARE_BRACKET = L"]";
+
+// Operators
+const std::wstring Operator::EQULAS = L"=";
