@@ -1,5 +1,5 @@
-#ifndef __joyeer_compiler_token_h__
-#define __joyeer_compiler_token_h__
+#ifndef __joyeer_compiler_lexer_token_h__
+#define __joyeer_compiler_lexer_token_h__
 
 #include <string>
 

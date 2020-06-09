@@ -150,8 +150,7 @@ void LexParser::parseNumberLiteral(std::wstring::const_iterator startAt) {
   }
 
   std::wstring identifier(startAt, iterator);
-  Token token(TokenKind::decimalLiteral, identifier, lineNumber, iterator - startAt);
-  tokens.push_back(token);
+  tokens.push_back(std::shared_ptr<Token>(new Token(TokenKind::decimalLiteral, identifier, lineNumber, iterator - startAt)));
   std::wcout << identifier << std::endl ;
 }
 
@@ -161,14 +160,16 @@ void LexParser::parseHexLiteral(std::wstring::const_iterator startAt) {
 
 void LexParser::parseOperator(std::wstring::const_iterator startIterator) {
   std::wstring operators(startIterator, startIterator + 1);
-  Token token(TokenKind::operators, operators, lineNumber, iterator - startIterator);
-  tokens.push_back(token);
+  tokens.push_back(
+    std::shared_ptr<Token>(new Token(TokenKind::operators, operators, lineNumber, iterator - startIterator))
+  );
 }
 
 void LexParser::parsePunctuation(std::wstring::const_iterator startIterator) {
   std::wstring punctuation(startIterator, startIterator + 1);
-  Token token(TokenKind::punctuation, punctuation, lineNumber, iterator - startIterator);
-  tokens.push_back(token);
+  tokens.push_back(
+    std::shared_ptr<Token>(new Token(TokenKind::punctuation, punctuation, lineNumber, iterator - startIterator))
+  );
 }
 
 void LexParser::parseStringLiteral() {
@@ -189,8 +190,9 @@ void LexParser::parseStringLiteral() {
   exit_label:
   std::wstring identifier(startAt, iterator);
   
-  Token token(isKeyword(identifier) ? TokenKind::keyword : TokenKind::identifier, identifier, lineNumber, iterator - startAt);
-  tokens.push_back(token);
+  tokens.push_back(
+    std::shared_ptr<Token>(new Token(isKeyword(identifier) ? TokenKind::keyword : TokenKind::identifier, identifier, lineNumber, iterator - startAt))
+  );
 }
 
 void LexParser::open(const std::string& filename) {
@@ -200,4 +202,3 @@ void LexParser::open(const std::string& filename) {
   wss << wif.rdbuf();
   this->content = wss.str();
 }
-

@@ -1,5 +1,6 @@
-#ifndef __joyeer_compiler_lexer_h__
-#define __joyeer_compiler_lexer_h__
+#ifndef __joyeer_compiler_lexer_lexparser_h__
+#define __joyeer_compiler_lexer_lexparser_h__
+
 
 #include <string>
 #include <vector>
@@ -22,7 +23,7 @@ private:
   void parsePunctuation(std::wstring::const_iterator startIterator);
 
 public:
-  std::vector<Token> tokens;
+  std::vector<std::shared_ptr<Token>> tokens;
 
 private:
   std::wstring content;
@@ -32,5 +33,6 @@ private:
   size_t lineNumber;
   std::wstring::const_iterator lineStartAtPosition;
 };
+
 
 #endif
