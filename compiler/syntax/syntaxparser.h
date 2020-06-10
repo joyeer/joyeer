@@ -21,7 +21,17 @@ private:
 
   void tryParseExpr();
   void tryParsePrefixExpr();
-  void tryParsePostfixExpr()
+  void tryParsePostfixExpr();
+  void tryParseBinaryExpr();
+
+  void tryParsePrimaryExpr();
+  void tryParseLiteralExpr();
+  
+  
+  void tryParseBinaryOperator();
+  void tryParseConditionalOperator();
+  std::shared_ptr<Node> tryParseAssignmentOperator();
+  std::shared_ptr<Token> tryParseOperator();
   
   void tryParseType();
   std::shared_ptr<Token> tryParseIdentifier();

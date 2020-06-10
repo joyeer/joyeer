@@ -1,4 +1,5 @@
 #include "syntaxparser.h"
+#include "compiler/AST/ast.h"
 
 SyntaxParser::SyntaxParser(const std::vector<std::shared_ptr<Token>>& tokens): 
   tokens(tokens) {
@@ -7,7 +8,7 @@ SyntaxParser::SyntaxParser(const std::vector<std::shared_ptr<Token>>& tokens):
 }
 
 std::shared_ptr<SourceFile> SyntaxParser::parse() {
-  return std::shared_ptr<SourceFile>(new SourceFile());
+  return nullptr;
 }
 
 void SyntaxParser::parseDecl() {
@@ -56,11 +57,56 @@ void SyntaxParser::tryParseClassDecl() {
   }
 }
 
+// expression -> prefix-expression /opt/ binary-expressions /opt/
+void SyntaxParser::tryParseExpr() {
+
+}
+
+void SyntaxParser::tryParsePrefixExpr() {
+
+}
+
+void SyntaxParser::tryParsePostfixExpr() {
+
+}
+
+void SyntaxParser::tryParseBinaryExpr() {
+
+}
+
+void SyntaxParser::tryParseBinaryOperator() {
+  
+}
+
+void SyntaxParser::tryParsePrimaryExpr() {
+  std::shared_ptr<Token> identifier = tryParseIdentifier();
+  if(identifier != nullptr) {
+    return; //DONE
+  }
+
+}
+
+void SyntaxParser::tryParseConditionalOperator() {
+
+}
+
+std::shared_ptr<Node> SyntaxParser::tryParseAssignmentOperator() {
+  if(tryEat(TokenKind::operators, Operator::EQULAS) == nullptr) {
+    return nullptr;
+  }
+  return std::shared_ptr<Node>(new AssignmentOperator());
+}
+
+std::shared_ptr<Token> SyntaxParser::tryParseOperator() {
+    return tryEat(TokenKind::operators);
+}
+
 std::shared_ptr<Token> SyntaxParser::tryEat(TokenKind kind) {
 
   if(iterator != endIterator) {
     std::shared_ptr<Token> pToken = curToken();
     if(pToken->kind == kind) {
+      iterator ++;
       return pToken;
     }
   }

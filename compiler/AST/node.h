@@ -1,20 +1,28 @@
 #ifndef __joyeer_compiler_AST_node_h__
 #define __joyeer_compiler_AST_node_h__
 
+#include <memory>
 
-enum StmtKind {
+enum SyntaxKind {
   importDecl,
   varDecl,
   letDecl,
   funcDecl,
   classDecl,
-  expression
-};
 
+  expression,
+  assignmentOperator,
+  binaryOperator
+};
 
 struct Node {
-  StmtKind kind;
+  SyntaxKind kind;
+  
+protected:
+  Node(SyntaxKind kind);
+
 };
 
+struct L
 
 #endif

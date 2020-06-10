@@ -9,7 +9,8 @@ enum TokenKind {
   punctuation,
   operators,
   floatLiteral,
-  decimalLiteral
+  decimalLiteral,
+  stringLiteral
 };
 
 struct Token {
