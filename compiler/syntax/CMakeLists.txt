@@ -1,0 +1,7 @@
+set(SYNTAX_SOURCES
+    ${CMAKE_CURRENT_SOURCE_DIR}/syntaxparser.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/syntaxparser.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/syntax.h )
+
+set(SOURCES ${SOURCES} ${SYNTAX_SOURCES} PARENT_SCOPE)
+

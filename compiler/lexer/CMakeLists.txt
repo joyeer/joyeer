@@ -1,0 +1,11 @@
+set(LEXER_SOURCES
+    ${CMAKE_CURRENT_SOURCE_DIR}/lexer.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/keyword.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/keyword.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/lexparser.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/lexparser.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/token.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/token.cpp
+  )
+
+set(SOURCES ${SOURCES} ${LEXER_SOURCES} PARENT_SCOPE)

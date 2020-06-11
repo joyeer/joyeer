@@ -23,6 +23,5 @@ protected:
 
 };
 
-struct L
 
 #endif

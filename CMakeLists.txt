@@ -3,18 +3,22 @@ cmake_minimum_required(VERSION 3.16)
 project (joyeer
           VERSION 0.0.1)
 
-add_executable(joyeer main.cpp
-                      compiler/lexer/keyword.cpp
-                      compiler/lexer/lexparser.cpp
-                      compiler/lexer/token.cpp
-                      compiler/syntax/syntaxparser.cpp
-                      compiler/AST/statement.cpp
-                      compiler/AST/ast.cpp
-                      compiler/AST/decl.cpp
-                      compiler/AST/expression.cpp
-                      compiler/AST/node.cpp
-                      runtime/object.cpp)
+set(SOURCES main.cpp)
+
+add_subdirectory(compiler)
+
+add_executable(joyeer ${SOURCES})
 
 include_directories(./)
+
+// IDE source group settings
+source_group("Source Files\\compiler\\lexer" REGULAR_EXPRESSION "compiler/lexer/.*\\.cpp")
+source_group("Source Files\\compiler\\syntax" REGULAR_EXPRESSION "compiler/syntax/.*\\.cpp")
+source_group("Source Files\\compiler\\AST" REGULAR_EXPRESSION "compiler/AST/.*\\.cpp")
+
+source_group("Header Files\\compiler\\lexer" REGULAR_EXPRESSION "compiler/lexer/.*\\.h")
+source_group("Header Files\\compiler\\syntax" REGULAR_EXPRESSION "compiler/syntax/.*\\.h")
+source_group("Header Files\\compiler\\AST" REGULAR_EXPRESSION "compiler/AST/.*\\.h")
+
 
 target_compile_features(joyeer PRIVATE cxx_std_17)

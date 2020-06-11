@@ -87,19 +87,19 @@ void SyntaxParser::tryParsePrimaryExpr() {
 }
 
 void SyntaxParser::tryParseConditionalOperator() {
-
+    
 }
 
 std::shared_ptr<Node> SyntaxParser::tryParseAssignmentOperator() {
-  if(tryEat(TokenKind::operators, Operator::EQULAS) == nullptr) {
-    return nullptr;
-  }
+    if(tryEat(TokenKind::operators, Operator::EQULAS) == nullptr) {
+        return nullptr;
+    }
   return std::shared_ptr<Node>(new AssignmentOperator());
 }
 
 std::shared_ptr<Token> SyntaxParser::tryParseOperator() {
     return tryEat(TokenKind::operators);
-}
+} 
 
 std::shared_ptr<Token> SyntaxParser::tryEat(TokenKind kind) {
 
