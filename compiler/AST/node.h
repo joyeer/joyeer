@@ -10,8 +10,12 @@ enum SyntaxKind {
   funcDecl,
   classDecl,
 
-  expression,
+  identifierExpr,
+  parenthesizedExpr,
+  
   literalExpr,
+  arrayLiteralExpr,
+  dictLiteralExpr,
   
   assignmentOperator,
   binaryOperator

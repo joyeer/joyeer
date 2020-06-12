@@ -5,6 +5,7 @@ struct Node;
 #include "compiler/lexer/lexer.h"
 
 struct Expr : Node {
+protected:
     Expr(SyntaxKind kind);
 };
 
@@ -13,6 +14,14 @@ struct LiteralExpr : Expr {
     LiteralExpr(std::shared_ptr<Token> literal);
 };
 
+struct IdentifierExpr: Expr {
+    std::shared_ptr<Token> identifier;
+    IdentifierExpr(std::shared_ptr<Token> literal);
+};
 
+struct ParenthesizedExpr: Expr {
+    std::shared_ptr<Expr> expr;
+    ParenthesizedExpr(std::shared_ptr<Expr> expr);
+};
 
 #endif

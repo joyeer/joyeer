@@ -4,51 +4,65 @@
 #include "compiler/AST/ast.h"
 #include "compiler/lexer/lexer.h"
 
-class SyntaxParser {
+class SyntaxParser
+{
 public:
-  SyntaxParser(const std::vector<std::shared_ptr<Token>>& tokens);
-  std::shared_ptr<SourceFile> parse();
+    SyntaxParser(const std::vector<std::shared_ptr<Token>> &tokens);
+    std::shared_ptr<SourceFile> parse();
 
 private:
-  void parseDecl();  
+    void parseDecl();
 
-  void tryParseClassDecl();
+    void tryParseClassDecl();
 
-  // Parse the constant declaration, e.g. let constValue = "10"
-  void tryParseConstDecl();
-  // Parse the variable declaration, e.g. var varValue = "10"
-  void tryParseVarDecl();
+    // Parse the constant declaration, e.g. let constValue = "10"
+    void tryParseConstDecl();
+    // Parse the variable declaration, e.g. var varValue = "10"
+    void tryParseVarDecl();
 
-  void tryParseExpr();
-  void tryParsePrefixExpr();
-  void tryParsePostfixExpr();
-  void tryParseBinaryExpr();
+    void tryParseExpr();
+    void tryParsePrefixExpr();
+    void tryParsePostfixExpr();
+    void tryParseBinaryExpr();
 
-  void tryParsePrimaryExpr();
-  std::shared_ptr<LiteralExpr> tryParseLiteralExpr();
-  
-  void tryParseBinaryOperator();
-  void tryParseConditionalOperator();
-  std::shared_ptr<Node> tryParseAssignmentOperator();
-  std::shared_ptr<Token> tryParseOperator();
-  
-  void tryParseType();
+    // primary-expression -> identifier
+    // primary-expression -> literal-expression
+    // primary-expression -> parenthesized-expression
+    std::shared_ptr<Node> tryParsePrimaryExpr();
 
-  // literal -> numeric-literal | string-literal | boolean-literal | nil-literal
-  std::shared_ptr<Token> tryParseLiteral();
-  // 
-  std::shared_ptr<Token> tryParseIdentifier();
+    // literal-expression -> literal
+    // literal-expression -> array-literal | dictionary-literal
+    // array-literal -> [ array-literal-items /opts/ ]
+    // array-literal-items -> array-literal-item , /opt/ |  array-literal-item, array-literal-items
+    // dictionary-literal -> [ dictionary-literal-items ]  | [ : ]
+    // dictionary-literal-items -> dictionary-literal-item, /opt/ | dictionary-literal-item, dictionary-literal-items
+    // dictionary-literal-item -> expression: expression
+    std::shared_ptr<LiteralExpr> tryParseLiteralExpr();
 
-  std::shared_ptr<Token> tryEat(TokenKind kind, const std::wstring& value);
-  std::shared_ptr<Token> tryEat(TokenKind kind);
+    // parenthesized-expression -> `(` expression `)`
+    std::shared_ptr<ParenthesizedExpr> tryParseParenthesizedExpr();
 
-  std::shared_ptr<Token> curToken() const;
+    void tryParseBinaryOperator();
+    void tryParseConditionalOperator();
+    std::shared_ptr<Node> tryParseAssignmentOperator();
+    std::shared_ptr<Token> tryParseOperator();
+
+    void tryParseType();
+
+    // literal -> numeric-literal | string-literal | boolean-literal | nil-literal
+    std::shared_ptr<Token> tryParseLiteral();
+    //
+    std::shared_ptr<Token> tryParseIdentifier();
+
+    std::shared_ptr<Token> tryEat(TokenKind kind, const std::wstring &value);
+    std::shared_ptr<Token> tryEat(TokenKind kind);
+
+    std::shared_ptr<Token> curToken() const;
 
 private:
-  const std::vector<std::shared_ptr<Token>>& tokens;
-  std::vector<std::shared_ptr<Token>>::const_iterator iterator;
-  std::vector<std::shared_ptr<Token>>::const_iterator endIterator;
+    const std::vector<std::shared_ptr<Token>> &tokens;
+    std::vector<std::shared_ptr<Token>>::const_iterator iterator;
+    std::vector<std::shared_ptr<Token>>::const_iterator endIterator;
 };
-
 
 #endif

@@ -11,3 +11,14 @@ LiteralExpr::LiteralExpr(std::shared_ptr<Token> literal):
  literal(literal) {
     
 }
+
+IdentifierExpr::IdentifierExpr(std::shared_ptr<Token> identifier):
+  Expr(SyntaxKind::identifierExpr),
+  identifier(identifier) {
+}
+
+ParenthesizedExpr::ParenthesizedExpr(std::shared_ptr<Expr> expr):
+  Expr(SyntaxKind::parenthesizedExpr),
+  expr(expr) {
+
+}
