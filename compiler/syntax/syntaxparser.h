@@ -25,8 +25,7 @@ private:
   void tryParseBinaryExpr();
 
   void tryParsePrimaryExpr();
-  void tryParseLiteralExpr();
-  
+  std::shared_ptr<LiteralExpr> tryParseLiteralExpr();
   
   void tryParseBinaryOperator();
   void tryParseConditionalOperator();
@@ -34,6 +33,10 @@ private:
   std::shared_ptr<Token> tryParseOperator();
   
   void tryParseType();
+
+  // literal -> numeric-literal | string-literal | boolean-literal | nil-literal
+  std::shared_ptr<Token> tryParseLiteral();
+  // 
   std::shared_ptr<Token> tryParseIdentifier();
 
   std::shared_ptr<Token> tryEat(TokenKind kind, const std::wstring& value);

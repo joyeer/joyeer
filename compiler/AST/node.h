@@ -11,6 +11,8 @@ enum SyntaxKind {
   classDecl,
 
   expression,
+  literalExpr,
+  
   assignmentOperator,
   binaryOperator
 };

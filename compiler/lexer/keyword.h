@@ -4,7 +4,7 @@
 #include <string>
 #include <unordered_set>
 
-struct Keyword {
+struct Keywords {
   static const std::wstring FUNC;
   static const std::wstring CLASS;
   static const std::wstring STRUCT;
@@ -23,7 +23,7 @@ struct Keyword {
 bool isKeyword(const std::wstring& keyword);
 
 
-struct Punctuation {
+struct Punctuations {
   static const std::wstring OPEN_CURLY_BRACKET;   // {
   static const std::wstring CLOSE_CURLY_BRACKET;  // }
   static const std::wstring OPEN_ROUND_BRACKET;   // (
@@ -32,8 +32,14 @@ struct Punctuation {
   static const std::wstring CLOSE_SQUARE_BRACKET; // ]
 };
 
-struct Operator {
+struct Operators {
   static const std::wstring EQULAS;               // =
+};
+
+struct Literals {
+  static const std::wstring TRUE;
+  static const std::wstring FALSE;
+  static const std::wstring NIL;
 };
 
 #endif

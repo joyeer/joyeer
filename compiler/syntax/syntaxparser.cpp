@@ -16,7 +16,7 @@ void SyntaxParser::parseDecl() {
 }
 
 void SyntaxParser::tryParseConstDecl() {
-  if(tryEat(TokenKind::keyword, Keyword::LET) == nullptr) {
+  if(tryEat(TokenKind::keyword, Keywords::LET) == nullptr) {
     return;
   }
 
@@ -25,7 +25,7 @@ void SyntaxParser::tryParseConstDecl() {
     return ; //Error 
   }
 
-  if(tryEat(TokenKind::operators, Operator::EQULAS) != nullptr) {
+  if(tryEat(TokenKind::operators, Operators::EQULAS) != nullptr) {
     
   }
 }
@@ -34,12 +34,8 @@ void SyntaxParser::tryParseType() {
 
 }
 
-std::shared_ptr<Token> SyntaxParser::tryParseIdentifier() {
-  return tryEat(TokenKind::identifier);
-}
-
 void SyntaxParser::tryParseClassDecl() {
-  if(tryEat(TokenKind::keyword, Keyword::CLASS) == nullptr) {
+  if(tryEat(TokenKind::keyword, Keywords::CLASS) == nullptr) {
     return ;
   }
 
@@ -48,11 +44,11 @@ void SyntaxParser::tryParseClassDecl() {
     return; // TODO: Error
   }
 
-  if(tryEat(TokenKind::punctuation, Punctuation::OPEN_CURLY_BRACKET) == nullptr) {
+  if(tryEat(TokenKind::punctuation, Punctuations::OPEN_CURLY_BRACKET) == nullptr) {
     return; // TODO: Error
   }
 
-  if(tryEat(TokenKind::punctuation, Punctuation::CLOSE_CURLY_BRACKET) == nullptr) {
+  if(tryEat(TokenKind::punctuation, Punctuations::CLOSE_CURLY_BRACKET) == nullptr) {
     return ; // TODO: Error
   }
 }
@@ -86,12 +82,20 @@ void SyntaxParser::tryParsePrimaryExpr() {
 
 }
 
+std::shared_ptr<LiteralExpr> SyntaxParser::tryParseLiteralExpr() {
+  std::shared_ptr<Token> literal = tryParseLiteral();
+  if(literal != nullptr) {
+    return std::shared_ptr<LiteralExpr>(new LiteralExpr(literal));
+  }
+  return nullptr;
+}
+
 void SyntaxParser::tryParseConditionalOperator() {
     
 }
 
 std::shared_ptr<Node> SyntaxParser::tryParseAssignmentOperator() {
-    if(tryEat(TokenKind::operators, Operator::EQULAS) == nullptr) {
+    if(tryEat(TokenKind::operators, Operators::EQULAS) == nullptr) {
         return nullptr;
     }
   return std::shared_ptr<Node>(new AssignmentOperator());
@@ -100,6 +104,39 @@ std::shared_ptr<Node> SyntaxParser::tryParseAssignmentOperator() {
 std::shared_ptr<Token> SyntaxParser::tryParseOperator() {
     return tryEat(TokenKind::operators);
 } 
+
+std::shared_ptr<Token> SyntaxParser::tryParseIdentifier() {
+  return tryEat(TokenKind::identifier);
+}
+
+std::shared_ptr<Token> SyntaxParser::tryParseLiteral() {
+  std::shared_ptr<Token> literal = tryEat(TokenKind::stringLiteral);
+  if(literal != nullptr) {
+    return literal;
+  }
+
+  literal = tryEat(TokenKind::decimalLiteral);
+  if(literal != nullptr) {
+    return literal;
+  }
+
+  literal = tryEat(TokenKind::floatLiteral);
+  if(literal != nullptr) {
+    return nullptr;
+  }
+
+  literal = tryEat(TokenKind::nilLiteral);
+  if(literal != nullptr) {
+    return nullptr;
+  }
+
+  literal = tryEat(TokenKind::booleanLiteral);
+  if(literal != nullptr) {
+    return nullptr;
+  }
+
+  return nullptr;
+}
 
 std::shared_ptr<Token> SyntaxParser::tryEat(TokenKind kind) {
 
