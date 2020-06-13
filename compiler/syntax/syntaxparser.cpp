@@ -7,30 +7,24 @@ SyntaxParser::SyntaxParser(const std::vector<std::shared_ptr<Token>> &tokens) : 
     endIterator = tokens.end();
 }
 
-std::shared_ptr<SourceFile> SyntaxParser::parse()
-{
+std::shared_ptr<SourceFile> SyntaxParser::parse() {
     return nullptr;
 }
 
-void SyntaxParser::parseDecl()
-{
+void SyntaxParser::parseDecl() {
 }
 
-void SyntaxParser::tryParseConstDecl()
-{
-    if (tryEat(TokenKind::keyword, Keywords::LET) == nullptr)
-    {
+void SyntaxParser::tryParseConstDecl() {
+    if (tryEat(TokenKind::keyword, Keywords::LET) == nullptr) {
         return;
     }
 
     std::shared_ptr<Token> identifier = tryParseIdentifier();
-    if (identifier == nullptr)
-    {
+    if (identifier == nullptr) {
         return; //Error
     }
 
-    if (tryEat(TokenKind::operators, Operators::EQULAS) != nullptr)
-    {
+    if (tryEat(TokenKind::operators, Operators::EQULAS) != nullptr) {
     }
 }
 
@@ -107,31 +101,26 @@ void SyntaxParser::tryParseBinaryExpr() {
 }
 
 void SyntaxParser::tryParseBinaryOperator() {
-
+    
 }
 
-std::shared_ptr<Node> SyntaxParser::tryParsePrimaryExpr()
-{
+std::shared_ptr<Node> SyntaxParser::tryParsePrimaryExpr() {
     std::shared_ptr<Token> identifier = tryParseIdentifier();
-    if (identifier != nullptr)
-    {
+    if (identifier != nullptr) {
         return std::shared_ptr<Node>(new IdentifierExpr(identifier));
     }
 
     std::shared_ptr<Node> literalExpr = tryParseLiteralExpr();
-    if (literalExpr != nullptr)
-    {
+    if (literalExpr != nullptr) {
         return literalExpr;
     }
 
     return nullptr;
 }
 
-std::shared_ptr<LiteralExpr> SyntaxParser::tryParseLiteralExpr()
-{
+std::shared_ptr<LiteralExpr> SyntaxParser::tryParseLiteralExpr() {
     std::shared_ptr<Token> literal = tryParseLiteral();
-    if (literal != nullptr)
-    {
+    if (literal != nullptr) {
         return std::shared_ptr<LiteralExpr>(new LiteralExpr(literal));
     }
     return nullptr;
@@ -155,26 +144,21 @@ std::shared_ptr<Node> SyntaxParser::tryParseParenthesizedExpr() {
     return std::shared_ptr<ParenthesizedExpr>(new ParenthesizedExpr(expr));
 }
 
-void SyntaxParser::tryParseConditionalOperator()
-{
+void SyntaxParser::tryParseConditionalOperator() {
 }
 
-std::shared_ptr<Node> SyntaxParser::tryParseAssignmentOperator()
-{
-    if (tryEat(TokenKind::operators, Operators::EQULAS) == nullptr)
-    {
+std::shared_ptr<Node> SyntaxParser::tryParseAssignmentOperator() {
+    if (tryEat(TokenKind::operators, Operators::EQULAS) == nullptr) {
         return nullptr;
     }
     return std::shared_ptr<Node>(new AssignmentOperator());
 }
 
-std::shared_ptr<Token> SyntaxParser::tryParseOperator()
-{
+std::shared_ptr<Token> SyntaxParser::tryParseOperator() {
     return tryEat(TokenKind::operators);
 }
 
-std::shared_ptr<Token> SyntaxParser::tryParseIdentifier()
-{
+std::shared_ptr<Token> SyntaxParser::tryParseIdentifier() {
     return tryEat(TokenKind::identifier);
 }
 
