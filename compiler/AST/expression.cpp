@@ -18,6 +18,17 @@ PrefixExpr::PrefixExpr(std::shared_ptr<Token> prefixOperator, std::shared_ptr<No
     expr(expr) {
 }
 
+BinaryExpr::BinaryExpr(std::shared_ptr<Token> binaryOperator, std::shared_ptr<Node> expr):
+    Node(SyntaxKind::binaryOperator),
+    binaryOperator(binaryOperator),
+    expr(expr) {
+}
+
+AssignmentExpr::AssignmentExpr(std::shared_ptr<Node> expr):
+    Node(SyntaxKind::assignmentOperator),
+    expr(expr) {
+}
+
 FunctionCallExpr::FunctionCallExpr(std::vector<std::shared_ptr<Node>> parameters, std::shared_ptr<Token> postfixOperator):
     Node(SyntaxKind::functionCallExpr),
     parameters(parameters),

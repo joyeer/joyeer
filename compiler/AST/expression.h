@@ -23,6 +23,18 @@ struct PrefixExpr: Node {
     PrefixExpr(std::shared_ptr<Token> prefixOperator, std::shared_ptr<Node> expr);
 };
 
+struct BinaryExpr: Node {
+    std::shared_ptr<Token> binaryOperator;
+    std::shared_ptr<Node> expr;
+    
+    BinaryExpr(std::shared_ptr<Token> binaryOperator, std::shared_ptr<Node> expr);
+};
+
+struct AssignmentExpr: Node {
+    std::shared_ptr<Node> expr;
+    AssignmentExpr(std::shared_ptr<Node> expr);
+};
+
 struct FunctionCallExpr: Node {
     std::shared_ptr<Token> postfixOperator;
     std::vector<std::shared_ptr<Node>> parameters;

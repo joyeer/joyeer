@@ -96,8 +96,30 @@ std::shared_ptr<Node> SyntaxParser::tryParseFunctionCallExpr() {
     return nullptr;
 }
 
-void SyntaxParser::tryParseBinaryExpr() {
+std::shared_ptr<Node> SyntaxParser::tryParseBinaryExpr() {
+    std::shared_ptr<Token> assignmentOperator = tryEat(TokenKind::operators, Operators::EQULAS);
+    if(assignmentOperator != nullptr) {
+        std::shared_ptr<Node> prefixExpr = tryParsePrefixExpr();
+        if(prefixExpr == nullptr) {
+            // TODO: Error
+            return nullptr;
+        }
 
+        return std::shared_ptr<Node>(new AssignmentExpr(prefixExpr));
+    }
+    
+    std::shared_ptr<Token> binaryOperator = tryEat(TokenKind::operators);
+    if(binaryOperator != nullptr) {
+        std::shared_ptr<Node> prefixExpr = tryParsePrefixExpr();
+        if(prefixExpr == nullptr) {
+            // TODO: Error
+            return nullptr;
+        }
+        return  std::shared_ptr<Node>(new BinaryExpr(binaryOperator, prefixExpr));
+    }
+
+    return nullptr;
+    
 }
 
 void SyntaxParser::tryParseBinaryOperator() {

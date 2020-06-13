@@ -32,7 +32,7 @@ private:
     
     std::shared_ptr<Node> tryParseFunctionCallExpr();
 
-    void tryParseBinaryExpr();
+    std::shared_ptr<Node> tryParseBinaryExpr();
 
     // primary-expression -> identifier
     // primary-expression -> literal-expression
