@@ -9,6 +9,24 @@ protected:
     Expr(SyntaxKind kind);
 };
 
+struct PrefixExpr: Node {
+    
+};
+
+struct PostfixExpr: Node {
+    std::shared_ptr<Node>  expr;
+    std::shared_ptr<Token> postfixOperator;
+
+    PostfixExpr(std::shared_ptr<Node> expr, std::shared_ptr<Token> postfixOperator);
+};
+
+struct FunctionCallExpr: Node {
+    std::shared_ptr<Token> postfixOperator;
+    std::vector<std::shared_ptr<Node>> parameters;
+
+    FunctionCallExpr(std::vector<std::shared_ptr<Node>> parameters, std::shared_ptr<Token> postfixOperator);
+}
+
 struct LiteralExpr : Expr {
     std::shared_ptr<Token> literal;
     LiteralExpr(std::shared_ptr<Token> literal);

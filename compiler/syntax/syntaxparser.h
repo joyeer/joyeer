@@ -20,9 +20,18 @@ private:
     // Parse the variable declaration, e.g. var varValue = "10"
     void tryParseVarDecl();
 
-    void tryParseExpr();
-    void tryParsePrefixExpr();
-    void tryParsePostfixExpr();
+    std::shared_ptr<Expr> tryParseExpr();
+
+    // prefix-expression -> prefix-operator /opt/ postfix-expression
+    std::shared_ptr<Node> tryParsePrefixExpr();
+
+    // postfix-expression -> primary-expression
+    // postfix-expression -> postfix-expression postfix-operator
+    // postfix-expression -> function-call-expression
+    std::shared_ptr<Node> tryParsePostfixExpr();
+    
+    std::shared_ptr<Node> tryParseFunctionCallExpr();
+
     void tryParseBinaryExpr();
 
     // primary-expression -> identifier
@@ -40,7 +49,7 @@ private:
     std::shared_ptr<LiteralExpr> tryParseLiteralExpr();
 
     // parenthesized-expression -> `(` expression `)`
-    std::shared_ptr<ParenthesizedExpr> tryParseParenthesizedExpr();
+    std::shared_ptr<Node> tryParseParenthesizedExpr();
 
     void tryParseBinaryOperator();
     void tryParseConditionalOperator();
@@ -56,6 +65,7 @@ private:
 
     std::shared_ptr<Token> tryEat(TokenKind kind, const std::wstring &value);
     std::shared_ptr<Token> tryEat(TokenKind kind);
+    void previous();
 
     std::shared_ptr<Token> curToken() const;
 

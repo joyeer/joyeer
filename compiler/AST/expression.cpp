@@ -6,9 +6,20 @@ Expr::Expr(SyntaxKind kind): Node(kind) {
     
 }
 
+PostfixExpr::PostfixExpr(std::shared_ptr<Node> expr, std::shared_ptr<Token> postfixOperator):
+    expr(expr),
+    postfixOperator(postfixOperator) {
+    
+}
+
+FunctionCallExpr::FunctionCallExpr(std::vector<std::shared_ptr<Node>> parameters, std::shared_ptr<Token> postfixOperator):
+    expr(expr),
+    postfixOperator(postfixOperator) {
+}
+
 LiteralExpr::LiteralExpr(std::shared_ptr<Token> literal):
- Expr(SyntaxKind::literalExpr),
- literal(literal) {
+    Expr(SyntaxKind::literalExpr),
+    literal(literal) {
     
 }
 
