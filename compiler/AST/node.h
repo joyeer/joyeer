@@ -4,21 +4,24 @@
 #include <memory>
 
 enum SyntaxKind {
-  importDecl,
-  varDecl,
-  letDecl,
-  funcDecl,
-  classDecl,
+    importDecl,
+    varDecl,
+    letDecl,
+    funcDecl,
+    classDecl,
 
-  identifierExpr,
-  parenthesizedExpr,
+    postfixExpr,
+    prefixExpr,
+    identifierExpr,
+    parenthesizedExpr,
+    functionCallExpr,
   
-  literalExpr,
-  arrayLiteralExpr,
-  dictLiteralExpr,
-  
-  assignmentOperator,
-  binaryOperator
+    literalExpr,
+    arrayLiteralExpr,
+    dictLiteralExpr,
+    
+    assignmentOperator,
+    binaryOperator
 };
 
 struct Node {

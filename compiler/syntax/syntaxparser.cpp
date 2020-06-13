@@ -66,17 +66,22 @@ std::shared_ptr<Expr> SyntaxParser::tryParseExpr() {
     return nullptr;
 }
 
-ste::shared_ptr<Node> SyntaxParser::tryParsePrefixExpr() {
+std::shared_ptr<Node> SyntaxParser::tryParsePrefixExpr() {
     std::shared_ptr<Token> prefixOperator = tryEat(TokenKind::operators);   
     std::shared_ptr<Node> postfixExpr = tryParsePostfixExpr();
     if(postfixExpr == nullptr) {
+        // revert the prefix operator
         if(prefixOperator != nullptr) {
-
+            previous();
         }
-        return postfixExpr;
+        return nullptr;
     }
 
-    if(prefixOperator)
+    if(prefixOperator == nullptr) {
+        return postfixExpr;
+    } else {
+        return std::shared_ptr<PrefixExpr>(new PrefixExpr(prefixOperator, postfixExpr));
+    }
 }
 
 std::shared_ptr<Node> SyntaxParser::tryParsePostfixExpr() {
@@ -87,7 +92,7 @@ std::shared_ptr<Node> SyntaxParser::tryParsePostfixExpr() {
 
     std::shared_ptr<Node> funcCallExpr = tryParseFunctionCallExpr();
     if(funcCallExpr != nullptr) {
-        return std::shared_ptr<Node>(new FunctionCallExpr(funcCallExpr, tryEat(TokenKind::operators)));
+        // return std::shared_ptr<Node>(new FunctionCallExpr(funcCallExpr, tryEat(TokenKind::operators)));
     }
 
     return nullptr;
@@ -102,7 +107,7 @@ void SyntaxParser::tryParseBinaryExpr() {
 }
 
 void SyntaxParser::tryParseBinaryOperator() {
-    
+
 }
 
 std::shared_ptr<Node> SyntaxParser::tryParsePrimaryExpr()

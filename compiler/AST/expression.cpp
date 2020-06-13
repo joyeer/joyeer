@@ -7,13 +7,20 @@ Expr::Expr(SyntaxKind kind): Node(kind) {
 }
 
 PostfixExpr::PostfixExpr(std::shared_ptr<Node> expr, std::shared_ptr<Token> postfixOperator):
+    Node(SyntaxKind::postfixExpr),
     expr(expr),
     postfixOperator(postfixOperator) {
-    
+}
+
+PrefixExpr::PrefixExpr(std::shared_ptr<Token> prefixOperator, std::shared_ptr<Node> expr):
+    Node(SyntaxKind::prefixExpr),
+    prefixOperator(prefixOperator),
+    expr(expr) {
 }
 
 FunctionCallExpr::FunctionCallExpr(std::vector<std::shared_ptr<Node>> parameters, std::shared_ptr<Token> postfixOperator):
-    expr(expr),
+    Node(SyntaxKind::functionCallExpr),
+    parameters(parameters),
     postfixOperator(postfixOperator) {
 }
 
