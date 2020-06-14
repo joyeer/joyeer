@@ -8,23 +8,18 @@ struct Decl : Node {
 
 };
 
-struct VarDecl: Decl {
-  std::shared_ptr<Token> identifier;
+struct ConstantDecl: Node {
+    std::shared_ptr<Token> identifier;
+    std::shared_ptr<Node> initializer;
+
+    ConstantDecl(std::shared_ptr<Token> identifier, std::shared_ptr<Node> initializer);
 };
 
-struct ConstDecl: Decl {
-  std::shared_ptr<Token> identifier;
+struct VarDecl: Node {
+    std::shared_ptr<Token> identifier;
+    std::shared_ptr<Node> initializer;
 
-};
-
-struct AssignmentOperator: Node {
-  AssignmentOperator();
-};
-
-struct BinaryOperator: Node {
-  
-  std::shared_ptr<Token> op;
-  BinaryOperator(std::shared_ptr<Token> operatorToken);
+    VarDecl(std::shared_ptr<Token> identifier, std::shared_ptr<Node> initializer);
 };
 
 #endif

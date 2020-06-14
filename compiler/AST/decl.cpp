@@ -1,12 +1,17 @@
 #include "decl.h"
 
-AssignmentOperator::AssignmentOperator():
-  Node(SyntaxKind::assignmentOperator) {
+
+
+ConstantDecl::ConstantDecl(std::shared_ptr<Token> identifier, std::shared_ptr<Node> initializer): 
+Node(SyntaxKind::constantDecl),
+identifier(identifier),
+initializer(initializer) {
 
 }
 
-BinaryOperator::BinaryOperator(std::shared_ptr<Token> o):
-  Node(SyntaxKind::binaryOperator),
-  op(o) {
-
+VarDecl::VarDecl(std::shared_ptr<Token> identifier, std::shared_ptr<Node> initializer):
+Node(SyntaxKind::varDecl),
+identifier(identifier),
+initializer(initializer) {
+    
 }

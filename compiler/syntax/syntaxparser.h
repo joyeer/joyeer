@@ -23,7 +23,7 @@ private:
     std::shared_ptr<Node> tryParseConstDecl();
 
     // Parse the variable declaration, e.g. var varValue = "10"
-    void tryParseVarDecl();
+    std::shared_ptr<Node> tryParseVarDecl();
 
     ////////////////////////////////////////////////////////////////////////////
     // Expressions
@@ -62,7 +62,7 @@ private:
 
     void tryParseBinaryOperator();
     void tryParseConditionalOperator();
-    std::shared_ptr<Node> tryParseAssignmentOperator();
+    
     std::shared_ptr<Token> tryParseOperator();
 
     void tryParseType();

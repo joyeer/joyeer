@@ -1,23 +1,16 @@
 #ifndef __compiler_ast_statement_h__
 #define __compiler_ast_statement_h__
 
-#include <vector>
-#include <memory>
+#include "compiler/lexer/lexer.h"
 
-struct Decl;
-struct Expr;
+class Node;
 
 struct SourceFile: Node {
-  std::vector<std::shared_ptr<Decl*>> decls;
-  std::vector<std::shared_ptr<Expr*>> exprs;
+  std::vector<std::shared_ptr<Node*>> decls;
+  std::vector<std::shared_ptr<Node*>> exprs;
 };
 
 
-struct ConstantDecl: Node {
-    std::shared_ptr<Token> identifier;
-    std::shared_ptr<Node> initializer;
 
-    ConstantDecl(std::shared_ptr<Token> identifier, std::shared_ptr<Node> initializer);
-};
 
 #endif

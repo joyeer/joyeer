@@ -16,16 +16,30 @@ void SyntaxParser::parseDecl() {
 
 std::shared_ptr<Node> SyntaxParser::tryParseConstDecl() {
     if (tryEat(TokenKind::keyword, Keywords::LET) == nullptr) {
-        return;
+        return nullptr; // Not a `let` declaration
     }
 
     std::shared_ptr<Token> identifier = tryParseIdentifier();
     if (identifier == nullptr) {
-        return; //TODO: report an syntax Error
+        return nullptr; //TODO: report an syntax Error
     }
 
     std::shared_ptr<Node> expr = tryParseExpr();
-    return std::shared_ptr<Node>(new ConstantDecl(expr));
+    return std::shared_ptr<Node>(new ConstantDecl(identifier, expr));
+}
+
+std::shared_ptr<Node> SyntaxParser::tryParseVarDecl() {
+    if(tryEat(TokenKind::keyword, Keywords::VAR) == nullptr) {
+        return nullptr; // Not a 'var' declaration
+    }
+
+    std::shared_ptr<Token> identifier = tryParseIdentifier();
+    if (identifier == nullptr) {
+        return nullptr; //TODO: report an syntax Error
+    }
+
+    std::shared_ptr<Node> expr = tryParseExpr();
+    return std::shared_ptr<Node>(new VarDecl(identifier, expr));
 }
 
 void SyntaxParser::tryParseType() {
@@ -167,13 +181,6 @@ std::shared_ptr<Node> SyntaxParser::tryParseParenthesizedExpr() {
 }
 
 void SyntaxParser::tryParseConditionalOperator() {
-}
-
-std::shared_ptr<Node> SyntaxParser::tryParseAssignmentOperator() {
-    if (tryEat(TokenKind::operators, Operators::EQULAS) == nullptr) {
-        return nullptr;
-    }
-    return std::shared_ptr<Node>(new AssignmentOperator());
 }
 
 std::shared_ptr<Token> SyntaxParser::tryParseOperator() {
