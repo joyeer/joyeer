@@ -15,9 +15,9 @@ private:
     ////////////////////////////////////////////////////////////////////////////
     // Declarations
     ////////////////////////////////////////////////////////////////////////////
-    void parseDecl();
+    std::shared_ptr<Node> tryParseDecl();
 
-    void tryParseClassDecl();
+    std::shared_ptr<Node> tryParseClassDecl();
 
     // Parse the constant declaration, e.g. let constValue = "10"
     std::shared_ptr<Node> tryParseConstDecl();

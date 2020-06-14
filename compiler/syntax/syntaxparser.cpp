@@ -11,7 +11,32 @@ std::shared_ptr<SourceFile> SyntaxParser::parse() {
     return nullptr;
 }
 
-void SyntaxParser::parseDecl() {
+////////////////////////////////////////////////////////////////////////////
+// Declarations
+////////////////////////////////////////////////////////////////////////////
+
+std::shared_ptr<Node> SyntaxParser::tryParseDecl() {
+    std::shared_ptr<Node> constantDecl = tryParseConstDecl();
+    if(constantDecl != nullptr) {
+        return constantDecl;
+    }
+
+    std::shared_ptr<Node> varDecl = tryParseVarDecl();
+    if(varDecl != nullptr) {
+        return varDecl;
+    }
+
+    std::shared_ptr<Node> classDecl = tryParseClassDecl();
+    if(varDecl != nullptr) {
+        return classDecl;
+    }
+
+    std::shared_ptr<Node> funcDecl = tryParseFunctionCallExpr();
+    if(funcDecl != nullptr) {
+        return funcDecl;
+    }
+
+    return nullptr;
 }
 
 std::shared_ptr<Node> SyntaxParser::tryParseConstDecl() {
@@ -45,28 +70,34 @@ std::shared_ptr<Node> SyntaxParser::tryParseVarDecl() {
 void SyntaxParser::tryParseType() {
 }
 
-void SyntaxParser::tryParseClassDecl()
-{
-    if (tryEat(TokenKind::keyword, Keywords::CLASS) == nullptr)
-    {
-        return;
+std::shared_ptr<Node> SyntaxParser::tryParseClassDecl() {
+    if (tryEat(TokenKind::keyword, Keywords::CLASS) == nullptr) {
+        return nullptr;
     }
 
     std::shared_ptr<Token> className = tryEat(TokenKind::identifier);
-    if (className == nullptr)
-    {
-        return; // TODO: Error
+    if (className == nullptr ) {
+        return nullptr; // TODO: Error
     }
 
-    if (tryEat(TokenKind::punctuation, Punctuations::OPEN_CURLY_BRACKET) == nullptr)
-    {
-        return; // TODO: Error
+    if (tryEat(TokenKind::punctuation, Punctuations::OPEN_CURLY_BRACKET) == nullptr) {
+        return nullptr; // TODO: Error
     }
 
-    if (tryEat(TokenKind::punctuation, Punctuations::CLOSE_CURLY_BRACKET) == nullptr)
-    {
-        return; // TODO: Error
+    std::vector<std::shared_ptr<Node>> members;
+    while (true) {
+        std::shared_ptr<Node> member = tryParseDecl();
+        if(member == nullptr) {
+            break;
+        }
+        members.push_back(member);
     }
+    
+    if (tryEat(TokenKind::punctuation, Punctuations::CLOSE_CURLY_BRACKET) == nullptr) {
+        return nullptr; // TODO: Error
+    }
+
+    return std::shared_ptr<Node>(new ClassDecl(className, members));
 }
 
 // expression -> prefix-expression /opt/ binary-expressions /opt/

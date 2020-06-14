@@ -4,9 +4,6 @@
 #include "node.h"
 #include "compiler/lexer/lexer.h"
 
-struct Decl : Node {
-
-};
 
 struct ConstantDecl: Node {
     std::shared_ptr<Token> identifier;
@@ -20,6 +17,21 @@ struct VarDecl: Node {
     std::shared_ptr<Node> initializer;
 
     VarDecl(std::shared_ptr<Token> identifier, std::shared_ptr<Node> initializer);
+};
+
+struct ClassDecl: Node {
+    std::shared_ptr<Token> name;
+    std::vector<std::shared_ptr<Node>> members;
+
+    ClassDecl(std::shared_ptr<Token> name, std::vector<std::shared_ptr<Node>> members);
+};
+
+struct FuncDecl: Node {
+    std::shared_ptr<Token> name;
+    std::vector<std::shared_ptr<Node>> parameters;
+    std::shared_ptr<Node> codeBlock;
+
+    FuncDecl(std::shared_ptr<Token> name, std::vector<std::shared_ptr<Node>> parameters, std::shared_ptr<Node> codeBlock);
 };
 
 #endif

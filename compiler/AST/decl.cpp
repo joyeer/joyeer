@@ -15,3 +15,16 @@ identifier(identifier),
 initializer(initializer) {
     
 }
+
+ClassDecl::ClassDecl(std::shared_ptr<Token> name, std::vector<std::shared_ptr<Node>> memebers):
+Node(SyntaxKind::classDecl),
+name(name),
+members(members) {
+}
+
+FuncDecl::FuncDecl(std::shared_ptr<Token> name, std::vector<std::shared_ptr<Node>> parameters, std::shared_ptr<Node> codeBlock):
+Node(SyntaxKind::funcDecl),
+name(name),
+parameters(parameters),
+codeBlock(codeBlock) {
+}
