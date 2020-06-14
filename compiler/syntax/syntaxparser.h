@@ -11,14 +11,23 @@ public:
     std::shared_ptr<SourceFile> parse();
 
 private:
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Declarations
+    ////////////////////////////////////////////////////////////////////////////
     void parseDecl();
 
     void tryParseClassDecl();
 
     // Parse the constant declaration, e.g. let constValue = "10"
-    void tryParseConstDecl();
+    std::shared_ptr<Node> tryParseConstDecl();
+
     // Parse the variable declaration, e.g. var varValue = "10"
     void tryParseVarDecl();
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Expressions
+    ////////////////////////////////////////////////////////////////////////////
 
     std::shared_ptr<Expr> tryParseExpr();
 
@@ -63,8 +72,14 @@ private:
     //
     std::shared_ptr<Token> tryParseIdentifier();
 
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Helper functions
+    ////////////////////////////////////////////////////////////////////////////
     std::shared_ptr<Token> tryEat(TokenKind kind, const std::wstring &value);
+
     std::shared_ptr<Token> tryEat(TokenKind kind);
+
     void previous();
 
     std::shared_ptr<Token> curToken() const;

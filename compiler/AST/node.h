@@ -5,6 +5,7 @@
 
 enum SyntaxKind {
     importDecl,
+    constantDecl,
     varDecl,
     letDecl,
     funcDecl,

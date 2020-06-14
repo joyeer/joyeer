@@ -14,18 +14,18 @@ std::shared_ptr<SourceFile> SyntaxParser::parse() {
 void SyntaxParser::parseDecl() {
 }
 
-void SyntaxParser::tryParseConstDecl() {
+std::shared_ptr<Node> SyntaxParser::tryParseConstDecl() {
     if (tryEat(TokenKind::keyword, Keywords::LET) == nullptr) {
         return;
     }
 
     std::shared_ptr<Token> identifier = tryParseIdentifier();
     if (identifier == nullptr) {
-        return; //Error
+        return; //TODO: report an syntax Error
     }
 
-    if (tryEat(TokenKind::operators, Operators::EQULAS) != nullptr) {
-    }
+    std::shared_ptr<Node> expr = tryParseExpr();
+    return std::shared_ptr<Node>(new ConstantDecl(expr));
 }
 
 void SyntaxParser::tryParseType() {

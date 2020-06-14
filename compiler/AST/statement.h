@@ -12,4 +12,12 @@ struct SourceFile: Node {
   std::vector<std::shared_ptr<Expr*>> exprs;
 };
 
+
+struct ConstantDecl: Node {
+    std::shared_ptr<Token> identifier;
+    std::shared_ptr<Node> initializer;
+
+    ConstantDecl(std::shared_ptr<Token> identifier, std::shared_ptr<Node> initializer);
+};
+
 #endif
