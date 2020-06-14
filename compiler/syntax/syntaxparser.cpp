@@ -68,18 +68,12 @@ std::shared_ptr<Node> SyntaxParser::tryParseFunctionDecl() {
         return nullptr; // TODO: report a error
     }
 
-    // Code block
-    if (tryEat(TokenKind::punctuation, Punctuations::OPEN_CURLY_BRACKET) == nullptr) {
+    std::shared_ptr<Node> codeBlock = tryParseCodeBlock();
+    if(codeBlock == nullptr) {
         return nullptr; // TODO: Error
     }
-
-    std::vector<std::shared_ptr<Node>> statements;
     
-    if (tryEat(TokenKind::punctuation, Punctuations::CLOSE_CURLY_BRACKET) == nullptr) {
-        return nullptr; // TODO: Error
-    }
-
-    return std::shared_ptr<Node>(new Funct)
+    return std::shared_ptr<Node>(new FuncDecl(identifier, parameters, codeBlock));
 }
 
 
@@ -153,9 +147,19 @@ std::shared_ptr<Node> SyntaxParser::tryParseCodeBlock() {
 
     std::vector<std::shared_ptr<Node>> statements;
     
+    while(true) {
+        std::shared_ptr<Node> statement = tryParseStatement();
+        if(statement == nullptr) {
+            break;
+        }
+        statements.push_back(statement);
+    }
+    
     if (tryEat(TokenKind::punctuation, Punctuations::CLOSE_CURLY_BRACKET) == nullptr) {
         return nullptr; 
     }
+
+    return std::shared_ptr<Node>(new CodeBlock(statements));
 }
 
 std::shared_ptr<Node> SyntaxParser::tryParseStatement() {
@@ -169,15 +173,40 @@ std::shared_ptr<Node> SyntaxParser::tryParseStatement() {
         return decl;
     }
 
+    std::shared_ptr<Node> loopStatement = tryParseLoopStatement();
+    if(loopStatement != nullptr) {
+        return loopStatement;
+    }
+
+    return loopStatement;
 }
 
 std::shared_ptr<Node> SyntaxParser::tryParseLoopStatement() {
-    if(tryEat(TokenKind::keyword, Keywords::FOR) != nullptr) {
-
-        
+    if(tryEat(TokenKind::keyword, Keywords::FOR) == nullptr) {
+        return nullptr;
     }
 
-    return nullptr;
+    std::shared_ptr<Token> pattern = tryParsePattern();
+    if(pattern == nullptr) {
+        return nullptr; // TODO: report an error;
+    }
+
+    if(tryEat(TokenKind::keyword, Keywords::IN) == nullptr) {
+        return nullptr; // TODO: report a grammar error
+    }
+
+    std::shared_ptr<Node> expr = tryParseExpr();
+    if(expr == nullptr) {
+
+    }
+
+    std::shared_ptr<Node> codeBlock = tryParseCodeBlock();
+
+    return std::shared_ptr<Node>(new ForInStatement(pattern, expr, codeBlock));
+}
+
+std::shared_ptr<Token> SyntaxParser::tryParsePattern() {
+    return tryParseIdentifier();
 }
 
 // expression -> prefix-expression /opt/ binary-expressions /opt/

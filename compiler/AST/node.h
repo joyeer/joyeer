@@ -12,6 +12,7 @@ enum SyntaxKind {
     classDecl,
 
     codeBlock,
+    forInStatement,
 
     postfixExpr,
     prefixExpr,

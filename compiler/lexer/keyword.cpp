@@ -13,6 +13,7 @@ const std::wstring Keywords::FOR = L"for";
 const std::wstring Keywords::WHILE = L"while";
 const std::wstring Keywords::IMPORT = L"import";
 const std::wstring Keywords::TRY = L"try";
+const std::wstring Keywords::IN = L"in";
 
 const std::unordered_set<std::wstring> Keywords::map = initKeywordMap();
 
@@ -28,6 +29,7 @@ std::unordered_set<std::wstring> initKeywordMap() {
   map.insert(Keywords::FOR);
   map.insert(Keywords::WHILE);
   map.insert(Keywords::TRY);
+  map.insert(Keywords::IN);
 
   return map;
 }

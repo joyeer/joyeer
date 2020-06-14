@@ -16,6 +16,7 @@ struct Keywords {
   static const std::wstring WHILE;
   static const std::wstring IMPORT;
   static const std::wstring TRY;
+  static const std::wstring IN;
 
   static const std::unordered_set<std::wstring> map;
 };

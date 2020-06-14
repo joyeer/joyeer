@@ -12,16 +12,17 @@ struct SourceFile: Node {
 
 struct CodeBlock: Node {
     std::vector<std::shared_ptr<Node>> statements;
+    
     CodeBlock(std::vector<std::shared_ptr<Node>> statements);
 
 };
 
 struct ForInStatement: Node {
-    std::shared_ptr<Token> patten;
+    std::shared_ptr<Token> pattern;
     std::shared_ptr<Node> inExpr;
     std::shared_ptr<Node> codeBlock;
 
-    ForInStatement(std::shared_ptr<Token> pattern)
+    ForInStatement(std::shared_ptr<Token> pattern, std::shared_ptr<Node> inExpr, std::shared_ptr<Node> codeBlock);
 };
 
 

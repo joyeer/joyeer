@@ -28,10 +28,10 @@ struct ClassDecl: Node {
 
 struct FuncDecl: Node {
     std::shared_ptr<Token> name;
-    std::vector<std::shared_ptr<Node>> parameters;
+    std::vector<std::shared_ptr<Token>> parameters;
     std::shared_ptr<Node> codeBlock;
 
-    FuncDecl(std::shared_ptr<Token> name, std::vector<std::shared_ptr<Node>> parameters, std::shared_ptr<Node> codeBlock);
+    FuncDecl(std::shared_ptr<Token> name, std::vector<std::shared_ptr<Token>> parameters, std::shared_ptr<Node> codeBlock);
 };
 
 #endif
