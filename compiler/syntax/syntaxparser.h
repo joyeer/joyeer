@@ -19,11 +19,25 @@ private:
 
     std::shared_ptr<Node> tryParseClassDecl();
 
+    std::shared_ptr<Node> tryParseFunctionDecl();
+
     // Parse the constant declaration, e.g. let constValue = "10"
     std::shared_ptr<Node> tryParseConstDecl();
 
     // Parse the variable declaration, e.g. var varValue = "10"
     std::shared_ptr<Node> tryParseVarDecl();
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Statements
+    ////////////////////////////////////////////////////////////////////////////
+
+    std::shared_ptr<Node> tryParseCodeBlock();
+
+    std::shared_ptr<Node> tryParseStatement();
+
+    std::shared_ptr<Node> tryParseLoopStatement();
+
+    std::shared_ptr<Node> tryParseBranchStatement();
 
     ////////////////////////////////////////////////////////////////////////////
     // Expressions
@@ -60,7 +74,6 @@ private:
     // parenthesized-expression -> `(` expression `)`
     std::shared_ptr<Node> tryParseParenthesizedExpr();
 
-    void tryParseBinaryOperator();
     void tryParseConditionalOperator();
     
     std::shared_ptr<Token> tryParseOperator();

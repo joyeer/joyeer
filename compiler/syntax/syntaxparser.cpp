@@ -39,6 +39,51 @@ std::shared_ptr<Node> SyntaxParser::tryParseDecl() {
     return nullptr;
 }
 
+std::shared_ptr<Node> SyntaxParser::tryParseFunctionDecl() {
+    if(tryEat(TokenKind::keyword, Keywords::FUNC) == nullptr) {
+        return nullptr;
+    }
+
+    std::shared_ptr<Token> identifier = tryParseIdentifier();
+    if(identifier == nullptr) {
+        return nullptr; //TODO: report a grammar error here.
+    }
+
+    if (tryEat(TokenKind::punctuation, Punctuations::OPEN_ROUND_BRACKET) == nullptr) {
+        return nullptr; // TODO: report a error
+    }
+
+    // parse the parameters declaration in function 
+    std::vector<std::shared_ptr<Token>> parameters;
+    while(true) {
+        std::shared_ptr<Token> identifier = tryParseIdentifier();
+        if(identifier == nullptr) {
+            break;
+        }
+
+        parameters.push_back(identifier);
+    }
+    
+    if(tryEat(TokenKind::punctuation, Punctuations::CLOSE_ROUND_BRACKET) == nullptr) {
+        return nullptr; // TODO: report a error
+    }
+
+    // Code block
+    if (tryEat(TokenKind::punctuation, Punctuations::OPEN_CURLY_BRACKET) == nullptr) {
+        return nullptr; // TODO: Error
+    }
+
+    std::vector<std::shared_ptr<Node>> statements;
+    
+    if (tryEat(TokenKind::punctuation, Punctuations::CLOSE_CURLY_BRACKET) == nullptr) {
+        return nullptr; // TODO: Error
+    }
+
+    return std::shared_ptr<Node>(new Funct)
+}
+
+
+
 std::shared_ptr<Node> SyntaxParser::tryParseConstDecl() {
     if (tryEat(TokenKind::keyword, Keywords::LET) == nullptr) {
         return nullptr; // Not a `let` declaration
@@ -98,6 +143,41 @@ std::shared_ptr<Node> SyntaxParser::tryParseClassDecl() {
     }
 
     return std::shared_ptr<Node>(new ClassDecl(className, members));
+}
+
+std::shared_ptr<Node> SyntaxParser::tryParseCodeBlock() {
+    // Code block
+    if (tryEat(TokenKind::punctuation, Punctuations::OPEN_CURLY_BRACKET) == nullptr) {
+        return nullptr; 
+    }
+
+    std::vector<std::shared_ptr<Node>> statements;
+    
+    if (tryEat(TokenKind::punctuation, Punctuations::CLOSE_CURLY_BRACKET) == nullptr) {
+        return nullptr; 
+    }
+}
+
+std::shared_ptr<Node> SyntaxParser::tryParseStatement() {
+    std::shared_ptr<Node> expr = tryParseExpr();
+    if(expr != nullptr) {
+        return expr;
+    }
+
+    std::shared_ptr<Node> decl = tryParseDecl();
+    if(decl != nullptr) {
+        return decl;
+    }
+
+}
+
+std::shared_ptr<Node> SyntaxParser::tryParseLoopStatement() {
+    if(tryEat(TokenKind::keyword, Keywords::FOR) != nullptr) {
+
+        
+    }
+
+    return nullptr;
 }
 
 // expression -> prefix-expression /opt/ binary-expressions /opt/
@@ -164,10 +244,6 @@ std::shared_ptr<Node> SyntaxParser::tryParseBinaryExpr() {
     }
 
     return nullptr;
-    
-}
-
-void SyntaxParser::tryParseBinaryOperator() {
     
 }
 

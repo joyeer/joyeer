@@ -11,6 +11,8 @@ enum SyntaxKind {
     funcDecl,
     classDecl,
 
+    codeBlock,
+
     postfixExpr,
     prefixExpr,
     identifierExpr,
