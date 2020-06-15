@@ -1,5 +1,11 @@
 #include "ast.h"
 
+SourceFile::SourceFile(std::vector<std::shared_ptr<Node>> decls):
+Node(SyntaxKind::sourceFile),
+decls(decls) {
+
+}
+
 CodeBlock::CodeBlock(std::vector<std::shared_ptr<Node>> statements):
 Node(SyntaxKind::codeBlock),
 statements(statements) {

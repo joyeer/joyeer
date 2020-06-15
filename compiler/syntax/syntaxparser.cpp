@@ -8,7 +8,17 @@ SyntaxParser::SyntaxParser(const std::vector<std::shared_ptr<Token>> &tokens) : 
 }
 
 std::shared_ptr<SourceFile> SyntaxParser::parse() {
-    return nullptr;
+
+    std::vector<std::shared_ptr<Node>> decls;
+    while(iterator != endIterator) {
+        std::shared_ptr<Node> decl = tryParseDecl();
+        if(decl == nullptr) {
+            return nullptr; // TODO: report an grammar error;
+        }
+
+        decls.push_back(decl);
+    }
+    return std::shared_ptr<SourceFile>(new SourceFile(decls));
 }
 
 ////////////////////////////////////////////////////////////////////////////
@@ -222,18 +232,18 @@ std::shared_ptr<Node> SyntaxParser::tryParseIfStatement() {
     }
 
     if(tryEat(TokenKind::keyword, Keywords::ELSE) == nullptr) {
-        return IfStatement(condition, codeBlock, nullptr);
+        return std::shared_ptr<Node>(new IfStatement(condition, codeBlock, nullptr));
     } else {
         std::shared_ptr<Node> elseIfStatement = tryParseIfStatement();
         if(elseIfStatement != nullptr) {
-            return ifStatement(condition, codeBlock, elseIfStatement);
+            return std::shared_ptr<Node>(new IfStatement(condition, codeBlock, elseIfStatement));
         }
 
         std::shared_ptr<Node> elseStatement = tryParseCodeBlock();
         if(elseStatement == nullptr) {
             return nullptr; // TODO: report an error, miss an else code block
         }
-        return IfStatement(condition, codeBlock, elseStatement);
+        return std::shared_ptr<Node>(new IfStatement(condition, codeBlock, elseStatement));
     }
 }
 

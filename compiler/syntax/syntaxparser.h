@@ -39,7 +39,7 @@ private:
 
     std::shared_ptr<Node> tryParseBranchStatement();
 
-    std::shared_ptr<Node> tryIfStatement();
+    std::shared_ptr<Node> tryParseIfStatement();
 
     ////////////////////////////////////////////////////////////////////////////
     // Type

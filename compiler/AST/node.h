@@ -4,6 +4,8 @@
 #include <memory>
 
 enum SyntaxKind {
+    sourceFile,
+
     importDecl,
     constantDecl,
     varDecl,

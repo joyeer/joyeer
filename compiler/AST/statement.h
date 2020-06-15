@@ -7,7 +7,8 @@ class Node;
 
 struct SourceFile: Node {
     std::vector<std::shared_ptr<Node>> decls;
-    std::vector<std::shared_ptr<Node>> exprs;
+
+    SourceFile(std::vector<std::shared_ptr<Node>> decls);
 };
 
 struct CodeBlock: Node {
