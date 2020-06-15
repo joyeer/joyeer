@@ -13,6 +13,7 @@ enum SyntaxKind {
 
     codeBlock,
     forInStatement,
+    ifStatement,
 
     postfixExpr,
     prefixExpr,

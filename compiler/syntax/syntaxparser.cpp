@@ -106,9 +106,6 @@ std::shared_ptr<Node> SyntaxParser::tryParseVarDecl() {
     return std::shared_ptr<Node>(new VarDecl(identifier, expr));
 }
 
-void SyntaxParser::tryParseType() {
-}
-
 std::shared_ptr<Node> SyntaxParser::tryParseClassDecl() {
     if (tryEat(TokenKind::keyword, Keywords::CLASS) == nullptr) {
         return nullptr;
@@ -203,6 +200,41 @@ std::shared_ptr<Node> SyntaxParser::tryParseLoopStatement() {
     std::shared_ptr<Node> codeBlock = tryParseCodeBlock();
 
     return std::shared_ptr<Node>(new ForInStatement(pattern, expr, codeBlock));
+}
+
+std::shared_ptr<Node> SyntaxParser::tryParseBranchStatement() {
+    return tryParseIfStatement();
+}
+
+std::shared_ptr<Node> SyntaxParser::tryParseIfStatement() {
+    if(tryEat(TokenKind::keyword, Keywords::IF) == nullptr) {
+        return nullptr;
+    }
+
+    std::shared_ptr<Node> condition = tryParseExpr();
+    if(condition == nullptr) {
+        return nullptr; //TODO: Report an grammar error
+    }
+
+    std::shared_ptr<Node> codeBlock = tryParseCodeBlock();
+    if(codeBlock == nullptr) {
+        return nullptr; // TODO: Report a grammar error
+    }
+
+    if(tryEat(TokenKind::keyword, Keywords::ELSE) == nullptr) {
+        return IfStatement(condition, codeBlock, nullptr);
+    } else {
+        std::shared_ptr<Node> elseIfStatement = tryParseIfStatement();
+        if(elseIfStatement != nullptr) {
+            return ifStatement(condition, codeBlock, elseIfStatement);
+        }
+
+        std::shared_ptr<Node> elseStatement = tryParseCodeBlock();
+        if(elseStatement == nullptr) {
+            return nullptr; // TODO: report an error, miss an else code block
+        }
+        return IfStatement(condition, codeBlock, elseStatement);
+    }
 }
 
 std::shared_ptr<Token> SyntaxParser::tryParsePattern() {

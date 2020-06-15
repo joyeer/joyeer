@@ -39,6 +39,8 @@ private:
 
     std::shared_ptr<Node> tryParseBranchStatement();
 
+    std::shared_ptr<Node> tryIfStatement();
+
     ////////////////////////////////////////////////////////////////////////////
     // Type
     ////////////////////////////////////////////////////////////////////////////
@@ -82,8 +84,6 @@ private:
     void tryParseConditionalOperator();
     
     std::shared_ptr<Token> tryParseOperator();
-
-    void tryParseType();
 
     // literal -> numeric-literal | string-literal | boolean-literal | nil-literal
     std::shared_ptr<Token> tryParseLiteral();
