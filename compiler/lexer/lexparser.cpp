@@ -85,27 +85,38 @@ void LexParser::parse() {
       parseOperator(iterator - 1);
       break;
     case '(':
-      break;
+        parsePunctuation(iterator - 1);
+        break;
     case ')':
-      break;
+        parsePunctuation(iterator - 1);
+        break;
     case '{':
-      break;
+        parsePunctuation(iterator - 1);
+        break;
     case '}':
-      break;
+        parsePunctuation(iterator - 1);
+        break;
     case '[':
-      break;
+        parsePunctuation(iterator - 1);
+        break;
     case ']':
-      break;
+        parsePunctuation(iterator - 1);
+        break;
     case '.':
-      break;
+        parsePunctuation(iterator - 1);
+        break;
     case ',':
-      break;
+        parsePunctuation(iterator - 1);
+        break;
     case ':':
-      break;
+        parsePunctuation(iterator - 1);
+        break;
     case '@':
-      break;
+        parsePunctuation(iterator - 1);
+        break;
     case '#':
-      break;
+        parsePunctuation(iterator - 1);
+        break;
     default:
       assert(false);
     }

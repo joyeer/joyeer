@@ -418,10 +418,15 @@ std::shared_ptr<Token> SyntaxParser::tryEat(TokenKind kind) {
 
 std::shared_ptr<Token> SyntaxParser::tryEat(TokenKind kind, const std::wstring &value) {
     std::shared_ptr<Token> pToken = tryEat(kind);
-    if (pToken != nullptr && pToken->value == value) {
+    if(pToken == nullptr) {
+        return nullptr;
+    }
+    
+    if (pToken->value == value) {
         return pToken;
     }
 
+    previous();
     return nullptr;
 }
 
