@@ -34,12 +34,25 @@ struct ClassDecl: Node {
     ClassDecl(std::shared_ptr<Token> name, std::vector<std::shared_ptr<Node>> members);
 };
 
+struct ParameterClause: Node {
+    std::vector<std::shared_ptr<Node>> parameters;
+    
+    ParameterClause(std::vector<std::shared_ptr<Node>> parameters);
+};
+
 struct FuncDecl: Node {
     std::shared_ptr<Token> name;
-    std::vector<std::shared_ptr<Token>> parameters;
+    std::shared_ptr<Node> parameterClause;
     std::shared_ptr<Node> codeBlock;
 
-    FuncDecl(std::shared_ptr<Token> name, std::vector<std::shared_ptr<Token>> parameters, std::shared_ptr<Node> codeBlock);
+    FuncDecl(std::shared_ptr<Token> name, std::shared_ptr<Node> parameterClause, std::shared_ptr<Node> codeBlock);
+};
+
+struct InitializerDecl: Node {
+    std::shared_ptr<Node> parameterClause;
+    std::shared_ptr<Node> codeBlock;
+    
+    InitializerDecl(std::shared_ptr<Node> parameterClause, std::shared_ptr<Node> codeBlock);
 };
 
 #endif

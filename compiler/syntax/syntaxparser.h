@@ -20,12 +20,17 @@ private:
     std::shared_ptr<Node> tryParseClassDecl();
 
     std::shared_ptr<Node> tryParseFunctionDecl();
+    
+    std::shared_ptr<Node> tryParseInitializerDecl();
 
     // Parse the constant declaration, e.g. let constValue = "10"
     std::shared_ptr<Node> tryParseConstDecl();
 
     // Parse the variable declaration, e.g. var varValue = "10"
     std::shared_ptr<Node> tryParseVarDecl();
+    
+    // Parse the parameter clause
+    std::shared_ptr<Node> tryParseParameterClause();
 
     ////////////////////////////////////////////////////////////////////////////
     // Statements

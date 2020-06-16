@@ -38,6 +38,9 @@ bool isKeyword(const std::wstring& keyword) {
   return Keywords::map.find(keyword) != Keywords::map.end();
 }
 
+/// Identifier
+const std::wstring Identifiers::INITIALIZER = L"init";
+
 /// Punctuation
 const std::wstring Punctuations::OPEN_CURLY_BRACKET = L"{";
 const std::wstring Punctuations::CLOSE_CURLY_BRACKET = L"}";
@@ -46,6 +49,7 @@ const std::wstring Punctuations::CLOSE_ROUND_BRACKET = L")";
 const std::wstring Punctuations::OPEN_SQUARE_BRACKET = L"[";
 const std::wstring Punctuations::CLOSE_SQUARE_BRACKET = L"]";
 const std::wstring Punctuations::COLON = L":";
+const std::wstring Punctuations::COMMA = L",";
 
 // Operators
 const std::wstring Operators::EQULAS = L"=";

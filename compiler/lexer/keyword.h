@@ -23,6 +23,9 @@ struct Keywords {
 
 bool isKeyword(const std::wstring& keyword);
 
+struct Identifiers {
+    static const std::wstring INITIALIZER;          // init
+};
 
 struct Punctuations {
     static const std::wstring OPEN_CURLY_BRACKET;   // {
@@ -32,6 +35,7 @@ struct Punctuations {
     static const std::wstring OPEN_SQUARE_BRACKET;  // [
     static const std::wstring CLOSE_SQUARE_BRACKET; // ]
     static const std::wstring COLON;                // :
+    static const std::wstring COMMA;
 };
 
 struct Operators {

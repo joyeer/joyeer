@@ -21,10 +21,15 @@ name(name),
 members(members) {
 }
 
-FuncDecl::FuncDecl(std::shared_ptr<Token> name, std::vector<std::shared_ptr<Token>> parameters, std::shared_ptr<Node> codeBlock):
+ParameterClause::ParameterClause(std::vector<std::shared_ptr<Node>> parameters):
+Node(SyntaxKind::parameterClause),
+parameters(parameters) {
+}
+
+FuncDecl::FuncDecl(std::shared_ptr<Token> name, std::shared_ptr<Node> parameterClause, std::shared_ptr<Node> codeBlock):
 Node(SyntaxKind::funcDecl),
 name(name),
-parameters(parameters),
+parameterClause(parameterClause),
 codeBlock(codeBlock) {
 }
 
@@ -32,4 +37,10 @@ Pattern::Pattern(std::shared_ptr<Token> identifier, std::shared_ptr<Node> type):
 Node(SyntaxKind::pattern),
 identifier(identifier),
 type(type) {
+}
+
+InitializerDecl::InitializerDecl(std::shared_ptr<Node> parameterClause, std::shared_ptr<Node> codeBlock):
+Node(SyntaxKind::initializerDecl),
+parameterClause(parameterClause),
+codeBlock(codeBlock) {
 }
