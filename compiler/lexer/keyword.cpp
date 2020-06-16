@@ -45,6 +45,8 @@ const std::wstring Punctuations::OPEN_ROUND_BRACKET = L"(";
 const std::wstring Punctuations::CLOSE_ROUND_BRACKET = L")";
 const std::wstring Punctuations::OPEN_SQUARE_BRACKET = L"[";
 const std::wstring Punctuations::CLOSE_SQUARE_BRACKET = L"]";
+const std::wstring Punctuations::COLON = L":";
 
 // Operators
 const std::wstring Operators::EQULAS = L"=";
+const std::wstring Operators::QUESTION = L"?";

@@ -93,13 +93,13 @@ std::shared_ptr<Node> SyntaxParser::tryParseConstDecl() {
         return nullptr; // Not a `let` declaration
     }
 
-    std::shared_ptr<Token> identifier = tryParseIdentifier();
-    if (identifier == nullptr) {
+    std::shared_ptr<Node> pattern = tryParsePattern();
+    if (pattern == nullptr) {
         return nullptr; //TODO: report an syntax Error
     }
-
+    
     std::shared_ptr<Node> expr = tryParseExpr();
-    return std::shared_ptr<Node>(new ConstantDecl(identifier, expr));
+    return std::shared_ptr<Node>(new ConstantDecl(pattern, expr));
 }
 
 std::shared_ptr<Node> SyntaxParser::tryParseVarDecl() {
@@ -107,13 +107,13 @@ std::shared_ptr<Node> SyntaxParser::tryParseVarDecl() {
         return nullptr; // Not a 'var' declaration
     }
 
-    std::shared_ptr<Token> identifier = tryParseIdentifier();
-    if (identifier == nullptr) {
-        return nullptr; //TODO: report an syntax Error
-    }
-
-    std::shared_ptr<Node> expr = tryParseExpr();
-    return std::shared_ptr<Node>(new VarDecl(identifier, expr));
+     std::shared_ptr<Node> pattern = tryParsePattern();
+       if (pattern == nullptr) {
+           return nullptr; //TODO: report an syntax Error
+       }
+       
+       std::shared_ptr<Node> expr = tryParseExpr();
+    return std::shared_ptr<Node>(new VarDecl(pattern, expr));
 }
 
 std::shared_ptr<Node> SyntaxParser::tryParseClassDecl() {
@@ -193,7 +193,7 @@ std::shared_ptr<Node> SyntaxParser::tryParseLoopStatement() {
         return nullptr;
     }
 
-    std::shared_ptr<Token> pattern = tryParsePattern();
+    std::shared_ptr<Node> pattern = tryParsePattern();
     if(pattern == nullptr) {
         return nullptr; // TODO: report an error;
     }
@@ -247,8 +247,32 @@ std::shared_ptr<Node> SyntaxParser::tryParseIfStatement() {
     }
 }
 
-std::shared_ptr<Token> SyntaxParser::tryParsePattern() {
-    return tryParseIdentifier();
+std::shared_ptr<Node> SyntaxParser::tryParsePattern() {
+    
+    std::shared_ptr<Token> identifier = tryParseIdentifier();
+    std::shared_ptr<Node> type = tryParseTypeAnnotation();
+    return std::shared_ptr<Node>(new Pattern(identifier, type));
+}
+
+std::shared_ptr<Node> SyntaxParser::tryParseTypeAnnotation() {
+    if(tryEat(TokenKind::punctuation, Punctuations::COLON) == nullptr) {
+        return nullptr;
+    }
+    
+    std::shared_ptr<Node> type = tryParseType();
+    if(type == nullptr ) {
+        return nullptr; // TODO: Report an error
+    }
+    return type;
+}
+
+std::shared_ptr<Node> SyntaxParser::tryParseType() {
+    std::shared_ptr<Token> identifier = tryParseIdentifier();
+    bool isOptinal = false;
+    if(tryEat(TokenKind::punctuation, Punctuations::COLON) != nullptr) {
+        isOptinal = true;
+    }
+    return std::shared_ptr<Node>(new Type(identifier, isOptinal));
 }
 
 // expression -> prefix-expression /opt/ binary-expressions /opt/

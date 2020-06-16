@@ -6,6 +6,11 @@
 enum SyntaxKind {
     sourceFile,
 
+    type,
+    arrayType,
+    dictType,
+    pattern,
+    
     importDecl,
     constantDecl,
     varDecl,

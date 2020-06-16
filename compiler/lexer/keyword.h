@@ -25,16 +25,18 @@ bool isKeyword(const std::wstring& keyword);
 
 
 struct Punctuations {
-  static const std::wstring OPEN_CURLY_BRACKET;   // {
-  static const std::wstring CLOSE_CURLY_BRACKET;  // }
-  static const std::wstring OPEN_ROUND_BRACKET;   // (
-  static const std::wstring CLOSE_ROUND_BRACKET;  // )
-  static const std::wstring OPEN_SQUARE_BRACKET;  // [
-  static const std::wstring CLOSE_SQUARE_BRACKET; // ]
+    static const std::wstring OPEN_CURLY_BRACKET;   // {
+    static const std::wstring CLOSE_CURLY_BRACKET;  // }
+    static const std::wstring OPEN_ROUND_BRACKET;   // (
+    static const std::wstring CLOSE_ROUND_BRACKET;  // )
+    static const std::wstring OPEN_SQUARE_BRACKET;  // [
+    static const std::wstring CLOSE_SQUARE_BRACKET; // ]
+    static const std::wstring COLON;                // :
 };
 
 struct Operators {
-  static const std::wstring EQULAS;               // =
+    static const std::wstring EQULAS;               // =
+    static const std::wstring QUESTION;             // ?
 };
 
 struct Literals {

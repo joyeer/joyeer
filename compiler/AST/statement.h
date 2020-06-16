@@ -19,11 +19,11 @@ struct CodeBlock: Node {
 };
 
 struct ForInStatement: Node {
-    std::shared_ptr<Token> pattern;
+    std::shared_ptr<Node> pattern;
     std::shared_ptr<Node> inExpr;
     std::shared_ptr<Node> codeBlock;
 
-    ForInStatement(std::shared_ptr<Token> pattern, std::shared_ptr<Node> inExpr, std::shared_ptr<Node> codeBlock);
+    ForInStatement(std::shared_ptr<Node> pattern, std::shared_ptr<Node> inExpr, std::shared_ptr<Node> codeBlock);
 };
 
 struct IfStatement: Node {

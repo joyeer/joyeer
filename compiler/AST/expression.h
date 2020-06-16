@@ -57,4 +57,11 @@ struct ParenthesizedExpr: Expr {
     ParenthesizedExpr(std::shared_ptr<Expr> expr);
 };
 
+struct Type: Node {
+    std::shared_ptr<Token> identifier;
+    bool isOptional;
+    
+    Type(std::shared_ptr<Token> identifier, bool isOptional);
+};
+
 #endif

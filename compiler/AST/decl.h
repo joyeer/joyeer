@@ -5,18 +5,26 @@
 #include "compiler/lexer/lexer.h"
 
 
-struct ConstantDecl: Node {
+struct Pattern: Node {
     std::shared_ptr<Token> identifier;
+    std::shared_ptr<Node> type;
+    
+    Pattern(std::shared_ptr<Token> identifier, std::shared_ptr<Node> type);
+};
+
+
+struct ConstantDecl: Node {
+    std::shared_ptr<Node> pattern;
     std::shared_ptr<Node> initializer;
 
-    ConstantDecl(std::shared_ptr<Token> identifier, std::shared_ptr<Node> initializer);
+    ConstantDecl(std::shared_ptr<Node> pattern, std::shared_ptr<Node> initializer);
 };
 
 struct VarDecl: Node {
-    std::shared_ptr<Token> identifier;
+    std::shared_ptr<Node> pattern;
     std::shared_ptr<Node> initializer;
 
-    VarDecl(std::shared_ptr<Token> identifier, std::shared_ptr<Node> initializer);
+    VarDecl(std::shared_ptr<Node> pattern, std::shared_ptr<Node> initializer);
 };
 
 struct ClassDecl: Node {

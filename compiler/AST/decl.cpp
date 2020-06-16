@@ -2,16 +2,15 @@
 
 
 
-ConstantDecl::ConstantDecl(std::shared_ptr<Token> identifier, std::shared_ptr<Node> initializer): 
+ConstantDecl::ConstantDecl(std::shared_ptr<Node> pattern, std::shared_ptr<Node> initializer):
 Node(SyntaxKind::constantDecl),
-identifier(identifier),
+pattern(pattern),
 initializer(initializer) {
-
 }
 
-VarDecl::VarDecl(std::shared_ptr<Token> identifier, std::shared_ptr<Node> initializer):
+VarDecl::VarDecl(std::shared_ptr<Node> pattern, std::shared_ptr<Node> initializer):
 Node(SyntaxKind::varDecl),
-identifier(identifier),
+pattern(pattern),
 initializer(initializer) {
     
 }
@@ -27,4 +26,10 @@ Node(SyntaxKind::funcDecl),
 name(name),
 parameters(parameters),
 codeBlock(codeBlock) {
+}
+
+Pattern::Pattern(std::shared_ptr<Token> identifier, std::shared_ptr<Node> type):
+Node(SyntaxKind::pattern),
+identifier(identifier),
+type(type) {
 }

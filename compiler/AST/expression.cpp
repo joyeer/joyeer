@@ -51,3 +51,9 @@ ParenthesizedExpr::ParenthesizedExpr(std::shared_ptr<Expr> expr):
   expr(expr) {
 
 }
+
+Type::Type(std::shared_ptr<Token> identifier, bool isOptional):
+Node(SyntaxKind::type),
+identifier(identifier),
+isOptional(isOptional) {
+}
