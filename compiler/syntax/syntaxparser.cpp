@@ -78,7 +78,7 @@ std::shared_ptr<Node> SyntaxParser::tryParseFunctionDecl() {
 }
 
 std::shared_ptr<Node> SyntaxParser::tryParseInitializerDecl() {
-    if(tryEat(TokenKind::identifier, Identifiers::INITIALIZER) == nullptr) {
+    if(tryEat(TokenKind::keyword, Keywords::INIT) == nullptr) {
         return nullptr;
     }
     
@@ -328,11 +328,19 @@ std::shared_ptr<Node> SyntaxParser::tryParseType() {
 
 // expression -> prefix-expression /opt/ binary-expressions /opt/
 std::shared_ptr<Expr> SyntaxParser::tryParseExpr() {
+    std::shared_ptr<Node> expr = tryParsePrefixExpr();
+    if(expr == nullptr) {
+        return nullptr;
+    }
+    
+    std::shared_ptr<Node> binExpr = tryParseBinaryExpr();
+    
     return nullptr;
 }
 
 std::shared_ptr<Node> SyntaxParser::tryParsePrefixExpr() {
-    std::shared_ptr<Token> prefixOperator = tryEat(TokenKind::operators);   
+    std::shared_ptr<Token> prefixOperator = tryEat(TokenKind::operators);
+    
     std::shared_ptr<Node> postfixExpr = tryParsePostfixExpr();
     if(postfixExpr == nullptr) {
         // revert the prefix operator

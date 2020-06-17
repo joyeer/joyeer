@@ -25,6 +25,7 @@ enum SyntaxKind {
     forInStatement,
     ifStatement,
 
+    expr,
     postfixExpr,
     prefixExpr,
     identifierExpr,

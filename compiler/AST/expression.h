@@ -5,8 +5,11 @@ struct Node;
 #include "compiler/lexer/lexer.h"
 
 struct Expr : Node {
-protected:
-    Expr(SyntaxKind kind);
+
+    std::shared_ptr<Node> prefix;
+    std::shared_ptr<Node> binary;
+    
+    Expr(std::shared_ptr<Node> prefix, std::shared_ptr<Node> binary);
 };
 
 struct PostfixExpr: Node {
@@ -42,17 +45,17 @@ struct FunctionCallExpr: Node {
     FunctionCallExpr(std::vector<std::shared_ptr<Node>> parameters, std::shared_ptr<Token> postfixOperator);
 };
 
-struct LiteralExpr : Expr {
+struct LiteralExpr : Node {
     std::shared_ptr<Token> literal;
     LiteralExpr(std::shared_ptr<Token> literal);
 };
 
-struct IdentifierExpr: Expr {
+struct IdentifierExpr: Node {
     std::shared_ptr<Token> identifier;
     IdentifierExpr(std::shared_ptr<Token> literal);
 };
 
-struct ParenthesizedExpr: Expr {
+struct ParenthesizedExpr: Node {
     std::shared_ptr<Expr> expr;
     ParenthesizedExpr(std::shared_ptr<Expr> expr);
 };

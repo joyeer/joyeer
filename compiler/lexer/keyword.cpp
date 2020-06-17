@@ -14,32 +14,31 @@ const std::wstring Keywords::WHILE = L"while";
 const std::wstring Keywords::IMPORT = L"import";
 const std::wstring Keywords::TRY = L"try";
 const std::wstring Keywords::IN = L"in";
+const std::wstring Keywords::INIT = L"init";
 
 const std::unordered_set<std::wstring> Keywords::map = initKeywordMap();
 
 std::unordered_set<std::wstring> initKeywordMap() {
-  std::unordered_set<std::wstring> map;
-  map.insert(Keywords::CLASS);
-  map.insert(Keywords::FUNC);
-  map.insert(Keywords::STRUCT);
-  map.insert(Keywords::VAR);
-  map.insert(Keywords::LET);
-  map.insert(Keywords::IF);
-  map.insert(Keywords::ELSE);
-  map.insert(Keywords::FOR);
-  map.insert(Keywords::WHILE);
-  map.insert(Keywords::TRY);
-  map.insert(Keywords::IN);
+    std::unordered_set<std::wstring> map;
+    map.insert(Keywords::CLASS);
+    map.insert(Keywords::FUNC);
+    map.insert(Keywords::STRUCT);
+    map.insert(Keywords::VAR);
+    map.insert(Keywords::LET);
+    map.insert(Keywords::IF);
+    map.insert(Keywords::ELSE);
+    map.insert(Keywords::FOR);
+    map.insert(Keywords::WHILE);
+    map.insert(Keywords::TRY);
+    map.insert(Keywords::IN);
+    map.insert(Keywords::INIT);
 
-  return map;
+    return map;
 }
 
 bool isKeyword(const std::wstring& keyword) {
   return Keywords::map.find(keyword) != Keywords::map.end();
 }
-
-/// Identifier
-const std::wstring Identifiers::INITIALIZER = L"init";
 
 /// Punctuation
 const std::wstring Punctuations::OPEN_CURLY_BRACKET = L"{";
