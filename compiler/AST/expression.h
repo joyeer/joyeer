@@ -38,11 +38,18 @@ struct AssignmentExpr: Node {
     AssignmentExpr(std::shared_ptr<Node> expr);
 };
 
+struct ArguCallExpr: Node {
+    std::shared_ptr<Token> identifier;
+    std::shared_ptr<Node> expr;
+    
+    ArguCallExpr(std::shared_ptr<Token> identifier, std::shared_ptr<Node> expr);
+};
+
 struct FunctionCallExpr: Node {
-    std::shared_ptr<Token> postfixOperator;
+    std::shared_ptr<Token> identifier;
     std::vector<std::shared_ptr<Node>> parameters;
 
-    FunctionCallExpr(std::vector<std::shared_ptr<Node>> parameters, std::shared_ptr<Token> postfixOperator);
+    FunctionCallExpr(std::shared_ptr<Token> identifier, std::vector<std::shared_ptr<Node>> parameters);
 };
 
 struct LiteralExpr : Node {
@@ -56,8 +63,14 @@ struct IdentifierExpr: Node {
 };
 
 struct ParenthesizedExpr: Node {
-    std::shared_ptr<Expr> expr;
-    ParenthesizedExpr(std::shared_ptr<Expr> expr);
+    std::shared_ptr<Node> expr;
+    ParenthesizedExpr(std::shared_ptr<Node> expr);
+};
+
+struct SelfExpr: Node {
+    std::shared_ptr<Token> identifier;
+    
+    SelfExpr(std::shared_ptr<Token> identifier);
 };
 
 struct Type: Node {

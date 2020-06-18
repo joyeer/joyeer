@@ -31,10 +31,16 @@ AssignmentExpr::AssignmentExpr(std::shared_ptr<Node> expr):
     expr(expr) {
 }
 
-FunctionCallExpr::FunctionCallExpr(std::vector<std::shared_ptr<Node>> parameters, std::shared_ptr<Token> postfixOperator):
-    Node(SyntaxKind::functionCallExpr),
-    parameters(parameters),
-    postfixOperator(postfixOperator) {
+ArguCallExpr::ArguCallExpr(std::shared_ptr<Token> identifier, std::shared_ptr<Node> expr):
+Node(SyntaxKind::arguCallExpr),
+identifier(identifier),
+expr(expr) {
+}
+
+FunctionCallExpr::FunctionCallExpr(std::shared_ptr<Token> identifier, std::vector<std::shared_ptr<Node>> parameters):
+Node(SyntaxKind::functionCallExpr),
+identifier(identifier),
+parameters(parameters) {
 }
 
 LiteralExpr::LiteralExpr(std::shared_ptr<Token> literal):
@@ -48,10 +54,14 @@ Node(SyntaxKind::identifierExpr),
 identifier(identifier) {
 }
 
-ParenthesizedExpr::ParenthesizedExpr(std::shared_ptr<Expr> expr):
+ParenthesizedExpr::ParenthesizedExpr(std::shared_ptr<Node> expr):
 Node(SyntaxKind::parenthesizedExpr),
 expr(expr) {
+}
 
+SelfExpr::SelfExpr(std::shared_ptr<Token> identifier):
+Node(SyntaxKind::selfExpr),
+identifier(identifier) {
 }
 
 Type::Type(std::shared_ptr<Token> identifier, bool isOptional):

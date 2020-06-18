@@ -15,6 +15,7 @@ const std::wstring Keywords::IMPORT = L"import";
 const std::wstring Keywords::TRY = L"try";
 const std::wstring Keywords::IN = L"in";
 const std::wstring Keywords::INIT = L"init";
+const std::wstring Keywords::SELF = L"self";
 
 const std::unordered_set<std::wstring> Keywords::map = initKeywordMap();
 
@@ -32,6 +33,7 @@ std::unordered_set<std::wstring> initKeywordMap() {
     map.insert(Keywords::TRY);
     map.insert(Keywords::IN);
     map.insert(Keywords::INIT);
+    map.insert(Keywords::SELF);
 
     return map;
 }
@@ -49,7 +51,10 @@ const std::wstring Punctuations::OPEN_SQUARE_BRACKET = L"[";
 const std::wstring Punctuations::CLOSE_SQUARE_BRACKET = L"]";
 const std::wstring Punctuations::COLON = L":";
 const std::wstring Punctuations::COMMA = L",";
+const std::wstring Punctuations::DOT = L".";
+
 
 // Operators
 const std::wstring Operators::EQULAS = L"=";
 const std::wstring Operators::QUESTION = L"?";
+const std::wstring Operators::POINT = L"!";

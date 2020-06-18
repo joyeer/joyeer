@@ -18,6 +18,7 @@ struct Keywords {
     static const std::wstring TRY;
     static const std::wstring IN;
     static const std::wstring INIT;
+    static const std::wstring SELF;
 
     static const std::unordered_set<std::wstring> map;
 };
@@ -32,12 +33,14 @@ struct Punctuations {
     static const std::wstring OPEN_SQUARE_BRACKET;  // [
     static const std::wstring CLOSE_SQUARE_BRACKET; // ]
     static const std::wstring COLON;                // :
-    static const std::wstring COMMA;
+    static const std::wstring COMMA;                // ,
+    static const std::wstring DOT;                  // .
 };
 
 struct Operators {
     static const std::wstring EQULAS;               // =
     static const std::wstring QUESTION;             // ?
+    static const std::wstring POINT;                // !
 };
 
 struct Literals {

@@ -59,7 +59,7 @@ private:
     // Expressions
     ////////////////////////////////////////////////////////////////////////////
 
-    std::shared_ptr<Expr> tryParseExpr();
+    std::shared_ptr<Node> tryParseExpr();
 
     // prefix-expression -> prefix-operator /opt/ postfix-expression
     std::shared_ptr<Node> tryParsePrefixExpr();
@@ -68,6 +68,8 @@ private:
     // postfix-expression -> postfix-expression postfix-operator
     // postfix-expression -> function-call-expression
     std::shared_ptr<Node> tryParsePostfixExpr();
+    
+    std::shared_ptr<Node> tryParseArguCallExpr();
     
     std::shared_ptr<Node> tryParseFunctionCallExpr();
 
@@ -78,6 +80,8 @@ private:
     // primary-expression -> parenthesized-expression
     std::shared_ptr<Node> tryParsePrimaryExpr();
 
+    std::shared_ptr<Node> tryParseSelfExpr();
+    
     // literal-expression -> literal
     // literal-expression -> array-literal | dictionary-literal
     // array-literal -> [ array-literal-items /opts/ ]
@@ -93,6 +97,8 @@ private:
     void tryParseConditionalOperator();
     
     std::shared_ptr<Token> tryParseOperator();
+    
+    std::shared_ptr<Token> tryParsePostfixOperator();
 
     // literal -> numeric-literal | string-literal | boolean-literal | nil-literal
     std::shared_ptr<Token> tryParseLiteral();

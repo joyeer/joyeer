@@ -26,10 +26,12 @@ enum SyntaxKind {
     ifStatement,
 
     expr,
+    selfExpr,
     postfixExpr,
     prefixExpr,
     identifierExpr,
     parenthesizedExpr,
+    arguCallExpr,
     functionCallExpr,
   
     literalExpr,
