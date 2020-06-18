@@ -358,15 +358,16 @@ std::shared_ptr<Node> SyntaxParser::tryParsePrefixExpr() {
 }
 
 std::shared_ptr<Node> SyntaxParser::tryParsePostfixExpr() {
+    std::shared_ptr<Node> funcCallExpr = tryParseFunctionCallExpr();
+    if(funcCallExpr != nullptr) {
+         return std::shared_ptr<Node>(new PostfixExpr(funcCallExpr, tryParsePostfixOperator()));
+    }
+    
     std::shared_ptr<Node> expr = tryParsePrimaryExpr();
     if(expr != nullptr) {
         return std::shared_ptr<PostfixExpr>(new PostfixExpr(expr, tryParsePostfixOperator()));
     }
 
-    std::shared_ptr<Node> funcCallExpr = tryParseFunctionCallExpr();
-    if(funcCallExpr != nullptr) {
-         return std::shared_ptr<Node>(new PostfixExpr(funcCallExpr, tryParsePostfixOperator()));
-    }
 
     return nullptr;
 }
@@ -400,7 +401,7 @@ std::shared_ptr<Node> SyntaxParser::tryParseFunctionCallExpr() {
     }
     
     
-    if(tryEat(TokenKind::punctuation, Punctuations::OPEN_ROUND_BRACKET) == nullptr) {
+    if(tryEat(TokenKind::punctuation, Punctuations::CLOSE_ROUND_BRACKET) == nullptr) {
         return nullptr; // TODO: report an grammar error
     }
     
@@ -555,19 +556,24 @@ std::shared_ptr<Token> SyntaxParser::tryParseLiteral()
     literal = tryEat(TokenKind::floatLiteral);
     if (literal != nullptr)
     {
-        return nullptr;
+        return literal;
     }
 
     literal = tryEat(TokenKind::nilLiteral);
     if (literal != nullptr)
     {
-        return nullptr;
+        return literal;
     }
 
     literal = tryEat(TokenKind::booleanLiteral);
     if (literal != nullptr)
     {
-        return nullptr;
+        return literal;
+    }
+    
+    literal = tryEat(TokenKind::nilLiteral);
+    if(literal != nullptr) {
+        return literal;
     }
 
     return nullptr;

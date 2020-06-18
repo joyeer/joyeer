@@ -201,9 +201,17 @@ void LexParser::parseStringLiteral() {
   exit_label:
   std::wstring identifier(startAt, iterator);
   
-  tokens.push_back(
-    std::shared_ptr<Token>(new Token(isKeyword(identifier) ? TokenKind::keyword : TokenKind::identifier, identifier, lineNumber, iterator - startAt))
-  );
+    std::shared_ptr<Token> token;
+    if(isKeyword(identifier)) {
+        token = std::shared_ptr<Token>(new Token(TokenKind::keyword, identifier, lineNumber, iterator - startAt));
+    } else if(identifier == Literals::NIL) {
+        token = std::shared_ptr<Token>(new Token(TokenKind::nilLiteral, identifier, lineNumber, iterator - startAt));
+    } else if(identifier == Literals::TRUE || identifier == Literals::FALSE) {
+        token = std::shared_ptr<Token>(new Token(TokenKind::booleanLiteral, identifier, lineNumber, iterator - startAt));
+    } else {
+        token = std::shared_ptr<Token>(new Token(TokenKind::identifier, identifier, lineNumber, iterator - startAt));
+    }
+    tokens.push_back(token);
 }
 
 void LexParser::open(const std::string& filename) {

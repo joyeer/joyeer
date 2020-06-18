@@ -58,3 +58,9 @@ const std::wstring Punctuations::DOT = L".";
 const std::wstring Operators::EQULAS = L"=";
 const std::wstring Operators::QUESTION = L"?";
 const std::wstring Operators::POINT = L"!";
+
+// Literals
+const std::wstring Literals::FALSE = L"false";
+const std::wstring Literals::TRUE = L"true";
+const std::wstring Literals::NIL = L"nil";
+
