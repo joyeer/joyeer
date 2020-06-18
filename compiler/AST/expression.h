@@ -52,6 +52,13 @@ struct FunctionCallExpr: Node {
     FunctionCallExpr(std::shared_ptr<Token> identifier, std::vector<std::shared_ptr<Node>> parameters);
 };
 
+struct MemberExpr: Node {
+    std::shared_ptr<Node> parent;
+    std::shared_ptr<Node> member;
+    
+    MemberExpr(std::shared_ptr<Node> parent, std::shared_ptr<Node> member);
+};
+
 struct LiteralExpr : Node {
     std::shared_ptr<Token> literal;
     LiteralExpr(std::shared_ptr<Token> literal);

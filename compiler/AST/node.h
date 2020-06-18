@@ -33,6 +33,7 @@ enum SyntaxKind {
     parenthesizedExpr,
     arguCallExpr,
     functionCallExpr,
+    memberExpr,
   
     literalExpr,
     arrayLiteralExpr,

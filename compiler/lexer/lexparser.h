@@ -14,13 +14,14 @@ public:
   void parse();
 
 private:
-  void open(const std::string& filepath);
+    void open(const std::string& filepath);
 
-  void parseStringLiteral();
-  void parseNumberLiteral(std::wstring::const_iterator startAt);
-  void parseHexLiteral(std::wstring::const_iterator startAt);
-  void parseOperator(std::wstring::const_iterator startIterator);
-  void parsePunctuation(std::wstring::const_iterator startIterator);
+    void parseStringLiteral();
+    void parseNumberLiteral(std::wstring::const_iterator startAt);
+    void parseHexLiteral(std::wstring::const_iterator startAt);
+    void pushOperator(TokenKind kind, std::wstring op, std::wstring::const_iterator startIterator);
+    void parseOperator(std::wstring::const_iterator startIterator);
+    void parsePunctuation(std::wstring::const_iterator startIterator);
 
 public:
   std::vector<std::shared_ptr<Token>> tokens;

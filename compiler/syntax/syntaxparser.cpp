@@ -232,6 +232,11 @@ std::shared_ptr<Node> SyntaxParser::tryParseStatement() {
     if(loopStatement != nullptr) {
         return loopStatement;
     }
+    
+    std::shared_ptr<Node> branchStatement = tryParseBranchStatement();
+    if(branchStatement != nullptr) {
+        return branchStatement;
+    }
 
     return loopStatement;
 }
@@ -358,27 +363,42 @@ std::shared_ptr<Node> SyntaxParser::tryParsePrefixExpr() {
 }
 
 std::shared_ptr<Node> SyntaxParser::tryParsePostfixExpr() {
+    std::shared_ptr<Node> result = nullptr;
+    
     std::shared_ptr<Node> funcCallExpr = tryParseFunctionCallExpr();
     if(funcCallExpr != nullptr) {
-         return std::shared_ptr<Node>(new PostfixExpr(funcCallExpr, tryParsePostfixOperator()));
+        result = std::shared_ptr<Node>(new PostfixExpr(funcCallExpr, tryParsePostfixOperator()));
     }
     
-    std::shared_ptr<Node> expr = tryParsePrimaryExpr();
-    if(expr != nullptr) {
-        return std::shared_ptr<PostfixExpr>(new PostfixExpr(expr, tryParsePostfixOperator()));
+    if(result == nullptr) {
+        std::shared_ptr<Node> primaryExpr = tryParsePrimaryExpr();
+        if(primaryExpr != nullptr) {
+            result = std::shared_ptr<PostfixExpr>(new PostfixExpr(primaryExpr, tryParsePostfixOperator()));
+        }
     }
-
-
-    return nullptr;
+    
+    if(result != nullptr) {
+        if (tryEat(TokenKind::punctuation, Punctuations::DOT) != nullptr) {
+            std::shared_ptr<Node> expr = tryParsePostfixExpr();
+            if(expr == nullptr) {
+                return nullptr; // TODO: Report a grammar;
+            }
+            std::shared_ptr<Node> memberExpr = std::shared_ptr<Node>(new MemberExpr(result, expr));
+        }
+    }
+    
+    return result;
 }
 
 std::shared_ptr<Node> SyntaxParser::tryParseFunctionCallExpr() {
+    std::vector<std::shared_ptr<Token>>::const_iterator mark = iterator;
     std::shared_ptr<Token> identifier = tryParseIdentifier();
     if(identifier == nullptr) {
         return nullptr;
     }
     
     if(tryEat(TokenKind::punctuation, Punctuations::OPEN_ROUND_BRACKET) == nullptr) {
+        iterator = mark;
         return nullptr;
     }
     

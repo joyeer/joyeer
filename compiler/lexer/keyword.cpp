@@ -56,6 +56,7 @@ const std::wstring Punctuations::DOT = L".";
 
 // Operators
 const std::wstring Operators::EQULAS = L"=";
+const std::wstring Operators::EQUAL_EQUAL = L"==";
 const std::wstring Operators::QUESTION = L"?";
 const std::wstring Operators::POINT = L"!";
 

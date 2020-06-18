@@ -46,6 +46,13 @@ void LexParser::parse() {
                 parseOperator(iterator - 1);
                 break;
             case '=':
+                if (iterator != endIterator) {
+                    if (*iterator == '=') {
+                        iterator ++;
+                        pushOperator(TokenKind::operators, Operators::EQUAL_EQUAL, iterator);
+                        continue;
+                    }
+                }
                 parseOperator(iterator - 1);
                 break;
             case '-':
@@ -174,6 +181,10 @@ void LexParser::parseOperator(std::wstring::const_iterator startIterator) {
   tokens.push_back(
     std::shared_ptr<Token>(new Token(TokenKind::operators, operators, lineNumber, iterator - startIterator))
   );
+}
+
+void LexParser::pushOperator(TokenKind kind, std::wstring op, std::wstring::const_iterator startIterator) {
+    tokens.push_back(std::shared_ptr<Token>(new Token(TokenKind::operators, op, lineNumber, iterator - startIterator)));
 }
 
 void LexParser::parsePunctuation(std::wstring::const_iterator startIterator) {

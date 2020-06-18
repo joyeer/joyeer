@@ -39,6 +39,7 @@ struct Punctuations {
 
 struct Operators {
     static const std::wstring EQULAS;               // =
+    static const std::wstring EQUAL_EQUAL;          // ==
     static const std::wstring QUESTION;             // ?
     static const std::wstring POINT;                // !
 };

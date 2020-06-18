@@ -43,6 +43,12 @@ identifier(identifier),
 parameters(parameters) {
 }
 
+MemberExpr::MemberExpr(std::shared_ptr<Node> parent, std::shared_ptr<Node> member):
+Node(SyntaxKind::memberExpr),
+parent(parent),
+member(member) {
+}
+
 LiteralExpr::LiteralExpr(std::shared_ptr<Token> literal):
 Node(SyntaxKind::literalExpr),
 literal(literal) {
