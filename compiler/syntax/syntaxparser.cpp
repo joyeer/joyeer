@@ -262,7 +262,7 @@ std::shared_ptr<Node> SyntaxParser::tryParseLoopStatement() {
 
     std::shared_ptr<Node> codeBlock = tryParseCodeBlock();
 
-    return std::shared_ptr<Node>(new ForInStatement(pattern, expr, codeBlock));
+    return std::shared_ptr<Node>(std::make_shared<ForInStatement>(pattern, expr, codeBlock));
 }
 
 std::shared_ptr<Node> SyntaxParser::tryParseBranchStatement() {
