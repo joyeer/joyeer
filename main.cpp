@@ -2,6 +2,7 @@
 #include "compiler/lexer/lexer.h"
 #include "compiler/syntax/syntax.h"
 
+
 int main(int argc, char** argv) {
   if(argc < 2) {
     std::cout << "input file";
@@ -14,6 +15,9 @@ int main(int argc, char** argv) {
 
   SyntaxParser syntaxParser(parser.tokens);
   syntaxParser.parse();
+    SymbolFactoryPtr symFactory = std::make_shared<SymbolFactory>();
+    
+    Binder binder(symFactory);
   
   return 0;
 }

@@ -2,13 +2,20 @@
 #define __joyeer_compiler_syntax_binder_h__
 
 #include "compiler/AST/ast.h"
+#include "syntax.h"
+#include "symtable.h"
 
 class Binder {
 public:
-    void bind(std::shared_ptr<SourceFile> sourceFile);
+    Binder(SymbolFactoryPtr symFactory);
+    
+    void bind(std::shared_ptr<Node> node);
     
 protected:
-    void bind(std::shared_ptr<Node> node);
+    void bind(std::shared_ptr<SourceFile> sourceFile);
+    
+private:
+    SymbolFactoryPtr symFactory;
 };
 
 #endif

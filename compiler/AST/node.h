@@ -4,7 +4,7 @@
 #include <memory>
 
 enum SyntaxKind {
-    sourceFile,
+    sourceFile = 1L,
 
     type,
     arrayType,
@@ -50,6 +50,6 @@ protected:
   Node(SyntaxKind kind);
 
 };
-
+typedef std::shared_ptr<Node> NodePtr;
 
 #endif

@@ -1,7 +1,7 @@
 #ifndef __joyeer_compiler_syntax_symtable_h__
 #define __joyeer_compiler_syntax_symtable_h__
 
-#include <string>
+#include "compiler/AST/ast.h"
 #include <unordered_map>
 #include <stack>
 
@@ -13,24 +13,34 @@ struct Symbol {
     std::wstring name;
     size_t flag;
 };
+typedef std::shared_ptr<Symbol> SymbolPtr;
 
 
+class SymTable;
+typedef std::shared_ptr<SymTable> SymTablePtr;
 class SymTable {
-
-    std::shared_ptr<SymTable> previous;
-    std::unordered_map<std::wstring, std::shared_ptr<SymTable>> map;
-    
+public:
     SymTable(std::shared_ptr<SymTable> previous);
+    
+private:
+    SymTablePtr previous;
+    std::unordered_map<std::wstring, SymbolPtr> map;
 };
 
 
-class SymTableStack {
+class SymbolFactory {
     
-    std::stack<SymTable> stack;
+public:
+    SymbolFactory();
+    // We create an SymTable for a specific node
+    SymTablePtr createSymTable(NodePtr node);
     
-    void append(std::shared_ptr<SymTable> table);
+private:
+    std::stack<SymTablePtr> stack;
     
+    void append(SymTablePtr table);
 };
+typedef std::shared_ptr<SymbolFactory> SymbolFactoryPtr;
 
 #endif
 

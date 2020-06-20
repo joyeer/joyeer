@@ -3,6 +3,6 @@
 
 #include "syntaxparser.h"
 #include "symtable.h"
-
+#include "binder.h"
 
 #endif
