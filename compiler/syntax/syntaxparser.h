@@ -8,7 +8,7 @@ class SyntaxParser
 {
 public:
     SyntaxParser(const std::vector<std::shared_ptr<Token>> &tokens);
-    std::shared_ptr<SourceFile> parse();
+    SourceBlock::Pointer parse();
 
 private:
 

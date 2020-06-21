@@ -7,8 +7,7 @@ SyntaxParser::SyntaxParser(const std::vector<std::shared_ptr<Token>> &tokens) : 
     endIterator = tokens.end();
 }
 
-std::shared_ptr<SourceFile> SyntaxParser::parse() {
-
+SourceBlock::Pointer SyntaxParser::parse() {
     std::vector<std::shared_ptr<Node>> decls;
     while(iterator != endIterator) {
         std::shared_ptr<Node> decl = tryParseDecl();
@@ -18,7 +17,8 @@ std::shared_ptr<SourceFile> SyntaxParser::parse() {
 
         decls.push_back(decl);
     }
-    return std::shared_ptr<SourceFile>(new SourceFile(decls));
+    
+    return std::make_shared<SourceBlock>(decls);
 }
 
 ////////////////////////////////////////////////////////////////////////////

@@ -4,7 +4,7 @@
 #include <memory>
 
 enum SyntaxKind {
-    sourceFile = 1L,
+    sourceBlock = 1L,
 
     type,
     arrayType,

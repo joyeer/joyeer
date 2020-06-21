@@ -1,7 +1,7 @@
 #include "ast.h"
 
-SourceFile::SourceFile(std::vector<std::shared_ptr<Node>> decls):
-Node(SyntaxKind::sourceFile),
+SourceBlock::SourceBlock(std::vector<std::shared_ptr<Node>> decls):
+Node(SyntaxKind::sourceBlock),
 decls(decls) {
 
 }

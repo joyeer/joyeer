@@ -4,20 +4,24 @@
 
 
 int main(int argc, char** argv) {
-  if(argc < 2) {
-    std::cout << "input file";
-    return -1;
-  }
+    if(argc < 2) {
+        std::cout << "input file";
+        return -1;
+    }
 
-  std::string filepath = std::string(argv[1]);
-  LexParser parser(filepath);
-  parser.parse();
+    std::string filepath = std::string(argv[1]);
+    LexParser parser(filepath);
+    parser.parse();
 
-  SyntaxParser syntaxParser(parser.tokens);
-  syntaxParser.parse();
-    SymbolFactoryPtr symFactory = std::make_shared<SymbolFactory>();
+    SyntaxParser syntaxParser(parser.tokens);
+    SourceBlock::Pointer sourceBlock = syntaxParser.parse();
     
-    Binder binder(symFactory);
-  
-  return 0;
+    SymbolFactory::Pointer symFactory = std::make_shared<SymbolFactory>();
+    TypeFactory::Pointer typeFactory = std::make_shared<TypeFactory>();
+    
+    Binder binder(symFactory, typeFactory);
+    binder.bind(sourceBlock);
+    std::cout << sizeof(1L);
+
+    return 0;
 }

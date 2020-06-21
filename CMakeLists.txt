@@ -13,6 +13,7 @@ add_executable(joyeer ${SOURCES})
 include_directories(./)
 
 # IDE source group settings
+source_group("compiler" REGULAR_EXPRESSION "compiler/.*\\.(cpp|h)")
 source_group("compiler\\lexer" REGULAR_EXPRESSION "compiler/lexer/.*\\.(cpp|h)")
 source_group("compiler\\syntax" REGULAR_EXPRESSION "compiler/syntax/.*\\.(cpp|h)")
 source_group("compiler\\AST" REGULAR_EXPRESSION "compiler/AST/.*\\.(cpp|h)")

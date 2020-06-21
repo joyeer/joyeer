@@ -17,7 +17,7 @@ name(name) {
 const PrimaryTypeDescriptor::Pointer PrimaryTypeDescriptor::Int = std::make_shared<PrimaryTypeDescriptor>(L"int");
 
 PrimaryTypeDescriptor::PrimaryTypeDescriptor(const std::wstring& name):
-TypeDescriptor(TypeKind::primary, name) {
+TypeDescriptor(TypeKind::primaryType, name) {
 }
 
 
@@ -26,5 +26,21 @@ TypeDescriptor(TypeKind::primary, name) {
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ClassTypeDescriptor::ClassTypeDescriptor(const std::wstring& name):
-TypeDescriptor(TypeKind::class_, name) {
+TypeDescriptor(TypeKind::classType, name) {
+}
+
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// TypeFactory
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+TypeFactory::TypeFactory():
+types() {
+}
+
+ClassTypeDescriptor::Pointer TypeFactory::createClassType(const std::wstring &name) {
+    ClassTypeDescriptor::Pointer type = std::make_shared<ClassTypeDescriptor>(name);
+    //TODO: find the
+    types[name] = type;
+    return type;
 }
