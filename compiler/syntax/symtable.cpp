@@ -16,6 +16,6 @@ previous(previous) {
 SymbolFactory::SymbolFactory() {
 }
 
-SymTablePtr createSymTable(NodePtr node) {
+SymTable::Pointer SymbolFactory::createSymTable(NodePtr node) {
     
 }

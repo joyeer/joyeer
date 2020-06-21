@@ -73,8 +73,10 @@ void Binder::bind(std::shared_ptr<Node> node) {
 
 
 void Binder::bind(std::shared_ptr<SourceFile> sourceFile) {
+    symFactory->createSymTable(sourceFile);
     for(auto& decl : sourceFile->decls) {
-        
+        bind(decl);
     }
 }
+
 

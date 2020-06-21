@@ -44,10 +44,12 @@ enum SyntaxKind {
 };
 
 struct Node {
-  SyntaxKind kind;
-  
+    typedef std::shared_ptr<Node> Pointer;
+    
+    SyntaxKind kind;
+    
 protected:
-  Node(SyntaxKind kind);
+    Node(SyntaxKind kind);
 
 };
 typedef std::shared_ptr<Node> NodePtr;

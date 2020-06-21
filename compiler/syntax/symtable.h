@@ -5,25 +5,32 @@
 #include <unordered_map>
 #include <stack>
 
-struct Symbol {
-    const static size_t NONE = 0;
-    const static size_t CLASS = 1 << 1;
-    const static size_t VAR = 1 << 2;
+enum SymbolFlag {
+    none = 0l,
+    block = 1L << 1,
     
-    std::wstring name;
-    size_t flag;
+    sourcFile = block & 1L << 10,
+    class_ = block & 1l << 11,
+    var = 1l << 12
 };
+
+struct Symbol {
+    SymbolFlag flag;
+    std::wstring name;
+    NodePtr node;
+};
+
 typedef std::shared_ptr<Symbol> SymbolPtr;
 
 
-class SymTable;
-typedef std::shared_ptr<SymTable> SymTablePtr;
 class SymTable {
+public:
+    typedef std::shared_ptr<SymTable> Pointer;
 public:
     SymTable(std::shared_ptr<SymTable> previous);
     
 private:
-    SymTablePtr previous;
+    SymTable::Pointer previous;
     std::unordered_map<std::wstring, SymbolPtr> map;
 };
 
@@ -32,13 +39,16 @@ class SymbolFactory {
     
 public:
     SymbolFactory();
+    
     // We create an SymTable for a specific node
-    SymTablePtr createSymTable(NodePtr node);
+    SymTable::Pointer createSymTable(NodePtr node);
+    
+    SymbolPtr createSymbol(const std::wstring& name);
     
 private:
-    std::stack<SymTablePtr> stack;
+    std::stack<SymTable::Pointer> stack;
+    std::unordered_map<NodePtr, SymTable::Pointer> map;
     
-    void append(SymTablePtr table);
 };
 typedef std::shared_ptr<SymbolFactory> SymbolFactoryPtr;
 

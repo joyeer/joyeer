@@ -13,6 +13,7 @@ public:
     
 protected:
     void bind(std::shared_ptr<SourceFile> sourceFile);
+    void bind(ClassDecl::Pointer classDecl);
     
 private:
     SymbolFactoryPtr symFactory;

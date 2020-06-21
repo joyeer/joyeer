@@ -6,6 +6,8 @@
 
 
 struct Pattern: Node {
+    typedef std::shared_ptr<Pattern> Pointer;
+    
     std::shared_ptr<Token> identifier;
     std::shared_ptr<Node> type;
     
@@ -13,14 +15,18 @@ struct Pattern: Node {
 };
 
 
-struct ConstantDecl: Node {
+struct ConstDecl: Node {
+    typedef std::shared_ptr<ConstDecl> Pointer;
+    
     std::shared_ptr<Node> pattern;
     std::shared_ptr<Node> initializer;
 
-    ConstantDecl(std::shared_ptr<Node> pattern, std::shared_ptr<Node> initializer);
+    ConstDecl(std::shared_ptr<Node> pattern, std::shared_ptr<Node> initializer);
 };
 
 struct VarDecl: Node {
+    typedef std::shared_ptr<VarDecl> Pointer;
+    
     std::shared_ptr<Node> pattern;
     std::shared_ptr<Node> initializer;
 
@@ -28,6 +34,8 @@ struct VarDecl: Node {
 };
 
 struct ClassDecl: Node {
+    typedef std::shared_ptr<ClassDecl> Pointer;
+    
     std::shared_ptr<Token> name;
     std::vector<std::shared_ptr<Node>> members;
 

@@ -147,7 +147,7 @@ std::shared_ptr<Node> SyntaxParser::tryParseConstDecl() {
     }
     
     std::shared_ptr<Node> expr = tryParseExpr();
-    return std::shared_ptr<Node>(new ConstantDecl(pattern, expr));
+    return std::shared_ptr<Node>(new ConstDecl(pattern, expr));
 }
 
 std::shared_ptr<Node> SyntaxParser::tryParseVarDecl() {

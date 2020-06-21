@@ -2,7 +2,7 @@
 
 
 
-ConstantDecl::ConstantDecl(std::shared_ptr<Node> pattern, std::shared_ptr<Node> initializer):
+ConstDecl::ConstDecl(std::shared_ptr<Node> pattern, std::shared_ptr<Node> initializer):
 Node(SyntaxKind::constantDecl),
 pattern(pattern),
 initializer(initializer) {
