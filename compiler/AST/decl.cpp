@@ -39,8 +39,8 @@ identifier(identifier),
 type(type) {
 }
 
-InitializerDecl::InitializerDecl(std::shared_ptr<Node> parameterClause, std::shared_ptr<Node> codeBlock):
-Node(SyntaxKind::initializerDecl),
+ConstructorDecl::ConstructorDecl(std::shared_ptr<Node> parameterClause, std::shared_ptr<Node> codeBlock):
+Node(SyntaxKind::constructorDecl),
 parameterClause(parameterClause),
 codeBlock(codeBlock) {
 }

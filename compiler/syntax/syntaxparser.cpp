@@ -46,7 +46,7 @@ std::shared_ptr<Node> SyntaxParser::tryParseDecl() {
         return funcDecl;
     }
     
-    std::shared_ptr<Node> initializer = tryParseInitializerDecl();
+    std::shared_ptr<Node> initializer = tryParseConstructorDecl();
     if(initializer != nullptr) {
         return initializer;
     }
@@ -77,7 +77,7 @@ std::shared_ptr<Node> SyntaxParser::tryParseFunctionDecl() {
     return std::shared_ptr<Node>(new FuncDecl(identifier, parameterClause, codeBlock));
 }
 
-std::shared_ptr<Node> SyntaxParser::tryParseInitializerDecl() {
+std::shared_ptr<Node> SyntaxParser::tryParseConstructorDecl() {
     if(tryEat(TokenKind::keyword, Keywords::INIT) == nullptr) {
         return nullptr;
     }
@@ -92,7 +92,7 @@ std::shared_ptr<Node> SyntaxParser::tryParseInitializerDecl() {
         return nullptr; // TODO: Error
     }
 
-    return std::shared_ptr<Node>(new InitializerDecl(parameterClause, codeBlock));
+    return std::shared_ptr<Node>(new ConstructorDecl(parameterClause, codeBlock));
 }
 
 std::shared_ptr<Node> SyntaxParser::tryParseParameterClause() {

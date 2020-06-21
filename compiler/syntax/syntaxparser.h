@@ -21,7 +21,7 @@ private:
 
     std::shared_ptr<Node> tryParseFunctionDecl();
     
-    std::shared_ptr<Node> tryParseInitializerDecl();
+    std::shared_ptr<Node> tryParseConstructorDecl();
 
     // Parse the constant declaration, e.g. let constValue = "10"
     std::shared_ptr<Node> tryParseConstDecl();

@@ -16,7 +16,7 @@ enum SyntaxKind {
     varDecl,
     letDecl,
     funcDecl,
-    initializerDecl,
+    constructorDecl,
     classDecl,
     
     parameterClause,

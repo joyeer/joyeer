@@ -56,11 +56,11 @@ struct FuncDecl: Node {
     FuncDecl(std::shared_ptr<Token> name, std::shared_ptr<Node> parameterClause, std::shared_ptr<Node> codeBlock);
 };
 
-struct InitializerDecl: Node {
+struct ConstructorDecl: Node {
     std::shared_ptr<Node> parameterClause;
     std::shared_ptr<Node> codeBlock;
     
-    InitializerDecl(std::shared_ptr<Node> parameterClause, std::shared_ptr<Node> codeBlock);
+    ConstructorDecl(std::shared_ptr<Node> parameterClause, std::shared_ptr<Node> codeBlock);
 };
 
 #endif

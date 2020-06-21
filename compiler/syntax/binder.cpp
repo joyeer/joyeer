@@ -45,12 +45,13 @@ void Binder::bind(std::shared_ptr<Node> node) {
         case constantDecl:
             break;
         case varDecl:
+            bind(std::static_pointer_cast<VarDecl>(node));
             break;
         case letDecl:
             break;
         case funcDecl:
             break;
-        case initializerDecl:
+        case constructorDecl:
             break;
         case classDecl:
             bind(std::static_pointer_cast<ClassDecl>(node));

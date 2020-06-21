@@ -1,9 +1,9 @@
 class ListNode {
-	var previous: Node?
-	var next: Node?
+	var previous: ListNode?
+	var next: ListNode?
 	var value: Any
 
-	init(previous: Node?, next: Node?, value: Any)  {
+	init(previous: ListNode?, next: ListNode?, value: Any)  {
 		self.previous = previous
 		self.next = next
 		self.value = value
