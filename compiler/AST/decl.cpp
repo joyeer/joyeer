@@ -8,7 +8,7 @@ pattern(pattern),
 initializer(initializer) {
 }
 
-VarDecl::VarDecl(std::shared_ptr<Node> pattern, std::shared_ptr<Node> initializer):
+VarDecl::VarDecl(Pattern::Pointer pattern, std::shared_ptr<Node> initializer):
 Node(SyntaxKind::varDecl),
 pattern(pattern),
 initializer(initializer) {
@@ -33,7 +33,7 @@ parameterClause(parameterClause),
 codeBlock(codeBlock) {
 }
 
-Pattern::Pattern(std::shared_ptr<Token> identifier, std::shared_ptr<Node> type):
+Pattern::Pattern(std::shared_ptr<Token> identifier, Type::Pointer type):
 Node(SyntaxKind::pattern),
 identifier(identifier),
 type(type) {

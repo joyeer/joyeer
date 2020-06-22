@@ -5,16 +5,30 @@
 #include "syntax.h"
 #include "symtable.h"
 #include "types.h"
-
+#include "scope.h"
 
 struct BindContext {
+public:
     std::stack<SymTable::Pointer> symbols;
     
+    // current semantic analyzing scope, e.g. source level, class level, method level etc.
+    std::stack<Scope::Pointer> scopes;
+    
+public:
+    Symbol::Pointer makeSymbol(Node::Pointer node, const std::wstring& name, SymbolFlag flag);
+    
+    // return the current parsing symbol tables
     SymTable::Pointer currentSymTable();
     
-    void enter(SymTable::Pointer symTable);
+    // return the current parsing scope
+    Scope::Pointer currentScope();
+
+    void enter(SymTable::Pointer table);
+    void leave(SymTable::Pointer table);
     
-    void leave(SymTable::Pointer symTable);
+    // enter or leave the parsing scope
+    void enterScope(ScopeFlag flag, TypeDescriptor::Pointer scopeType);
+    void leaveScope(ScopeFlag flag, TypeDescriptor::Pointer scopeType);
 };
 
 
@@ -33,10 +47,14 @@ protected:
     
     void bind(VarDecl::Pointer varDecl);
     
+    void bind(ConstructorDecl::Pointer decl);
+    
+    void bind(Type::Pointer decl);
+    
 private:
     SymbolFactory::Pointer symFactory;
     TypeFactory::Pointer typeFactory;
-
+    
     std::shared_ptr<BindContext> context;
 };
 

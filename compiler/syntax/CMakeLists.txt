@@ -1,4 +1,6 @@
 set(SYNTAX_SOURCES
+    ${CMAKE_CURRENT_SOURCE_DIR}/scope.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/scope.h
     ${CMAKE_CURRENT_SOURCE_DIR}/types.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/types.h
     ${CMAKE_CURRENT_SOURCE_DIR}/binder.cpp

@@ -10,6 +10,14 @@ TypeDescriptor::TypeDescriptor(TypeKind kind, const std::wstring& name):
 kind(kind),
 name(name) {
 }
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// SourceFileTypeDescriptor
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+SourceFileTypeDescriptor::SourceFileTypeDescriptor(const std::wstring& name):
+TypeDescriptor(TypeKind::sourceType, name){
+    
+}
  
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // PrimaryTypeDescriptor
@@ -20,6 +28,12 @@ PrimaryTypeDescriptor::PrimaryTypeDescriptor(const std::wstring& name):
 TypeDescriptor(TypeKind::primaryType, name) {
 }
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// FieldTypeDescriptor
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+FieldTypeDescriptor::FieldTypeDescriptor(const std::wstring& name):
+TypeDescriptor(TypeKind::memberFieldType, name) {
+}
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // ClassTypeDescriptor
@@ -28,8 +42,6 @@ TypeDescriptor(TypeKind::primaryType, name) {
 ClassTypeDescriptor::ClassTypeDescriptor(const std::wstring& name):
 TypeDescriptor(TypeKind::classType, name) {
 }
-
-
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // TypeFactory
@@ -40,7 +52,17 @@ types() {
 
 ClassTypeDescriptor::Pointer TypeFactory::createClassType(const std::wstring &name) {
     ClassTypeDescriptor::Pointer type = std::make_shared<ClassTypeDescriptor>(name);
-    //TODO: find the
-    types[name] = type;
+    //TODO: find the duplicate type and report error
+    types[name] = std::static_pointer_cast<TypeDescriptor>(type);
+    return type;
+}
+
+SourceFileTypeDescriptor::Pointer TypeFactory::createSourceFileType(const std::wstring &name) {
+    SourceFileTypeDescriptor::Pointer type = std::make_shared<SourceFileTypeDescriptor>(name);
+    return type;
+}
+
+FieldTypeDescriptor::Pointer TypeFactory::createFieldType(const std::wstring &name) {
+    FieldTypeDescriptor::Pointer type = std::make_shared<FieldTypeDescriptor>(name);
     return type;
 }

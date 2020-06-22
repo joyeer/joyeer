@@ -3,17 +3,17 @@
 
 #include "node.h"
 #include "compiler/lexer/lexer.h"
-
+#include "expression.h"
 
 struct Pattern: Node {
     typedef std::shared_ptr<Pattern> Pointer;
     
     std::shared_ptr<Token> identifier;
-    std::shared_ptr<Node> type;
+    Type::Pointer type;
     
-    Pattern(std::shared_ptr<Token> identifier, std::shared_ptr<Node> type);
+    Pattern(std::shared_ptr<Token> identifier, Type::Pointer type);
+    
 };
-
 
 struct ConstDecl: Node {
     typedef std::shared_ptr<ConstDecl> Pointer;
@@ -24,13 +24,13 @@ struct ConstDecl: Node {
     ConstDecl(std::shared_ptr<Node> pattern, std::shared_ptr<Node> initializer);
 };
 
-struct VarDecl: Node {
+struct VarDecl: public Node {
     typedef std::shared_ptr<VarDecl> Pointer;
     
-    std::shared_ptr<Node> pattern;
+    Pattern::Pointer pattern;
     std::shared_ptr<Node> initializer;
 
-    VarDecl(std::shared_ptr<Node> pattern, std::shared_ptr<Node> initializer);
+    VarDecl(Pattern::Pointer pattern, std::shared_ptr<Node> initializer);
 };
 
 struct ClassDecl: Node {
@@ -57,6 +57,8 @@ struct FuncDecl: Node {
 };
 
 struct ConstructorDecl: Node {
+    typedef std::shared_ptr<ConstructorDecl> Pointer;
+    
     std::shared_ptr<Node> parameterClause;
     std::shared_ptr<Node> codeBlock;
     

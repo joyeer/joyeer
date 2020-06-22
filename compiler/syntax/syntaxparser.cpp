@@ -155,7 +155,7 @@ std::shared_ptr<Node> SyntaxParser::tryParseVarDecl() {
         return nullptr; // Not a 'var' declaration
     }
 
-    std::shared_ptr<Node> pattern = tryParsePattern();
+    Pattern::Pointer pattern = tryParsePattern();
     if (pattern == nullptr) {
        return nullptr; //TODO: report an syntax Error
     }
@@ -300,35 +300,36 @@ std::shared_ptr<Node> SyntaxParser::tryParseIfStatement() {
     }
 }
 
-std::shared_ptr<Node> SyntaxParser::tryParsePattern() {
+Pattern::Pointer SyntaxParser::tryParsePattern() {
     
     std::shared_ptr<Token> identifier = tryParseIdentifier();
     if (identifier == nullptr) {
         return nullptr;
     }
-    std::shared_ptr<Node> type = tryParseTypeAnnotation();
-    return std::shared_ptr<Node>(new Pattern(identifier, type));
+    
+    Type::Pointer type = tryParseTypeAnnotation();
+    return std::make_shared<Pattern>(identifier, type);
 }
 
-std::shared_ptr<Node> SyntaxParser::tryParseTypeAnnotation() {
+Type::Pointer SyntaxParser::tryParseTypeAnnotation() {
     if(tryEat(TokenKind::punctuation, Punctuations::COLON) == nullptr) {
         return nullptr;
     }
     
-    std::shared_ptr<Node> type = tryParseType();
+    Type::Pointer type = tryParseType();
     if(type == nullptr ) {
         return nullptr; // TODO: Report an error
     }
     return type;
 }
 
-std::shared_ptr<Node> SyntaxParser::tryParseType() {
+Type::Pointer SyntaxParser::tryParseType() {
     std::shared_ptr<Token> identifier = tryParseIdentifier();
     bool isOptinal = false;
     if(tryEat(TokenKind::operators, Operators::QUESTION) != nullptr) {
         isOptinal = true;
     }
-    return std::shared_ptr<Node>(new Type(identifier, isOptinal));
+    return std::make_shared<Type>(identifier, isOptinal);
 }
 
 // expression -> prefix-expression /opt/ binary-expressions /opt/

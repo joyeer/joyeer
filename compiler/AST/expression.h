@@ -81,6 +81,8 @@ struct SelfExpr: Node {
 };
 
 struct Type: Node {
+    typedef std::shared_ptr<Type> Pointer;
+    
     std::shared_ptr<Token> identifier;
     bool isOptional;
     
