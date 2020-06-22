@@ -1,8 +1,8 @@
 #include "ast.h"
 
-SourceBlock::SourceBlock(std::vector<std::shared_ptr<Node>> decls):
+SourceBlock::SourceBlock(std::vector<std::shared_ptr<Node>> statements):
 Node(SyntaxKind::sourceBlock),
-decls(decls) {
+statements(statements) {
 
 }
 

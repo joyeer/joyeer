@@ -59,7 +59,7 @@ private:
     // Expressions
     ////////////////////////////////////////////////////////////////////////////
 
-    std::shared_ptr<Node> tryParseExpr();
+    Node::Pointer tryParseExpr();
 
     // prefix-expression -> prefix-operator /opt/ postfix-expression
     std::shared_ptr<Node> tryParsePrefixExpr();

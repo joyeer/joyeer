@@ -120,8 +120,8 @@ void Binder::bind(SourceBlock::Pointer sourceBlock) {
     context->enterScope(ScopeFlag::sourceScope, sourceFileType);
     context->enter(symtable);
     
-    for(auto& decl : sourceBlock->decls) {
-        bind(decl);
+    for(auto& statement : sourceBlock->statements) {
+        bind(statement);
     }
     
     context->leave(symtable);

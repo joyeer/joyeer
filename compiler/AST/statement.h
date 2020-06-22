@@ -7,9 +7,9 @@ class Node;
 
 struct SourceBlock: Node {
     typedef std::shared_ptr<SourceBlock> Pointer;
-    std::vector<std::shared_ptr<Node>> decls;
+    std::vector<std::shared_ptr<Node>> statements;
 
-    SourceBlock(std::vector<std::shared_ptr<Node>> decls);
+    SourceBlock(std::vector<std::shared_ptr<Node>> statements);
 };
 
 struct CodeBlock: Node {

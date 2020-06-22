@@ -333,15 +333,19 @@ Type::Pointer SyntaxParser::tryParseType() {
 }
 
 // expression -> prefix-expression /opt/ binary-expressions /opt/
-std::shared_ptr<Node> SyntaxParser::tryParseExpr() {
+Node::Pointer SyntaxParser::tryParseExpr() {
     std::shared_ptr<Node> expr = tryParsePrefixExpr();
     if(expr == nullptr) {
         return nullptr;
     }
     
     std::shared_ptr<Node> binExpr = tryParseBinaryExpr();
+    if(binExpr == nullptr) {
+        return expr;
+    } else {
+        return std::shared_ptr<Node>(new Expr(expr, binExpr));
+    }
     
-    return std::shared_ptr<Node>(new Expr(expr, binExpr));
 }
 
 std::shared_ptr<Node> SyntaxParser::tryParsePrefixExpr() {
