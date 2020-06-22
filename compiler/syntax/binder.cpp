@@ -68,6 +68,7 @@ void Binder::bind(std::shared_ptr<Node> node) {
         case funcDecl:
             break;
         case constructorDecl:
+            bind(std::static_pointer_cast<ConstructorDecl>(node));
             break;
         case classDecl:
             bind(std::static_pointer_cast<ClassDecl>(node));
@@ -128,6 +129,12 @@ void Binder::bind(SourceBlock::Pointer sourceBlock) {
 }
 
 void Binder::bind(ClassDecl::Pointer classDecl) {
+    
+    // TODO: double the parent scope is Source File
+    
+    SourceFileTypeDescriptor::Pointer sourceFile = std::static_pointer_cast<SourceFileTypeDescriptor>(context->currentScope()->scopeType);
+    
+    
     const std::wstring& className = classDecl->name->value;
     // declara an new class type
     ClassTypeDescriptor::Pointer classType = typeFactory->createClassType(className);
@@ -160,14 +167,28 @@ void Binder::bind(VarDecl::Pointer decl) {
         case sourceScope:
             break;
         case classScope: {
-            ClassTypeDescriptor::Pointer owenerClassType = std::static_pointer_cast<ClassTypeDescriptor>(context->currentScope()->scopeType);
+            ClassTypeDescriptor::Pointer ownerClassType = std::static_pointer_cast<ClassTypeDescriptor>(context->currentScope()->scopeType);
             FieldTypeDescriptor::Pointer fieldType = typeFactory->createFieldType(pattern->identifier->value);
             
+            ownerClassType->append(fieldType);
+            
             // go down
-            context->enterScope(ScopeFlag::fie, <#TypeDescriptor::Pointer scopeType#>)
+            context->enterScope(ScopeFlag::fieldScope, fieldType);
+            
+            context->leaveScope(ScopeFlag::fieldScope, fieldType);
         }
             break;
         default:
             break;
     }
+}
+
+void Binder::bind(ConstructorDecl::Pointer decl) {
+    Scope::Pointer scope = context->currentScope();
+    
+    // TODO: check the constructor must be in Class scope
+    ClassTypeDescriptor::Pointer ownerClassType = std::static_pointer_cast<ClassTypeDescriptor>(context->currentScope()->scopeType);
+    MethodTypeDescriptor::Pointer methodType = typeFactory->createMethodType(L"constructor");
+    
+    
 }

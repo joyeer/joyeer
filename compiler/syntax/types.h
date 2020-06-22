@@ -37,7 +37,12 @@ class SourceFileTypeDescriptor: public TypeDescriptor {
 public:
     typedef std::shared_ptr<SourceFileTypeDescriptor> Pointer;
     
+public:
     SourceFileTypeDescriptor(const std::wstring& name);
+    void append(TypeDescriptor::Pointer type);
+    
+protected:
+    std::vector<TypeDescriptor::Pointer> types;
 };
 
 /// Primary data type. e.g. int, float
@@ -66,6 +71,10 @@ public:
 
 /// Method
 class MethodTypeDescriptor: public TypeDescriptor {
+public:
+    typedef std::shared_ptr<MethodTypeDescriptor> Pointer;
+    
+    MethodTypeDescriptor(const std::wstring& name);
     
 };
 
@@ -76,8 +85,11 @@ public:
     
     ClassTypeDescriptor(const std::wstring& name);
     
+    void append(FieldTypeDescriptor::Pointer fieldType);
+    
 protected:
     std::vector<FieldTypeDescriptor::Pointer> fields;
+    std::vector<MethodTypeDescriptor::Pointer> methods;
 };
 
 
@@ -93,6 +105,8 @@ public:
     ClassTypeDescriptor::Pointer createClassType(const std::wstring& name);
     
     FieldTypeDescriptor::Pointer createFieldType(const std::wstring& name);
+    
+    MethodTypeDescriptor::Pointer createMethodType(const std::wstring& name);
     
 private:
     std::unordered_map<std::wstring, TypeDescriptor::Pointer> types;

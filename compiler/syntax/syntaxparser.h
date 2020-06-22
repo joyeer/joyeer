@@ -96,9 +96,9 @@ private:
 
     void tryParseConditionalOperator();
     
-    std::shared_ptr<Token> tryParseOperator();
+    Token::Pointer tryParseOperator();
     
-    std::shared_ptr<Token> tryParsePostfixOperator();
+    Token::Pointer tryParsePostfixOperator();
 
     // literal -> numeric-literal | string-literal | boolean-literal | nil-literal
     std::shared_ptr<Token> tryParseLiteral();

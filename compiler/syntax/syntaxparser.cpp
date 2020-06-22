@@ -10,7 +10,7 @@ SyntaxParser::SyntaxParser(const std::vector<std::shared_ptr<Token>> &tokens) : 
 SourceBlock::Pointer SyntaxParser::parse() {
     std::vector<std::shared_ptr<Node>> decls;
     while(iterator != endIterator) {
-        std::shared_ptr<Node> decl = tryParseDecl();
+        std::shared_ptr<Node> decl = tryParseStatement();
         if(decl == nullptr) {
             return nullptr; // TODO: report an grammar error;
         }
@@ -368,13 +368,23 @@ std::shared_ptr<Node> SyntaxParser::tryParsePostfixExpr() {
     
     std::shared_ptr<Node> funcCallExpr = tryParseFunctionCallExpr();
     if(funcCallExpr != nullptr) {
-        result = std::shared_ptr<Node>(new PostfixExpr(funcCallExpr, tryParsePostfixOperator()));
+        Token::Pointer postfixOperator = tryParsePostfixOperator();
+        if(postfixOperator == nullptr) {
+            result = funcCallExpr;
+        } else {
+            result = std::shared_ptr<Node>(new PostfixExpr(funcCallExpr, postfixOperator));
+        }
     }
     
     if(result == nullptr) {
         std::shared_ptr<Node> primaryExpr = tryParsePrimaryExpr();
         if(primaryExpr != nullptr) {
-            result = std::shared_ptr<PostfixExpr>(new PostfixExpr(primaryExpr, tryParsePostfixOperator()));
+            Token::Pointer postfixOperator = tryParsePostfixOperator();
+            if(postfixOperator == nullptr) {
+                result = primaryExpr;
+            } else {
+                result = std::shared_ptr<PostfixExpr>(new PostfixExpr(primaryExpr, postfixOperator));
+            }
         }
     }
     
@@ -542,7 +552,7 @@ std::shared_ptr<Token> SyntaxParser::tryParseOperator() {
     return tryEat(TokenKind::operators);
 }
 
-std::shared_ptr<Token> SyntaxParser::tryParsePostfixOperator() {
+Token::Pointer SyntaxParser::tryParsePostfixOperator() {
     std::shared_ptr<Token> token = tryEat(TokenKind::operators, Operators::QUESTION);
     if(token != nullptr) {
         return token;

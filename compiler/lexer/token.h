@@ -17,7 +17,10 @@ enum TokenKind {
 };
 
 struct Token {
-    std::shared_ptr<Token> Pointer;
+public:
+    typedef std::shared_ptr<Token> Pointer;
+    
+public:
     TokenKind kind;
     std::wstring value;
 

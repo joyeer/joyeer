@@ -36,11 +36,23 @@ TypeDescriptor(TypeKind::memberFieldType, name) {
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// MethodTypeDescriptor
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+MethodTypeDescriptor::MethodTypeDescriptor(const std::wstring& name):
+TypeDescriptor(TypeKind::methodType, name) {
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // ClassTypeDescriptor
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ClassTypeDescriptor::ClassTypeDescriptor(const std::wstring& name):
 TypeDescriptor(TypeKind::classType, name) {
+}
+
+void ClassTypeDescriptor::append(FieldTypeDescriptor::Pointer fieldType) {
+    fields.push_back(fieldType);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -64,5 +76,10 @@ SourceFileTypeDescriptor::Pointer TypeFactory::createSourceFileType(const std::w
 
 FieldTypeDescriptor::Pointer TypeFactory::createFieldType(const std::wstring &name) {
     FieldTypeDescriptor::Pointer type = std::make_shared<FieldTypeDescriptor>(name);
+    return type;
+}
+
+MethodTypeDescriptor::Pointer TypeFactory::createMethodType(const std::wstring &name) {
+    MethodTypeDescriptor::Pointer type = std::make_shared<MethodTypeDescriptor>(name);
     return type;
 }
