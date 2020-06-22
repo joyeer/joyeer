@@ -1,7 +1,10 @@
 
 set(SOURCES ${SOURCES}
     ${CMAKE_CURRENT_SOURCE_DIR}/diagnostic.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/diagnostic.h )
+    ${CMAKE_CURRENT_SOURCE_DIR}/diagnostic.h 
+    ${CMAKE_CURRENT_SOURCE_DIR}/IRGen.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/IRGen.h 
+)
 
 
 add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/AST)

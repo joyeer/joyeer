@@ -1,0 +1,14 @@
+
+set(SOURCES ${SOURCES}
+    ${CMAKE_CURRENT_SOURCE_DIR}/object.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/object.h 
+    ${CMAKE_CURRENT_SOURCE_DIR}/runtime.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/runtime.h 
+    ${CMAKE_CURRENT_SOURCE_DIR}/buildin.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/buildin.h 
+)
+
+
+
+set(SOURCES ${SOURCES} PARENT_SCOPE)
+
