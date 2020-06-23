@@ -4,7 +4,6 @@
 #include <codecvt>
 #include <string>
 #include <iostream>
-#include "keyword.h"
 
 LexParser::LexParser(const std::string& filepath):
 lineNumber(0) {

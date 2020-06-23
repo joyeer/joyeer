@@ -2,10 +2,7 @@
 #define __joyeer_compiler_AST_node_h__
 
 #include "token.h"
-#include "keyword.h"
-#include <memory>
-#include <string>
-#include <vector>
+
 
 enum SyntaxKind {
     sourceBlock = 1L,

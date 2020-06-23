@@ -6,8 +6,6 @@ set(SOURCES ${SOURCES}
     ${CMAKE_CURRENT_SOURCE_DIR}/IRGen.h
     ${CMAKE_CURRENT_SOURCE_DIR}/node.h
     ${CMAKE_CURRENT_SOURCE_DIR}/node.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/keyword.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/keyword.h
     ${CMAKE_CURRENT_SOURCE_DIR}/lexparser.h
     ${CMAKE_CURRENT_SOURCE_DIR}/lexparser.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/token.h
