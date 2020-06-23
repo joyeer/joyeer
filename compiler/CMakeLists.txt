@@ -3,14 +3,26 @@ set(SOURCES ${SOURCES}
     ${CMAKE_CURRENT_SOURCE_DIR}/diagnostic.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/diagnostic.h 
     ${CMAKE_CURRENT_SOURCE_DIR}/IRGen.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/IRGen.h 
+    ${CMAKE_CURRENT_SOURCE_DIR}/IRGen.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/node.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/node.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/keyword.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/keyword.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/lexparser.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/lexparser.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/token.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/token.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/scope.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/scope.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/types.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/types.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/binder.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/binder.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/syntaxparser.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/syntaxparser.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/symtable.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/symtable.cpp
 )
-
-
-add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/AST)
-add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/lexer)
-add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/syntax)
-
 
 set(SOURCES ${SOURCES} PARENT_SCOPE)
 

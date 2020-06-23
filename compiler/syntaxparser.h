@@ -1,8 +1,7 @@
 #ifndef __joyeer_syntax_syntaxparser_h__
 #define __joyeer_syntax_syntaxparser_h__
 
-#include "compiler/AST/ast.h"
-#include "compiler/lexer/lexer.h"
+#include "node.h"
 
 class SyntaxParser
 {

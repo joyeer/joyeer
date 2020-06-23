@@ -1,8 +1,7 @@
 #ifndef __joyeer_compiler_irgen_h__
 #define __joyeer_compiler_irgen_h__
 
-#include "compiler/AST/ast.h"
-#include "compiler/syntax/syntax.h"
+#include "node.h"
 
 class IRGen {
 public:

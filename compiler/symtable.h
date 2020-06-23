@@ -1,8 +1,8 @@
 #ifndef __joyeer_compiler_syntax_symtable_h__
 #define __joyeer_compiler_syntax_symtable_h__
 
-#include "compiler/AST/ast.h"
 #include "types.h"
+#include "node.h"
 #include <unordered_map>
 #include <stack>
 
@@ -51,11 +51,11 @@ public:
     SymbolFactory();
     
     // We create an SymTable for a specific node
-    SymTable::Pointer createSymTable(NodePtr node);
+    SymTable::Pointer createSymTable(Node::Pointer node);
     
 private:
     std::stack<SymTable::Pointer> stack;
-    std::unordered_map<NodePtr, SymTable::Pointer> tables;
+    std::unordered_map<Node::Pointer, SymTable::Pointer> tables;
      
 };
 

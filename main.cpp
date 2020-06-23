@@ -1,8 +1,9 @@
 #include <iostream>
-#include "compiler/lexer/lexer.h"
-#include "compiler/syntax/syntax.h"
-#include "compiler/IRGen.h"
 
+#include "compiler/lexparser.h"
+#include "compiler/syntaxparser.h"
+#include "compiler/symtable.h"
+#include "compiler/binder.h"
 
 int main(int argc, char** argv) {
     if(argc < 2) {

@@ -31,6 +31,6 @@ void SymTable::insert(Symbol::Pointer symbol) {
 SymbolFactory::SymbolFactory() {
 }
 
-SymTable::Pointer SymbolFactory::createSymTable(NodePtr node) {
+SymTable::Pointer SymbolFactory::createSymTable(Node::Pointer node) {
     SymTable::Pointer pointer = std::make_shared<SymTable>(nullptr);
 }
