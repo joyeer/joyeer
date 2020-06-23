@@ -6,6 +6,8 @@ set(SOURCES ${SOURCES}
     ${CMAKE_CURRENT_SOURCE_DIR}/runtime.h 
     ${CMAKE_CURRENT_SOURCE_DIR}/buildin.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/buildin.h 
+    ${CMAKE_CURRENT_SOURCE_DIR}/method.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/method.h 
 )
 
 

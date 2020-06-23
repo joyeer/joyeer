@@ -32,5 +32,5 @@ SymbolFactory::SymbolFactory() {
 }
 
 SymTable::Pointer SymbolFactory::createSymTable(NodePtr node) {
-    return std::make_shared<SymTable>(nullptr);
+    SymTable::Pointer pointer = std::make_shared<SymTable>(nullptr);
 }

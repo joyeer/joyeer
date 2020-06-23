@@ -2,6 +2,7 @@
 #define __joyeer_compiler_AST_expression_h__
 
 struct Node;
+
 #include "compiler/lexer/lexer.h"
 
 struct Expr : Node {
@@ -46,9 +47,10 @@ struct ArguCallExpr: Node {
 };
 
 struct FunctionCallExpr: Node {
+    typedef std::shared_ptr<FunctionCallExpr> Pointer;
     std::shared_ptr<Token> identifier;
     std::vector<std::shared_ptr<Node>> parameters;
-
+    
     FunctionCallExpr(std::shared_ptr<Token> identifier, std::vector<std::shared_ptr<Node>> parameters);
 };
 

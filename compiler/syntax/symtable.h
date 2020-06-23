@@ -55,8 +55,8 @@ public:
     
 private:
     std::stack<SymTable::Pointer> stack;
-    std::unordered_map<NodePtr, SymTable::Pointer> map;
-    
+    std::unordered_map<NodePtr, SymTable::Pointer> tables;
+     
 };
 
 #endif

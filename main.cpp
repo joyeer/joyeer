@@ -1,6 +1,7 @@
 #include <iostream>
 #include "compiler/lexer/lexer.h"
 #include "compiler/syntax/syntax.h"
+#include "compiler/IRGen.h"
 
 
 int main(int argc, char** argv) {
@@ -21,7 +22,6 @@ int main(int argc, char** argv) {
     
     Binder binder(symFactory, typeFactory);
     binder.bind(sourceBlock);
-    std::cout << sizeof(1L);
-
+    
     return 0;
 }

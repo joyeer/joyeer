@@ -125,7 +125,7 @@ void LexParser::parse() {
                 parsePunctuation(iterator - 1);
                 break;
             default:
-              assert(false);
+                break;
             }
   }
 }
@@ -169,7 +169,6 @@ void LexParser::parseNumberLiteral(std::wstring::const_iterator startAt) {
 
   std::wstring identifier(startAt, iterator);
   tokens.push_back(std::shared_ptr<Token>(new Token(TokenKind::decimalLiteral, identifier, lineNumber, iterator - startAt)));
-  std::wcout << identifier << std::endl ;
 }
 
 void LexParser::parseHexLiteral(std::wstring::const_iterator startAt) {
