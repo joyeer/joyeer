@@ -1,4 +1,6 @@
 #include "symtable.h"
+#include "diagnostic.h"
+#include "runtime/buildin.h"
 
 /////////////////////////////////////////////////////////////////
 // Symbol
@@ -7,21 +9,22 @@
 Symbol::Symbol(SymbolFlag flag, const std::wstring& name):
 flag(flag),
 name(name),
-type(nullptr) { 
+index(-1) { 
 }
 
 /////////////////////////////////////////////////////////////////
 // SymTable
 /////////////////////////////////////////////////////////////////
-SymTable::SymTable(std::shared_ptr<SymTable> previous):
-previous(previous) {
+SymTable::SymTable() {
 }
 
 void SymTable::insert(Symbol::Pointer symbol) {
-    
+    if(symbols.find(symbol->name) != symbols.end()) {
+        Diagnostics::reportError(L"Duplicate symbol" + symbol->name);
+        return;
+    }
+    symbols[symbol->name] = symbol;
 }
-
-
 
 /////////////////////////////////////////////////////////////////
 // SymbolFactory
@@ -31,6 +34,19 @@ SymbolFactory::SymbolFactory() {
 }
 
 SymTable::Pointer SymbolFactory::createSymTable() {
-    SymTable::Pointer pointer = std::make_shared<SymTable>(nullptr);
+    auto pointer = std::make_shared<SymTable>();
     return pointer;
+}
+
+void SymbolFactory::createGlobalSymbolTable() {
+    auto table = createSymTable();
+    
+    for(size_t index = 0 ; index < Global::funcTable.size(); index ++) {
+        auto func = Global::funcTable[index];
+        auto symbol = std::make_shared<Symbol>(SymbolFlag::funcSymbol, func->name);
+        symbol->index = index;
+        
+        table->insert(symbol);
+    }
+    
 }

@@ -82,7 +82,7 @@ identifier(identifier),
 expr(expr) {
 }
 
-FunctionCallExpr::FunctionCallExpr(std::shared_ptr<Token> identifier, std::vector<std::shared_ptr<Node>> parameters):
+FuncCallExpr::FuncCallExpr(std::shared_ptr<Token> identifier, std::vector<std::shared_ptr<Node>> parameters):
 Node(SyntaxKind::functionCallExpr),
 identifier(identifier),
 parameters(parameters) {

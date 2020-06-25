@@ -6,12 +6,15 @@
 #include <stack>
 
 enum SymbolFlag {
-    noneSymbol = 0l,
-    blockSymbol = 1L << 1,
+    noneSymbol,
+    blockSymbol,
     
-    sourcFileSymbol = blockSymbol & 1L << 10,
-    classTypeSymbol = blockSymbol & 1l << 11,
-    varSymbol = 1l << 12
+    sourcFileSymbol,
+    classTypeSymbol,
+    funcSymbol,
+    
+    varSymbol
+    
 };
 
 struct Symbol {
@@ -21,7 +24,7 @@ public:
     Symbol(SymbolFlag flag, const std::wstring& name);
     
 public:
-    TypeDescriptor::Pointer type;
+    size_t index;
     SymbolFlag flag;
     std::wstring name;
 };
@@ -31,16 +34,15 @@ class SymTable {
 public:
     typedef std::shared_ptr<SymTable> Pointer;
 public:
-    SymTable(std::shared_ptr<SymTable> previous);
-    
+    SymTable();
     // insert an new Symbol
     void insert(Symbol::Pointer symbol);
+    
 private:
-    SymTable::Pointer previous;
     std::unordered_map<std::wstring, Symbol::Pointer> symbols;
 };
 
-
+/// SymbolFactory will include global symbols like functions
 class SymbolFactory {
 public:
     typedef std::shared_ptr<SymbolFactory> Pointer;
@@ -50,11 +52,13 @@ public:
     
     // We create an SymTable for a specific node
     SymTable::Pointer createSymTable();
+    
+    SymTable::Pointer getGlobalSymbolTable();
+    
 private:
-    void initialGlobalSymbolTable();
+    void createGlobalSymbolTable();
 private:
-    std::stack<SymTable::Pointer> stack;
-     
+    SymTable::Pointer globalSymbolTable;
 };
 
 #endif

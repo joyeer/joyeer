@@ -10,7 +10,7 @@ public:
 protected:
     void emit(Node::Pointer node);
     
-    void emit(FunctionCallExpr::Pointer node);
+    void emit(FuncCallExpr::Pointer node);
     
 };
 

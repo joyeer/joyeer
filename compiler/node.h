@@ -164,8 +164,8 @@ struct ArguCallExpr: Node {
     ArguCallExpr(std::shared_ptr<Token> identifier, std::shared_ptr<Node> expr);
 };
 
-struct FunctionCallExpr: Node {
-    typedef std::shared_ptr<FunctionCallExpr> Pointer;
+struct FuncCallExpr: Node {
+    typedef std::shared_ptr<FuncCallExpr> Pointer;
     
     Token::Pointer identifier;
     std::vector<std::shared_ptr<Node>> parameters;
@@ -173,7 +173,7 @@ struct FunctionCallExpr: Node {
     // Function's symbol
     Symbol::Pointer symbol;
     
-    FunctionCallExpr(std::shared_ptr<Token> identifier, std::vector<std::shared_ptr<Node>> parameters);
+    FuncCallExpr(std::shared_ptr<Token> identifier, std::vector<std::shared_ptr<Node>> parameters);
 };
 
 struct MemberExpr: Node {

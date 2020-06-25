@@ -96,6 +96,7 @@ void Binder::bind(std::shared_ptr<Node> node) {
         case arguCallExpr:
             break;
         case functionCallExpr:
+            bind(std::static_pointer_cast<FuncCallExpr>(node));
             break;
         case memberExpr:
             break;
@@ -141,7 +142,7 @@ void Binder::bind(ClassDecl::Pointer classDecl) {
     
     // delcara an class Symbol
     Symbol::Pointer classDeclSymbol = std::make_shared<Symbol>(SymbolFlag::classTypeSymbol, className);
-    classDeclSymbol->type = std::static_pointer_cast<TypeDescriptor>(classType);
+    
     context->currentSymTable()->insert(classDeclSymbol);
     
     SymTable::Pointer symtable = symFactory->createSymTable();
@@ -191,4 +192,11 @@ void Binder::bind(ConstructorDecl::Pointer decl) {
     MethodTypeDescriptor::Pointer methodType = typeFactory->createMethodType(L"constructor");
     
     
+}
+
+
+void Binder::bind(FuncCallExpr::Pointer decl) {
+    for(auto& paramter: decl->parameters) {
+        bind(paramter);
+    }
 }

@@ -50,6 +50,8 @@ protected:
     
     void bind(Type::Pointer decl);
     
+    void bind(FuncCallExpr::Pointer decl);
+    
 private:
     SymbolFactory::Pointer symFactory;
     TypeFactory::Pointer typeFactory;

@@ -9,13 +9,13 @@ void IRGen::emit(SourceBlock::Pointer block) {
 void IRGen::emit(Node::Pointer node) {
     switch (node->kind) {
         case functionCallExpr:
-            emit(std::static_pointer_cast<FunctionCallExpr>(node));
+            emit(std::static_pointer_cast<FuncCallExpr>(node));
             break;
         default:
             break;
     }
 }
 
-void IRGen::emit(FunctionCallExpr::Pointer node) {
+void IRGen::emit(FuncCallExpr::Pointer node) {
     
 }

@@ -4,6 +4,7 @@
 #include "compiler/syntaxparser.h"
 #include "compiler/binder.h"
 #include "compiler/IRGen.h"
+#include "compiler/diagnostic.h"
 
 int main(int argc, char** argv) {
     if(argc < 2) {
@@ -18,8 +19,8 @@ int main(int argc, char** argv) {
     SyntaxParser syntaxParser(parser.tokens);
     SourceBlock::Pointer sourceBlock = syntaxParser.parse();
     
-    SymbolFactory::Pointer symFactory = std::make_shared<SymbolFactory>();
-    TypeFactory::Pointer typeFactory = std::make_shared<TypeFactory>();
+    auto symFactory = std::make_shared<SymbolFactory>();
+    auto typeFactory = std::make_shared<TypeFactory>();
     
     Binder binder(symFactory, typeFactory);
     binder.bind(sourceBlock);

@@ -17,4 +17,5 @@ source_group("compiler" REGULAR_EXPRESSION "compiler/.*\\.(cpp|h)")
 source_group("runtime" REGULAR_EXPRESSION "runtime/.*\\.(cpp|h)")
 
 
-target_compile_features(joyeer PRIVATE cxx_std_17)
+target_compile_features(joyeer PRIVATE cxx_std_20)
+set_property(TARGET joyeer PROPERTY CXX_STANDARD 20)

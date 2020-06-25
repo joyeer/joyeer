@@ -441,7 +441,7 @@ std::shared_ptr<Node> SyntaxParser::tryParseFunctionCallExpr() {
     }
     
     
-    return std::shared_ptr<Node>(new FunctionCallExpr(identifier, arguments));
+    return std::shared_ptr<Node>(new FuncCallExpr(identifier, arguments));
 }
 
 std::shared_ptr<Node> SyntaxParser::tryParseArguCallExpr() {

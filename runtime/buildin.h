@@ -6,7 +6,8 @@
 #include <unordered_map>
 #include "function.h"
 
-
-
+struct Global {
+    const static std::vector<JrFunction::Pointer> funcTable;
+};
 
 #endif

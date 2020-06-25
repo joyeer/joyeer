@@ -37,6 +37,7 @@ struct JrNativeCode {
 #define JrFunction_VM           2
 
 struct JrFunction {
+    typedef std::shared_ptr<JrFunction> Pointer;
 public:
     const std::wstring name;
     

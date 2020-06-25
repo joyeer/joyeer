@@ -3,11 +3,8 @@
 
 #include <string>
 
-class Diagnostics {
-public:
-    void reportError(const std::wstring& error);
-    
+struct Diagnostics {
+    static void reportError(const std::wstring& error);
 };
 
 #endif
-
