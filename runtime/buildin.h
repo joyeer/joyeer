@@ -8,6 +8,7 @@
 
 struct Global {
     const static std::vector<JrFunction::Pointer> funcTable;
+    const static std::vector<std::wstring> stringTable;
 };
 
 #endif

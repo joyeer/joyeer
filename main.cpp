@@ -26,7 +26,7 @@ int main(int argc, char** argv) {
     binder.bind(sourceBlock);
     
     IRGen irGen;
-    irGen.emit(sourceBlock);
+    irGen.emit(std::static_pointer_cast<Node>(sourceBlock));
     
     return 0;
 }

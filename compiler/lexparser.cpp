@@ -166,8 +166,10 @@ void LexParser::parseNumberLiteral(std::wstring::const_iterator startAt) {
     } 
   }
 
-  std::wstring identifier(startAt, iterator);
-  tokens.push_back(std::shared_ptr<Token>(new Token(TokenKind::decimalLiteral, identifier, lineNumber, iterator - startAt)));
+    std::wstring identifier(startAt, iterator);
+    auto token = std::make_shared<Token>(TokenKind::decimalLiteral, identifier, lineNumber, iterator - startAt);
+    token->intValue = std::stoi(identifier);
+    tokens.push_back(token);
 }
 
 void LexParser::parseHexLiteral(std::wstring::const_iterator startAt) {

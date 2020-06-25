@@ -370,7 +370,7 @@ std::shared_ptr<Node> SyntaxParser::tryParsePrefixExpr() {
 std::shared_ptr<Node> SyntaxParser::tryParsePostfixExpr() {
     std::shared_ptr<Node> result = nullptr;
     
-    std::shared_ptr<Node> funcCallExpr = tryParseFunctionCallExpr();
+    std::shared_ptr<Node> funcCallExpr = tryParseFuncCallExpr();
     if(funcCallExpr != nullptr) {
         Token::Pointer postfixOperator = tryParsePostfixOperator();
         if(postfixOperator == nullptr) {
@@ -405,7 +405,7 @@ std::shared_ptr<Node> SyntaxParser::tryParsePostfixExpr() {
     return result;
 }
 
-std::shared_ptr<Node> SyntaxParser::tryParseFunctionCallExpr() {
+std::shared_ptr<Node> SyntaxParser::tryParseFuncCallExpr() {
     std::vector<std::shared_ptr<Token>>::const_iterator mark = iterator;
     std::shared_ptr<Token> identifier = tryParseIdentifier();
     if(identifier == nullptr) {
@@ -417,8 +417,8 @@ std::shared_ptr<Node> SyntaxParser::tryParseFunctionCallExpr() {
         return nullptr;
     }
     
-    std::vector<std::shared_ptr<Node>> arguments;
-    std::shared_ptr<Node> arguCall = tryParseArguCallExpr();
+    std::vector<ArguCallExpr::Pointer> arguments;
+    auto arguCall = tryParseArguCallExpr();
     if(arguCall != nullptr) {
         arguments.push_back(arguCall);
         while (true) {
@@ -426,7 +426,7 @@ std::shared_ptr<Node> SyntaxParser::tryParseFunctionCallExpr() {
                 break;
             }
             
-            std::shared_ptr<Node> arguCall = tryParseArguCallExpr();
+            auto arguCall = tryParseArguCallExpr();
             if(arguCall == nullptr) {
                 return nullptr; //TODO: Report a grammar error
             }
@@ -444,7 +444,7 @@ std::shared_ptr<Node> SyntaxParser::tryParseFunctionCallExpr() {
     return std::shared_ptr<Node>(new FuncCallExpr(identifier, arguments));
 }
 
-std::shared_ptr<Node> SyntaxParser::tryParseArguCallExpr() {
+ArguCallExpr::Pointer SyntaxParser::tryParseArguCallExpr() {
     std::shared_ptr<Token> identifier = tryParseIdentifier();
     if(identifier == nullptr) {
         return nullptr;
@@ -459,7 +459,7 @@ std::shared_ptr<Node> SyntaxParser::tryParseArguCallExpr() {
         return nullptr; // TODO: report a grammar error
     }
     
-    return std::shared_ptr<Node>(new ArguCallExpr(identifier, expr));
+    return std::make_shared<ArguCallExpr>(identifier, expr);
 }
 
 std::shared_ptr<Node> SyntaxParser::tryParseBinaryExpr() {

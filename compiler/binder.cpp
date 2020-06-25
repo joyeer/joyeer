@@ -1,4 +1,5 @@
 #include "binder.h"
+#include "runtime/buildin.h"
 
 /////////////////////////////////////////////////////////////////
 // BindContext
@@ -94,6 +95,7 @@ void Binder::bind(std::shared_ptr<Node> node) {
         case parenthesizedExpr:
             break;
         case arguCallExpr:
+            bind(std::static_pointer_cast<ArguCallExpr>(node));
             break;
         case functionCallExpr:
             bind(std::static_pointer_cast<FuncCallExpr>(node));
@@ -194,9 +196,27 @@ void Binder::bind(ConstructorDecl::Pointer decl) {
     
 }
 
-
 void Binder::bind(FuncCallExpr::Pointer decl) {
-    for(auto& paramter: decl->parameters) {
+    // go down to bind argument
+    for(auto& paramter: decl->arguments) {
         bind(paramter);
     }
+    
+    std::wstring name = decl->identifier->value;
+    name += L"(";
+    for(auto& argument: decl->arguments) {
+        name += argument->label->value;
+        name += L":";
+    }
+    name += L")";
+    
+    
+}
+
+void Binder::bind(ArguCallExpr::Pointer decl) {
+    bind(decl->expr);
+}
+
+void Binder::bind(LiteralExpr::Pointer decl) {
+    
 }

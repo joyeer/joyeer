@@ -1,5 +1,5 @@
 #include "instruction.h"
 
-JrCodeWriter::JrCodeWriter() {
-    
+void JrCodeWriter::write(const Instruction& instruction) {
+    instructions.push_back(instruction);
 }

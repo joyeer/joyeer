@@ -52,6 +52,10 @@ protected:
     
     void bind(FuncCallExpr::Pointer decl);
     
+    void bind(ArguCallExpr::Pointer decl);
+    
+    void bind(LiteralExpr::Pointer decl);
+    
 private:
     SymbolFactory::Pointer symFactory;
     TypeFactory::Pointer typeFactory;

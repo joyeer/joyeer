@@ -78,14 +78,14 @@ AssignmentExpr::AssignmentExpr(std::shared_ptr<Node> expr):
 
 ArguCallExpr::ArguCallExpr(std::shared_ptr<Token> identifier, std::shared_ptr<Node> expr):
 Node(SyntaxKind::arguCallExpr),
-identifier(identifier),
+label(identifier),
 expr(expr) {
 }
 
-FuncCallExpr::FuncCallExpr(std::shared_ptr<Token> identifier, std::vector<std::shared_ptr<Node>> parameters):
+FuncCallExpr::FuncCallExpr(Token::Pointer identifier, std::vector<ArguCallExpr::Pointer> arguments):
 Node(SyntaxKind::functionCallExpr),
 identifier(identifier),
-parameters(parameters) {
+arguments(arguments) {
 }
 
 MemberExpr::MemberExpr(std::shared_ptr<Node> parent, std::shared_ptr<Node> member):

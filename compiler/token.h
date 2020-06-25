@@ -26,6 +26,9 @@ public:
 public:
     TokenKind kind;
     std::wstring value;
+    union {
+        int intValue;
+    };
 
     int lineNumber;
     int columnAt;

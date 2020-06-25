@@ -16,14 +16,14 @@ private:
     ////////////////////////////////////////////////////////////////////////////
     Node::Pointer tryParseDecl();
 
-    std::shared_ptr<Node> tryParseClassDecl();
+    Node::Pointer tryParseClassDecl();
 
-    std::shared_ptr<Node> tryParseFunctionDecl();
+    Node::Pointer tryParseFunctionDecl();
     
-    std::shared_ptr<Node> tryParseConstructorDecl();
+    Node::Pointer tryParseConstructorDecl();
 
     // Parse the constant declaration, e.g. let constValue = "10"
-    std::shared_ptr<Node> tryParseConstDecl();
+    Node::Pointer tryParseConstDecl();
 
     // Parse the variable declaration, e.g. var varValue = "10"
     std::shared_ptr<Node> tryParseVarDecl();
@@ -68,9 +68,9 @@ private:
     // postfix-expression -> function-call-expression
     std::shared_ptr<Node> tryParsePostfixExpr();
     
-    std::shared_ptr<Node> tryParseArguCallExpr();
+    ArguCallExpr::Pointer tryParseArguCallExpr();
     
-    std::shared_ptr<Node> tryParseFunctionCallExpr();
+    std::shared_ptr<Node> tryParseFuncCallExpr();
 
     std::shared_ptr<Node> tryParseBinaryExpr();
 

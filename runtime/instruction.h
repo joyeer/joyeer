@@ -2,6 +2,8 @@
 #define __joyeer_runtime_instruction_h__
 
 #include <stdint.h>
+#include <cstddef>
+#include <vector>
 
 enum Opcode {
     OP_NONE = 0x00,
@@ -14,12 +16,16 @@ enum Opcode {
 
 };
 
+struct Instruction {
+    uint8_t opcode;
+    int32_t value;
+};
+
 class JrCodeWriter {
 public:
-    JrCodeWriter();
-    ~JrCodeWriter();
-    
-    void write(uint8_t opcode, uint8_t size, uint8_t value[]);
+    void write(const Instruction& instruction);
+private:
+    std::vector<Instruction> instructions;
 };
 
 #endif
