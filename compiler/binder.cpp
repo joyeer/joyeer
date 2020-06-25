@@ -114,7 +114,7 @@ void Binder::bind(std::shared_ptr<Node> node) {
 
 
 void Binder::bind(SourceBlock::Pointer sourceBlock) {
-    SymTable::Pointer symtable = symFactory->createSymTable(sourceBlock);
+    SymTable::Pointer symtable = symFactory->createSymTable();
     SourceFileTypeDescriptor::Pointer sourceFileType = typeFactory->createSourceFileType(L"sourcefile");
     
     context->enterScope(ScopeFlag::sourceScope, sourceFileType);
@@ -144,7 +144,7 @@ void Binder::bind(ClassDecl::Pointer classDecl) {
     classDeclSymbol->type = std::static_pointer_cast<TypeDescriptor>(classType);
     context->currentSymTable()->insert(classDeclSymbol);
     
-    SymTable::Pointer symtable = symFactory->createSymTable(classDecl);
+    SymTable::Pointer symtable = symFactory->createSymTable();
     
     // go down to parse Class members
     context->enterScope(ScopeFlag::classScope, classType);

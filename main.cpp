@@ -2,8 +2,8 @@
 
 #include "compiler/lexparser.h"
 #include "compiler/syntaxparser.h"
-#include "compiler/symtable.h"
 #include "compiler/binder.h"
+#include "compiler/IRGen.h"
 
 int main(int argc, char** argv) {
     if(argc < 2) {
@@ -23,6 +23,9 @@ int main(int argc, char** argv) {
     
     Binder binder(symFactory, typeFactory);
     binder.bind(sourceBlock);
+    
+    IRGen irGen;
+    irGen.emit(sourceBlock);
     
     return 0;
 }

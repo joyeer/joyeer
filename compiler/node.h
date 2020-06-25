@@ -2,7 +2,7 @@
 #define __joyeer_compiler_AST_node_h__
 
 #include "token.h"
-
+#include "symtable.h"
 
 enum SyntaxKind {
     sourceBlock = 1L,
@@ -166,8 +166,12 @@ struct ArguCallExpr: Node {
 
 struct FunctionCallExpr: Node {
     typedef std::shared_ptr<FunctionCallExpr> Pointer;
-    std::shared_ptr<Token> identifier;
+    
+    Token::Pointer identifier;
     std::vector<std::shared_ptr<Node>> parameters;
+    
+    // Function's symbol
+    Symbol::Pointer symbol;
     
     FunctionCallExpr(std::shared_ptr<Token> identifier, std::vector<std::shared_ptr<Node>> parameters);
 };

@@ -2,7 +2,6 @@
 #define __joyeer_compiler_syntax_symtable_h__
 
 #include "types.h"
-#include "node.h"
 #include <unordered_map>
 #include <stack>
 
@@ -25,7 +24,6 @@ public:
     TypeDescriptor::Pointer type;
     SymbolFlag flag;
     std::wstring name;
-    Node::Pointer node;
 };
 
 
@@ -51,11 +49,11 @@ public:
     SymbolFactory();
     
     // We create an SymTable for a specific node
-    SymTable::Pointer createSymTable(Node::Pointer node);
-    
+    SymTable::Pointer createSymTable();
+private:
+    void initialGlobalSymbolTable();
 private:
     std::stack<SymTable::Pointer> stack;
-    std::unordered_map<Node::Pointer, SymTable::Pointer> tables;
      
 };
 

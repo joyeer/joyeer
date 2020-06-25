@@ -7,7 +7,6 @@
 Symbol::Symbol(SymbolFlag flag, const std::wstring& name):
 flag(flag),
 name(name),
-node(nullptr),
 type(nullptr) { 
 }
 
@@ -31,7 +30,7 @@ void SymTable::insert(Symbol::Pointer symbol) {
 SymbolFactory::SymbolFactory() {
 }
 
-SymTable::Pointer SymbolFactory::createSymTable(Node::Pointer node) {
+SymTable::Pointer SymbolFactory::createSymTable() {
     SymTable::Pointer pointer = std::make_shared<SymTable>(nullptr);
     return pointer;
 }
