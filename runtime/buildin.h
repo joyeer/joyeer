@@ -4,11 +4,12 @@
 
 #include <string>
 #include <unordered_map>
+#include <vector>
 #include "function.h"
 
 struct Global {
     const static std::vector<JrFunction::Pointer> funcTable;
-    const static std::vector<std::wstring> stringTable;
+    static std::vector<std::wstring> stringTable;
 };
 
 #endif

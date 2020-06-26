@@ -154,7 +154,7 @@ void Binder::bind(ClassDecl::Pointer classDecl) {
     SourceFileTypeDescriptor::Pointer sourceFile = std::static_pointer_cast<SourceFileTypeDescriptor>(context->currentScope()->scopeType);
     
     
-    const std::wstring& className = classDecl->name->value;
+    const std::wstring& className = classDecl->name->rawValue;
     // declara an new class type
     ClassTypeDescriptor::Pointer classType = typeFactory->createClassType(className);
     
@@ -180,14 +180,14 @@ void Binder::bind(VarDecl::Pointer decl) {
     SymTable::Pointer symtable = context->currentSymTable();
     Pattern::Pointer pattern = decl->pattern;
     
-    Symbol::Pointer symbol = context->makeSymbol(decl, pattern->identifier->value, SymbolFlag::varSymbol);
+    Symbol::Pointer symbol = context->makeSymbol(decl, pattern->identifier->rawValue, SymbolFlag::varSymbol);
     
     switch (context->currentScope()->flog) {
         case sourceScope:
             break;
         case classScope: {
             ClassTypeDescriptor::Pointer ownerClassType = std::static_pointer_cast<ClassTypeDescriptor>(context->currentScope()->scopeType);
-            FieldTypeDescriptor::Pointer fieldType = typeFactory->createFieldType(pattern->identifier->value);
+            FieldTypeDescriptor::Pointer fieldType = typeFactory->createFieldType(pattern->identifier->rawValue);
             
             ownerClassType->append(fieldType);
             
@@ -216,10 +216,10 @@ void Binder::bind(FuncCallExpr::Pointer decl) {
         bind(paramter);
     }
     
-    std::wstring name = decl->identifier->value;
+    std::wstring name = decl->identifier->rawValue;
     name += L"(";
     for(auto& argument: decl->arguments) {
-        name += argument->label->value;
+        name += argument->label->rawValue;
         name += L":";
     }
     name += L")";

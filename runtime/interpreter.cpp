@@ -11,6 +11,9 @@ void JrInterpreter::run(std::vector<Instruction> instructions) {
             case OP_ICONST:
                 context->stack->push4(instruction.value);
                 break;
+            case OP_SCONST:
+                context->stack->push4(instruction.value);
+                break;
             case OP_INVOKE:
                 exec_invoke(instruction);
                 break;

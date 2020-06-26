@@ -18,7 +18,7 @@ enum SymbolFlag {
 };
 
 struct Symbol {
-    typedef std::shared_ptr<Symbol> Pointer;
+    typedef std::shared_ptr<Symbol> Pointer; 
     
 public:
     Symbol(SymbolFlag flag, const std::wstring& name);

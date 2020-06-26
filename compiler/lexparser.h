@@ -16,6 +16,8 @@ public:
 private:
     void open(const std::string& filepath);
 
+    void parseStringIdentifier();
+    
     void parseStringLiteral();
     void parseNumberLiteral(std::wstring::const_iterator startAt);
     void parseHexLiteral(std::wstring::const_iterator startAt);

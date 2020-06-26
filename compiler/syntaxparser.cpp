@@ -526,7 +526,7 @@ std::shared_ptr<Node> SyntaxParser::tryParseSelfExpr() {
 std::shared_ptr<LiteralExpr> SyntaxParser::tryParseLiteralExpr() {
     std::shared_ptr<Token> literal = tryParseLiteral();
     if (literal != nullptr) {
-        return std::shared_ptr<LiteralExpr>(new LiteralExpr(literal));
+        return std::make_shared<LiteralExpr>(literal);
     }
     return nullptr;
 }
@@ -632,7 +632,7 @@ std::shared_ptr<Token> SyntaxParser::tryEat(TokenKind kind, const std::wstring &
         return nullptr;
     }
     
-    if (pToken->value == value) {
+    if (pToken->rawValue == value) {
         return pToken;
     }
 

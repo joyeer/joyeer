@@ -1,8 +1,8 @@
 #include "token.h"
 
-Token::Token(TokenKind kind, const std::wstring& value, size_t lineNumber, size_t columnAt):
+Token::Token(TokenKind kind, const std::wstring& rawValue, size_t lineNumber, size_t columnAt):
   kind(kind),
-  value(value), 
+  rawValue(rawValue),
   lineNumber(lineNumber),
   columnAt(columnAt) {
 

@@ -4,6 +4,8 @@
 #include <codecvt>
 #include <string>
 #include <iostream>
+#include "diagnostic.h"
+#include "runtime/buildin.h"
 
 LexParser::LexParser(const std::string& filepath):
 lineNumber(0) {
@@ -36,7 +38,7 @@ void LexParser::parse() {
             case 'a': case 'b': case 'c': case 'd': case 'e': case 'f': case 'g': case 'h': case 'i': case 'j': case 'k': case 'l': case 'm': case 'n': case 'o': case 'p': case 'q': case 'r': case 's': case 't': case 'u': case 'v': case 'w': case 'x': case 'y': case 'z':
             case 'A': case 'B': case 'C': case 'D': case 'E': case 'F': case 'G': case 'H': case 'I': case 'J': case 'K': case 'L': case 'M': case 'N': case 'O': case 'P': case 'Q': case 'R': case 'S': case 'T': case 'U': case 'V': case 'W': case 'X': case 'Y': case 'Z':
             case '_':
-                parseStringLiteral();
+                parseStringIdentifier();
                 break;
             case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8': case '9':
                 parseNumberLiteral(iterator - 1);
@@ -123,6 +125,9 @@ void LexParser::parse() {
             case '#':
                 parsePunctuation(iterator - 1);
                 break;
+            case '\"':
+                parseStringLiteral();
+                break;
             default:
                 break;
             }
@@ -194,7 +199,7 @@ void LexParser::parsePunctuation(std::wstring::const_iterator startIterator) {
   );
 }
 
-void LexParser::parseStringLiteral() {
+void LexParser::parseStringIdentifier() {
   std::wstring::const_iterator startAt = iterator - 1;
   while(iterator != endIterator) {
     switch (*iterator ++) {
@@ -223,6 +228,29 @@ void LexParser::parseStringLiteral() {
         token = std::shared_ptr<Token>(new Token(TokenKind::identifier, identifier, lineNumber, iterator - startAt));
     }
     tokens.push_back(token);
+}
+
+void LexParser::parseStringLiteral() {
+    auto startAt = iterator;
+    while(iterator != endIterator) {
+        if(*iterator == '\\') {
+            iterator ++;
+            if(iterator == endIterator) {
+                Diagnostics::reportError(L"[Error] except character after \"");
+                return;
+            }
+        } else if (*iterator == '\"') {
+            iterator ++ ;
+            break;
+        }
+        iterator ++;
+    }
+    
+    const std::wstring identifier(startAt, iterator);
+    auto stringLiteral = std::make_shared<Token>(TokenKind::stringLiteral, identifier, lineNumber, iterator - startAt);
+    Global::stringTable.push_back(identifier);
+    stringLiteral->index = Global::stringTable.size() - 1;
+    tokens.push_back(stringLiteral);
 }
 
 void LexParser::open(const std::string& filename) {

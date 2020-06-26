@@ -103,6 +103,11 @@ void IRGen::emit(LiteralExpr::Pointer node) {
                 .value = node->literal->intValue
             });
             break;
+        case stringLiteral:
+            writer.write({
+                .opcode = OP_SCONST,
+                .value = node->literal->index
+            });
         default:
             break;;
     }

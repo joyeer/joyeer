@@ -25,15 +25,18 @@ public:
     
 public:
     TokenKind kind;
-    std::wstring value;
+    std::wstring rawValue;
     union {
         int intValue;
+        int index;
+        double doubleValue;
+        float floatValue;
     };
 
     int lineNumber;
     int columnAt;
 
-    Token(TokenKind kind, const std::wstring& value, size_t lineNumber, size_t columnAt);
+    Token(TokenKind kind, const std::wstring& rawValue, size_t lineNumber, size_t columnAt);
 
 };
 
