@@ -21,10 +21,10 @@ struct Instruction {
     int32_t value;
 };
 
-class JrCodeWriter {
-public:
+struct JrCodeWriter {
+    
     void write(const Instruction& instruction);
-private:
+    
     std::vector<Instruction> instructions;
 };
 

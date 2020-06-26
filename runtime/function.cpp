@@ -10,8 +10,7 @@ JrCode::~JrCode() {
 }
 
 
-void JrNativeCode::operator()(JrRuntimeContext *context) {
-    
+void JrNativeCode::operator()(JrRuntimeContext *context, JrFunction* func) {
 }
 
 

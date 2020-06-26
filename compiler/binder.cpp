@@ -1,12 +1,28 @@
 #include "binder.h"
+#include "diagnostic.h"
 #include "runtime/buildin.h"
 
 /////////////////////////////////////////////////////////////////
 // BindContext
 /////////////////////////////////////////////////////////////////
 
+BindContext::BindContext(SymbolFactory::Pointer factory):
+factory(factory) {
+    symbols.push_back(factory->getGlobalSymbolTable());
+}
+
+Symbol::Pointer BindContext::findSymbol(const std::wstring &name) {
+    for(auto symtable : symbols) {
+        auto result = symtable->find(name);
+        if(result != nullptr) {
+            return result;
+        }
+    }
+    return nullptr;
+}
+
 SymTable::Pointer BindContext::currentSymTable() {
-    return symbols.top();
+    return *symbols.end();
 }
 
 Scope::Pointer BindContext::currentScope() {
@@ -14,12 +30,12 @@ Scope::Pointer BindContext::currentScope() {
 }
 
 void BindContext::enter(SymTable::Pointer table) {
-    symbols.push(table);
+    symbols.push_back(table);
 }
 
 void BindContext::leave(SymTable::Pointer table) {
     // TODO: check the top is the table
-    symbols.pop();
+    symbols.back();
 }
 
 void BindContext::enterScope(ScopeFlag flag, TypeDescriptor::Pointer scopeType) {
@@ -41,7 +57,7 @@ Symbol::Pointer BindContext::makeSymbol(Node::Pointer node, const std::wstring &
 Binder::Binder(SymbolFactory::Pointer symFactory, TypeFactory::Pointer typeFactory):
 symFactory(symFactory),
 typeFactory(typeFactory),
-context(std::make_shared<BindContext>()){
+context(std::make_shared<BindContext>(symFactory)) {
 }
 
 void Binder::bind(std::shared_ptr<Node> node) {
@@ -192,8 +208,6 @@ void Binder::bind(ConstructorDecl::Pointer decl) {
     // TODO: check the constructor must be in Class scope
     ClassTypeDescriptor::Pointer ownerClassType = std::static_pointer_cast<ClassTypeDescriptor>(context->currentScope()->scopeType);
     MethodTypeDescriptor::Pointer methodType = typeFactory->createMethodType(L"constructor");
-    
-    
 }
 
 void Binder::bind(FuncCallExpr::Pointer decl) {
@@ -210,7 +224,12 @@ void Binder::bind(FuncCallExpr::Pointer decl) {
     }
     name += L")";
     
+    auto symbol = context->findSymbol(name);
+    if(symbol == nullptr) {
+        Diagnostics::reportError(L"Cannot find function");
+    }
     
+    decl->symbol = symbol;
 }
 
 void Binder::bind(ArguCallExpr::Pointer decl) {

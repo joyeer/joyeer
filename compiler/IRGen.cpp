@@ -1,6 +1,8 @@
 #include "IRGen.h"
 
-
+std::vector<Instruction>& IRGen::getInstructions() {
+    return writer.instructions;
+}
 
 void IRGen::emit(Node::Pointer node) {
     switch (node->kind) {
@@ -73,12 +75,20 @@ void IRGen::emit(Node::Pointer node) {
 
 void IRGen::emit(SourceBlock::Pointer block) {
     for(auto& statement: block->statements) {
-        
+        emit(statement);
     }
 }
 
-void IRGen::emit(FuncCallExpr::Pointer node) {
+void IRGen::emit(FuncCallExpr::Pointer funcCallExpr) {
+    for(auto argument : funcCallExpr->arguments) {
+        emit(argument);
+    }
     
+    auto funcIndex = funcCallExpr->symbol->index;
+    writer.write({
+        .opcode = OP_INVOKE,
+        .value = (int32_t)funcIndex
+    });
 }
 
 void IRGen::emit(ArguCallExpr::Pointer node) {

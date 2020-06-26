@@ -1,1 +1,2 @@
+print(message: 100)
 print(message: 10)

@@ -9,13 +9,14 @@
 Symbol::Symbol(SymbolFlag flag, const std::wstring& name):
 flag(flag),
 name(name),
-index(-1) { 
+index(-1) {
 }
 
 /////////////////////////////////////////////////////////////////
 // SymTable
 /////////////////////////////////////////////////////////////////
-SymTable::SymTable() {
+SymTable::SymTable() :
+symbols() {
 }
 
 void SymTable::insert(Symbol::Pointer symbol) {
@@ -26,16 +27,30 @@ void SymTable::insert(Symbol::Pointer symbol) {
     symbols[symbol->name] = symbol;
 }
 
+Symbol::Pointer SymTable::find(const std::wstring& name) const {
+    auto result = symbols.find(name);
+    if( result != symbols.end()) {
+        return result->second;
+    }
+    
+    return nullptr;
+}
+
 /////////////////////////////////////////////////////////////////
 // SymbolFactory
 /////////////////////////////////////////////////////////////////
 
 SymbolFactory::SymbolFactory() {
+    createGlobalSymbolTable();
 }
 
 SymTable::Pointer SymbolFactory::createSymTable() {
     auto pointer = std::make_shared<SymTable>();
     return pointer;
+}
+
+SymTable::Pointer SymbolFactory::getGlobalSymbolTable() {
+    return globalSymbolTable;
 }
 
 void SymbolFactory::createGlobalSymbolTable() {
@@ -49,4 +64,5 @@ void SymbolFactory::createGlobalSymbolTable() {
         table->insert(symbol);
     }
     
+    globalSymbolTable = table;
 }

@@ -38,6 +38,8 @@ public:
     // insert an new Symbol
     void insert(Symbol::Pointer symbol);
     
+    Symbol::Pointer find(const std::wstring& name) const;
+    
 private:
     std::unordered_map<std::wstring, Symbol::Pointer> symbols;
 };

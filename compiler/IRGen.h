@@ -10,6 +10,7 @@ class IRGen {
 public:
     void emit(Node::Pointer node);
     
+    std::vector<Instruction>& getInstructions();
     
 protected:
     void emit(SourceBlock::Pointer block);

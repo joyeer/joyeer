@@ -8,12 +8,10 @@
 
 struct BindContext {
 public:
-    std::stack<SymTable::Pointer> symbols;
+    BindContext(SymbolFactory::Pointer factory);
     
-    // current semantic analyzing scope, e.g. source level, class level, method level etc.
-    std::stack<Scope::Pointer> scopes;
+    Symbol::Pointer findSymbol(const std::wstring& name);
     
-public:
     Symbol::Pointer makeSymbol(Node::Pointer node, const std::wstring& name, SymbolFlag flag);
     
     // return the current parsing symbol tables
@@ -28,6 +26,14 @@ public:
     // enter or leave the parsing scope
     void enterScope(ScopeFlag flag, TypeDescriptor::Pointer scopeType);
     void leaveScope(ScopeFlag flag, TypeDescriptor::Pointer scopeType);
+    
+private:
+    SymbolFactory::Pointer factory;
+    
+    std::vector<SymTable::Pointer> symbols;
+    // current semantic analyzing scope, e.g. source level, class level, method level etc.
+    std::stack<Scope::Pointer> scopes;
+    
 };
 
 

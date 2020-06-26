@@ -5,6 +5,7 @@
 #include <vector>
 
 struct JrRuntimeContext;
+struct JrFunction;
 
 struct JrType {
     uint32_t kind;
@@ -30,7 +31,7 @@ struct JrCode {
 struct JrNativeCode {
     typedef std::shared_ptr<JrNativeCode> Pointer;
     
-    virtual void operator() (JrRuntimeContext *context);
+    virtual void operator() (JrRuntimeContext *context, JrFunction* func);
 };
 
 #define JrFunction_Native       1
