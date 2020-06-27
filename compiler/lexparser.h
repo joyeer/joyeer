@@ -19,6 +19,7 @@ private:
     void parseStringIdentifier();
     
     void parseStringLiteral();
+    void parseOctalLiteral(std::wstring::const_iterator startAt);
     void parseNumberLiteral(std::wstring::const_iterator startAt);
     void parseHexLiteral(std::wstring::const_iterator startAt);
     void pushOperator(TokenKind kind, std::wstring op, std::wstring::const_iterator startIterator);

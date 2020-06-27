@@ -6,13 +6,12 @@
 #include <vector>
 
 enum Opcode {
-    OP_NONE = 0x00,
+    OP_NOP = 0x00,
     OP_ICONST,
     OP_ICONST_64,
     OP_SCONST,
-    
-    OP_LOAD,
     OP_INVOKE,
+    
     OP_DEBUG,
 
 };

@@ -1,0 +1,5 @@
+let maximumNumberOfLoginAttempts = 10
+var currentLoginAttempt = 0
+
+print(message: maximumNumberOfLoginAttempts)
+print(message: currentLoginAttempt)

@@ -43,6 +43,26 @@ void LexParser::parse() {
             case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8': case '9':
                 parseNumberLiteral(iterator - 1);
                 break;
+            case '0':
+                if (iterator == endIterator) {
+                    auto token = std::make_shared<Token>(TokenKind::decimalLiteral, L"0", lineNumber, iterator - lineStartAtPosition);
+                    tokens.push_back(token);
+                    break;
+                }
+                switch (*iterator) {
+                    case '0': case '1': case '2': case '3': case '4': case '5': case '6': case '7':
+                        break;
+                        parseOctalLiteral(iterator);
+                    case '8': case '9':
+                        Diagnostics::reportError(L"Octal number only contains 0,1,2,3,4,5,6,7");
+                        break;
+                    default:
+                        auto token = std::make_shared<Token>(TokenKind::decimalLiteral, L"0", lineNumber, iterator - lineStartAtPosition);
+                        tokens.push_back(token);
+                        break;
+                }
+                
+                break;
             case '/':
                 parseOperator(iterator - 1);
                 break;
@@ -132,6 +152,25 @@ void LexParser::parse() {
                 break;
             }
   }
+}
+
+void LexParser::parseOctalLiteral(std::wstring::const_iterator startAt) {
+    while (iterator < endIterator) {
+        switch (*iterator) {
+            case '0': case '1': case '2': case '3': case '4': case '5': case '6': case '7':
+                break;
+            case '8': case '9':
+                Diagnostics::reportError(L"Octal number only contains 0,1,2,3,4,5,6,7");
+                goto label;
+            default:
+                goto label;
+        }
+    }
+    
+label:
+    std::wstring number(startAt, iterator);
+    auto token = std::make_shared<Token>(TokenKind::decimalLiteral, number, lineNumber, startAt - lineStartAtPosition);
+    tokens.push_back(token);
 }
 
 void LexParser::parseNumberLiteral(std::wstring::const_iterator startAt) {

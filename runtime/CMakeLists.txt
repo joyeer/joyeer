@@ -12,6 +12,8 @@ set(SOURCES ${SOURCES}
     ${CMAKE_CURRENT_SOURCE_DIR}/interpreter.h
     ${CMAKE_CURRENT_SOURCE_DIR}/instruction.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/instruction.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/gc.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/gc.h
 )
 
 
