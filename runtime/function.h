@@ -2,19 +2,10 @@
 #define __joyeer_runtime_function_h__
 
 #include <string>
-#include <vector>
+#include "runtime.h"
 
 struct JrRuntimeContext;
 struct JrFunction;
-
-struct JrType {
-    uint32_t kind;
-    uint32_t index;
-};
-
-struct JrParameter {
-    JrType type;
-};
 
 
 struct JrCode {
@@ -61,10 +52,6 @@ public:
     
 public:
     ~JrFunction();
-};
-
-struct JrFunctionFrame {
-    
 };
 
 

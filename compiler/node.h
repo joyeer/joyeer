@@ -101,12 +101,16 @@ struct ClassDecl: Node {
 };
 
 struct ParameterClause: Node {
+    typedef std::shared_ptr<ParameterClause> Pointer;
+    
     std::vector<std::shared_ptr<Node>> parameters;
     
     ParameterClause(std::vector<std::shared_ptr<Node>> parameters);
 };
 
 struct FuncDecl: Node {
+    typedef std::shared_ptr<FuncDecl> Pointer;
+    
     std::shared_ptr<Token> name;
     std::shared_ptr<Node> parameterClause;
     std::shared_ptr<Node> codeBlock;
@@ -124,7 +128,8 @@ struct ConstructorDecl: Node {
 };
 
 struct Expr : Node {
-
+    typedef std::shared_ptr<Expr> Pointer;
+    
     std::shared_ptr<Node> prefix;
     std::shared_ptr<Node> binary;
     
@@ -132,6 +137,8 @@ struct Expr : Node {
 };
 
 struct PostfixExpr: Node {
+    typedef std::shared_ptr<PostfixExpr> Pointer;
+    
     std::shared_ptr<Node>  expr;
     std::shared_ptr<Token> postfixOperator;
 
@@ -139,6 +146,8 @@ struct PostfixExpr: Node {
 };
 
 struct PrefixExpr: Node {
+    typedef std::shared_ptr<PrefixExpr> Pointer;
+    
     std::shared_ptr<Token> prefixOperator;
     std::shared_ptr<Node> expr; // postfix-expression
     
@@ -146,6 +155,8 @@ struct PrefixExpr: Node {
 };
 
 struct BinaryExpr: Node {
+    typedef std::shared_ptr<BinaryExpr> Pointer;
+    
     std::shared_ptr<Token> binaryOperator;
     std::shared_ptr<Node> expr;
     
@@ -153,6 +164,8 @@ struct BinaryExpr: Node {
 };
 
 struct AssignmentExpr: Node {
+    typedef std::shared_ptr<AssignmentExpr> Pointer;
+    
     std::shared_ptr<Node> expr;
     AssignmentExpr(std::shared_ptr<Node> expr);
 };
@@ -179,6 +192,8 @@ struct FuncCallExpr: Node {
 };
 
 struct MemberExpr: Node {
+    typedef std::shared_ptr<MemberExpr> Pointer;
+    
     std::shared_ptr<Node> parent;
     std::shared_ptr<Node> member;
     
@@ -193,26 +208,33 @@ struct LiteralExpr : Node {
 };
 
 struct IdentifierExpr: Node {
+    typedef std::shared_ptr<IdentifierExpr> Pointer;
+    
     std::shared_ptr<Token> identifier;
     IdentifierExpr(std::shared_ptr<Token> literal);
 };
 
 struct ParenthesizedExpr: Node {
+    typedef std::shared_ptr<ParenthesizedExpr> Pointer;
+    
     std::shared_ptr<Node> expr;
     ParenthesizedExpr(std::shared_ptr<Node> expr);
 };
 
 struct SelfExpr: Node {
+    typedef std::shared_ptr<SelfExpr> Pointer;
+    
     std::shared_ptr<Token> identifier;
     
     SelfExpr(std::shared_ptr<Token> identifier);
 };
 
-
 struct SourceBlock: Node {
     typedef std::shared_ptr<SourceBlock> Pointer;
+    
     std::vector<std::shared_ptr<Node>> statements;
-
+    SymTable::Pointer symbols;
+    
     SourceBlock(std::vector<std::shared_ptr<Node>> statements);
 };
 
@@ -244,7 +266,6 @@ struct IfStatement: Node {
 
     IfStatement(std::shared_ptr<Node> condition, std::shared_ptr<Node> ifCodeBlock, std::shared_ptr<Node> elseCodeBlock);
 };
-
 
 
 #endif

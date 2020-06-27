@@ -14,7 +14,7 @@ int main(int argc, char** argv) {
         return -1;
     }
 
-    std::string filepath = std::string(argv[1]);
+    auto filepath = std::string(argv[1]);
     LexParser parser(filepath);
     parser.parse();
 
