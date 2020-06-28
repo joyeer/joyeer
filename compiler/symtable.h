@@ -13,8 +13,8 @@ enum SymbolFlag {
     classTypeSymbol,
     funcSymbol,
     
-    varSymbol
-    
+    varSymbol,
+    constSymbol
 };
 
 struct Symbol {

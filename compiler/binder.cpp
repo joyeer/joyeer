@@ -22,7 +22,7 @@ Symbol::Pointer BindContext::findSymbol(const std::wstring &name) {
 }
 
 SymTable::Pointer BindContext::currentSymTable() {
-    return *symbols.end();
+    return symbols.back();
 }
 
 Scope::Pointer BindContext::currentScope() {
@@ -47,7 +47,16 @@ void BindContext::leaveScope(ScopeFlag flag, TypeDescriptor::Pointer scopeType) 
 }
 
 Symbol::Pointer BindContext::makeSymbol(Node::Pointer node, const std::wstring &name, SymbolFlag flag) {
-    return std::make_shared<Symbol>(flag, name);
+    auto table = currentSymTable();
+    
+    if(table->find(name) !=  nullptr) {
+        Diagnostics::reportError(L"[Error]Duplicate symbols");
+    }
+    
+    auto symbol = std::make_shared<Symbol>(flag, name);
+    table->insert(symbol);
+    
+    return symbol;
 }
 
 /////////////////////////////////////////////////////////////////
@@ -76,6 +85,7 @@ void Binder::bind(std::shared_ptr<Node> node) {
         case importDecl:
             break;
         case constantDecl:
+            bind(std::static_pointer_cast<ConstDecl>(node));
             break;
         case varDecl:
             bind(std::static_pointer_cast<VarDecl>(node));
@@ -105,8 +115,10 @@ void Binder::bind(std::shared_ptr<Node> node) {
         case postfixExpr:
             break;
         case prefixExpr:
+            bind(std::static_pointer_cast<PrefixExpr>(node));
             break;
         case identifierExpr:
+            bind(std::static_pointer_cast<IdentifierExpr>(node));
             break;
         case parenthesizedExpr:
             break;
@@ -119,6 +131,7 @@ void Binder::bind(std::shared_ptr<Node> node) {
         case memberExpr:
             break;
         case literalExpr:
+            bind(std::static_pointer_cast<LiteralExpr>(node));
             break;
         case arrayLiteralExpr:
             break;
@@ -202,6 +215,15 @@ void Binder::bind(VarDecl::Pointer decl) {
     }
 }
 
+void Binder::bind(ConstDecl::Pointer decl) {
+    auto pattern = decl->pattern;
+    context->makeSymbol(decl, pattern->identifier->rawValue, SymbolFlag::constSymbol);
+    
+    if(decl->initializer != nullptr) {
+        bind(decl->initializer);
+    }
+}
+
 void Binder::bind(ConstructorDecl::Pointer decl) {
     Scope::Pointer scope = context->currentScope();
     
@@ -237,5 +259,15 @@ void Binder::bind(ArguCallExpr::Pointer decl) {
 }
 
 void Binder::bind(LiteralExpr::Pointer decl) {
+}
+
+void Binder::bind(PrefixExpr::Pointer decl) {
+    bind(decl->expr);
+}
+
+void Binder::bind(IdentifierExpr::Pointer decl) {
+    if(context->findSymbol(decl->identifier->rawValue) == nullptr) {
+        Diagnostics::reportError(L"[Error] cannot find symbol");
+    }
     
 }

@@ -4,7 +4,7 @@ Node::Node(SyntaxKind k): kind(k) {
 
 }
 
-ConstDecl::ConstDecl(std::shared_ptr<Node> pattern, std::shared_ptr<Node> initializer):
+ConstDecl::ConstDecl(Pattern::Pointer pattern, std::shared_ptr<Node> initializer):
 Node(SyntaxKind::constantDecl),
 pattern(pattern),
 initializer(initializer) {
@@ -14,7 +14,6 @@ VarDecl::VarDecl(Pattern::Pointer pattern, std::shared_ptr<Node> initializer):
 Node(SyntaxKind::varDecl),
 pattern(pattern),
 initializer(initializer) {
-    
 }
 
 ClassDecl::ClassDecl(std::shared_ptr<Token> name, std::vector<std::shared_ptr<Node>> members):

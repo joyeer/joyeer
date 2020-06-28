@@ -76,10 +76,10 @@ struct Pattern: Node {
 struct ConstDecl: Node {
     typedef std::shared_ptr<ConstDecl> Pointer;
     
-    std::shared_ptr<Node> pattern;
+    Pattern::Pointer pattern;
     std::shared_ptr<Node> initializer;
 
-    ConstDecl(std::shared_ptr<Node> pattern, std::shared_ptr<Node> initializer);
+    ConstDecl(Pattern::Pointer pattern, std::shared_ptr<Node> initializer);
 };
 
 struct VarDecl: public Node {

@@ -50,6 +50,8 @@ protected:
     
     void bind(ClassDecl::Pointer classDecl);
     
+    void bind(ConstDecl::Pointer decl);
+    
     void bind(VarDecl::Pointer varDecl);
     
     void bind(ConstructorDecl::Pointer decl);
@@ -62,6 +64,9 @@ protected:
     
     void bind(LiteralExpr::Pointer decl);
     
+    void bind(PrefixExpr::Pointer decl);
+    
+    void bind(IdentifierExpr::Pointer decl);
 private:
     SymbolFactory::Pointer symFactory;
     TypeFactory::Pointer typeFactory;

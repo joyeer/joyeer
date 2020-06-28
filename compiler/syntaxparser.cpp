@@ -141,7 +141,7 @@ std::shared_ptr<Node> SyntaxParser::tryParseConstDecl() {
         return nullptr; // Not a `let` declaration
     }
 
-    std::shared_ptr<Node> pattern = tryParsePattern();
+    Pattern::Pointer pattern = tryParsePattern();
     if (pattern == nullptr) {
         return nullptr; //TODO: report an syntax Error
     }

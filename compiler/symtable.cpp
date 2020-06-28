@@ -24,7 +24,11 @@ void SymTable::insert(Symbol::Pointer symbol) {
         Diagnostics::reportError(L"Duplicate symbol" + symbol->name);
         return;
     }
-    symbols[symbol->name] = symbol;
+    
+    symbols.insert({
+        symbol->name,
+        symbol
+    });
 }
 
 Symbol::Pointer SymTable::find(const std::wstring& name) const {

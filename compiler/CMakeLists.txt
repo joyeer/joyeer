@@ -20,6 +20,8 @@ set(SOURCES ${SOURCES}
     ${CMAKE_CURRENT_SOURCE_DIR}/syntaxparser.h
     ${CMAKE_CURRENT_SOURCE_DIR}/symtable.h
     ${CMAKE_CURRENT_SOURCE_DIR}/symtable.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/typecheck.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/typecheck.h
 )
 
 set(SOURCES ${SOURCES} PARENT_SCOPE)
