@@ -4,7 +4,7 @@
 #include <stdint.h>
 #include <vector>
 #include <string>
-
+#include "instruction.h"
 #define JrType_Void         0
 
 #define JrType_Int          1
@@ -34,14 +34,24 @@ struct JrType {
 struct JrVar {
     JrType type;
     std::wstring name;
-    union {
-        int32_t int32Value;
-    };
+    int index;
 };
 
 struct JrFunctionFrame {
-    std::vector<JrVar> vars;
+    
+    typedef std::shared_ptr<JrFunctionFrame> Pointer;
+    
+    // the index of the function in function tables
+    int addressOfFunc;
+    
+    // the address of this frame in stack
+    uint8_t* startAddress;
+    uint8_t* endAddress;
+    
+    // the addresses of variable in stack
+    std::vector<uint8_t*> addressOfVariables;
 };
+
 
 // Runtime stack for VM
 struct JrRuntimeStack {
@@ -53,9 +63,14 @@ struct JrRuntimeStack {
     uint8_t data[JrRuntimeStack::Size];
     
     // push the FunctionFrame into stack
-    void push(const JrFunctionFrame& frame);
-    
+    void push(JrFunctionFrame::Pointer frame);
     void push4(uint32_t value);
+    
+    // store the variable value at address at stack
+    void storeValueForVariable(uint8_t* addressOfVariable, int value);
+    // get the int value of the variable
+    int intValueOfVariable(uint8_t* addressOfVariable);
+    
     uint32_t pop4();
 };
 
@@ -65,6 +80,8 @@ struct JrRuntimeContext {
     ~JrRuntimeContext();
     
     JrRuntimeStack *stack;
+    
+    JrFunctionFrame::Pointer frame;
 };
 
 

@@ -6,12 +6,18 @@
 std::vector<JrFunction::Pointer> initGlobalFunctionTable() ;
 
 const static std::unordered_map<std::wstring, JrFunction::Pointer>  globalFunctionTableMap;
-const std::vector<JrFunction::Pointer> Global::funcTable = initGlobalFunctionTable();
+
+std::vector<JrFunction::Pointer> Global::funcTable = initGlobalFunctionTable();
+
 std::vector<std::wstring> Global::stringTable = {};
+
+void Global::registerFunction(JrFunction::Pointer func) {
+    func->addressOfFunc = funcTable.size();
+    funcTable.push_back(func);
+}
 
 struct JrPrintNativeCode : public JrNativeCode {
     void operator()(JrRuntimeContext* context, JrFunction* func) {
-        
         uint32_t value = context->stack->pop4();
         std::cout << value << std::endl;
     }
@@ -25,7 +31,8 @@ std::vector<JrFunction::Pointer> initGlobalFunctionTable() {
             .paramCount = 1,
             .paramTypes = {{ .kind = JrType_Object, .index = 0}},
             .returnType = { .kind = JrType_Void, .index = 0 },
-            .nativeCode = new JrPrintNativeCode()
+            .nativeCode = new JrPrintNativeCode(),
+            .addressOfFunc = 0
         })
     };
     

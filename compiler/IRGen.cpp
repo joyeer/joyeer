@@ -1,9 +1,21 @@
 #include "IRGen.h"
 #include "diagnostic.h"
+#include "runtime/buildin.h"
 #include <cassert>
+
+IRGen::IRGen() {
+    function = std::make_shared<JrFunction>();
+}
 
 std::vector<Instruction>& IRGen::getInstructions() {
     return writer.instructions;
+}
+
+JrFunction::Pointer IRGen::getFunction() {
+    function->instructions = writer.instructions;
+    Global::registerFunction(function);
+    
+    return function;
 }
 
 void IRGen::emit(Node::Pointer node) {
@@ -83,6 +95,11 @@ void IRGen::emit(SourceBlock::Pointer block) {
     
     //initialize the variables for source code scope
     varFinder.scopes.push_back(block->scope);
+    for(auto var: block->scope->vars) {
+        function->localVars.push_back(JrVar {
+            .name = var->name
+        });
+    }
     
     for(auto& statement: block->statements) {
         emit(statement);

@@ -8,8 +8,13 @@
 #include "function.h"
 
 struct Global {
-    const static std::vector<JrFunction::Pointer> funcTable;
+    
+    static std::vector<JrFunction::Pointer> funcTable;
     static std::vector<std::wstring> stringTable;
+    
+    
+    /// register an new function in global function table
+    static void registerFunction(JrFunction::Pointer func);
 };
 
 #endif

@@ -31,4 +31,8 @@ struct JrCodeWriter {
     std::vector<Instruction> instructions;
 };
 
+struct JrInstructionDebugPrinter {
+    
+};
+
 #endif

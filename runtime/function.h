@@ -30,6 +30,7 @@ struct JrNativeCode {
 
 struct JrFunction {
     typedef std::shared_ptr<JrFunction> Pointer;
+    
 public:
     const std::wstring name;
     
@@ -45,10 +46,18 @@ public:
     // Function's return type
     JrType  returnType;
     
+    // Variables
+    std::vector<JrVar> localVars;
+    
+    std::vector<Instruction> instructions;
+    
     union {
         JrCode* code;
         JrNativeCode* nativeCode;
     };
+    
+    // address index of this function in function table
+    int addressOfFunc;
     
 public:
     ~JrFunction();

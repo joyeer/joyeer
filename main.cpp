@@ -1,4 +1,5 @@
 #include <iostream>
+#include <vector>
 
 #include "compiler/lexparser.h"
 #include "compiler/syntaxparser.h"
@@ -8,6 +9,7 @@
 #include "compiler/diagnostic.h"
 #include "runtime/runtime.h"
 #include "runtime/interpreter.h"
+#include "runtime/buildin.h"
 
 int main(int argc, char** argv) {
     if(argc < 2) {
@@ -34,11 +36,11 @@ int main(int argc, char** argv) {
     IRGen irGen;
     irGen.emit(std::static_pointer_cast<Node>(sourceBlock));
     
-    std::vector<Instruction> instructions = irGen.getInstructions();
+    auto function  = irGen.getFunction();
     
     JrRuntimeContext context;
     JrInterpreter interpreter(&context);
-    interpreter.run(instructions);
+    interpreter.run(function);
     
     return 0;
 }

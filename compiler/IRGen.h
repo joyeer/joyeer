@@ -4,14 +4,20 @@
 #include "node.h"
 #include "runtime/runtime.h"
 #include "runtime/instruction.h"
+#include "runtime/function.h"
 
 class JrCodeWriter;
 
 class IRGen {
 public:
+    
+    IRGen();
+    
     void emit(Node::Pointer node);
     
     std::vector<Instruction>& getInstructions();
+    
+    JrFunction::Pointer getFunction();
     
 protected:
     void emit(SourceBlock::Pointer block);
@@ -34,6 +40,9 @@ private:
     JrCodeWriter writer;
     
     ScopeVarFinder varFinder;
+    
+    JrFunction::Pointer function;
+    
 };
 
 #endif

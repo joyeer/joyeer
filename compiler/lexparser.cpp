@@ -46,6 +46,7 @@ void LexParser::parse() {
             case '0':
                 if (iterator == endIterator) {
                     auto token = std::make_shared<Token>(TokenKind::decimalLiteral, L"0", lineNumber, iterator - lineStartAtPosition);
+                    token->intValue = 0;
                     tokens.push_back(token);
                     break;
                 }
@@ -58,6 +59,7 @@ void LexParser::parse() {
                         break;
                     default:
                         auto token = std::make_shared<Token>(TokenKind::decimalLiteral, L"0", lineNumber, iterator - lineStartAtPosition);
+                        token->intValue = 0;
                         tokens.push_back(token);
                         break;
                 }
