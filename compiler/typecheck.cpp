@@ -59,9 +59,9 @@ void TypeChecker::verify(Node::Pointer node) {
             break;
         case dictLiteralExpr:
             break;
-        case assignmentOperator:
+        case assignmentExpr:
             break;
-        case binaryOperator:
+        case binaryExpr:
             break;
     }
 }

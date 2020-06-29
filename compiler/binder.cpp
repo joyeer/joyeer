@@ -83,11 +83,10 @@ typeFactory(typeFactory),
 context(std::make_shared<BindContext>(symFactory)) {
 }
 
-void Binder::bind(std::shared_ptr<Node> node) {
+Node::Pointer Binder::bind(std::shared_ptr<Node> node) {
     switch (node->kind) {
         case SyntaxKind::sourceBlock:
-            bind(std::static_pointer_cast<SourceBlock>(node));
-            break;
+            return bind(std::static_pointer_cast<SourceBlock>(node));
         case type:
             break;
         case arrayType:
@@ -99,21 +98,17 @@ void Binder::bind(std::shared_ptr<Node> node) {
         case importDecl:
             break;
         case constantDecl:
-            bind(std::static_pointer_cast<ConstDecl>(node));
-            break;
+            return bind(std::static_pointer_cast<ConstDecl>(node));
         case varDecl:
-            bind(std::static_pointer_cast<VarDecl>(node));
-            break;
+            return bind(std::static_pointer_cast<VarDecl>(node));
         case letDecl:
             break;
         case funcDecl:
             break;
         case constructorDecl:
-            bind(std::static_pointer_cast<ConstructorDecl>(node));
-            break;
+            return bind(std::static_pointer_cast<ConstructorDecl>(node));
         case classDecl:
-            bind(std::static_pointer_cast<ClassDecl>(node));
-            break;
+            return bind(std::static_pointer_cast<ClassDecl>(node));
         case parameterClause:
             break;
         case codeBlock:
@@ -123,43 +118,38 @@ void Binder::bind(std::shared_ptr<Node> node) {
         case ifStatement:
             break;
         case expr:
-            break;
+            return bind(std::static_pointer_cast<Expr>(node));
         case selfExpr:
             break;
         case postfixExpr:
             break;
         case prefixExpr:
-            bind(std::static_pointer_cast<PrefixExpr>(node));
-            break;
+            return bind(std::static_pointer_cast<PrefixExpr>(node));
         case identifierExpr:
-            bind(std::static_pointer_cast<IdentifierExpr>(node));
-            break;
+            return bind(std::static_pointer_cast<IdentifierExpr>(node));
         case parenthesizedExpr:
             break;
         case arguCallExpr:
-            bind(std::static_pointer_cast<ArguCallExpr>(node));
-            break;
+            return bind(std::static_pointer_cast<ArguCallExpr>(node));
         case functionCallExpr:
-            bind(std::static_pointer_cast<FuncCallExpr>(node));
-            break;
+            return bind(std::static_pointer_cast<FuncCallExpr>(node));
         case memberExpr:
             break;
         case literalExpr:
-            bind(std::static_pointer_cast<LiteralExpr>(node));
-            break;
+            return bind(std::static_pointer_cast<LiteralExpr>(node));
         case arrayLiteralExpr:
             break;
         case dictLiteralExpr:
             break;
-        case assignmentOperator:
-            break;
-        case binaryOperator:
+        case assignmentExpr:
+            return bind(std::static_pointer_cast<AssignmentExpr>(node));
+        case binaryExpr:
             break;
     }
 }
 
 
-void Binder::bind(SourceBlock::Pointer sourceBlock) {
+SourceBlock::Pointer Binder::bind(SourceBlock::Pointer sourceBlock) {
     SymTable::Pointer symtable = symFactory->createSymTable();
     auto scope = std::shared_ptr<Scope>(new Scope {
         .flag = ScopeFlag::sourceScope
@@ -170,21 +160,25 @@ void Binder::bind(SourceBlock::Pointer sourceBlock) {
     context->enter(scope);
     context->enter(symtable);
     
+    auto nodes = std::vector<Node::Pointer>();
     for(auto& statement : sourceBlock->statements) {
-        bind(statement);
+        nodes.push_back(bind(statement));
     }
+    sourceBlock->statements = nodes;
     
     context->leave(symtable);
     context->leave(scope);
+    
+    return sourceBlock;
 }
 
-void Binder::bind(ClassDecl::Pointer classDecl) {
+Node::Pointer Binder::bind(ClassDecl::Pointer classDecl) {
     
     // TODO: double the parent scope is Source File
-    
+    return classDecl;
 }
 
-void Binder::bind(VarDecl::Pointer decl) {
+Node::Pointer Binder::bind(VarDecl::Pointer decl) {
     
     auto pattern = decl->pattern;
     
@@ -194,11 +188,13 @@ void Binder::bind(VarDecl::Pointer decl) {
     decl->variable = variable;
     
     if(decl->initializer != nullptr) {
-        bind(decl->initializer);
+        decl->initializer = bind(decl->initializer);
     }
+    
+    return decl;
 }
 
-void Binder::bind(ConstDecl::Pointer decl) {
+Node::Pointer Binder::bind(ConstDecl::Pointer decl) {
     auto pattern = decl->pattern;
     context->makeSymbol(decl, pattern->identifier->rawValue, SymbolFlag::constSymbol);
     auto variable = context->makeVar(decl, pattern->identifier->rawValue, true);
@@ -206,19 +202,23 @@ void Binder::bind(ConstDecl::Pointer decl) {
     decl->variable = variable;
     
     if(decl->initializer != nullptr) {
-        bind(decl->initializer);
+        decl->initializer = bind(decl->initializer);
     }
+    return decl;
 }
 
-void Binder::bind(ConstructorDecl::Pointer decl) {
+Node::Pointer Binder::bind(ConstructorDecl::Pointer decl) {
     Scope::Pointer scope = context->currentScope();
+    return decl;
 }
 
-void Binder::bind(FuncCallExpr::Pointer decl) {
+Node::Pointer Binder::bind(FuncCallExpr::Pointer decl) {
     // go down to bind argument
+    std::vector<ArguCallExpr::Pointer> argus;
     for(auto& paramter: decl->arguments) {
-        bind(paramter);
+        argus.push_back(std::static_pointer_cast<ArguCallExpr>(bind(paramter)));
     }
+    decl->arguments = argus;
     
     std::wstring name = decl->identifier->rawValue;
     name += L"(";
@@ -234,22 +234,50 @@ void Binder::bind(FuncCallExpr::Pointer decl) {
     }
     
     decl->symbol = symbol;
+    return decl;
 }
 
-void Binder::bind(ArguCallExpr::Pointer decl) {
-    bind(decl->expr);
+Node::Pointer Binder::bind(ArguCallExpr::Pointer decl) {
+    decl->expr = bind(decl->expr);
+    
+    return decl;
 }
 
-void Binder::bind(LiteralExpr::Pointer decl) {
+Node::Pointer Binder::bind(LiteralExpr::Pointer decl) {
+    return decl;
 }
 
-void Binder::bind(PrefixExpr::Pointer decl) {
-    bind(decl->expr);
+Node::Pointer Binder::bind(PrefixExpr::Pointer decl) {
+    decl->expr = bind(decl->expr);
+    return decl;
 }
 
-void Binder::bind(IdentifierExpr::Pointer decl) {
+Node::Pointer Binder::bind(IdentifierExpr::Pointer decl) {
     if(context->findSymbol(decl->identifier->rawValue) == nullptr) {
         Diagnostics::reportError(L"[Error] cannot find symbol");
     }
+    return decl;
+}
+
+Node::Pointer Binder::bind(Expr::Pointer decl) {
     
+    // If binary is assignment
+    if(decl->binary->kind == assignmentExpr) {
+        if(decl->prefix->kind != identifierExpr) {
+            Diagnostics::reportError(L"[Error] left of assignment expression must be a variable");
+            return decl;
+        }
+        
+        
+    }
+    
+    decl->prefix = bind(decl->prefix);
+    decl->binary = bind(decl->binary);
+    return decl;
+    
+}
+
+Node::Pointer Binder::bind(AssignmentExpr::Pointer decl) {
+    decl->expr = bind(decl->expr);
+    return decl;
 }

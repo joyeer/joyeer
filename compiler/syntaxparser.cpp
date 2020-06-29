@@ -471,7 +471,7 @@ std::shared_ptr<Node> SyntaxParser::tryParseBinaryExpr() {
             return nullptr;
         }
 
-        return std::shared_ptr<Node>(new AssignmentExpr(prefixExpr));
+        return std::make_shared<AssignmentExpr>(prefixExpr);
     }
     
     std::shared_ptr<Token> binaryOperator = tryEat(TokenKind::operators);

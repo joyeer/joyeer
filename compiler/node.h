@@ -41,8 +41,8 @@ enum SyntaxKind {
     arrayLiteralExpr,
     dictLiteralExpr,
     
-    assignmentOperator,
-    binaryOperator
+    assignmentExpr,
+    binaryExpr
 };
 
 struct Node {
@@ -237,11 +237,12 @@ struct SelfExpr: Node {
 struct SourceBlock: Node {
     typedef std::shared_ptr<SourceBlock> Pointer;
     
-    std::vector<std::shared_ptr<Node>> statements;
+    std::vector<Node::Pointer> statements;
+    
     SymTable::Pointer symbols;
     Scope::Pointer scope;
     
-    SourceBlock(std::vector<std::shared_ptr<Node>> statements);
+    SourceBlock(std::vector<Node::Pointer> statements);
 };
 
 struct CodeBlock: Node {

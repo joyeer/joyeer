@@ -1,2 +1,15 @@
+print(message: 1000)
 print(message: 100)
-print(message: 10)
+
+let maximumNumberOfLoginAttempts = 10
+var currentLoginAttempt = 0
+
+print(message: maximumNumberOfLoginAttempts)
+print(message: currentLoginAttempt)
+
+let b = 11
+var a = 13
+
+print(message: a)
+a = b 
+print(message: a)

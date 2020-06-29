@@ -42,35 +42,40 @@ private:
 
 
 // Bind all types and symbols during analyzing AST tree
+// Reduce the expression's depth level
 class Binder {
 public:
     Binder(SymbolFactory::Pointer symFactory, TypeFactory::Pointer typeFactory);
     
-    void bind(SourceBlock::Pointer sourceBlock);
+    SourceBlock::Pointer bind(SourceBlock::Pointer sourceBlock);
     
 protected:
     // recursive bind down node
-    void bind(Node::Pointer node);
+    Node::Pointer bind(Node::Pointer node);
     
-    void bind(ClassDecl::Pointer classDecl);
+    Node::Pointer bind(ClassDecl::Pointer classDecl);
     
-    void bind(ConstDecl::Pointer decl);
+    Node::Pointer bind(ConstDecl::Pointer decl);
     
-    void bind(VarDecl::Pointer varDecl);
+    Node::Pointer bind(VarDecl::Pointer varDecl);
     
-    void bind(ConstructorDecl::Pointer decl);
+    Node::Pointer bind(ConstructorDecl::Pointer decl);
     
-    void bind(Type::Pointer decl);
+    Node::Pointer bind(Type::Pointer decl);
     
-    void bind(FuncCallExpr::Pointer decl);
+    Node::Pointer bind(FuncCallExpr::Pointer decl);
     
-    void bind(ArguCallExpr::Pointer decl);
+    Node::Pointer bind(ArguCallExpr::Pointer decl);
     
-    void bind(LiteralExpr::Pointer decl);
+    Node::Pointer bind(LiteralExpr::Pointer decl);
     
-    void bind(PrefixExpr::Pointer decl);
+    Node::Pointer bind(PrefixExpr::Pointer decl);
     
-    void bind(IdentifierExpr::Pointer decl);
+    Node::Pointer bind(IdentifierExpr::Pointer decl);
+    
+    Node::Pointer bind(Expr::Pointer decl);
+    
+    Node::Pointer bind(AssignmentExpr::Pointer decl);
 private:
     SymbolFactory::Pointer symFactory;
     TypeFactory::Pointer typeFactory;

@@ -65,13 +65,13 @@ PrefixExpr::PrefixExpr(std::shared_ptr<Token> prefixOperator, std::shared_ptr<No
 }
 
 BinaryExpr::BinaryExpr(std::shared_ptr<Token> binaryOperator, std::shared_ptr<Node> expr):
-    Node(SyntaxKind::binaryOperator),
+    Node(SyntaxKind::binaryExpr),
     binaryOperator(binaryOperator),
     expr(expr) {
 }
 
 AssignmentExpr::AssignmentExpr(std::shared_ptr<Node> expr):
-    Node(SyntaxKind::assignmentOperator),
+    Node(SyntaxKind::assignmentExpr),
     expr(expr) {
 }
 
