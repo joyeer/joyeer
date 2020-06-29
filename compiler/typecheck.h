@@ -7,6 +7,8 @@ class TypeChecker {
 public:
     void verify(Node::Pointer node);
     
+private:
+    void verify(SourceBlock::Pointer node);
 };
 
 #endif

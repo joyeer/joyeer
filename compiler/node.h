@@ -3,6 +3,7 @@
 
 #include "token.h"
 #include "symtable.h"
+#include "scope.h"
 
 enum SyntaxKind {
     sourceBlock = 1L,
@@ -78,6 +79,8 @@ struct ConstDecl: Node {
     
     Pattern::Pointer pattern;
     std::shared_ptr<Node> initializer;
+    
+    std::shared_ptr<Var> variable;
 
     ConstDecl(Pattern::Pointer pattern, std::shared_ptr<Node> initializer);
 };
@@ -87,6 +90,8 @@ struct VarDecl: public Node {
     
     Pattern::Pointer pattern;
     std::shared_ptr<Node> initializer;
+    
+    std::shared_ptr<Var> variable;
 
     VarDecl(Pattern::Pointer pattern, std::shared_ptr<Node> initializer);
 };
@@ -234,6 +239,7 @@ struct SourceBlock: Node {
     
     std::vector<std::shared_ptr<Node>> statements;
     SymTable::Pointer symbols;
+    Scope::Pointer scope;
     
     SourceBlock(std::vector<std::shared_ptr<Node>> statements);
 };

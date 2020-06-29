@@ -2,6 +2,7 @@
 #define __joyeer_compiler_irgen_h__
 
 #include "node.h"
+#include "runtime/runtime.h"
 #include "runtime/instruction.h"
 
 class JrCodeWriter;
@@ -21,8 +22,18 @@ protected:
     
     void emit(LiteralExpr::Pointer node);
     
+    void emit(ConstDecl::Pointer node);
+    
+    void emit(VarDecl::Pointer node);
+    
+    void emit(PrefixExpr::Pointer node);
+    
+    void emit(IdentifierExpr::Pointer node);
+    
 private:
     JrCodeWriter writer;
+    
+    ScopeVarFinder varFinder;
 };
 
 #endif

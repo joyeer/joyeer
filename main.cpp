@@ -3,6 +3,7 @@
 #include "compiler/lexparser.h"
 #include "compiler/syntaxparser.h"
 #include "compiler/binder.h"
+#include "compiler/typecheck.h"
 #include "compiler/IRGen.h"
 #include "compiler/diagnostic.h"
 #include "runtime/runtime.h"
@@ -26,6 +27,9 @@ int main(int argc, char** argv) {
     
     Binder binder(symFactory, typeFactory);
     binder.bind(sourceBlock);
+    
+    TypeChecker typeChecker;
+    typeChecker.verify(std::static_pointer_cast<Node>(sourceBlock));
     
     IRGen irGen;
     irGen.emit(std::static_pointer_cast<Node>(sourceBlock));

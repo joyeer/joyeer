@@ -1,4 +1,6 @@
 #include "IRGen.h"
+#include "diagnostic.h"
+#include <cassert>
 
 std::vector<Instruction>& IRGen::getInstructions() {
     return writer.instructions;
@@ -20,8 +22,10 @@ void IRGen::emit(Node::Pointer node) {
         case importDecl:
             break;
         case constantDecl:
+            emit(std::static_pointer_cast<ConstDecl>(node));
             break;
         case varDecl:
+            emit(std::static_pointer_cast<VarDecl>(node));
             break;
         case letDecl:
             break;
@@ -46,8 +50,10 @@ void IRGen::emit(Node::Pointer node) {
         case postfixExpr:
             break;
         case prefixExpr:
+            emit(std::static_pointer_cast<PrefixExpr>(node));
             break;
         case identifierExpr:
+            emit(std::static_pointer_cast<IdentifierExpr>(node));
             break;
         case parenthesizedExpr:
             break;
@@ -74,6 +80,10 @@ void IRGen::emit(Node::Pointer node) {
 }
 
 void IRGen::emit(SourceBlock::Pointer block) {
+    
+    //initialize the variables for source code scope
+    varFinder.scopes.push_back(block->scope);
+    
     for(auto& statement: block->statements) {
         emit(statement);
     }
@@ -111,4 +121,47 @@ void IRGen::emit(LiteralExpr::Pointer node) {
         default:
             break;;
     }
+}
+
+void IRGen::emit(ConstDecl::Pointer node) {
+    emit(node->initializer);
+    
+    // TODO: detect the variable's type
+    writer.write({
+        .opcode = OP_ISTORE,
+        .value = node->variable->index
+    });
+    
+}
+
+void IRGen::emit(VarDecl::Pointer node) {
+    emit(node->initializer);
+    
+    // TODO: detect the variable's type
+    writer.write({
+        .opcode = OP_ISTORE,
+        .value = node->variable->index
+    });
+}
+
+void IRGen::emit(PrefixExpr::Pointer node) {
+    assert(node->expr != nullptr);
+    emit(node->expr);
+}
+
+void IRGen::emit(IdentifierExpr::Pointer node) {
+    // TODO:
+    // Step1: try to find the variable in local variable array
+    
+    auto name = node->identifier->rawValue;
+    auto variable = varFinder.find(name);
+    if(variable == nullptr) {
+        Diagnostics::reportError(L"[Error][GenCode]");
+    }
+    writer.write({
+        .opcode = OP_ILOAD,
+        .value = variable->index
+    });
+    
+    // Step2: try to find the symbol in symbols
 }

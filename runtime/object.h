@@ -4,16 +4,6 @@
 #include <vector>
 
 
-#define JrType_Void         0
-
-#define JrType_Int          1
-#define JrType_Float        2
-#define JrType_Double       3
-#define JrType_Long         4
-#define JrType_String       8
-
-#define JrType_Object       10
-
 
 struct JrObjectHead {
     size_t  refCount;

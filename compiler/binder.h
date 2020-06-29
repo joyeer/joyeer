@@ -14,25 +14,29 @@ public:
     
     Symbol::Pointer makeSymbol(Node::Pointer node, const std::wstring& name, SymbolFlag flag);
     
+    // declare an variable in current scope
+    Var::Pointer makeVar(Node::Pointer node, const std::wstring& name, bool isMutable);
+    
     // return the current parsing symbol tables
     SymTable::Pointer currentSymTable();
     
     // return the current parsing scope
     Scope::Pointer currentScope();
 
+    // Symbol tables entry & leave
     void enter(SymTable::Pointer table);
     void leave(SymTable::Pointer table);
     
     // enter or leave the parsing scope
-    void enterScope(ScopeFlag flag, TypeDescriptor::Pointer scopeType);
-    void leaveScope(ScopeFlag flag, TypeDescriptor::Pointer scopeType);
+    void enter(Scope::Pointer scope);
+    void leave(Scope::Pointer scope);
     
 private:
     SymbolFactory::Pointer factory;
     
     std::vector<SymTable::Pointer> symbols;
     // current semantic analyzing scope, e.g. source level, class level, method level etc.
-    std::stack<Scope::Pointer> scopes;
+    std::vector<Scope::Pointer> scopes;
     
 };
 

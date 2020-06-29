@@ -1,6 +1,7 @@
 #include "binder.h"
 #include "diagnostic.h"
 #include "runtime/buildin.h"
+#include <cassert>
 
 /////////////////////////////////////////////////////////////////
 // BindContext
@@ -26,7 +27,7 @@ SymTable::Pointer BindContext::currentSymTable() {
 }
 
 Scope::Pointer BindContext::currentScope() {
-    return scopes.top();
+    return scopes.back();
 }
 
 void BindContext::enter(SymTable::Pointer table) {
@@ -34,16 +35,17 @@ void BindContext::enter(SymTable::Pointer table) {
 }
 
 void BindContext::leave(SymTable::Pointer table) {
-    // TODO: check the top is the table
-    symbols.back();
+    assert(table == symbols.back());
+    symbols.pop_back();
 }
 
-void BindContext::enterScope(ScopeFlag flag, TypeDescriptor::Pointer scopeType) {
-    scopes.push(std::make_shared<Scope>(flag, scopeType));
+void BindContext::enter(Scope::Pointer scope) {
+    scopes.push_back(scope);
 }
  
-void BindContext::leaveScope(ScopeFlag flag, TypeDescriptor::Pointer scopeType) {
-    scopes.pop();
+void BindContext::leave(Scope::Pointer scope) {
+    assert(scopes.back() == scope);
+    scopes.pop_back();
 }
 
 Symbol::Pointer BindContext::makeSymbol(Node::Pointer node, const std::wstring &name, SymbolFlag flag) {
@@ -57,6 +59,18 @@ Symbol::Pointer BindContext::makeSymbol(Node::Pointer node, const std::wstring &
     table->insert(symbol);
     
     return symbol;
+}
+
+Var::Pointer BindContext::makeVar(Node::Pointer, const std::wstring &name, bool isMutable) {
+    auto scope = currentScope();
+    
+    auto var = std::shared_ptr<Var>(new Var {
+        .name = name,
+        .isMutable = isMutable
+    });
+    scope->insert(var);
+    
+    return var;
 }
 
 /////////////////////////////////////////////////////////////////
@@ -147,9 +161,13 @@ void Binder::bind(std::shared_ptr<Node> node) {
 
 void Binder::bind(SourceBlock::Pointer sourceBlock) {
     SymTable::Pointer symtable = symFactory->createSymTable();
-    SourceFileTypeDescriptor::Pointer sourceFileType = typeFactory->createSourceFileType(L"sourcefile");
+    auto scope = std::shared_ptr<Scope>(new Scope {
+        .flag = ScopeFlag::sourceScope
+    });
+    sourceBlock->symbols = symtable;
+    sourceBlock->scope = scope;
     
-    context->enterScope(ScopeFlag::sourceScope, sourceFileType);
+    context->enter(scope);
     context->enter(symtable);
     
     for(auto& statement : sourceBlock->statements) {
@@ -157,67 +175,35 @@ void Binder::bind(SourceBlock::Pointer sourceBlock) {
     }
     
     context->leave(symtable);
-    context->leaveScope(ScopeFlag::sourceScope, sourceFileType);
+    context->leave(scope);
 }
 
 void Binder::bind(ClassDecl::Pointer classDecl) {
     
     // TODO: double the parent scope is Source File
     
-    SourceFileTypeDescriptor::Pointer sourceFile = std::static_pointer_cast<SourceFileTypeDescriptor>(context->currentScope()->scopeType);
-    
-    
-    const std::wstring& className = classDecl->name->rawValue;
-    // declara an new class type
-    ClassTypeDescriptor::Pointer classType = typeFactory->createClassType(className);
-    
-    // delcara an class Symbol
-    Symbol::Pointer classDeclSymbol = std::make_shared<Symbol>(SymbolFlag::classTypeSymbol, className);
-    
-    context->currentSymTable()->insert(classDeclSymbol);
-    
-    SymTable::Pointer symtable = symFactory->createSymTable();
-    
-    // go down to parse Class members
-    context->enterScope(ScopeFlag::classScope, classType);
-    context->enter(symtable);
-    
-    for(auto& member: classDecl->members) {
-        bind(member);
-    }
-    context->leave(symtable);
-    context->leaveScope(ScopeFlag::classScope, classType);
 }
 
 void Binder::bind(VarDecl::Pointer decl) {
-    SymTable::Pointer symtable = context->currentSymTable();
-    Pattern::Pointer pattern = decl->pattern;
     
-    Symbol::Pointer symbol = context->makeSymbol(decl, pattern->identifier->rawValue, SymbolFlag::varSymbol);
+    auto pattern = decl->pattern;
     
-    switch (context->currentScope()->flog) {
-        case sourceScope:
-            break;
-        case classScope: {
-            ClassTypeDescriptor::Pointer ownerClassType = std::static_pointer_cast<ClassTypeDescriptor>(context->currentScope()->scopeType);
-            FieldTypeDescriptor::Pointer fieldType = typeFactory->createFieldType(pattern->identifier->rawValue);
-            
-            ownerClassType->append(fieldType);
-            
-            // go down
-            context->enterScope(ScopeFlag::fieldScope, fieldType);
-            
-            context->leaveScope(ScopeFlag::fieldScope, fieldType);
-        }
-            break;
-        default:
-            break;
+    auto symbol = context->makeSymbol(decl, pattern->identifier->rawValue, SymbolFlag::varSymbol);
+    auto variable  = context->makeVar(decl, pattern->identifier->rawValue, false);
+    
+    decl->variable = variable;
+    
+    if(decl->initializer != nullptr) {
+        bind(decl->initializer);
     }
 }
 
 void Binder::bind(ConstDecl::Pointer decl) {
     auto pattern = decl->pattern;
     context->makeSymbol(decl, pattern->identifier->rawValue, SymbolFlag::constSymbol);
+    auto variable = context->makeVar(decl, pattern->identifier->rawValue, true);
+    
+    decl->variable = variable;
     
     if(decl->initializer != nullptr) {
         bind(decl->initializer);
@@ -226,10 +212,6 @@ void Binder::bind(ConstDecl::Pointer decl) {
 
 void Binder::bind(ConstructorDecl::Pointer decl) {
     Scope::Pointer scope = context->currentScope();
-    
-    // TODO: check the constructor must be in Class scope
-    ClassTypeDescriptor::Pointer ownerClassType = std::static_pointer_cast<ClassTypeDescriptor>(context->currentScope()->scopeType);
-    MethodTypeDescriptor::Pointer methodType = typeFactory->createMethodType(L"constructor");
 }
 
 void Binder::bind(FuncCallExpr::Pointer decl) {

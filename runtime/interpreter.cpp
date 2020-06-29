@@ -17,6 +17,12 @@ void JrInterpreter::run(std::vector<Instruction> instructions) {
             case OP_INVOKE:
                 exec_invoke(instruction);
                 break;
+            case OP_ISTORE:
+                break;
+            case OP_ILOAD:
+                break;
+            default:
+                break;
         }
     }
 }

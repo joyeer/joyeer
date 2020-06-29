@@ -11,13 +11,32 @@ enum ScopeFlag {
     fieldScope,
 };
 
+struct Var {
+    typedef std::shared_ptr<Var> Pointer;
+    
+    bool isMutable;
+    std::wstring name;
+    int index;
+};
+
 struct Scope {
     typedef std::shared_ptr<Scope> Pointer;
     
-    ScopeFlag flog;
-    TypeDescriptor::Pointer scopeType;
+    ScopeFlag flag;
+    std::vector<Var::Pointer> vars;
+    std::unordered_map<std::wstring, Var::Pointer> map;
     
-    Scope(ScopeFlag flag, TypeDescriptor::Pointer scopeType);
+    void insert(Var::Pointer var);
+    
+    Var::Pointer find(const std::wstring& name);
+    
+};
+
+struct ScopeVarFinder {
+    
+    std::vector<Scope::Pointer> scopes;
+    
+    Var::Pointer find(const std::wstring& name);
 };
 
 #endif

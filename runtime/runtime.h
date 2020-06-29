@@ -3,6 +3,17 @@
 
 #include <stdint.h>
 #include <vector>
+#include <string>
+
+#define JrType_Void         0
+
+#define JrType_Int          1
+#define JrType_Float        2
+#define JrType_Double       3
+#define JrType_Long         4
+#define JrType_String       8
+
+#define JrType_Object       10
  
 typedef int64_t     JrInt;
 typedef int64_t     JrInt64;
@@ -22,6 +33,7 @@ struct JrType {
 
 struct JrVar {
     JrType type;
+    std::wstring name;
     union {
         int32_t int32Value;
     };

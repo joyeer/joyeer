@@ -10,6 +10,9 @@ enum Opcode {
     OP_ICONST,
     OP_ICONST_64,
     OP_SCONST,
+    
+    OP_ISTORE,
+    OP_ILOAD,
     OP_INVOKE,
     
     OP_DEBUG,
