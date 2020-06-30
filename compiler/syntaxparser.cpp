@@ -398,30 +398,30 @@ std::shared_ptr<Node> SyntaxParser::tryParseBinaryExpr() {
 }
 
 std::shared_ptr<Node> SyntaxParser::tryParsePrefixExpr() {
-    std::shared_ptr<Token> prefixOperator = tryEat(TokenKind::operators);
+    auto op = tryParseOperatorExpr();
     
     std::shared_ptr<Node> postfixExpr = tryParsePostfixExpr();
     if(postfixExpr == nullptr) {
         // revert the prefix operator
-        if(prefixOperator != nullptr) {
+        if(op != nullptr) {
             previous();
         }
         return nullptr;
     }
 
-    if(prefixOperator == nullptr) {
+    if(op == nullptr) {
         return postfixExpr;
     } else {
-        return std::shared_ptr<PrefixExpr>(new PrefixExpr(prefixOperator, postfixExpr));
+        return std::make_shared<PrefixExpr>(op, postfixExpr);
     }
 }
 
-std::shared_ptr<Node> SyntaxParser::tryParsePostfixExpr() {
+Node::Pointer SyntaxParser::tryParsePostfixExpr() {
     std::shared_ptr<Node> result = nullptr;
     
     std::shared_ptr<Node> funcCallExpr = tryParseFuncCallExpr();
     if(funcCallExpr != nullptr) {
-        Token::Pointer postfixOperator = tryParsePostfixOperator();
+        auto postfixOperator = tryParsePostfixOperatorExpr();
         if(postfixOperator == nullptr) {
             result = funcCallExpr;
         } else {
@@ -432,11 +432,11 @@ std::shared_ptr<Node> SyntaxParser::tryParsePostfixExpr() {
     if(result == nullptr) {
         std::shared_ptr<Node> primaryExpr = tryParsePrimaryExpr();
         if(primaryExpr != nullptr) {
-            Token::Pointer postfixOperator = tryParsePostfixOperator();
+            auto postfixOperator = tryParsePostfixOperatorExpr();
             if(postfixOperator == nullptr) {
                 result = primaryExpr;
             } else {
-                result = std::shared_ptr<PostfixExpr>(new PostfixExpr(primaryExpr, postfixOperator));
+                result = std::make_shared<PostfixExpr>(primaryExpr, postfixOperator);
             }
         }
     }
@@ -576,19 +576,23 @@ std::shared_ptr<Node> SyntaxParser::tryParseParenthesizedExpr() {
 void SyntaxParser::tryParseConditionalOperator() {
 }
 
-std::shared_ptr<Token> SyntaxParser::tryParseOperator() {
-    return tryEat(TokenKind::operators);
+OperatorExpr::Pointer SyntaxParser::tryParseOperatorExpr() {
+    auto token = tryEat(TokenKind::operators);
+    if(token == nullptr) {
+        return nullptr;
+    }
+    return std::make_shared<OperatorExpr>(token);
 }
 
-Token::Pointer SyntaxParser::tryParsePostfixOperator() {
-    std::shared_ptr<Token> token = tryEat(TokenKind::operators, Operators::QUESTION);
+OperatorExpr::Pointer SyntaxParser::tryParsePostfixOperatorExpr() {
+    auto token = tryEat(TokenKind::operators, Operators::QUESTION);
     if(token != nullptr) {
-        return token;
+        return std::make_shared<OperatorExpr>(token);
     }
 
-    std::shared_ptr<Token> pointToken = tryEat(TokenKind::operators, Operators::POINT);
+    auto pointToken = tryEat(TokenKind::operators, Operators::POINT);
     if(pointToken != nullptr) {
-        return pointToken;
+        return std::make_shared<OperatorExpr>(pointToken);
     }
 
     return nullptr;

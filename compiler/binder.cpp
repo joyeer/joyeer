@@ -145,6 +145,9 @@ Node::Pointer Binder::bind(std::shared_ptr<Node> node) {
             return bind(std::static_pointer_cast<AssignmentExpr>(node));
         case binaryExpr:
             return bind(std::static_pointer_cast<BinaryExpr>(node));
+        case operatorExpr:
+            break;
+            
     }
 }
 

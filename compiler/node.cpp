@@ -3,7 +3,11 @@
 #include <iomanip>
 
 Node::Node(SyntaxKind k): kind(k) {
+}
 
+OperatorExpr::OperatorExpr(Token::Pointer token):
+Node(SyntaxKind::operatorExpr),
+token(token) {
 }
 
 ConstDecl::ConstDecl(Pattern::Pointer pattern, std::shared_ptr<Node> initializer):
@@ -55,16 +59,17 @@ prefix(prefix),
 binaries(binaries) {
 }
 
-PostfixExpr::PostfixExpr(std::shared_ptr<Node> expr, std::shared_ptr<Token> postfixOperator):
-    Node(SyntaxKind::postfixExpr),
-    expr(expr),
-    postfixOperator(postfixOperator) {
+PostfixExpr::PostfixExpr(Node::Pointer expr, OperatorExpr::Pointer op):
+Node(SyntaxKind::postfixExpr),
+expr(expr),
+op(op) {
 }
 
-PrefixExpr::PrefixExpr(std::shared_ptr<Token> prefixOperator, std::shared_ptr<Node> expr):
-    Node(SyntaxKind::prefixExpr),
-    prefixOperator(prefixOperator),
-    expr(expr) {
+PrefixExpr::PrefixExpr(OperatorExpr::Pointer op, std::shared_ptr<Node> expr):
+Node(SyntaxKind::prefixExpr),
+op(op),
+expr(expr) {
+    
 }
 
 BinaryExpr::BinaryExpr(std::shared_ptr<Token> binaryOperator, std::shared_ptr<Node> expr):
@@ -271,9 +276,9 @@ void NodeDebugPrinter::print(Node::Pointer node) {
         case postfixExpr: {
             std::wcout << L"+postfixExpr" ;
             auto n = std::static_pointer_cast<PostfixExpr>(node);
-            std::wcout << L"(op:" << n->postfixOperator->rawValue << L")";
             incTab();
             print(n->expr);
+            print(n->op);
             decTab();
         }
             break;
@@ -281,8 +286,8 @@ void NodeDebugPrinter::print(Node::Pointer node) {
             std::wcout << L"+prefixExpr" ;
             auto n = std::static_pointer_cast<PrefixExpr>(node);
             incTab();
-            if(n->prefixOperator != nullptr) {
-                std::wcout << "(op: " << n->prefixOperator->rawValue << ")" ;
+            if(n->op != nullptr) {
+                print(n->op);
             }
             if(n->expr != nullptr) {
                 print(n->expr);
@@ -354,6 +359,11 @@ void NodeDebugPrinter::print(Node::Pointer node) {
                 print(n->expr);
             }
             decTab();
+        }
+            break;
+        case operatorExpr: {
+            auto n = std::static_pointer_cast<OperatorExpr>(node);
+            std::wcout << L"+operatorExpr(" << n->token->rawValue << ")" ;
         }
             break;
     }

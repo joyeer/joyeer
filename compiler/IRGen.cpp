@@ -89,6 +89,8 @@ void IRGen::emit(Node::Pointer node) {
             break;
         case binaryExpr:
             break;
+        case operatorExpr:
+            break;
     }
 }
 

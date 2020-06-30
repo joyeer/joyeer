@@ -91,13 +91,13 @@ private:
     std::shared_ptr<LiteralExpr> tryParseLiteralExpr();
 
     // parenthesized-expression -> `(` expression `)`
-    std::shared_ptr<Node> tryParseParenthesizedExpr();
+    Node::Pointer tryParseParenthesizedExpr();
 
     void tryParseConditionalOperator();
     
-    Token::Pointer tryParseOperator();
+    OperatorExpr::Pointer tryParseOperatorExpr();
     
-    Token::Pointer tryParsePostfixOperator();
+    OperatorExpr::Pointer tryParsePostfixOperatorExpr();
 
     // literal -> numeric-literal | string-literal | boolean-literal | nil-literal
     std::shared_ptr<Token> tryParseLiteral();

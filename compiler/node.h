@@ -28,6 +28,8 @@ enum SyntaxKind {
     ifStatement,
 
     expr,
+    assignmentExpr,
+    binaryExpr,
     selfExpr,
     postfixExpr,
     prefixExpr,
@@ -40,9 +42,8 @@ enum SyntaxKind {
     literalExpr,
     arrayLiteralExpr,
     dictLiteralExpr,
+    operatorExpr
     
-    assignmentExpr,
-    binaryExpr
 };
 
 struct Node {
@@ -61,11 +62,14 @@ struct IdentifierExpr: public Node {
     Var::Pointer   varRef;
     Token::Pointer token;
     
-    IdentifierExpr(std::shared_ptr<Token> token);
+    IdentifierExpr(Token::Pointer token);
 };
 
 struct OperatorExpr: Node {
+    typedef std::shared_ptr<OperatorExpr> Pointer;
     
+    Token::Pointer token;
+    OperatorExpr(Token::Pointer token);
 };
 
 struct Type: Node {
@@ -91,9 +95,9 @@ struct ConstDecl: Node {
     typedef std::shared_ptr<ConstDecl> Pointer;
     
     Pattern::Pointer pattern;
-    std::shared_ptr<Node> initializer;
+    Node::Pointer initializer;
     
-    std::shared_ptr<Var> variable;
+    Var::Pointer variable;
 
     ConstDecl(Pattern::Pointer pattern, std::shared_ptr<Node> initializer);
 };
@@ -102,10 +106,10 @@ struct VarDecl: public Node {
     typedef std::shared_ptr<VarDecl> Pointer;
     
     Pattern::Pointer pattern;
-    std::shared_ptr<Node> initializer;
+    Node::Pointer initializer;
     
     // enrich
-    std::shared_ptr<Var> variable;
+    Var::Pointer variable;
 
     VarDecl(Pattern::Pointer pattern, std::shared_ptr<Node> initializer);
 };
@@ -122,9 +126,9 @@ struct ClassDecl: Node {
 struct ParameterClause: Node {
     typedef std::shared_ptr<ParameterClause> Pointer;
     
-    std::vector<std::shared_ptr<Node>> parameters;
+    std::vector<Node::Pointer> parameters;
     
-    ParameterClause(std::vector<std::shared_ptr<Node>> parameters);
+    ParameterClause(std::vector<Node::Pointer> parameters);
 };
 
 struct FuncDecl: Node {
@@ -140,10 +144,10 @@ struct FuncDecl: Node {
 struct ConstructorDecl: Node {
     typedef std::shared_ptr<ConstructorDecl> Pointer;
     
-    std::shared_ptr<Node> parameterClause;
-    std::shared_ptr<Node> codeBlock;
+    Node::Pointer parameterClause;
+    Node::Pointer codeBlock;
     
-    ConstructorDecl(std::shared_ptr<Node> parameterClause, std::shared_ptr<Node> codeBlock);
+    ConstructorDecl(Node::Pointer parameterClause, Node::Pointer codeBlock);
 };
 
 struct Expr : Node {
@@ -158,19 +162,19 @@ struct Expr : Node {
 struct PostfixExpr: Node {
     typedef std::shared_ptr<PostfixExpr> Pointer;
     
-    std::shared_ptr<Node>  expr;
-    std::shared_ptr<Token> postfixOperator;
+    Node::Pointer  expr;
+    OperatorExpr::Pointer op;
 
-    PostfixExpr(std::shared_ptr<Node> expr, std::shared_ptr<Token> postfixOperator);
+    PostfixExpr(Node::Pointer expr, OperatorExpr::Pointer op);
 };
 
 struct PrefixExpr: Node {
     typedef std::shared_ptr<PrefixExpr> Pointer;
     
-    std::shared_ptr<Token> prefixOperator;
-    std::shared_ptr<Node> expr; // postfix-expression
+    OperatorExpr::Pointer op;
+    Node::Pointer expr; // postfix-expression
     
-    PrefixExpr(std::shared_ptr<Token> prefixOperator, std::shared_ptr<Node> expr);
+    PrefixExpr(OperatorExpr::Pointer op, Node::Pointer expr);
 };
 
 struct BinaryExpr: Node {
@@ -266,7 +270,7 @@ struct CodeBlock: Node {
 struct ForInStatement: Node {
     typedef std::shared_ptr<ForInStatement> Pointer;
     
-    std::shared_ptr<Node> pattern;
+    Node::Pointer pattern;
     std::shared_ptr<Node> inExpr;
     std::shared_ptr<Node> codeBlock;
 
