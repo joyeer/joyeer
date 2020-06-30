@@ -85,6 +85,7 @@ void IRGen::emit(Node::Pointer node) {
         case dictLiteralExpr:
             break;
         case assignmentExpr:
+            emit(std::static_pointer_cast<AssignmentExpr>(node));
             break;
         case binaryExpr:
             break;
@@ -170,7 +171,7 @@ void IRGen::emit(IdentifierExpr::Pointer node) {
     // TODO:
     // Step1: try to find the variable in local variable array
     
-    auto name = node->identifier->rawValue;
+    auto name = node->token->rawValue;
     auto variable = varFinder.find(name);
     if(variable == nullptr) {
         Diagnostics::reportError(L"[Error][GenCode]");
@@ -181,4 +182,13 @@ void IRGen::emit(IdentifierExpr::Pointer node) {
     });
     
     // Step2: try to find the symbol in symbols
+}
+
+void IRGen::emit(AssignmentExpr::Pointer node) {
+    emit(node->expr);
+    // TODO: detect the variable's type
+    writer.write({
+        .opcode = OP_ISTORE,
+        .value = node->identifier->varRef->index
+    });
 }

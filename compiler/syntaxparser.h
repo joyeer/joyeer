@@ -102,7 +102,7 @@ private:
     // literal -> numeric-literal | string-literal | boolean-literal | nil-literal
     std::shared_ptr<Token> tryParseLiteral();
     //
-    std::shared_ptr<Token> tryParseIdentifier();
+    IdentifierExpr::Pointer tryParseIdentifierExpr();
 
 
     ////////////////////////////////////////////////////////////////////////////

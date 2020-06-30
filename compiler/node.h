@@ -55,23 +55,36 @@ protected:
 
 };
 
+struct IdentifierExpr: public Node {
+    typedef std::shared_ptr<IdentifierExpr> Pointer;
+    
+    Var::Pointer   varRef;
+    Token::Pointer token;
+    
+    IdentifierExpr(std::shared_ptr<Token> token);
+};
+
+struct OperatorExpr: Node {
+    
+};
+
 struct Type: Node {
     typedef std::shared_ptr<Type> Pointer;
     
-    std::shared_ptr<Token> identifier;
+    IdentifierExpr::Pointer identifier;
     bool isOptional;
     
-    Type(std::shared_ptr<Token> identifier, bool isOptional);
+    Type(IdentifierExpr::Pointer identifier, bool isOptional);
 };
 
-struct Pattern: Node {
+struct Pattern: public Node {
     typedef std::shared_ptr<Pattern> Pointer;
     
-    std::shared_ptr<Token> identifier;
+    IdentifierExpr::Pointer identifier;
     Type::Pointer type;
     
-    Pattern(std::shared_ptr<Token> identifier, Type::Pointer type);
-    
+    Pattern(IdentifierExpr::Pointer identifier, Type::Pointer type);
+
 };
 
 struct ConstDecl: Node {
@@ -91,6 +104,7 @@ struct VarDecl: public Node {
     Pattern::Pointer pattern;
     std::shared_ptr<Node> initializer;
     
+    // enrich
     std::shared_ptr<Var> variable;
 
     VarDecl(Pattern::Pointer pattern, std::shared_ptr<Node> initializer);
@@ -116,11 +130,11 @@ struct ParameterClause: Node {
 struct FuncDecl: Node {
     typedef std::shared_ptr<FuncDecl> Pointer;
     
-    std::shared_ptr<Token> name;
-    std::shared_ptr<Node> parameterClause;
-    std::shared_ptr<Node> codeBlock;
+    IdentifierExpr::Pointer identifier;
+    Node::Pointer parameterClause;
+    Node::Pointer codeBlock;
 
-    FuncDecl(std::shared_ptr<Token> name, std::shared_ptr<Node> parameterClause, std::shared_ptr<Node> codeBlock);
+    FuncDecl(IdentifierExpr::Pointer identifier, Node::Pointer parameterClause, Node::Pointer codeBlock);
 };
 
 struct ConstructorDecl: Node {
@@ -135,10 +149,10 @@ struct ConstructorDecl: Node {
 struct Expr : Node {
     typedef std::shared_ptr<Expr> Pointer;
     
-    std::shared_ptr<Node> prefix;
-    std::shared_ptr<Node> binary;
+    Node::Pointer prefix;
+    std::vector<Node::Pointer> binaries;
     
-    Expr(std::shared_ptr<Node> prefix, std::shared_ptr<Node> binary);
+    Expr(Node::Pointer prefix, std::vector<Node::Pointer> binary);
 };
 
 struct PostfixExpr: Node {
@@ -171,29 +185,30 @@ struct BinaryExpr: Node {
 struct AssignmentExpr: Node {
     typedef std::shared_ptr<AssignmentExpr> Pointer;
     
-    std::shared_ptr<Node> expr;
+    IdentifierExpr::Pointer identifier;
+    Node::Pointer expr;
     AssignmentExpr(std::shared_ptr<Node> expr);
 };
 
 struct ArguCallExpr: Node {
     typedef std::shared_ptr<ArguCallExpr> Pointer;
     
-    Token::Pointer label;
-    std::shared_ptr<Node> expr;
+    IdentifierExpr::Pointer label;
+    Node::Pointer expr;
     
-    ArguCallExpr(Token::Pointer label, std::shared_ptr<Node> expr);
+    ArguCallExpr(IdentifierExpr::Pointer label, Node::Pointer expr);
 };
 
 struct FuncCallExpr: Node {
     typedef std::shared_ptr<FuncCallExpr> Pointer;
     
-    Token::Pointer identifier;
+    IdentifierExpr::Pointer identifier;
     std::vector<ArguCallExpr::Pointer> arguments;
     
     // Function's symbol
     Symbol::Pointer symbol;
     
-    FuncCallExpr(Token::Pointer identifier, std::vector<ArguCallExpr::Pointer> arguments);
+    FuncCallExpr(IdentifierExpr::Pointer identifier, std::vector<ArguCallExpr::Pointer> arguments);
 };
 
 struct MemberExpr: Node {
@@ -212,12 +227,6 @@ struct LiteralExpr : Node {
     LiteralExpr(Token::Pointer literal);
 };
 
-struct IdentifierExpr: Node {
-    typedef std::shared_ptr<IdentifierExpr> Pointer;
-    
-    std::shared_ptr<Token> identifier;
-    IdentifierExpr(std::shared_ptr<Token> literal);
-};
 
 struct ParenthesizedExpr: Node {
     typedef std::shared_ptr<ParenthesizedExpr> Pointer;
@@ -229,9 +238,9 @@ struct ParenthesizedExpr: Node {
 struct SelfExpr: Node {
     typedef std::shared_ptr<SelfExpr> Pointer;
     
-    std::shared_ptr<Token> identifier;
+    IdentifierExpr::Pointer identifier;
     
-    SelfExpr(std::shared_ptr<Token> identifier);
+    SelfExpr(IdentifierExpr::Pointer identifier);
 };
 
 struct SourceBlock: Node {
@@ -267,12 +276,22 @@ struct ForInStatement: Node {
 struct IfStatement: Node {
     typedef std::shared_ptr<IfStatement> Pointer;
     
-    std::shared_ptr<Node> condition;
-    std::shared_ptr<Node> ifCodeBlock;
-    std::shared_ptr<Node> elseCodeBlock;
+    Node::Pointer condition;
+    Node::Pointer ifCodeBlock;
+    Node::Pointer elseCodeBlock;
 
     IfStatement(std::shared_ptr<Node> condition, std::shared_ptr<Node> ifCodeBlock, std::shared_ptr<Node> elseCodeBlock);
 };
 
+
+struct NodeDebugPrinter {
+    void print(Node::Pointer node);
+    
+    void printTab();
+    void incTab();
+    void decTab();
+    
+    int size = 0;
+};
 
 #endif

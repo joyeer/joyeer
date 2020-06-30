@@ -1,6 +1,1 @@
-let b = 11
-var a = 13
-
-print(message: a)
-a = b 
-print(message: a)
+var a = 12 + 1 * 2

@@ -36,6 +36,7 @@ protected:
     
     void emit(IdentifierExpr::Pointer node);
     
+    void emit(AssignmentExpr::Pointer node);
 private:
     JrCodeWriter writer;
     

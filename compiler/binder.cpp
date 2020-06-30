@@ -144,7 +144,7 @@ Node::Pointer Binder::bind(std::shared_ptr<Node> node) {
         case assignmentExpr:
             return bind(std::static_pointer_cast<AssignmentExpr>(node));
         case binaryExpr:
-            break;
+            return bind(std::static_pointer_cast<BinaryExpr>(node));
     }
 }
 
@@ -182,8 +182,8 @@ Node::Pointer Binder::bind(VarDecl::Pointer decl) {
     
     auto pattern = decl->pattern;
     
-    auto symbol = context->makeSymbol(decl, pattern->identifier->rawValue, SymbolFlag::varSymbol);
-    auto variable  = context->makeVar(decl, pattern->identifier->rawValue, false);
+    auto symbol = context->makeSymbol(decl, pattern->identifier->token->rawValue, SymbolFlag::varSymbol);
+    auto variable  = context->makeVar(decl, pattern->identifier->token->rawValue, false);
     
     decl->variable = variable;
     
@@ -196,8 +196,8 @@ Node::Pointer Binder::bind(VarDecl::Pointer decl) {
 
 Node::Pointer Binder::bind(ConstDecl::Pointer decl) {
     auto pattern = decl->pattern;
-    context->makeSymbol(decl, pattern->identifier->rawValue, SymbolFlag::constSymbol);
-    auto variable = context->makeVar(decl, pattern->identifier->rawValue, true);
+    context->makeSymbol(decl, pattern->identifier->token->rawValue, SymbolFlag::constSymbol);
+    auto variable = context->makeVar(decl, pattern->identifier->token->rawValue, true);
     
     decl->variable = variable;
     
@@ -220,10 +220,10 @@ Node::Pointer Binder::bind(FuncCallExpr::Pointer decl) {
     }
     decl->arguments = argus;
     
-    std::wstring name = decl->identifier->rawValue;
+    std::wstring name = decl->identifier->token->rawValue;
     name += L"(";
     for(auto& argument: decl->arguments) {
-        name += argument->label->rawValue;
+        name += argument->label->token->rawValue;
         name += L":";
     }
     name += L")";
@@ -253,7 +253,7 @@ Node::Pointer Binder::bind(PrefixExpr::Pointer decl) {
 }
 
 Node::Pointer Binder::bind(IdentifierExpr::Pointer decl) {
-    if(context->findSymbol(decl->identifier->rawValue) == nullptr) {
+    if(context->findSymbol(decl->token->rawValue) == nullptr) {
         Diagnostics::reportError(L"[Error] cannot find symbol");
     }
     return decl;
@@ -261,23 +261,37 @@ Node::Pointer Binder::bind(IdentifierExpr::Pointer decl) {
 
 Node::Pointer Binder::bind(Expr::Pointer decl) {
     
-    // If binary is assignment
-    if(decl->binary->kind == assignmentExpr) {
-        if(decl->prefix->kind != identifierExpr) {
-            Diagnostics::reportError(L"[Error] left of assignment expression must be a variable");
-            return decl;
-        }
-        
-        
-    }
+//    // If binary is assignment
+//    if(decl->binary->kind == assignmentExpr) {
+//        if(decl->prefix->kind != identifierExpr) {
+//            Diagnostics::reportError(L"[Error] left of assignment expression must be a variable");
+//            return decl;
+//        }
+//
+//        auto identifier = std::static_pointer_cast<IdentifierExpr>(bind(decl->prefix));
+//        auto var = context->currentScope()->find(identifier->identifier->rawValue);
+//        identifier->varRef = var;
+//        auto assignmentExpr = std::static_pointer_cast<AssignmentExpr>(bind(decl->binary));
+//        assignmentExpr->identifier = identifier;
+//        return assignmentExpr;
+//    }
     
     decl->prefix = bind(decl->prefix);
-    decl->binary = bind(decl->binary);
+    std::vector<Node::Pointer> binaries;
+    for(auto bin: decl->binaries) {
+        binaries.push_back(bind(bin));
+    }
+    decl->binaries = binaries;
     return decl;
     
 }
 
 Node::Pointer Binder::bind(AssignmentExpr::Pointer decl) {
+    decl->expr = bind(decl->expr);
+    return decl;
+}
+
+Node::Pointer Binder::bind(BinaryExpr::Pointer decl) {
     decl->expr = bind(decl->expr);
     return decl;
 }

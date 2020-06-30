@@ -21,7 +21,7 @@ uint32_t JrRuntimeStack::pop4() {
 }
 
 void JrRuntimeStack::storeValueForVariable(uint8_t *addressOfVariable, int value) {
-    assert(addressOfVariable < pointer);
+//    assert(addressOfVariable < pointer);
     *(int*)addressOfVariable = value;
 }
 
