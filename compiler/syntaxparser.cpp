@@ -367,7 +367,34 @@ Node::Pointer SyntaxParser::tryParseExpr() {
         return expr;
     }
     
+    
     return std::make_shared<Expr>(expr, binaries);
+}
+
+std::shared_ptr<Node> SyntaxParser::tryParseBinaryExpr() {
+    std::shared_ptr<Token> assignmentOperator = tryEat(TokenKind::operators, Operators::EQULAS);
+    if(assignmentOperator != nullptr) {
+        std::shared_ptr<Node> prefixExpr = tryParseExpr();
+        if(prefixExpr == nullptr) {
+            // TODO: Error
+            return nullptr;
+        }
+
+        return std::make_shared<AssignmentExpr>(prefixExpr);
+    }
+    
+    std::shared_ptr<Token> binaryOperator = tryEat(TokenKind::operators);
+    if(binaryOperator != nullptr) {
+        std::shared_ptr<Node> prefixExpr = tryParsePrefixExpr();
+        if(prefixExpr == nullptr) {
+            // TODO: Error
+            return nullptr;
+        }
+        return  std::shared_ptr<Node>(new BinaryExpr(binaryOperator, prefixExpr));
+    }
+
+    return nullptr;
+    
 }
 
 std::shared_ptr<Node> SyntaxParser::tryParsePrefixExpr() {
@@ -484,31 +511,6 @@ ArguCallExpr::Pointer SyntaxParser::tryParseArguCallExpr() {
     return std::make_shared<ArguCallExpr>(identifier, expr);
 }
 
-std::shared_ptr<Node> SyntaxParser::tryParseBinaryExpr() {
-    std::shared_ptr<Token> assignmentOperator = tryEat(TokenKind::operators, Operators::EQULAS);
-    if(assignmentOperator != nullptr) {
-        std::shared_ptr<Node> prefixExpr = tryParsePrefixExpr();
-        if(prefixExpr == nullptr) {
-            // TODO: Error
-            return nullptr;
-        }
-
-        return std::make_shared<AssignmentExpr>(prefixExpr);
-    }
-    
-    std::shared_ptr<Token> binaryOperator = tryEat(TokenKind::operators);
-    if(binaryOperator != nullptr) {
-        std::shared_ptr<Node> prefixExpr = tryParsePrefixExpr();
-        if(prefixExpr == nullptr) {
-            // TODO: Error
-            return nullptr;
-        }
-        return  std::shared_ptr<Node>(new BinaryExpr(binaryOperator, prefixExpr));
-    }
-
-    return nullptr;
-    
-}
 
 Node::Pointer SyntaxParser::tryParsePrimaryExpr() {
     auto identifier = tryParseIdentifierExpr();

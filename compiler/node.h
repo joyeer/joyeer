@@ -286,7 +286,7 @@ struct IfStatement: Node {
 
 struct NodeDebugPrinter {
     void print(Node::Pointer node);
-    
+    void print(std::vector<Node::Pointer> nodes);
     void printTab();
     void incTab();
     void decTab();

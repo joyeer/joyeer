@@ -256,25 +256,27 @@ Node::Pointer Binder::bind(IdentifierExpr::Pointer decl) {
     if(context->findSymbol(decl->token->rawValue) == nullptr) {
         Diagnostics::reportError(L"[Error] cannot find symbol");
     }
+    
+    auto var = context->currentScope()->find(decl->token->rawValue);
+    decl->varRef = var;
     return decl;
 }
 
 Node::Pointer Binder::bind(Expr::Pointer decl) {
+    // If binary is assignment
+    if(decl->binaries.size() == 1 && decl->binaries[0]->kind == assignmentExpr) {
+        if(decl->prefix->kind != identifierExpr) {
+            Diagnostics::reportError(L"[Error] left of assignment expression must be a variable");
+            return decl;
+        }
+
+        auto identifier = std::static_pointer_cast<IdentifierExpr>(bind(decl->prefix));
+        auto assignmentExpr = std::static_pointer_cast<AssignmentExpr>(bind(decl->binaries[0]));
+        assignmentExpr->identifier = identifier;
+        return assignmentExpr;
+    }
     
-//    // If binary is assignment
-//    if(decl->binary->kind == assignmentExpr) {
-//        if(decl->prefix->kind != identifierExpr) {
-//            Diagnostics::reportError(L"[Error] left of assignment expression must be a variable");
-//            return decl;
-//        }
-//
-//        auto identifier = std::static_pointer_cast<IdentifierExpr>(bind(decl->prefix));
-//        auto var = context->currentScope()->find(identifier->identifier->rawValue);
-//        identifier->varRef = var;
-//        auto assignmentExpr = std::static_pointer_cast<AssignmentExpr>(bind(decl->binary));
-//        assignmentExpr->identifier = identifier;
-//        return assignmentExpr;
-//    }
+    // Order of the operations
     
     decl->prefix = bind(decl->prefix);
     std::vector<Node::Pointer> binaries;

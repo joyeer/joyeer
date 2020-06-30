@@ -35,7 +35,7 @@ int main(int argc, char** argv) {
     binder.bind(sourceBlock);
     
     std::wcout << std::endl << L"==bind=="<<std::endl;
-//    debugPrinter.print(sourceBlock);
+    debugPrinter.print(sourceBlock);
 
     
     TypeChecker typeChecker;

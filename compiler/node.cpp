@@ -150,6 +150,24 @@ elseCodeBlock(elseCodeBlock) {
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+void NodeDebugPrinter::print(std::vector<Node::Pointer> nodes) {
+    std::wcout << std::endl;
+    printTab();
+    
+    std::wcout << L"[";
+    incTab();
+    
+    for(auto n : nodes) {
+        print(n);
+    }
+    decTab();
+    std::wcout << std::endl;
+    printTab();
+    
+    std::wcout << L"]";
+    
+}
+
 void NodeDebugPrinter::print(Node::Pointer node) {
     if(node == nullptr) {
         return;
@@ -243,11 +261,7 @@ void NodeDebugPrinter::print(Node::Pointer node) {
             if(n->prefix != nullptr) {
                 print(n->prefix);
             }
-            
-            for(auto binary: n->binaries) {
-                print(binary);
-            }
-
+            print(n->binaries);
             decTab();
         }
             break;
