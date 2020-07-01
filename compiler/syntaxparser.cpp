@@ -383,14 +383,14 @@ std::shared_ptr<Node> SyntaxParser::tryParseBinaryExpr() {
         return std::make_shared<AssignmentExpr>(prefixExpr);
     }
     
-    std::shared_ptr<Token> binaryOperator = tryEat(TokenKind::operators);
+    auto binaryOperator = tryParseOperatorExpr();
     if(binaryOperator != nullptr) {
         std::shared_ptr<Node> prefixExpr = tryParsePrefixExpr();
         if(prefixExpr == nullptr) {
             // TODO: Error
             return nullptr;
         }
-        return  std::shared_ptr<Node>(new BinaryExpr(binaryOperator, prefixExpr));
+        return std::make_shared<BinaryExpr>(binaryOperator, prefixExpr);
     }
 
     return nullptr;

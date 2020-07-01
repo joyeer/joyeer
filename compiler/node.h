@@ -180,10 +180,10 @@ struct PrefixExpr: Node {
 struct BinaryExpr: Node {
     typedef std::shared_ptr<BinaryExpr> Pointer;
     
-    std::shared_ptr<Token> binaryOperator;
+    OperatorExpr::Pointer op;
     std::shared_ptr<Node> expr;
     
-    BinaryExpr(std::shared_ptr<Token> binaryOperator, std::shared_ptr<Node> expr);
+    BinaryExpr(OperatorExpr::Pointer op, std::shared_ptr<Node> expr);
 };
 
 struct AssignmentExpr: Node {

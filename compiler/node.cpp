@@ -65,25 +65,25 @@ expr(expr),
 op(op) {
 }
 
-PrefixExpr::PrefixExpr(OperatorExpr::Pointer op, std::shared_ptr<Node> expr):
+PrefixExpr::PrefixExpr(OperatorExpr::Pointer op, Node::Pointer expr):
 Node(SyntaxKind::prefixExpr),
 op(op),
 expr(expr) {
     
 }
 
-BinaryExpr::BinaryExpr(std::shared_ptr<Token> binaryOperator, std::shared_ptr<Node> expr):
-    Node(SyntaxKind::binaryExpr),
-    binaryOperator(binaryOperator),
-    expr(expr) {
+BinaryExpr::BinaryExpr(OperatorExpr::Pointer op, Node::Pointer expr):
+Node(SyntaxKind::binaryExpr),
+op(op),
+expr(expr) {
 }
 
-AssignmentExpr::AssignmentExpr(std::shared_ptr<Node> expr):
-    Node(SyntaxKind::assignmentExpr),
-    expr(expr) {
+AssignmentExpr::AssignmentExpr(Node::Pointer expr):
+Node(SyntaxKind::assignmentExpr),
+expr(expr) {
 }
 
-ArguCallExpr::ArguCallExpr(IdentifierExpr::Pointer identifier, std::shared_ptr<Node> expr):
+ArguCallExpr::ArguCallExpr(IdentifierExpr::Pointer identifier, Node::Pointer expr):
 Node(SyntaxKind::arguCallExpr),
 label(identifier),
 expr(expr) {
@@ -351,10 +351,11 @@ void NodeDebugPrinter::print(Node::Pointer node) {
         case binaryExpr: {
             std::wcout << L"+binaryExpr" ;
             auto n = std::static_pointer_cast<BinaryExpr>(node);
-            if(n->binaryOperator != nullptr) {
-                std::wcout << L"(" << n->binaryOperator->rawValue << L")";
-            }
+            
             incTab();
+            if(n->op != nullptr) {
+                print(n->op);
+            }
             if(n->expr != nullptr) {
                 print(n->expr);
             }
