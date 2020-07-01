@@ -69,6 +69,7 @@ struct OperatorExpr: Node {
     typedef std::shared_ptr<OperatorExpr> Pointer;
     
     Token::Pointer token;
+    OperatorPriority priority;
     OperatorExpr(Token::Pointer token);
 };
 
@@ -155,6 +156,9 @@ struct Expr : Node {
     
     Node::Pointer prefix;
     std::vector<Node::Pointer> binaries;
+    
+    // After binder, the 'binaries' and prefix will be merged into nodes 
+    std::vector<Node::Pointer> nodes;
     
     Expr(Node::Pointer prefix, std::vector<Node::Pointer> binary);
 };

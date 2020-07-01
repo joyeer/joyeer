@@ -146,7 +146,7 @@ Node::Pointer Binder::bind(std::shared_ptr<Node> node) {
         case binaryExpr:
             return bind(std::static_pointer_cast<BinaryExpr>(node));
         case operatorExpr:
-            break;
+            return bind(std::static_pointer_cast<OperatorExpr>(node));
             
     }
 }
@@ -279,14 +279,81 @@ Node::Pointer Binder::bind(Expr::Pointer decl) {
         return assignmentExpr;
     }
     
-    // Order of the operations
+    // Flat the expr subnodes
+    std::vector<Node::Pointer> nodes;
+    nodes.push_back(decl->prefix);
     
-    decl->prefix = bind(decl->prefix);
-    std::vector<Node::Pointer> binaries;
-    for(auto bin: decl->binaries) {
-        binaries.push_back(bind(bin));
+    for(auto node: decl->binaries) {
+        if(node->kind != binaryExpr) {
+            Diagnostics::reportError(L"[Error] Except an binary expression");
+            return decl;
+        }
+        
+        auto bn = std::static_pointer_cast<BinaryExpr>(node);
+        nodes.push_back(bn->op);
+        nodes.push_back(bn->expr);
     }
-    decl->binaries = binaries;
+    
+    std::deque<Node::Pointer> temps;
+    std::deque<Node::Pointer> operators;
+    std::vector<Node::Pointer> result;
+    
+    for(auto iterator = nodes.begin(); iterator != nodes.end(); iterator ++ ) {
+        auto n  = *iterator;
+        if(n->kind != operatorExpr) {
+            temps.push_back(n);
+            continue;
+        }
+        
+        auto opNode = std::static_pointer_cast<OperatorExpr>(n);
+        if(Operators::getPriority(opNode->token->rawValue) == low) {
+            operators.push_back(opNode);
+            continue;
+        }
+        
+        // for high priority operator
+        if(temps.size() == 0) {
+            Diagnostics::reportError(L"[Error] Except");
+        }
+        
+        auto l = temps.back();
+        temps.pop_back();
+        iterator ++;
+        if(iterator == nodes.end()) {
+            Diagnostics::reportError(L"[Error] Except");
+        }
+        auto r = *iterator;
+        
+        result.push_back(l);
+        result.push_back(r);
+        result.push_back(opNode);
+    }
+    
+    
+    
+    while(temps.size() > 0 || operators.size() > 0 ) {
+        if(temps.size() > 0 ) {
+            auto n = temps.front();
+            result.push_back(n);
+            temps.pop_front();
+        }
+        
+        if(operators.size() > 0) {
+            auto n = operators.front();
+            result.push_back(n);
+            operators.pop_front();
+        }
+    }
+    
+    
+    decl->prefix = nullptr;
+    decl->binaries.clear();
+    decl->nodes.clear();
+    
+    for(auto n : result) {
+        decl->nodes.push_back(bind(n));
+    }
+    
     return decl;
     
 }
@@ -298,5 +365,9 @@ Node::Pointer Binder::bind(AssignmentExpr::Pointer decl) {
 
 Node::Pointer Binder::bind(BinaryExpr::Pointer decl) {
     decl->expr = bind(decl->expr);
+    return decl;
+}
+
+Node::Pointer Binder::bind(OperatorExpr::Pointer decl) {
     return decl;
 }

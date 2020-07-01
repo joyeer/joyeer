@@ -1,4 +1,5 @@
 #include "token.h"
+#include <unordered_map>
 
 Token::Token(TokenKind kind, const std::wstring& rawValue, size_t lineNumber, size_t columnAt):
   kind(kind),
@@ -67,6 +68,51 @@ const std::wstring Operators::EQULAS = L"=";
 const std::wstring Operators::EQUAL_EQUAL = L"==";
 const std::wstring Operators::QUESTION = L"?";
 const std::wstring Operators::POINT = L"!";
+const std::wstring Operators::PLUS = L"+";
+const std::wstring Operators::MINUS = L"-";
+const std::wstring Operators::MULTIPLY = L"*";
+const std::wstring Operators::DIV = L"/";
+const std::wstring Operators::PERCENTAGE = L"%";
+
+std::unordered_map<std::wstring, OperatorPriority> initOperatorPriorities() {
+    std::unordered_map<std::wstring, OperatorPriority> result {
+        {
+            Operators::EQULAS, OperatorPriority::high
+        },
+        {
+            Operators::EQUAL_EQUAL, OperatorPriority::high
+        },
+        {
+            Operators::QUESTION, OperatorPriority::high
+        },
+        {
+            Operators::POINT, OperatorPriority::high
+        },
+        {
+            Operators::PLUS, OperatorPriority::low
+        },
+        {
+            Operators::MINUS, OperatorPriority::low
+        },
+        {
+            Operators::MULTIPLY, OperatorPriority::high
+        },
+        {
+            Operators::DIV, OperatorPriority::high
+        },
+        {
+            Operators::PERCENTAGE, OperatorPriority::high
+        },
+    };
+    return result;
+}
+
+const std::unordered_map<std::wstring, OperatorPriority> Operators::prioprityMap = initOperatorPriorities();
+
+OperatorPriority Operators::getPriority(const std::wstring& op) {
+    return prioprityMap.find(op)->second;
+}
+
 
 // Literals
 const std::wstring Literals::FALSE = L"false";

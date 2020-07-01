@@ -3,6 +3,7 @@
 
 #include <string>
 #include <unordered_set>
+#include <unordered_map>
 #include <memory>
 #include <vector>
 
@@ -31,6 +32,7 @@ public:
         int index;
         double doubleValue;
         float floatValue;
+        int opValue;
     };
 
     int lineNumber;
@@ -55,7 +57,7 @@ struct Keywords {
     static const std::wstring IN;
     static const std::wstring INIT;
     static const std::wstring SELF;
-
+    
     static const std::unordered_set<std::wstring> map;
 };
 
@@ -73,11 +75,26 @@ struct Punctuations {
     static const std::wstring DOT;                  // .
 };
 
+enum OperatorPriority {
+    high,
+    low
+};
+
 struct Operators {
     static const std::wstring EQULAS;               // =
     static const std::wstring EQUAL_EQUAL;          // ==
     static const std::wstring QUESTION;             // ?
     static const std::wstring POINT;                // !
+    static const std::wstring PLUS;                 // +
+    static const std::wstring MINUS;                // -
+    static const std::wstring MULTIPLY;             // *
+    static const std::wstring DIV;                  // /
+    static const std::wstring PERCENTAGE;           // %
+    
+    // get the operator's priority
+    static OperatorPriority getPriority(const std::wstring& name);
+    
+    static const std::unordered_map<std::wstring, OperatorPriority> prioprityMap;
 };
 
 struct Literals {

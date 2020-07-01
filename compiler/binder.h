@@ -79,6 +79,8 @@ protected:
     
     Node::Pointer bind(BinaryExpr::Pointer decl);
     
+    Node::Pointer bind(OperatorExpr::Pointer decl);
+    
 private:
     SymbolFactory::Pointer symFactory;
     TypeFactory::Pointer typeFactory;

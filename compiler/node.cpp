@@ -8,6 +8,7 @@ Node::Node(SyntaxKind k): kind(k) {
 OperatorExpr::OperatorExpr(Token::Pointer token):
 Node(SyntaxKind::operatorExpr),
 token(token) {
+    
 }
 
 ConstDecl::ConstDecl(Pattern::Pointer pattern, std::shared_ptr<Node> initializer):
@@ -266,7 +267,12 @@ void NodeDebugPrinter::print(Node::Pointer node) {
             if(n->prefix != nullptr) {
                 print(n->prefix);
             }
-            print(n->binaries);
+            if(n->binaries.size() > 0) {
+                print(n->binaries);
+            }
+            if(n->nodes.size() > 0) {
+                print(n->nodes);
+            }
             decTab();
         }
             break;

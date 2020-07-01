@@ -29,6 +29,12 @@ void JrInterpreter::run(JrFunction::Pointer function) {
             case OP_ILOAD:
                 exec_iload(instruction);
                 break;
+            case OP_IMUL:
+                exec_imul(instruction);
+                break;
+            case OP_IADD:
+                exec_iadd(instruction);
+                break;
             default:
                 break;
         }
@@ -73,3 +79,14 @@ void JrInterpreter::exec_invoke(const Instruction &instruction) {
     }
 }
 
+void JrInterpreter::exec_iadd(const Instruction &instruction) {
+    auto value1 = context->stack->pop4();
+    auto value2 = context->stack->pop4();
+    context->stack->push4(value1 + value2);
+}
+
+void JrInterpreter::exec_imul(const Instruction &instruction) {
+    auto value1 = context->stack->pop4();
+    auto value2 = context->stack->pop4();
+    context->stack->push4(value1 * value2);
+}

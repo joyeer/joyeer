@@ -13,7 +13,15 @@ enum Opcode {
     
     OP_ISTORE,
     OP_ILOAD,
+    
+    OP_IADD,
+    OP_ISUB,
+    OP_IMUL,
+    OP_IDIV,
+    OP_IREM,
+    
     OP_INVOKE,
+    
     
     OP_DEBUG,
 

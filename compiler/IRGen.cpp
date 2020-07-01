@@ -2,6 +2,8 @@
 #include "diagnostic.h"
 #include "runtime/buildin.h"
 #include <cassert>
+#include <unordered_map>
+
 
 IRGen::IRGen() {
     function = std::make_shared<JrFunction>();
@@ -56,6 +58,7 @@ void IRGen::emit(Node::Pointer node) {
         case ifStatement:
             break;
         case expr:
+            emit(std::static_pointer_cast<Expr>(node));
             break;
         case selfExpr:
             break;
@@ -90,6 +93,7 @@ void IRGen::emit(Node::Pointer node) {
         case binaryExpr:
             break;
         case operatorExpr:
+            emit(std::static_pointer_cast<OperatorExpr>(node));
             break;
     }
 }
@@ -192,5 +196,31 @@ void IRGen::emit(AssignmentExpr::Pointer node) {
     writer.write({
         .opcode = OP_ISTORE,
         .value = node->identifier->varRef->index
+    });
+}
+
+void IRGen::emit(Expr::Pointer node) {
+    assert(node->prefix == nullptr);
+    assert(node->binaries.size() == 0);
+    
+    for(auto n: node->nodes) {
+        emit(n);
+    }
+}
+
+void IRGen::emit(OperatorExpr::Pointer node) {
+    
+    static std::unordered_map<std::wstring, Opcode> imaps {
+        {
+            { Operators::MINUS, OP_ISUB },
+            { Operators::PLUS, OP_IADD },
+            { Operators::DIV, OP_IDIV },
+            { Operators::MULTIPLY, OP_IMUL },
+            { Operators::PERCENTAGE, OP_IREM }
+        }
+    };
+    
+    writer.write({
+        .opcode = static_cast<uint8_t>(imaps[node->token->rawValue])
     });
 }
