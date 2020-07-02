@@ -315,8 +315,13 @@ void NodeDebugPrinter::print(Node::Pointer node) {
             
         }
             break;
-        case parenthesizedExpr:
+        case parenthesizedExpr: {
+            auto n = std::static_pointer_cast<ParenthesizedExpr>(node);
             std::wcout << L"+parenthesizedExpr" ;
+            incTab();
+            print(n->expr);
+            decTab();
+        }
             break;
         case arguCallExpr: {
             std::wcout << L"+arguCallExpr" ;

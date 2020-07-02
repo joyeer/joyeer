@@ -518,14 +518,19 @@ Node::Pointer SyntaxParser::tryParsePrimaryExpr() {
         return identifier;
     }
 
-    std::shared_ptr<Node> literalExpr = tryParseLiteralExpr();
+    auto literalExpr = tryParseLiteralExpr();
     if (literalExpr != nullptr) {
         return literalExpr;
     }
     
-    std::shared_ptr<Node> selfExpr = tryParseSelfExpr();
+    auto selfExpr = tryParseSelfExpr();
     if(selfExpr != nullptr) {
         return selfExpr;
+    }
+    
+    auto parenthesizedExpr = tryParseParenthesizedExpr();
+    if(parenthesizedExpr != nullptr) {
+        return parenthesizedExpr;
     }
 
     return nullptr;
@@ -555,22 +560,23 @@ std::shared_ptr<LiteralExpr> SyntaxParser::tryParseLiteralExpr() {
     return nullptr;
 }
 
-std::shared_ptr<Node> SyntaxParser::tryParseParenthesizedExpr() {
+Node::Pointer SyntaxParser::tryParseParenthesizedExpr() {
     if(tryEat(TokenKind::punctuation, Punctuations::OPEN_ROUND_BRACKET) == nullptr) {
         return nullptr;
     }
 
     std::shared_ptr<Node> expr = tryParseExpr();
     if(expr == nullptr) {
+        Diagnostics::reportError(L"[Error] Parenthesized expr error 1");
         return nullptr;
-        // TODO: error
     }
 
     if(tryEat(TokenKind::punctuation, Punctuations::CLOSE_ROUND_BRACKET) == nullptr) {
-        return nullptr; //TODO: Error
+        Diagnostics::reportError(L"[Error] Parenthesized expr error 2");
+        return nullptr; 
     }
 
-    return std::shared_ptr<Node>(new ParenthesizedExpr(expr));
+    return std::make_shared<ParenthesizedExpr>(expr);
 }
 
 void SyntaxParser::tryParseConditionalOperator() {

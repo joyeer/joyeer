@@ -128,7 +128,7 @@ Node::Pointer Binder::bind(std::shared_ptr<Node> node) {
         case identifierExpr:
             return bind(std::static_pointer_cast<IdentifierExpr>(node));
         case parenthesizedExpr:
-            break;
+            return bind(std::static_pointer_cast<ParenthesizedExpr>(node));
         case arguCallExpr:
             return bind(std::static_pointer_cast<ArguCallExpr>(node));
         case functionCallExpr:
@@ -379,5 +379,15 @@ Node::Pointer Binder::bind(BinaryExpr::Pointer decl) {
 }
 
 Node::Pointer Binder::bind(OperatorExpr::Pointer decl) {
+    return decl;
+}
+
+Node::Pointer Binder::bind(ParenthesizedExpr::Pointer decl) {
+    if(decl->expr->kind == parenthesizedExpr) {
+        auto n = std::static_pointer_cast<ParenthesizedExpr>(decl->expr);
+        return bind(n);
+    }
+    
+    decl->expr = bind(decl->expr);
     return decl;
 }

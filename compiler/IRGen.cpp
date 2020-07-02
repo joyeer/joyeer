@@ -71,6 +71,7 @@ void IRGen::emit(Node::Pointer node) {
             emit(std::static_pointer_cast<IdentifierExpr>(node));
             break;
         case parenthesizedExpr:
+            emit(std::static_pointer_cast<ParenthesizedExpr>(node));
             break;
         case arguCallExpr:
             emit(std::static_pointer_cast<ArguCallExpr>(node));
@@ -223,4 +224,8 @@ void IRGen::emit(OperatorExpr::Pointer node) {
     writer.write({
         .opcode = static_cast<uint8_t>(imaps[node->token->rawValue])
     });
+}
+
+void IRGen::emit(ParenthesizedExpr::Pointer node) {
+    emit(node->expr);
 }

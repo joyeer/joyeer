@@ -41,6 +41,8 @@ protected:
     void emit(Expr::Pointer node);
     
     void emit(OperatorExpr::Pointer node);
+    
+    void emit(ParenthesizedExpr::Pointer node);
 private:
     JrCodeWriter writer;
     

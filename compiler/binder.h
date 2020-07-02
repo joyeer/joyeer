@@ -81,6 +81,8 @@ protected:
     
     Node::Pointer bind(OperatorExpr::Pointer decl);
     
+    Node::Pointer bind(ParenthesizedExpr::Pointer decl);
+    
 private:
     SymbolFactory::Pointer symFactory;
     TypeFactory::Pointer typeFactory;
