@@ -13,3 +13,6 @@ var a = 13
 print(message: a)
 a = b 
 print(message: a)
+
+a = 24 / 2 - 23 % 2 * 2 - 14 + 4 * 4 - 14 / 3
+print(message: a)

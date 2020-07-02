@@ -56,6 +56,10 @@ protected:
 
 };
 
+struct NoneNode:public Node {
+    NoneNode();
+};
+
 struct IdentifierExpr: public Node {
     typedef std::shared_ptr<IdentifierExpr> Pointer;
     
@@ -161,6 +165,7 @@ struct Expr : Node {
     std::vector<Node::Pointer> nodes;
     
     Expr(Node::Pointer prefix, std::vector<Node::Pointer> binary);
+    Expr(std::vector<Node::Pointer> nodes);
 };
 
 struct PostfixExpr: Node {

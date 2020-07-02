@@ -147,7 +147,6 @@ Node::Pointer Binder::bind(std::shared_ptr<Node> node) {
             return bind(std::static_pointer_cast<BinaryExpr>(node));
         case operatorExpr:
             return bind(std::static_pointer_cast<OperatorExpr>(node));
-            
     }
 }
 
@@ -266,6 +265,7 @@ Node::Pointer Binder::bind(IdentifierExpr::Pointer decl) {
 }
 
 Node::Pointer Binder::bind(Expr::Pointer decl) {
+    
     // If binary is assignment
     if(decl->binaries.size() == 1 && decl->binaries[0]->kind == assignmentExpr) {
         if(decl->prefix->kind != identifierExpr) {
@@ -278,6 +278,19 @@ Node::Pointer Binder::bind(Expr::Pointer decl) {
         assignmentExpr->identifier = identifier;
         return assignmentExpr;
     }
+    
+    
+    // visit sub nodes first;
+    if(decl->prefix != nullptr) {
+        decl->prefix = bind(decl->prefix);
+    }
+    
+    std::vector<Node::Pointer> binaries;
+    for(auto n: decl->binaries) {
+        binaries.push_back(bind(n));
+    }
+    decl->binaries = binaries;
+    
     
     // Flat the expr subnodes
     std::vector<Node::Pointer> nodes;
@@ -295,8 +308,8 @@ Node::Pointer Binder::bind(Expr::Pointer decl) {
     }
     
     std::deque<Node::Pointer> temps;
-    std::deque<Node::Pointer> operators;
-    std::vector<Node::Pointer> result;
+    std::deque<OperatorExpr::Pointer> operators;
+    
     
     for(auto iterator = nodes.begin(); iterator != nodes.end(); iterator ++ ) {
         auto n  = *iterator;
@@ -324,38 +337,35 @@ Node::Pointer Binder::bind(Expr::Pointer decl) {
         }
         auto r = *iterator;
         
-        result.push_back(l);
-        result.push_back(r);
-        result.push_back(opNode);
+        auto expr = std::make_shared<Expr>(std::vector<Node::Pointer> {l, r, opNode});
+        temps.push_back(expr);
     }
     
-    
-    
+    // assembly all
+    std::vector<Node::Pointer> result;
     while(temps.size() > 0 || operators.size() > 0 ) {
-        if(temps.size() > 0 ) {
-            auto n = temps.front();
-            result.push_back(n);
+        if(temps.size() > operators.size() ) {
+            auto t = temps.front();
             temps.pop_front();
+            result.push_back(t);
+    
+            continue;
         }
         
-        if(operators.size() > 0) {
-            auto n = operators.front();
-            result.push_back(n);
-            operators.pop_front();
-        }
+        auto t = temps.front();
+        auto o = operators.front();
+        temps.pop_front();
+        operators.pop_front();
+        result.push_back(t);
+        result.push_back(o);
+        
     }
-    
     
     decl->prefix = nullptr;
     decl->binaries.clear();
-    decl->nodes.clear();
-    
-    for(auto n : result) {
-        decl->nodes.push_back(bind(n));
-    }
+    decl->nodes = result;
     
     return decl;
-    
 }
 
 Node::Pointer Binder::bind(AssignmentExpr::Pointer decl) {

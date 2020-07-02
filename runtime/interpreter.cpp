@@ -35,6 +35,15 @@ void JrInterpreter::run(JrFunction::Pointer function) {
             case OP_IADD:
                 exec_iadd(instruction);
                 break;
+            case OP_ISUB:
+                exec_isub(instruction);
+                break;
+            case OP_IDIV:
+                exec_idiv(instruction);
+                break;
+            case OP_IREM:
+                exec_irem(instruction);
+                break;
             default:
                 break;
         }
@@ -89,4 +98,23 @@ void JrInterpreter::exec_imul(const Instruction &instruction) {
     auto value1 = context->stack->pop4();
     auto value2 = context->stack->pop4();
     context->stack->push4(value1 * value2);
+}
+
+void JrInterpreter::exec_isub(const Instruction &instruction) {
+    auto value1 = context->stack->pop4();
+    auto value2 = context->stack->pop4();
+    context->stack->push4(value2 - value1 );
+}
+
+void JrInterpreter::exec_idiv(const Instruction &instrunction) {
+    auto value1 = context->stack->pop4();
+    auto value2 = context->stack->pop4();
+    context->stack->push4(value2 / value1);
+}
+
+void JrInterpreter::exec_irem(const Instruction &instrunction) {
+    auto value1 = context->stack->pop4();
+    auto value2 = context->stack->pop4();
+    
+    context->stack->push4(value2 % value1);
 }

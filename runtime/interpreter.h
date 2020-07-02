@@ -21,6 +21,9 @@ private:
     void exec_iload(const Instruction& instruction);
     void exec_iadd(const Instruction& instruction);
     void exec_imul(const Instruction& instruction);
+    void exec_isub(const Instruction& instruction);
+    void exec_idiv(const Instruction& instrunction);
+    void exec_irem(const Instruction& instrunction);
     
     JrRuntimeContext* context;
 };

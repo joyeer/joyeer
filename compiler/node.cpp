@@ -60,6 +60,14 @@ prefix(prefix),
 binaries(binaries) {
 }
 
+Expr::Expr(std::vector<Node::Pointer> nodes):
+Node(SyntaxKind::expr),
+prefix(nullptr),
+binaries(),
+nodes(nodes){
+    
+}
+
 PostfixExpr::PostfixExpr(Node::Pointer expr, OperatorExpr::Pointer op):
 Node(SyntaxKind::postfixExpr),
 expr(expr),
