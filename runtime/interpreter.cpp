@@ -51,6 +51,9 @@ void JrInterpreter::run(JrFunction::Pointer function) {
             case OP_IFLE:
                 exec_ifle(instruction);
                 break;
+            case OP_GOTO:
+                exec_goto(instruction);
+                break;
             default:
                 break;
         }
@@ -133,4 +136,9 @@ void JrInterpreter::exec_ifle(const Instruction &instrunction) {
     if(value1 <= 0) {
         pointer += instrunction.value;
     }
+}
+
+void JrInterpreter::exec_goto(const Instruction &instruction) {
+    auto value1 = context->stack->pop4();
+    pointer += instruction.value;
 }

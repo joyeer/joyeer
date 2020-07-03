@@ -29,6 +29,8 @@ enum Opcode {
     
     OP_INVOKE,
     
+    OP_GOTO,
+    
     
     OP_DEBUG,
 

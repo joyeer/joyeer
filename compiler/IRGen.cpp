@@ -249,12 +249,26 @@ void IRGen::emit(IfStatement::Pointer node) {
     gen.emit(node->ifCodeBlock);
     auto instructions = gen.getInstructions();
     
+    std::vector<Instruction> elseInstructions;
+    if(node->elseCodeBlock != nullptr) {
+        IRGen elseBlockGenerator;
+        elseBlockGenerator.emit(node->elseCodeBlock);
+        elseInstructions = elseBlockGenerator.getInstructions();
+        
+        // insert an goto instruction in ifInstructions;
+        instructions.push_back({
+            .opcode = OP_GOTO,
+            .value = static_cast<int32_t>(elseInstructions.size())
+        });
+    }
+    
     emit(node->condition);
     writer.write({
         .opcode = OP_IFLE,
         .value = static_cast<int32_t>(instructions.size())
     });
     writer.write(instructions);
+    writer.write(elseInstructions);
     
 }
 

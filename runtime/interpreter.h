@@ -29,6 +29,8 @@ private:
     
     void exec_ifle(const Instruction& instrunction);
     
+    void exec_goto(const Instruction& instruction);
+    
     JrRuntimeContext* context;
 };
 
