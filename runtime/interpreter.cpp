@@ -12,7 +12,11 @@ void JrInterpreter::run(JrFunction::Pointer function) {
     context->stack->push(frame);
     context->frame = frame;
     
-    for(auto instruction: function->instructions) {
+    pointer = function->instructions.begin();
+    end = function->instructions.end();
+    
+    while(pointer != end) {
+        auto instruction = *pointer;
         switch(instruction.opcode) {
             case OP_ICONST:
                 context->stack->push4(instruction.value);
@@ -44,9 +48,14 @@ void JrInterpreter::run(JrFunction::Pointer function) {
             case OP_IREM:
                 exec_irem(instruction);
                 break;
+            case OP_IFLE:
+                exec_ifle(instruction);
+                break;
             default:
                 break;
         }
+        
+        pointer ++;
     }
 }
 
@@ -117,4 +126,11 @@ void JrInterpreter::exec_irem(const Instruction &instrunction) {
     auto value2 = context->stack->pop4();
     
     context->stack->push4(value2 % value1);
+}
+
+void JrInterpreter::exec_ifle(const Instruction &instrunction) {
+    auto value1 = context->stack->pop4();
+    if(value1 <= 0) {
+        pointer += instrunction.value;
+    }
 }

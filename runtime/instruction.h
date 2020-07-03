@@ -20,6 +20,13 @@ enum Opcode {
     OP_IDIV,
     OP_IREM,
     
+    OP_IFEQ,    // == 0
+    OP_IFNE,    // != 0
+    OP_IFLT,    // < 0
+    OP_IFLE,    // <= 0
+    OP_IFGT,    // > 0
+    OP_IFGE,    // >= 0
+    
     OP_INVOKE,
     
     
@@ -28,13 +35,14 @@ enum Opcode {
 };
 
 struct Instruction {
-    uint8_t opcode;
+    Opcode opcode;
     int32_t value;
 };
 
 struct JrCodeWriter {
     
     void write(const Instruction& instruction);
+    void write(const std::vector<Instruction>& instructions);
     
     std::vector<Instruction> instructions;
 };

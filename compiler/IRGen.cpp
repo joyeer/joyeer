@@ -7,6 +7,11 @@
 
 IRGen::IRGen() {
     function = std::make_shared<JrFunction>();
+    varFinder = std::make_shared<ScopeVarFinder>();
+}
+
+IRGen::IRGen(ScopeVarFinder::Pointer varFinder):
+varFinder(varFinder) {
 }
 
 std::vector<Instruction>& IRGen::getInstructions() {
@@ -52,10 +57,12 @@ void IRGen::emit(Node::Pointer node) {
         case parameterClause:
             break;
         case codeBlock:
+            emit(std::static_pointer_cast<CodeBlock>(node));
             break;
         case forInStatement:
             break;
         case ifStatement:
+            emit(std::static_pointer_cast<IfStatement>(node));
             break;
         case expr:
             emit(std::static_pointer_cast<Expr>(node));
@@ -102,7 +109,7 @@ void IRGen::emit(Node::Pointer node) {
 void IRGen::emit(SourceBlock::Pointer block) {
     
     //initialize the variables for source code scope
-    varFinder.scopes.push_back(block->scope);
+    varFinder->scopes.push_back(block->scope);
     for(auto var: block->scope->vars) {
         function->localVars.push_back(JrVar {
             .name = var->name
@@ -143,6 +150,13 @@ void IRGen::emit(LiteralExpr::Pointer node) {
                 .opcode = OP_SCONST,
                 .value = node->literal->index
             });
+            break;
+        case booleanLiteral:
+            writer.write({
+                .opcode = OP_ICONST,
+                .value = node->literal->rawValue == L"true" ? 1 : 0
+            });
+            break;
         default:
             break;;
     }
@@ -179,7 +193,7 @@ void IRGen::emit(IdentifierExpr::Pointer node) {
     // Step1: try to find the variable in local variable array
     
     auto name = node->token->rawValue;
-    auto variable = varFinder.find(name);
+    auto variable = varFinder->find(name);
     if(variable == nullptr) {
         Diagnostics::reportError(L"[Error][GenCode]");
     }
@@ -222,10 +236,30 @@ void IRGen::emit(OperatorExpr::Pointer node) {
     };
     
     writer.write({
-        .opcode = static_cast<uint8_t>(imaps[node->token->rawValue])
+        .opcode = imaps[node->token->rawValue]
     });
 }
 
 void IRGen::emit(ParenthesizedExpr::Pointer node) {
     emit(node->expr);
+}
+
+void IRGen::emit(IfStatement::Pointer node) {
+    IRGen gen(varFinder);
+    gen.emit(node->ifCodeBlock);
+    auto instructions = gen.getInstructions();
+    
+    emit(node->condition);
+    writer.write({
+        .opcode = OP_IFLE,
+        .value = static_cast<int32_t>(instructions.size())
+    });
+    writer.write(instructions);
+    
+}
+
+void IRGen::emit(CodeBlock::Pointer node) {
+    for(auto statement: node->statements) {
+        emit(statement);
+    }
 }

@@ -259,14 +259,26 @@ void NodeDebugPrinter::print(Node::Pointer node) {
         case parameterClause:
             std::wcout << L"+parameterClause" ;
             break;
-        case codeBlock:
+        case codeBlock: {
+            auto n = std::static_pointer_cast<CodeBlock>(node);
             std::wcout << L"+codeBlock" ;
+            incTab();
+            print(n->statements);
+            decTab();
+        }
             break;
         case forInStatement:
             std::wcout << L"+forInStatement" ;
             break;
-        case ifStatement:
+        case ifStatement: {
+            auto n = std::static_pointer_cast<IfStatement>(node);
             std::wcout << L"+ifStatement" ;
+            incTab();
+            print(n->condition);
+            print(n->ifCodeBlock);
+            print(n->elseCodeBlock);
+            decTab();
+        }
             break;
         case expr: {
             std::wcout << L"+expr" ;

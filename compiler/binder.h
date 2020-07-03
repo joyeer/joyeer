@@ -83,6 +83,10 @@ protected:
     
     Node::Pointer bind(ParenthesizedExpr::Pointer decl);
     
+    Node::Pointer bind(IfStatement::Pointer decl);
+    
+    Node::Pointer bind(CodeBlock::Pointer decl);
+    
 private:
     SymbolFactory::Pointer symFactory;
     TypeFactory::Pointer typeFactory;

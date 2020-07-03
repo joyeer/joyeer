@@ -34,10 +34,10 @@ int main(int argc, char** argv) {
     Binder binder(symFactory, typeFactory);
     binder.bind(sourceBlock);
     
-    std::wcout << std::endl << L"==bind=="<<std::endl;
+    std::wcout << std::endl << L"====bind==="<<std::endl;
     debugPrinter.print(sourceBlock);
+    std::wcout << std::endl << L"====end====" << std::endl;
 
-    
     TypeChecker typeChecker;
     typeChecker.verify(std::static_pointer_cast<Node>(sourceBlock));
     

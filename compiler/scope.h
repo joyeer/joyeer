@@ -6,9 +6,7 @@
 enum ScopeFlag {
     sourceScope,
     classScope,
-    interClassScope,
-    methodScope,
-    fieldScope,
+    methodScope
 };
 
 struct Var {
@@ -33,6 +31,7 @@ struct Scope {
 };
 
 struct ScopeVarFinder {
+    typedef std::shared_ptr<ScopeVarFinder> Pointer;
     
     std::vector<Scope::Pointer> scopes;
     

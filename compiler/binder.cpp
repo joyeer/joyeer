@@ -112,11 +112,11 @@ Node::Pointer Binder::bind(std::shared_ptr<Node> node) {
         case parameterClause:
             break;
         case codeBlock:
-            break;
+            return bind(std::static_pointer_cast<CodeBlock>(node));
         case forInStatement:
             break;
         case ifStatement:
-            break;
+            return bind(std::static_pointer_cast<IfStatement>(node));
         case expr:
             return bind(std::static_pointer_cast<Expr>(node));
         case selfExpr:
@@ -175,8 +175,6 @@ SourceBlock::Pointer Binder::bind(SourceBlock::Pointer sourceBlock) {
 }
 
 Node::Pointer Binder::bind(ClassDecl::Pointer classDecl) {
-    
-    // TODO: double the parent scope is Source File
     return classDecl;
 }
 
@@ -389,5 +387,31 @@ Node::Pointer Binder::bind(ParenthesizedExpr::Pointer decl) {
     }
     
     decl->expr = bind(decl->expr);
+    return decl;
+}
+
+Node::Pointer Binder::bind(IfStatement::Pointer decl) {
+    decl->condition = bind(decl->condition);
+    decl->ifCodeBlock = bind(decl->ifCodeBlock);
+    if(decl->elseCodeBlock != nullptr) {
+        decl->elseCodeBlock = bind(decl->elseCodeBlock);
+    }
+    return decl;
+}
+
+Node::Pointer Binder::bind(CodeBlock::Pointer decl) {
+    
+    SymTable::Pointer symtable = symFactory->createSymTable();
+    decl->symbols = symtable;
+    
+    context->enter(symtable);
+    
+    std::vector<Node::Pointer> statements;
+    for(auto s: decl->statements) {
+        statements.push_back(bind(s));
+    }
+    
+    context->leave(symtable);
+    decl->statements = statements;
     return decl;
 }

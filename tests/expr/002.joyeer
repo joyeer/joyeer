@@ -1,4 +1,4 @@
-var a = (8 - 2)
-
-a = 24 / (8 - 2) + 300 / (24 * (3 + 2))
-print(message:a)
+var a = true
+if a {
+    print(message: a)
+}

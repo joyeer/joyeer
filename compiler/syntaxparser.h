@@ -26,24 +26,24 @@ private:
     Node::Pointer tryParseConstDecl();
 
     // Parse the variable declaration, e.g. var varValue = "10"
-    std::shared_ptr<Node> tryParseVarDecl();
+    Node::Pointer tryParseVarDecl();
     
     // Parse the parameter clause
-    std::shared_ptr<Node> tryParseParameterClause();
+    Node::Pointer tryParseParameterClause();
 
     ////////////////////////////////////////////////////////////////////////////
     // Statements
     ////////////////////////////////////////////////////////////////////////////
 
-    std::shared_ptr<Node> tryParseCodeBlock();
+    Node::Pointer tryParseCodeBlock();
 
-    std::shared_ptr<Node> tryParseStatement();
+    Node::Pointer tryParseStatement();
 
-    std::shared_ptr<Node> tryParseLoopStatement();
+    Node::Pointer tryParseLoopStatement();
 
-    std::shared_ptr<Node> tryParseBranchStatement();
+    Node::Pointer tryParseBranchStatement();
 
-    std::shared_ptr<Node> tryParseIfStatement();
+    Node::Pointer tryParseIfStatement();
 
     ////////////////////////////////////////////////////////////////////////////
     // Type
@@ -61,25 +61,25 @@ private:
     Node::Pointer tryParseExpr();
 
     // prefix-expression -> prefix-operator /opt/ postfix-expression
-    std::shared_ptr<Node> tryParsePrefixExpr();
+    Node::Pointer tryParsePrefixExpr();
 
     // postfix-expression -> primary-expression
     // postfix-expression -> postfix-expression postfix-operator
     // postfix-expression -> function-call-expression
-    std::shared_ptr<Node> tryParsePostfixExpr();
+    Node::Pointer tryParsePostfixExpr();
     
     ArguCallExpr::Pointer tryParseArguCallExpr();
     
-    std::shared_ptr<Node> tryParseFuncCallExpr();
+    Node::Pointer tryParseFuncCallExpr();
 
-    std::shared_ptr<Node> tryParseBinaryExpr();
+    Node::Pointer tryParseBinaryExpr();
 
     // primary-expression -> identifier
     // primary-expression -> literal-expression
     // primary-expression -> parenthesized-expression
-    std::shared_ptr<Node> tryParsePrimaryExpr();
+    Node::Pointer tryParsePrimaryExpr();
 
-    std::shared_ptr<Node> tryParseSelfExpr();
+    Node::Pointer tryParseSelfExpr();
     
     // literal-expression -> literal
     // literal-expression -> array-literal | dictionary-literal
@@ -100,7 +100,7 @@ private:
     OperatorExpr::Pointer tryParsePostfixOperatorExpr();
 
     // literal -> numeric-literal | string-literal | boolean-literal | nil-literal
-    std::shared_ptr<Token> tryParseLiteral();
+    Token::Pointer tryParseLiteral();
     //
     IdentifierExpr::Pointer tryParseIdentifierExpr();
 
@@ -108,18 +108,18 @@ private:
     ////////////////////////////////////////////////////////////////////////////
     // Helper functions
     ////////////////////////////////////////////////////////////////////////////
-    std::shared_ptr<Token> tryEat(TokenKind kind, const std::wstring &value);
+    Token::Pointer tryEat(TokenKind kind, const std::wstring &value);
 
-    std::shared_ptr<Token> tryEat(TokenKind kind);
+    Token::Pointer tryEat(TokenKind kind);
 
     void previous();
 
-    std::shared_ptr<Token> curToken() const;
+    Token::Pointer curToken() const;
 
 private:
-    const std::vector<std::shared_ptr<Token>> &tokens;
-    std::vector<std::shared_ptr<Token>>::const_iterator iterator;
-    std::vector<std::shared_ptr<Token>>::const_iterator endIterator;
+    const std::vector<Token::Pointer> &tokens;
+    std::vector<Token::Pointer>::const_iterator iterator;
+    std::vector<Token::Pointer>::const_iterator endIterator;
 };
 
 #endif

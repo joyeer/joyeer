@@ -12,6 +12,7 @@ class IRGen {
 public:
     
     IRGen();
+    IRGen(ScopeVarFinder::Pointer varFinder);
     
     void emit(Node::Pointer node);
     
@@ -43,10 +44,14 @@ protected:
     void emit(OperatorExpr::Pointer node);
     
     void emit(ParenthesizedExpr::Pointer node);
+    
+    void emit(IfStatement::Pointer node);
+    
+    void emit(CodeBlock::Pointer node);
 private:
     JrCodeWriter writer;
     
-    ScopeVarFinder varFinder;
+    ScopeVarFinder::Pointer varFinder;
     
     JrFunction::Pointer function;
     

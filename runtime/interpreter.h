@@ -12,6 +12,8 @@ public:
     void run(JrFunction::Pointer function);
     
 private:
+    std::vector<Instruction>::const_iterator pointer;
+    std::vector<Instruction>::const_iterator end;
     
     // prepare the stack frame
     JrFunctionFrame::Pointer prepareStackFrame(JrFunction::Pointer func);
@@ -24,6 +26,8 @@ private:
     void exec_isub(const Instruction& instruction);
     void exec_idiv(const Instruction& instrunction);
     void exec_irem(const Instruction& instrunction);
+    
+    void exec_ifle(const Instruction& instrunction);
     
     JrRuntimeContext* context;
 };

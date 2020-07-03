@@ -270,9 +270,10 @@ struct SourceBlock: Node {
 struct CodeBlock: Node {
     typedef std::shared_ptr<CodeBlock> Pointer;
     
-    std::vector<std::shared_ptr<Node>> statements;
+    std::vector<Node::Pointer> statements;
 
-    CodeBlock(std::vector<std::shared_ptr<Node>> statements);
+    SymTable::Pointer symbols;
+    CodeBlock(std::vector<Node::Pointer> statements);
 
 };
 
@@ -293,7 +294,7 @@ struct IfStatement: Node {
     Node::Pointer ifCodeBlock;
     Node::Pointer elseCodeBlock;
 
-    IfStatement(std::shared_ptr<Node> condition, std::shared_ptr<Node> ifCodeBlock, std::shared_ptr<Node> elseCodeBlock);
+    IfStatement(Node::Pointer condition, Node::Pointer ifCodeBlock, Node::Pointer elseCodeBlock);
 };
 
 
