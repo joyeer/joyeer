@@ -65,5 +65,7 @@ void TypeChecker::verify(Node::Pointer node) {
             break;
         case operatorExpr:
             break;
+        case returnStatement:
+            break;
     }
 }

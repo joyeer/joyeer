@@ -49,6 +49,7 @@ void IRGen::emit(Node::Pointer node) {
         case letDecl:
             break;
         case funcDecl:
+            emit(std::static_pointer_cast<FuncDecl>(node));
             break;
         case constructorDecl:
             break;
@@ -102,6 +103,9 @@ void IRGen::emit(Node::Pointer node) {
             break;
         case operatorExpr:
             emit(std::static_pointer_cast<OperatorExpr>(node));
+            break;
+        case returnStatement:
+            emit(std::static_pointer_cast<ReturnStatement>(node));
             break;
     }
 }
@@ -276,4 +280,32 @@ void IRGen::emit(CodeBlock::Pointer node) {
     for(auto statement: node->statements) {
         emit(statement);
     }
+}
+
+void IRGen::emit(FuncDecl::Pointer node) {
+    
+    auto varFinder = std::make_shared<ScopeVarFinder>();
+    varFinder->scopes.push_back(node->scope);
+    
+    IRGen generator(varFinder);
+    generator.emit(node->codeBlock);
+    auto instructions = generator.getInstructions();
+    
+    // FuncDecl's all variable
+    auto function = std::make_shared<JrFunction>();
+    function->name = node->getFuncName();
+    function->kind = JrFunction_VM;
+    function->instructions = instructions;
+    
+    
+    Global::registerFunction(function);
+}
+
+void IRGen::emit(ReturnStatement::Pointer node) {
+    if(node->expr != nullptr) {
+        emit(node->expr);
+        
+        return;
+    }
+    
 }

@@ -88,13 +88,13 @@ Node::Pointer Binder::bind(std::shared_ptr<Node> node) {
         case SyntaxKind::sourceBlock:
             return bind(std::static_pointer_cast<SourceBlock>(node));
         case type:
-            break;
+            return bind(std::static_pointer_cast<TypeDecl>(node));
         case arrayType:
             break;
         case dictType:
             break;
         case pattern:
-            break;
+            return bind(std::static_pointer_cast<Pattern>(node));
         case importDecl:
             break;
         case constantDecl:
@@ -104,13 +104,13 @@ Node::Pointer Binder::bind(std::shared_ptr<Node> node) {
         case letDecl:
             break;
         case funcDecl:
-            break;
+            return bind(std::static_pointer_cast<FuncDecl>(node));
         case constructorDecl:
             return bind(std::static_pointer_cast<ConstructorDecl>(node));
         case classDecl:
             return bind(std::static_pointer_cast<ClassDecl>(node));
         case parameterClause:
-            break;
+            return bind(std::static_pointer_cast<ParameterClause>(node));
         case codeBlock:
             return bind(std::static_pointer_cast<CodeBlock>(node));
         case forInStatement:
@@ -147,6 +147,8 @@ Node::Pointer Binder::bind(std::shared_ptr<Node> node) {
             return bind(std::static_pointer_cast<BinaryExpr>(node));
         case operatorExpr:
             return bind(std::static_pointer_cast<OperatorExpr>(node));
+        case returnStatement:
+            return bind(std::static_pointer_cast<ReturnStatement>(node));
     }
 }
 
@@ -252,11 +254,7 @@ Node::Pointer Binder::bind(PrefixExpr::Pointer decl) {
     return decl;
 }
 
-Node::Pointer Binder::bind(IdentifierExpr::Pointer decl) {
-    if(context->findSymbol(decl->token->rawValue) == nullptr) {
-        Diagnostics::reportError(L"[Error] cannot find symbol");
-    }
-    
+Node::Pointer Binder::bind(IdentifierExpr::Pointer decl) {    
     auto var = context->currentScope()->find(decl->token->rawValue);
     decl->varRef = var;
     return decl;
@@ -413,5 +411,64 @@ Node::Pointer Binder::bind(CodeBlock::Pointer decl) {
     
     context->leave(symtable);
     decl->statements = statements;
+    return decl;
+}
+
+Node::Pointer Binder::bind(FuncDecl::Pointer decl) {
+    SymTable::Pointer symtable = symFactory->createSymTable();
+    auto scope = std::shared_ptr<Scope>(new Scope {
+        .flag = ScopeFlag::funcScope
+    });
+    decl->symbols = symtable;
+    decl->scope = scope;
+    
+    context->enter(scope);
+    context->enter(symtable);
+    
+    decl->identifier = bind(decl->identifier);
+    decl->parameterClause = bind(decl->parameterClause);
+    if(decl->returnType != nullptr) {
+        decl->returnType = bind(decl->returnType);
+    }
+    decl->codeBlock = bind(decl->codeBlock);
+    
+    context->leave(symtable);
+    context->leave(scope);
+
+    return decl;
+}
+
+Node::Pointer Binder::bind(ParameterClause::Pointer decl) {
+    std::vector<Pattern::Pointer> parameters;
+    for(auto parameter: decl->parameters) {
+        parameters.push_back(std::static_pointer_cast<Pattern>(bind(parameter)));
+    }
+    
+    for(auto parameter: decl->parameters) {
+        auto name = parameter->identifier->token->rawValue;
+        auto symbol = context->makeSymbol(parameter, name, SymbolFlag::paramSymbol);
+        auto var = context->makeVar(parameter, name, false);
+        decl->variables.push_back(var);
+    }
+    
+    decl->parameters = parameters;
+    return decl;
+}
+
+Node::Pointer Binder::bind(Pattern::Pointer decl) {
+    decl->identifier = std::static_pointer_cast<IdentifierExpr>(bind(decl->identifier));
+    decl->type = std::static_pointer_cast<TypeDecl>(bind(decl->type));
+    return decl;
+}
+
+Node::Pointer Binder::bind(TypeDecl::Pointer decl) {
+    decl->identifier = std::static_pointer_cast<IdentifierExpr>(bind(decl->identifier));
+    return decl;
+}
+
+Node::Pointer Binder::bind(ReturnStatement::Pointer decl) {
+    if(decl->expr != nullptr) {
+        decl->expr = bind(decl->expr);
+    }
     return decl;
 }

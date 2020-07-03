@@ -32,7 +32,7 @@ struct JrFunction {
     typedef std::shared_ptr<JrFunction> Pointer;
     
 public:
-    const std::wstring name;
+    std::wstring name;
     
     uint8_t kind;
     // The maximun count of parameter count is 0xFF
@@ -62,7 +62,5 @@ public:
 public:
     ~JrFunction();
 };
-
-
 
 #endif

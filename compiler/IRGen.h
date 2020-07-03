@@ -48,6 +48,11 @@ protected:
     void emit(IfStatement::Pointer node);
     
     void emit(CodeBlock::Pointer node);
+    
+    void emit(FuncDecl::Pointer node);
+    
+    void emit(ReturnStatement::Pointer node);
+    
 private:
     JrCodeWriter writer;
     

@@ -31,7 +31,6 @@ enum Opcode {
     
     OP_GOTO,
     
-    
     OP_DEBUG,
 
 };

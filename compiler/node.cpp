@@ -1,6 +1,8 @@
 #include "node.h"
 #include <iostream>
 #include <iomanip>
+#include <sstream>
+
 
 Node::Node(SyntaxKind k): kind(k) {
 }
@@ -29,19 +31,30 @@ name(name),
 members(members) {
 }
 
-ParameterClause::ParameterClause(std::vector<std::shared_ptr<Node>> parameters):
+ParameterClause::ParameterClause(std::vector<std::shared_ptr<Pattern>> parameters):
 Node(SyntaxKind::parameterClause),
 parameters(parameters) {
 }
 
-FuncDecl::FuncDecl(IdentifierExpr::Pointer identifier, std::shared_ptr<Node> parameterClause, std::shared_ptr<Node> codeBlock):
+FuncDecl::FuncDecl(Node::Pointer identifier, Node::Pointer parameterClause, Node::Pointer returnType, Node::Pointer codeBlock):
 Node(SyntaxKind::funcDecl),
 identifier(identifier),
 parameterClause(parameterClause),
+returnType(returnType),
 codeBlock(codeBlock) {
 }
 
-Pattern::Pattern(IdentifierExpr::Pointer identifier, Type::Pointer type):
+const std::wstring FuncDecl::getFuncName() {
+    std::wstringstream ss;
+    ss << std::static_pointer_cast<IdentifierExpr>(identifier)->token->rawValue << L"(";
+    for(auto p: std::static_pointer_cast<ParameterClause>(parameterClause)->parameters) {
+        ss << p->identifier->token->rawValue << L":";
+    }
+    ss << L")";
+    return ss.str();
+}
+
+Pattern::Pattern(IdentifierExpr::Pointer identifier, TypeDecl::Pointer type):
 Node(SyntaxKind::pattern),
 identifier(identifier),
 type(type) {
@@ -131,7 +144,7 @@ Node(SyntaxKind::selfExpr),
 identifier(identifier) {
 }
 
-Type::Type(IdentifierExpr::Pointer identifier, bool isOptional):
+TypeDecl::TypeDecl(IdentifierExpr::Pointer identifier, bool isOptional):
 Node(SyntaxKind::type),
 identifier(identifier),
 isOptional(isOptional) {
@@ -155,13 +168,18 @@ inExpr(inExpr),
 codeBlock(codeBlock) {
 }
 
-IfStatement::IfStatement(std::shared_ptr<Node> condition, std::shared_ptr<Node> ifCodeBlock, std::shared_ptr<Node> elseCodeBlock):
+IfStatement::IfStatement(Node::Pointer condition, Node::Pointer ifCodeBlock, std::shared_ptr<Node> elseCodeBlock):
 Node(SyntaxKind::ifStatement),
 condition(condition),
 ifCodeBlock(ifCodeBlock),
 elseCodeBlock(elseCodeBlock) {
-
 }
+
+ReturnStatement::ReturnStatement(Node::Pointer expr):
+Node(SyntaxKind::returnStatement),
+expr(expr) {
+}
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void NodeDebugPrinter::print(std::vector<Node::Pointer> nodes) {
@@ -202,8 +220,13 @@ void NodeDebugPrinter::print(Node::Pointer node) {
             decTab();
         }
             break;
-        case type:
+        case type: {
             std::wcout << L"+type" ;
+            auto n = std::static_pointer_cast<TypeDecl>(node);
+            incTab();
+            print(n->identifier);
+            decTab();
+        }
             break;
         case arrayType:
             std::wcout << L"+arrayType" ;
@@ -247,8 +270,16 @@ void NodeDebugPrinter::print(Node::Pointer node) {
         case letDecl:
             std::wcout << L"+letDecl" ;
             break;
-        case funcDecl:
+        case funcDecl: {
             std::wcout << L"+funcDecl" ;
+            auto n = std::static_pointer_cast<FuncDecl>(node);
+            incTab();
+            print(n->identifier);
+            print(n->parameterClause);
+            print(n->returnType);
+            print(n->codeBlock);
+            decTab();
+        }
             break;
         case constructorDecl:
             std::wcout << L"+constructorDecl" ;
@@ -256,8 +287,17 @@ void NodeDebugPrinter::print(Node::Pointer node) {
         case classDecl:
             std::wcout << L"+classDecl" ;
             break;
-        case parameterClause:
+        case parameterClause: {
             std::wcout << L"+parameterClause" ;
+            auto n = std::static_pointer_cast<ParameterClause>(node);
+            incTab();
+            std::vector<Node::Pointer> parameters;
+            for(auto p: n->parameters) {
+                parameters.push_back(p);
+            }
+            print(parameters);
+            decTab();
+        }
             break;
         case codeBlock: {
             auto n = std::static_pointer_cast<CodeBlock>(node);
@@ -396,6 +436,14 @@ void NodeDebugPrinter::print(Node::Pointer node) {
         case operatorExpr: {
             auto n = std::static_pointer_cast<OperatorExpr>(node);
             std::wcout << L"+operatorExpr(" << n->token->rawValue << ")" ;
+        }
+            break;
+        case returnStatement: {
+            auto n = std::static_pointer_cast<ReturnStatement>(node);
+            std::wcout << L"+returnStatement";
+            incTab();
+            print(n->expr);
+            decTab();
         }
             break;
     }

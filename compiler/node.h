@@ -26,6 +26,7 @@ enum SyntaxKind {
     codeBlock,
     forInStatement,
     ifStatement,
+    returnStatement,
 
     expr,
     assignmentExpr,
@@ -56,10 +57,6 @@ protected:
 
 };
 
-struct NoneNode:public Node {
-    NoneNode();
-};
-
 struct IdentifierExpr: public Node {
     typedef std::shared_ptr<IdentifierExpr> Pointer;
     
@@ -77,22 +74,23 @@ struct OperatorExpr: Node {
     OperatorExpr(Token::Pointer token);
 };
 
-struct Type: Node {
-    typedef std::shared_ptr<Type> Pointer;
+struct TypeDecl: Node {
+    typedef std::shared_ptr<TypeDecl> Pointer;
     
     IdentifierExpr::Pointer identifier;
     bool isOptional;
     
-    Type(IdentifierExpr::Pointer identifier, bool isOptional);
+    TypeDecl(IdentifierExpr::Pointer identifier, bool isOptional);
+    
 };
 
 struct Pattern: public Node {
     typedef std::shared_ptr<Pattern> Pointer;
     
     IdentifierExpr::Pointer identifier;
-    Type::Pointer type;
+    TypeDecl::Pointer type;
     
-    Pattern(IdentifierExpr::Pointer identifier, Type::Pointer type);
+    Pattern(IdentifierExpr::Pointer identifier, TypeDecl::Pointer type);
 
 };
 
@@ -131,19 +129,27 @@ struct ClassDecl: Node {
 struct ParameterClause: Node {
     typedef std::shared_ptr<ParameterClause> Pointer;
     
-    std::vector<Node::Pointer> parameters;
+    std::vector<Pattern::Pointer> parameters;
+    std::vector<Var::Pointer> variables;
     
-    ParameterClause(std::vector<Node::Pointer> parameters);
+    ParameterClause(std::vector<Pattern::Pointer> parameters);
 };
 
 struct FuncDecl: Node {
     typedef std::shared_ptr<FuncDecl> Pointer;
     
-    IdentifierExpr::Pointer identifier;
+    Node::Pointer identifier;               //IdentifierExpr
     Node::Pointer parameterClause;
     Node::Pointer codeBlock;
+    Node::Pointer returnType;
+    
+    // Additional information
+    Scope::Pointer scope;
+    SymTable::Pointer symbols;
 
-    FuncDecl(IdentifierExpr::Pointer identifier, Node::Pointer parameterClause, Node::Pointer codeBlock);
+    FuncDecl(Node::Pointer identifier, Node::Pointer parameterClause, Node::Pointer returnType, Node::Pointer codeBlock);
+    
+    const std::wstring getFuncName();
 };
 
 struct ConstructorDecl: Node {
@@ -281,10 +287,10 @@ struct ForInStatement: Node {
     typedef std::shared_ptr<ForInStatement> Pointer;
     
     Node::Pointer pattern;
-    std::shared_ptr<Node> inExpr;
-    std::shared_ptr<Node> codeBlock;
+    Node::Pointer inExpr;
+    Node::Pointer codeBlock;
 
-    ForInStatement(std::shared_ptr<Node> pattern, std::shared_ptr<Node> inExpr, std::shared_ptr<Node> codeBlock);
+    ForInStatement(Node::Pointer pattern, Node::Pointer inExpr, Node::Pointer codeBlock);
 };
 
 struct IfStatement: Node {
@@ -295,6 +301,14 @@ struct IfStatement: Node {
     Node::Pointer elseCodeBlock;
 
     IfStatement(Node::Pointer condition, Node::Pointer ifCodeBlock, Node::Pointer elseCodeBlock);
+};
+
+struct ReturnStatement: Node {
+    typedef std::shared_ptr<ReturnStatement> Pointer;
+    
+    Node::Pointer expr;
+    
+    ReturnStatement(Node::Pointer expr);
 };
 
 

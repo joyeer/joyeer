@@ -6,7 +6,7 @@
 enum ScopeFlag {
     sourceScope,
     classScope,
-    methodScope
+    funcScope
 };
 
 struct Var {

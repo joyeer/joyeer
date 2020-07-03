@@ -13,6 +13,7 @@ enum SymbolFlag {
     classTypeSymbol,
     funcSymbol,
     
+    paramSymbol,
     varSymbol,
     constSymbol
 };

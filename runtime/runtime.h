@@ -5,6 +5,7 @@
 #include <vector>
 #include <string>
 #include "instruction.h"
+
 #define JrType_Void         0
 
 #define JrType_Int          1
@@ -14,6 +15,12 @@
 #define JrType_String       8
 
 #define JrType_Object       10
+
+struct JrType {
+    uint32_t kind;
+    // index to the type tables
+    uint32_t index;
+};
  
 typedef int64_t     JrInt;
 typedef int64_t     JrInt64;
@@ -26,10 +33,7 @@ typedef uint32_t    JrUInt32;
 typedef uint16_t    JrUInt16;
 typedef uint8_t     JrUInt8;
 
-struct JrType {
-    uint32_t kind;
-    uint32_t index;
-};
+
 
 struct JrVar {
     JrType type;
@@ -84,6 +88,5 @@ struct JrRuntimeContext {
     JrFunctionFrame::Pointer frame;
     
 };
-
 
 #endif

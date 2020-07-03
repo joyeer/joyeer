@@ -44,15 +44,17 @@ private:
     Node::Pointer tryParseBranchStatement();
 
     Node::Pointer tryParseIfStatement();
+    
+    Node::Pointer tryParseReturnStatement();
 
     ////////////////////////////////////////////////////////////////////////////
     // Type
     ////////////////////////////////////////////////////////////////////////////
     Pattern::Pointer tryParsePattern();
     
-    Type::Pointer tryParseTypeAnnotation();
+    TypeDecl::Pointer tryParseTypeAnnotation();
     
-    Type::Pointer tryParseType();
+    TypeDecl::Pointer tryParseType();
 
     ////////////////////////////////////////////////////////////////////////////
     // Expressions
@@ -98,7 +100,7 @@ private:
     OperatorExpr::Pointer tryParseOperatorExpr();
     
     OperatorExpr::Pointer tryParsePostfixOperatorExpr();
-
+    
     // literal -> numeric-literal | string-literal | boolean-literal | nil-literal
     Token::Pointer tryParseLiteral();
     //

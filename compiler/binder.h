@@ -61,7 +61,7 @@ protected:
     
     Node::Pointer bind(ConstructorDecl::Pointer decl);
     
-    Node::Pointer bind(Type::Pointer decl);
+    Node::Pointer bind(TypeDecl::Pointer decl);
     
     Node::Pointer bind(FuncCallExpr::Pointer decl);
     
@@ -86,6 +86,14 @@ protected:
     Node::Pointer bind(IfStatement::Pointer decl);
     
     Node::Pointer bind(CodeBlock::Pointer decl);
+    
+    Node::Pointer bind(FuncDecl::Pointer decl);
+    
+    Node::Pointer bind(ParameterClause::Pointer decl);
+    
+    Node::Pointer bind(Pattern::Pointer decl);
+    
+    Node::Pointer bind(ReturnStatement::Pointer decl);
     
 private:
     SymbolFactory::Pointer symFactory;

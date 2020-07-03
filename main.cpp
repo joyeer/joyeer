@@ -24,10 +24,10 @@ int main(int argc, char** argv) {
     SyntaxParser syntaxParser(parser.tokens);
     SourceBlock::Pointer sourceBlock = syntaxParser.parse();
     
-    std::wcout << L"==syntax=="<<std::endl;
-    NodeDebugPrinter debugPrinter;
-    debugPrinter.print(sourceBlock);
-    
+//    std::wcout << L"==syntax=="<<std::endl;
+//    NodeDebugPrinter debugPrinter;
+//    debugPrinter.print(sourceBlock);
+//
     auto symFactory = std::make_shared<SymbolFactory>();
     auto typeFactory = std::make_shared<TypeFactory>();
     
@@ -35,6 +35,7 @@ int main(int argc, char** argv) {
     binder.bind(sourceBlock);
     
     std::wcout << std::endl << L"====bind==="<<std::endl;
+    NodeDebugPrinter debugPrinter;
     debugPrinter.print(sourceBlock);
     std::wcout << std::endl << L"====end====" << std::endl;
 
