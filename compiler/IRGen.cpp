@@ -302,10 +302,15 @@ void IRGen::emit(FuncDecl::Pointer node) {
 }
 
 void IRGen::emit(ReturnStatement::Pointer node) {
+    Opcode op = OP_IRETURN;
     if(node->expr != nullptr) {
         emit(node->expr);
+        op = OP_IRETURN;
         
-        return;
     }
+    writer.write({
+        .opcode = op
+    });
+    
     
 }

@@ -3,8 +3,7 @@
 
 
 #include "node.h"
-#include "types.h"
-#include "scope.h"
+#include "context.h"
 
 struct BindContext {
 public:
@@ -45,7 +44,7 @@ private:
 // Reduce the expression's depth level
 class Binder {
 public:
-    Binder(SymbolFactory::Pointer symFactory, TypeFactory::Pointer typeFactory);
+    Binder(SymbolFactory::Pointer symFactory);
     
     SourceBlock::Pointer bind(SourceBlock::Pointer sourceBlock);
     
@@ -97,7 +96,6 @@ protected:
     
 private:
     SymbolFactory::Pointer symFactory;
-    TypeFactory::Pointer typeFactory;
     
     std::shared_ptr<BindContext> context;
 };

@@ -3,7 +3,7 @@
 
 #include "token.h"
 #include "symtable.h"
-#include "scope.h"
+#include "context.h"
 
 enum SyntaxKind {
     sourceBlock = 1L,

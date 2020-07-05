@@ -10,10 +10,6 @@ set(SOURCES ${SOURCES}
     ${CMAKE_CURRENT_SOURCE_DIR}/lexparser.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/token.h
     ${CMAKE_CURRENT_SOURCE_DIR}/token.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/scope.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/scope.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/types.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/types.h
     ${CMAKE_CURRENT_SOURCE_DIR}/binder.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/binder.h
     ${CMAKE_CURRENT_SOURCE_DIR}/syntaxparser.cpp
@@ -22,6 +18,8 @@ set(SOURCES ${SOURCES}
     ${CMAKE_CURRENT_SOURCE_DIR}/symtable.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/typecheck.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/typecheck.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/context.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/context.h
 )
 
 set(SOURCES ${SOURCES} PARENT_SCOPE)

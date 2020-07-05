@@ -1,31 +1,23 @@
 #ifndef __joyeer_compiler_syntax_symtable_h__
 #define __joyeer_compiler_syntax_symtable_h__
 
-#include "types.h"
 #include <unordered_map>
+#include <string>
 #include <stack>
 
 enum SymbolFlag {
-    noneSymbol,
-    blockSymbol,
-    
-    sourcFileSymbol,
-    classTypeSymbol,
     funcSymbol,
-    
     paramSymbol,
     varSymbol,
     constSymbol
 };
 
 struct Symbol {
-    typedef std::shared_ptr<Symbol> Pointer; 
-    
+    typedef std::shared_ptr<Symbol> Pointer;
 public:
     Symbol(SymbolFlag flag, const std::wstring& name);
-    
 public:
-    size_t index;
+    int index;
     SymbolFlag flag;
     std::wstring name;
 };

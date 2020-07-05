@@ -10,6 +10,7 @@
 #include "runtime/runtime.h"
 #include "runtime/interpreter.h"
 #include "runtime/buildin.h"
+#include "compiler/context.h"
 
 int main(int argc, char** argv) {
     if(argc < 2) {
@@ -29,9 +30,8 @@ int main(int argc, char** argv) {
 //    debugPrinter.print(sourceBlock);
 //
     auto symFactory = std::make_shared<SymbolFactory>();
-    auto typeFactory = std::make_shared<TypeFactory>();
     
-    Binder binder(symFactory, typeFactory);
+    Binder binder(symFactory);
     binder.bind(sourceBlock);
     
     std::wcout << std::endl << L"====bind==="<<std::endl;

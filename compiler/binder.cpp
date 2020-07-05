@@ -77,9 +77,8 @@ Var::Pointer BindContext::makeVar(Node::Pointer, const std::wstring &name, bool 
 // Binder
 /////////////////////////////////////////////////////////////////
 
-Binder::Binder(SymbolFactory::Pointer symFactory, TypeFactory::Pointer typeFactory):
+Binder::Binder(SymbolFactory::Pointer symFactory):
 symFactory(symFactory),
-typeFactory(typeFactory),
 context(std::make_shared<BindContext>(symFactory)) {
 }
 

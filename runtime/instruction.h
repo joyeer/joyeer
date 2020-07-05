@@ -27,6 +27,9 @@ enum Opcode {
     OP_IFGT,    // > 0
     OP_IFGE,    // >= 0
     
+    OP_RETURN,
+    OP_IRETURN,
+    
     OP_INVOKE,
     
     OP_GOTO,
@@ -53,3 +56,4 @@ struct JrInstructionDebugPrinter {
 };
 
 #endif
+                    
