@@ -20,7 +20,7 @@ print(message: a)
 a = 24 / (8 - 2) + 300 / (24 * (3 + 2))
 print(message: a)
 
-var a = true
+a = true
 if a {
     print(message: a)
 } else {

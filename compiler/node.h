@@ -207,8 +207,10 @@ struct BinaryExpr: Node {
 struct AssignmentExpr: Node {
     typedef std::shared_ptr<AssignmentExpr> Pointer;
     
-    IdentifierExpr::Pointer identifier;
     Node::Pointer expr;
+    
+    // After binded, the identifier will be binded 
+    IdentifierExpr::Pointer identifier;
     AssignmentExpr(std::shared_ptr<Node> expr);
 };
 

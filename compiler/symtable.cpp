@@ -19,7 +19,7 @@ bool SymbolTable::insert(Symbol::Pointer symbol) {
         symbol
     });
     
-    return false;
+    return true;
 }
 
 Symbol::Pointer SymbolTable::find(const std::wstring& name) const {

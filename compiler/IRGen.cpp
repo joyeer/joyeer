@@ -106,15 +106,19 @@ void IRGen::emit(Node::Pointer node) {
 
 void IRGen::emit(SourceBlock::Pointer block) {
     
-    //initialize the variables for source code scope
-//    varFinder->scopes.push_back(block->scope);
-//    for(auto var: block->scope->vars) {
-//        function->localVars.push_back(JrVar {
-//            .name = var->name
-//        });
-//    }
+    assert(func == nullptr);
+    func = std::make_shared<JrFunction>();
+    func->name = L"__FILE__";
+    func->kind = JrFunction_VM;
     
     auto symbols = block->symtable->allVarSymbols();
+    
+    for(auto symbol: symbols) {
+        symbol->index = func->localVars.size();
+        func->localVars.push_back(JrVar{
+            .name = symbol->name
+        });
+    }
     
     for(auto& statement: block->statements) {
         emit(statement);
@@ -168,7 +172,7 @@ void IRGen::emit(ConstDecl::Pointer node) {
     // TODO: detect the variable's type
     writer.write({
         .opcode = OP_ISTORE,
-//        .value = node->variable->index
+        .value = node->symbol->index
     });
     
 }
@@ -179,7 +183,7 @@ void IRGen::emit(VarDecl::Pointer node) {
     // TODO: detect the variable's type
     writer.write({
         .opcode = OP_ISTORE,
-//        .value = node->variable->index
+        .value = node->symbol->index
     });
 }
 
@@ -190,16 +194,15 @@ void IRGen::emit(PrefixExpr::Pointer node) {
 
 void IRGen::emit(IdentifierExpr::Pointer node) {
     
-    auto name = node->token->rawValue;
-    auto symbol = context->lookup(name);
+    auto symbol = node->symbol;
     if(symbol == nullptr) {
         Diagnostics::reportError(L"[Error][GenCode]");
     }
     
-    if(symbol->flag == varSymbol) {
+    if((symbol->flag & varSymbol) == varSymbol) {
         writer.write({
             .opcode = OP_ILOAD,
-//            .value = variable->index
+            .value = symbol->index
         });
     }
     
@@ -208,7 +211,6 @@ void IRGen::emit(IdentifierExpr::Pointer node) {
 
 void IRGen::emit(AssignmentExpr::Pointer node) {
     emit(node->expr);
-    // TODO: detect the variable's type
     writer.write({
         .opcode = OP_ISTORE,
 //        .value = node->identifier->varRef->index

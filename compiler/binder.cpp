@@ -204,7 +204,7 @@ Node::Pointer Binder::bind(IdentifierExpr::Pointer decl) {
             return decl;
         default: {
             auto table = context->curSymTable();
-            auto symbol = table->find(decl->token->rawValue);
+            auto symbol = context->lookup(decl->token->rawValue);
             decl->symbol = symbol;
             return decl;
         }

@@ -16,8 +16,8 @@ enum SymbolFlag {
     immutableSymbol =   1 << 6,
     
     // delcare & variable symbol
-    declMutableVarSymbol =          SymbolFlag::declSymbol & SymbolFlag::varSymbol & SymbolFlag::mutableSymbol,
-    declImmutableVarSymbol =        SymbolFlag::declSymbol & SymbolFlag::varSymbol & SymbolFlag::immutableSymbol,
+    declMutableVarSymbol =          SymbolFlag::declSymbol | SymbolFlag::varSymbol | SymbolFlag::mutableSymbol,
+    declImmutableVarSymbol =        SymbolFlag::declSymbol | SymbolFlag::varSymbol | SymbolFlag::immutableSymbol,
 };
 
 
