@@ -7,13 +7,13 @@ std::vector<JrFunction::Pointer> initGlobalFunctionTable() ;
 
 const static std::unordered_map<std::wstring, JrFunction::Pointer>  globalFunctionTableMap;
 
-std::vector<JrFunction::Pointer> Global::funcTable = initGlobalFunctionTable();
+std::vector<JrFunction::Pointer> Global::functions = initGlobalFunctionTable();
 
-std::vector<std::wstring> Global::stringTable = {};
+std::vector<std::wstring> Global::strings = {};
 
 void Global::registerFunction(JrFunction::Pointer func) {
-    func->addressOfFunc = funcTable.size();
-    funcTable.push_back(func);
+    func->addressOfFunc = functions.size();
+    functions.push_back(func);
 }
 
 struct JrPrintNativeCode : public JrNativeCode {

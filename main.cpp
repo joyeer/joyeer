@@ -29,9 +29,9 @@ int main(int argc, char** argv) {
 //    NodeDebugPrinter debugPrinter;
 //    debugPrinter.print(sourceBlock);
 //
-    auto symFactory = std::make_shared<SymbolFactory>();
+    auto compileContext = std::make_shared<CompileContext>();
     
-    Binder binder(symFactory);
+    Binder binder(compileContext);
     binder.bind(sourceBlock);
     
     std::wcout << std::endl << L"====bind==="<<std::endl;
@@ -42,7 +42,7 @@ int main(int argc, char** argv) {
     TypeChecker typeChecker;
     typeChecker.verify(std::static_pointer_cast<Node>(sourceBlock));
     
-    IRGen irGen;
+    IRGen irGen(compileContext);
     irGen.emit(std::static_pointer_cast<Node>(sourceBlock));
     
     auto function  = irGen.getFunction();

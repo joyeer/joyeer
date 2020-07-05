@@ -3,35 +3,26 @@
 #include "runtime/buildin.h"
 
 /////////////////////////////////////////////////////////////////
-// Symbol
-/////////////////////////////////////////////////////////////////
-
-Symbol::Symbol(SymbolFlag flag, const std::wstring& name):
-flag(flag),
-name(name),
-index(-1) {
-}
-
-/////////////////////////////////////////////////////////////////
 // SymTable
 /////////////////////////////////////////////////////////////////
-SymTable::SymTable() :
+SymbolTable::SymbolTable() :
 symbols() {
 }
 
-void SymTable::insert(Symbol::Pointer symbol) {
+bool SymbolTable::insert(Symbol::Pointer symbol) {
     if(symbols.find(symbol->name) != symbols.end()) {
-        Diagnostics::reportError(L"Duplicate symbol" + symbol->name);
-        return;
+        return false;
     }
     
     symbols.insert({
         symbol->name,
         symbol
     });
+    
+    return false;
 }
 
-Symbol::Pointer SymTable::find(const std::wstring& name) const {
+Symbol::Pointer SymbolTable::find(const std::wstring& name) const {
     auto result = symbols.find(name);
     if( result != symbols.end()) {
         return result->second;
@@ -40,33 +31,17 @@ Symbol::Pointer SymTable::find(const std::wstring& name) const {
     return nullptr;
 }
 
-/////////////////////////////////////////////////////////////////
-// SymbolFactory
-/////////////////////////////////////////////////////////////////
-
-SymbolFactory::SymbolFactory() {
-    createGlobalSymbolTable();
-}
-
-SymTable::Pointer SymbolFactory::createSymTable() {
-    auto pointer = std::make_shared<SymTable>();
-    return pointer;
-}
-
-SymTable::Pointer SymbolFactory::getGlobalSymbolTable() {
-    return globalSymbolTable;
-}
-
-void SymbolFactory::createGlobalSymbolTable() {
-    auto table = createSymTable();
-    
-    for(size_t index = 0 ; index < Global::funcTable.size(); index ++) {
-        auto func = Global::funcTable[index];
-        auto symbol = std::make_shared<Symbol>(SymbolFlag::funcSymbol, func->name);
-        symbol->index = index;
-        
-        table->insert(symbol);
+std::vector<Symbol::Pointer> SymbolTable::allVarSymbols() const {
+    std::vector<Symbol::Pointer> result;
+    for(auto symbol: symbols) {
+        if((symbol.second->flag & declSymbol) == declSymbol) {
+            result.push_back(symbol.second);
+        }
     }
     
-    globalSymbolTable = table;
+    for(auto table: children) {
+        auto symbols = table->allVarSymbols();
+        result.insert(result.end(), std::begin(symbols), std::end(symbols));
+    }
+    return result;
 }

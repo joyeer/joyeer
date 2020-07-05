@@ -11,8 +11,7 @@ class JrCodeWriter;
 class IRGen {
 public:
     
-    IRGen();
-    IRGen(ScopeVarFinder::Pointer varFinder);
+    IRGen(CompileContext::Pointer context);
     
     void emit(Node::Pointer node);
     
@@ -56,10 +55,10 @@ protected:
 private:
     JrCodeWriter writer;
     
-    ScopeVarFinder::Pointer varFinder;
+    // geneated function declaration
+    JrFunction::Pointer func;
     
-    JrFunction::Pointer function;
-    
+    CompileContext::Pointer context;
 };
 
 #endif

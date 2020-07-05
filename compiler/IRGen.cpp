@@ -5,13 +5,9 @@
 #include <unordered_map>
 
 
-IRGen::IRGen() {
-    function = std::make_shared<JrFunction>();
-    varFinder = std::make_shared<ScopeVarFinder>();
-}
-
-IRGen::IRGen(ScopeVarFinder::Pointer varFinder):
-varFinder(varFinder) {
+IRGen::IRGen(CompileContext::Pointer context):
+context(context) {
+    
 }
 
 std::vector<Instruction>& IRGen::getInstructions() {
@@ -19,10 +15,8 @@ std::vector<Instruction>& IRGen::getInstructions() {
 }
 
 JrFunction::Pointer IRGen::getFunction() {
-    function->instructions = writer.instructions;
-    Global::registerFunction(function);
-    
-    return function;
+    func->instructions = getInstructions();
+    return func;
 }
 
 void IRGen::emit(Node::Pointer node) {
@@ -113,12 +107,14 @@ void IRGen::emit(Node::Pointer node) {
 void IRGen::emit(SourceBlock::Pointer block) {
     
     //initialize the variables for source code scope
-    varFinder->scopes.push_back(block->scope);
-    for(auto var: block->scope->vars) {
-        function->localVars.push_back(JrVar {
-            .name = var->name
-        });
-    }
+//    varFinder->scopes.push_back(block->scope);
+//    for(auto var: block->scope->vars) {
+//        function->localVars.push_back(JrVar {
+//            .name = var->name
+//        });
+//    }
+    
+    auto symbols = block->symtable->allVarSymbols();
     
     for(auto& statement: block->statements) {
         emit(statement);
@@ -172,7 +168,7 @@ void IRGen::emit(ConstDecl::Pointer node) {
     // TODO: detect the variable's type
     writer.write({
         .opcode = OP_ISTORE,
-        .value = node->variable->index
+//        .value = node->variable->index
     });
     
 }
@@ -183,7 +179,7 @@ void IRGen::emit(VarDecl::Pointer node) {
     // TODO: detect the variable's type
     writer.write({
         .opcode = OP_ISTORE,
-        .value = node->variable->index
+//        .value = node->variable->index
     });
 }
 
@@ -193,18 +189,19 @@ void IRGen::emit(PrefixExpr::Pointer node) {
 }
 
 void IRGen::emit(IdentifierExpr::Pointer node) {
-    // TODO:
-    // Step1: try to find the variable in local variable array
     
     auto name = node->token->rawValue;
-    auto variable = varFinder->find(name);
-    if(variable == nullptr) {
+    auto symbol = context->lookup(name);
+    if(symbol == nullptr) {
         Diagnostics::reportError(L"[Error][GenCode]");
     }
-    writer.write({
-        .opcode = OP_ILOAD,
-        .value = variable->index
-    });
+    
+    if(symbol->flag == varSymbol) {
+        writer.write({
+            .opcode = OP_ILOAD,
+//            .value = variable->index
+        });
+    }
     
     // Step2: try to find the symbol in symbols
 }
@@ -214,7 +211,7 @@ void IRGen::emit(AssignmentExpr::Pointer node) {
     // TODO: detect the variable's type
     writer.write({
         .opcode = OP_ISTORE,
-        .value = node->identifier->varRef->index
+//        .value = node->identifier->varRef->index
     });
 }
 
@@ -249,13 +246,13 @@ void IRGen::emit(ParenthesizedExpr::Pointer node) {
 }
 
 void IRGen::emit(IfStatement::Pointer node) {
-    IRGen gen(varFinder);
+    IRGen gen(context);
     gen.emit(node->ifCodeBlock);
     auto instructions = gen.getInstructions();
     
     std::vector<Instruction> elseInstructions;
     if(node->elseCodeBlock != nullptr) {
-        IRGen elseBlockGenerator;
+        IRGen elseBlockGenerator(context);
         elseBlockGenerator.emit(node->elseCodeBlock);
         elseInstructions = elseBlockGenerator.getInstructions();
         
@@ -284,10 +281,7 @@ void IRGen::emit(CodeBlock::Pointer node) {
 
 void IRGen::emit(FuncDecl::Pointer node) {
     
-    auto varFinder = std::make_shared<ScopeVarFinder>();
-    varFinder->scopes.push_back(node->scope);
-    
-    IRGen generator(varFinder);
+    IRGen generator(context);
     generator.emit(node->codeBlock);
     auto instructions = generator.getInstructions();
     

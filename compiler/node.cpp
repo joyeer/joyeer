@@ -60,6 +60,10 @@ identifier(identifier),
 type(type) {
 }
 
+const std::wstring& Pattern::getIdentifierName() {
+    return identifier->token->rawValue;
+}
+
 
 ConstructorDecl::ConstructorDecl(std::shared_ptr<Node> parameterClause, std::shared_ptr<Node> codeBlock):
 Node(SyntaxKind::constructorDecl),
@@ -132,6 +136,10 @@ literal(literal) {
 IdentifierExpr::IdentifierExpr(std::shared_ptr<Token> token):
 Node(SyntaxKind::identifierExpr),
 token(token) {
+}
+
+const std::wstring& IdentifierExpr::getName() {
+    return token->rawValue;
 }
 
 ParenthesizedExpr::ParenthesizedExpr(std::shared_ptr<Node> expr):

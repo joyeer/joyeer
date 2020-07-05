@@ -4,18 +4,25 @@
 #include <unordered_map>
 #include <string>
 #include <stack>
+#include <vector>
 
 enum SymbolFlag {
-    funcSymbol,
-    paramSymbol,
-    varSymbol,
-    constSymbol
+    declSymbol =        1,
+    refSymbol =         1 << 1,
+    classSymbol =       1 << 2,
+    funcSymbol =        1 << 3,
+    varSymbol =         1 << 4,
+    mutableSymbol =     1 << 5,
+    immutableSymbol =   1 << 6,
+    
+    // delcare & variable symbol
+    declMutableVarSymbol =          SymbolFlag::declSymbol & SymbolFlag::varSymbol & SymbolFlag::mutableSymbol,
+    declImmutableVarSymbol =        SymbolFlag::declSymbol & SymbolFlag::varSymbol & SymbolFlag::immutableSymbol,
 };
+
 
 struct Symbol {
     typedef std::shared_ptr<Symbol> Pointer;
-public:
-    Symbol(SymbolFlag flag, const std::wstring& name);
 public:
     int index;
     SymbolFlag flag;
@@ -23,37 +30,29 @@ public:
 };
 
 
-class SymTable {
+class SymbolTable {
 public:
-    typedef std::shared_ptr<SymTable> Pointer;
+    typedef std::shared_ptr<SymbolTable> Pointer;
+    typedef std::weak_ptr<SymbolTable> WeakPointer;
 public:
-    SymTable();
-    // insert an new Symbol
-    void insert(Symbol::Pointer symbol);
+    SymbolTable();
     
+    // insert an new Symbol
+    bool insert(Symbol::Pointer symbol);
+    
+    // find symbol by a given name
     Symbol::Pointer find(const std::wstring& name) const;
+    
+    std::vector<Symbol::Pointer> allVarSymbols() const;
+
+    // Parent's
+    SymbolTable::WeakPointer parent;
+    std::vector<SymbolTable::Pointer> children;
     
 private:
     std::unordered_map<std::wstring, Symbol::Pointer> symbols;
 };
 
-/// SymbolFactory will include global symbols like functions
-class SymbolFactory {
-public:
-    typedef std::shared_ptr<SymbolFactory> Pointer;
-    
-public:
-    SymbolFactory();
-    
-    // We create an SymTable for a specific node
-    SymTable::Pointer createSymTable();
-    
-    SymTable::Pointer getGlobalSymbolTable();
-    
-private:
-    void createGlobalSymbolTable();
-private:
-    SymTable::Pointer globalSymbolTable;
-};
+
 
 #endif

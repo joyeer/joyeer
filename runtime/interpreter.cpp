@@ -94,7 +94,7 @@ void JrInterpreter::exec_iload(const Instruction &instruction) {
 }
 
 void JrInterpreter::exec_invoke(const Instruction &instruction) {
-    auto func = Global::funcTable[instruction.value];
+    auto func = Global::functions[instruction.value];
     if(func->kind == JrFunction_Native) {
         (*func->nativeCode)(context, func.get());
     }

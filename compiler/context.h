@@ -12,57 +12,57 @@ enum ScopeFlag {
     sourceScope,
     classScope,
     funcScope,
-    codeScope,
+    codeBlockScope,
 };
 
-struct Var {
-    typedef std::shared_ptr<Var> Pointer;
-    
-    bool isMutable;
-    std::wstring name;
-    int index;
+enum CompileStage {
+    visitSourceBlock,
+    visitCodeBlock,
+    visitClassDecl,
+    visitFuncDecl,          // process func declaration
+    visitFuncNameDecl,      // process func name
+    visitFuncParamDecl,
 };
-
-struct Scope {
-    typedef std::shared_ptr<Scope> Pointer;
-    
-    ScopeFlag flag;
-    std::vector<Var::Pointer> vars;
-    std::unordered_map<std::wstring, Var::Pointer> map;
-    
-    void insert(Var::Pointer var);
-    
-    Var::Pointer find(const std::wstring& name);
-    
-};
-
-struct ScopeVarFinder {
-    typedef std::shared_ptr<ScopeVarFinder> Pointer;
-    
-    std::vector<Scope::Pointer> scopes;
-    
-    Var::Pointer find(const std::wstring& name);
-};
-
 
 class CompileContext {
-    
 public:
+    typedef std::shared_ptr<CompileContext> Pointer;
+    
     CompileContext();
     
+    // initialize an new scope, e.g. when parsing an function/class, we will initialize an scope,
+    // basically, an scope is a Symtable
     void initializeScope(ScopeFlag flag);
-    void finalizeScope();
     
-    std::pair<Symbol::Pointer, ScopeFlag> lookup(const std::wstring& name);
+    // complete an scope
+    void finalizeScope(ScopeFlag flag);
     
-    SymTable::Pointer currentSymbolTable();
+    void visit(CompileStage stage, std::function<void(void)> visit);
+    
+    CompileStage curStage() const;
+    
+    // look up name's mapped symbol
+    Symbol::Pointer lookup(const std::wstring& name);
+    
+    // insert an new Symbol in top symbol table
+    bool insert(Symbol::Pointer symbol);
+    
+    SymbolTable::Pointer curSymTable() ;
     
 protected:
     // initializ global scope, e.g. buildin functions/object etc
     void initializeGlobalScope();
+    
+    // entry into an stage of compile pipeline
+    void entry(CompileStage stage);
+    
+    // leave from an compile pipeline stage
+    void leave(CompileStage stage);
+    
 protected:
-    std::vector<SymTable::Pointer> symbols;
+    std::vector<SymbolTable::Pointer> symbols;
     std::vector<ScopeFlag> scopes;
+    std::vector<CompileStage> stages;
 };
 
 #endif

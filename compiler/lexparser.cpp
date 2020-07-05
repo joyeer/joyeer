@@ -289,8 +289,8 @@ void LexParser::parseStringLiteral() {
     
     const std::wstring identifier(startAt, iterator);
     auto stringLiteral = std::make_shared<Token>(TokenKind::stringLiteral, identifier, lineNumber, iterator - startAt);
-    Global::stringTable.push_back(identifier);
-    stringLiteral->index = Global::stringTable.size() - 1;
+    Global::strings.push_back(identifier);
+    stringLiteral->index = Global::strings.size() - 1;
     tokens.push_back(stringLiteral);
 }
 

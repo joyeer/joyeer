@@ -33,9 +33,8 @@ typedef uint32_t    JrUInt32;
 typedef uint16_t    JrUInt16;
 typedef uint8_t     JrUInt8;
 
-
-
 struct JrVar {
+    typedef std::shared_ptr<JrVar> Pointer;
     JrType type;
     std::wstring name;
     int index;

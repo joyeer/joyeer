@@ -3,83 +3,13 @@
 #include "runtime/buildin.h"
 #include <cassert>
 
-/////////////////////////////////////////////////////////////////
-// BindContext
-/////////////////////////////////////////////////////////////////
-
-BindContext::BindContext(SymbolFactory::Pointer factory):
-factory(factory) {
-    symbols.push_back(factory->getGlobalSymbolTable());
-}
-
-Symbol::Pointer BindContext::findSymbol(const std::wstring &name) {
-    for(auto symtable : symbols) {
-        auto result = symtable->find(name);
-        if(result != nullptr) {
-            return result;
-        }
-    }
-    return nullptr;
-}
-
-SymTable::Pointer BindContext::currentSymTable() {
-    return symbols.back();
-}
-
-Scope::Pointer BindContext::currentScope() {
-    return scopes.back();
-}
-
-void BindContext::enter(SymTable::Pointer table) {
-    symbols.push_back(table);
-}
-
-void BindContext::leave(SymTable::Pointer table) {
-    assert(table == symbols.back());
-    symbols.pop_back();
-}
-
-void BindContext::enter(Scope::Pointer scope) {
-    scopes.push_back(scope);
-}
- 
-void BindContext::leave(Scope::Pointer scope) {
-    assert(scopes.back() == scope);
-    scopes.pop_back();
-}
-
-Symbol::Pointer BindContext::makeSymbol(Node::Pointer node, const std::wstring &name, SymbolFlag flag) {
-    auto table = currentSymTable();
-    
-    if(table->find(name) !=  nullptr) {
-        Diagnostics::reportError(L"[Error]Duplicate symbols");
-    }
-    
-    auto symbol = std::make_shared<Symbol>(flag, name);
-    table->insert(symbol);
-    
-    return symbol;
-}
-
-Var::Pointer BindContext::makeVar(Node::Pointer, const std::wstring &name, bool isMutable) {
-    auto scope = currentScope();
-    
-    auto var = std::shared_ptr<Var>(new Var {
-        .name = name,
-        .isMutable = isMutable
-    });
-    scope->insert(var);
-    
-    return var;
-}
 
 /////////////////////////////////////////////////////////////////
 // Binder
 /////////////////////////////////////////////////////////////////
 
-Binder::Binder(SymbolFactory::Pointer symFactory):
-symFactory(symFactory),
-context(std::make_shared<BindContext>(symFactory)) {
+Binder::Binder(CompileContext::Pointer context):
+context(context) {
 }
 
 Node::Pointer Binder::bind(std::shared_ptr<Node> node) {
@@ -153,24 +83,20 @@ Node::Pointer Binder::bind(std::shared_ptr<Node> node) {
 
 
 SourceBlock::Pointer Binder::bind(SourceBlock::Pointer sourceBlock) {
-    SymTable::Pointer symtable = symFactory->createSymTable();
-    auto scope = std::shared_ptr<Scope>(new Scope {
-        .flag = ScopeFlag::sourceScope
+    
+    context->initializeScope(ScopeFlag::sourceScope);
+    sourceBlock->symtable = context->curSymTable();
+    
+    context->visit(visitSourceBlock, [sourceBlock, this]() {
+        auto nodes = std::vector<Node::Pointer>();
+        for(auto& statement : sourceBlock->statements) {
+            nodes.push_back(bind(statement));
+        }
+        sourceBlock->statements = nodes;
     });
-    sourceBlock->symbols = symtable;
-    sourceBlock->scope = scope;
     
-    context->enter(scope);
-    context->enter(symtable);
     
-    auto nodes = std::vector<Node::Pointer>();
-    for(auto& statement : sourceBlock->statements) {
-        nodes.push_back(bind(statement));
-    }
-    sourceBlock->statements = nodes;
-    
-    context->leave(symtable);
-    context->leave(scope);
+    context->finalizeScope(ScopeFlag::sourceScope);
     
     return sourceBlock;
 }
@@ -182,11 +108,20 @@ Node::Pointer Binder::bind(ClassDecl::Pointer classDecl) {
 Node::Pointer Binder::bind(VarDecl::Pointer decl) {
     
     auto pattern = decl->pattern;
+    auto symtable = context->curSymTable();
+    auto name = pattern->identifier->token->rawValue;
     
-    auto symbol = context->makeSymbol(decl, pattern->identifier->token->rawValue, SymbolFlag::varSymbol);
-    auto variable  = context->makeVar(decl, pattern->identifier->token->rawValue, false);
+    if(symtable->find(name) != nullptr) {
+        Diagnostics::reportError(L"[Error] duplicate variable name");
+    }
     
-    decl->variable = variable;
+    // double check the domplciate
+    auto symbol = std::shared_ptr<Symbol>(new Symbol{
+        .name = name,
+        .flag = SymbolFlag::declMutableVarSymbol
+    });
+    symtable->insert(symbol);
+    decl->symbol = symbol;
     
     if(decl->initializer != nullptr) {
         decl->initializer = bind(decl->initializer);
@@ -197,10 +132,20 @@ Node::Pointer Binder::bind(VarDecl::Pointer decl) {
 
 Node::Pointer Binder::bind(ConstDecl::Pointer decl) {
     auto pattern = decl->pattern;
-    context->makeSymbol(decl, pattern->identifier->token->rawValue, SymbolFlag::constSymbol);
-    auto variable = context->makeVar(decl, pattern->identifier->token->rawValue, true);
+    auto name = pattern->getIdentifierName();
     
-    decl->variable = variable;
+    auto table = context->curSymTable();
+    if(table->find(name) != nullptr) {
+        Diagnostics::reportError(L"[Error] duplicate variable name");
+    }
+    
+    auto symbol = std::shared_ptr<Symbol>(new Symbol{
+        .name = name,
+        .flag = SymbolFlag::declImmutableVarSymbol
+    });
+    
+    table->insert(symbol);
+    decl->symbol = symbol;
     
     if(decl->initializer != nullptr) {
         decl->initializer = bind(decl->initializer);
@@ -209,7 +154,6 @@ Node::Pointer Binder::bind(ConstDecl::Pointer decl) {
 }
 
 Node::Pointer Binder::bind(ConstructorDecl::Pointer decl) {
-    Scope::Pointer scope = context->currentScope();
     return decl;
 }
 
@@ -221,7 +165,7 @@ Node::Pointer Binder::bind(FuncCallExpr::Pointer decl) {
     }
     decl->arguments = argus;
     
-    std::wstring name = decl->identifier->token->rawValue;
+    std::wstring name = decl->identifier->getName();
     name += L"(";
     for(auto& argument: decl->arguments) {
         name += argument->label->token->rawValue;
@@ -229,9 +173,9 @@ Node::Pointer Binder::bind(FuncCallExpr::Pointer decl) {
     }
     name += L")";
     
-    auto symbol = context->findSymbol(name);
+    auto symbol = context->lookup(name);
     if(symbol == nullptr) {
-        Diagnostics::reportError(L"Cannot find function");
+        Diagnostics::reportError(L"[Error]Cannot find the function");
     }
     
     decl->symbol = symbol;
@@ -253,10 +197,18 @@ Node::Pointer Binder::bind(PrefixExpr::Pointer decl) {
     return decl;
 }
 
-Node::Pointer Binder::bind(IdentifierExpr::Pointer decl) {    
-    auto var = context->currentScope()->find(decl->token->rawValue);
-    decl->varRef = var;
-    return decl;
+Node::Pointer Binder::bind(IdentifierExpr::Pointer decl) {
+    switch (context->curStage()) {
+        case visitFuncNameDecl:
+        case visitFuncParamDecl:
+            return decl;
+        default: {
+            auto table = context->curSymTable();
+            auto symbol = table->find(decl->token->rawValue);
+            decl->symbol = symbol;
+            return decl;
+        }
+    }
 }
 
 Node::Pointer Binder::bind(Expr::Pointer decl) {
@@ -398,42 +350,52 @@ Node::Pointer Binder::bind(IfStatement::Pointer decl) {
 
 Node::Pointer Binder::bind(CodeBlock::Pointer decl) {
     
-    SymTable::Pointer symtable = symFactory->createSymTable();
-    decl->symbols = symtable;
+    context->initializeScope(ScopeFlag::codeBlockScope);
+    auto table = context->curSymTable();
+    decl->symbols = table;
     
-    context->enter(symtable);
+    // start to process code block
+    context->visit(visitCodeBlock, [decl, this]() {
+        std::vector<Node::Pointer> statements;
+        for(auto s: decl->statements) {
+            statements.push_back(bind(s));
+        }
+        decl->statements = statements;
+    });
     
-    std::vector<Node::Pointer> statements;
-    for(auto s: decl->statements) {
-        statements.push_back(bind(s));
-    }
+    context->finalizeScope(codeBlockScope);
     
-    context->leave(symtable);
-    decl->statements = statements;
     return decl;
 }
 
 Node::Pointer Binder::bind(FuncDecl::Pointer decl) {
-    SymTable::Pointer symtable = symFactory->createSymTable();
-    auto scope = std::shared_ptr<Scope>(new Scope {
-        .flag = ScopeFlag::funcScope
-    });
+    context->initializeScope(ScopeFlag::funcScope);
+    auto symtable = context->curSymTable();
     decl->symbols = symtable;
-    decl->scope = scope;
     
-    context->enter(scope);
-    context->enter(symtable);
-    
-    decl->identifier = bind(decl->identifier);
-    decl->parameterClause = bind(decl->parameterClause);
-    if(decl->returnType != nullptr) {
-        decl->returnType = bind(decl->returnType);
-    }
-    decl->codeBlock = bind(decl->codeBlock);
-    
-    context->leave(symtable);
-    context->leave(scope);
+    // visit func decleration
+    context->visit(visitFuncDecl, [this, decl]() {
+        
+        // start to process function name
+        context->visit(visitFuncNameDecl, [this, decl]() {
+            decl->identifier = bind(decl->identifier);
+        });
+        
+        // start to process function parameters
+        context->visit(visitFuncParamDecl, [this, decl]() {
+            decl->parameterClause = bind(decl->parameterClause);
+        });
+        
+        if(decl->returnType != nullptr) {
+            decl->returnType = bind(decl->returnType);
+        }
+        
+        decl->codeBlock = bind(decl->codeBlock);
+    });
 
+    context->finalizeScope(ScopeFlag::funcScope);
+        
+  
     return decl;
 }
 
@@ -445,9 +407,19 @@ Node::Pointer Binder::bind(ParameterClause::Pointer decl) {
     
     for(auto parameter: decl->parameters) {
         auto name = parameter->identifier->token->rawValue;
-        auto symbol = context->makeSymbol(parameter, name, SymbolFlag::paramSymbol);
-        auto var = context->makeVar(parameter, name, false);
-        decl->variables.push_back(var);
+        
+        auto symtable = context->curSymTable();
+        
+        // In current symtable, we find same name symbol, report it as error
+        if(symtable->find(name) != nullptr) {
+            Diagnostics::reportError(L"[Error] duplicate variable name");
+        }
+        
+        auto symbol = std::shared_ptr<Symbol>(new Symbol{
+            .name = name,
+            .flag = SymbolFlag::varSymbol
+        });
+        
     }
     
     decl->parameters = parameters;

@@ -5,46 +5,12 @@
 #include "node.h"
 #include "context.h"
 
-struct BindContext {
-public:
-    BindContext(SymbolFactory::Pointer factory);
-    
-    Symbol::Pointer findSymbol(const std::wstring& name);
-    
-    Symbol::Pointer makeSymbol(Node::Pointer node, const std::wstring& name, SymbolFlag flag);
-    
-    // declare an variable in current scope
-    Var::Pointer makeVar(Node::Pointer node, const std::wstring& name, bool isMutable);
-    
-    // return the current parsing symbol tables
-    SymTable::Pointer currentSymTable();
-    
-    // return the current parsing scope
-    Scope::Pointer currentScope();
-
-    // Symbol tables entry & leave
-    void enter(SymTable::Pointer table);
-    void leave(SymTable::Pointer table);
-    
-    // enter or leave the parsing scope
-    void enter(Scope::Pointer scope);
-    void leave(Scope::Pointer scope);
-    
-private:
-    SymbolFactory::Pointer factory;
-    
-    std::vector<SymTable::Pointer> symbols;
-    // current semantic analyzing scope, e.g. source level, class level, method level etc.
-    std::vector<Scope::Pointer> scopes;
-    
-};
-
 
 // Bind all types and symbols during analyzing AST tree
 // Reduce the expression's depth level
 class Binder {
 public:
-    Binder(SymbolFactory::Pointer symFactory);
+    Binder(CompileContext::Pointer context);
     
     SourceBlock::Pointer bind(SourceBlock::Pointer sourceBlock);
     
@@ -95,9 +61,7 @@ protected:
     Node::Pointer bind(ReturnStatement::Pointer decl);
     
 private:
-    SymbolFactory::Pointer symFactory;
-    
-    std::shared_ptr<BindContext> context;
+    CompileContext::Pointer context;
 };
 
 #endif

@@ -60,10 +60,13 @@ protected:
 struct IdentifierExpr: public Node {
     typedef std::shared_ptr<IdentifierExpr> Pointer;
     
-    Var::Pointer   varRef;
     Token::Pointer token;
+    Symbol::Pointer symbol;
     
     IdentifierExpr(Token::Pointer token);
+    
+    // Return identifier's name
+    const std::wstring& getName();
 };
 
 struct OperatorExpr: Node {
@@ -91,6 +94,8 @@ struct Pattern: public Node {
     TypeDecl::Pointer type;
     
     Pattern(IdentifierExpr::Pointer identifier, TypeDecl::Pointer type);
+    
+    const std::wstring& getIdentifierName();
 
 };
 
@@ -100,7 +105,7 @@ struct ConstDecl: Node {
     Pattern::Pointer pattern;
     Node::Pointer initializer;
     
-    Var::Pointer variable;
+    Symbol::Pointer symbol;
 
     ConstDecl(Pattern::Pointer pattern, std::shared_ptr<Node> initializer);
 };
@@ -112,7 +117,7 @@ struct VarDecl: public Node {
     Node::Pointer initializer;
     
     // enrich
-    Var::Pointer variable;
+    Symbol::Pointer symbol;
 
     VarDecl(Pattern::Pointer pattern, std::shared_ptr<Node> initializer);
 };
@@ -130,7 +135,6 @@ struct ParameterClause: Node {
     typedef std::shared_ptr<ParameterClause> Pointer;
     
     std::vector<Pattern::Pointer> parameters;
-    std::vector<Var::Pointer> variables;
     
     ParameterClause(std::vector<Pattern::Pointer> parameters);
 };
@@ -144,8 +148,7 @@ struct FuncDecl: Node {
     Node::Pointer returnType;
     
     // Additional information
-    Scope::Pointer scope;
-    SymTable::Pointer symbols;
+    SymbolTable::Pointer symbols;
 
     FuncDecl(Node::Pointer identifier, Node::Pointer parameterClause, Node::Pointer returnType, Node::Pointer codeBlock);
     
@@ -267,8 +270,7 @@ struct SourceBlock: Node {
     
     std::vector<Node::Pointer> statements;
     
-    SymTable::Pointer symbols;
-    Scope::Pointer scope;
+    SymbolTable::Pointer symtable; // source symbol
     
     SourceBlock(std::vector<Node::Pointer> statements);
 };
@@ -278,7 +280,7 @@ struct CodeBlock: Node {
     
     std::vector<Node::Pointer> statements;
 
-    SymTable::Pointer symbols;
+    SymbolTable::Pointer symbols;
     CodeBlock(std::vector<Node::Pointer> statements);
 
 };

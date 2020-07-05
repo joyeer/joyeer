@@ -1,69 +1,88 @@
 #include "context.h"
 #include <cassert>
+#include <memory>
+#include "symtable.h"
 #include "diagnostic.h"
 #include "runtime/buildin.h"
 
-void Scope::insert(Var::Pointer var) {
-    if(map.find(var->name) != map.end()) {
-        Diagnostics::reportError(L"[Error] duplicated var");
-    }
-    
-    map.insert({
-        var->name,
-        var
-    });
-    
-    vars.push_back(var);
-    var->index = vars.size() - 1;
+
+CompileContext::CompileContext() {
+    initializeScope(globalScope);
+    initializeGlobalScope();
 }
 
-Var::Pointer Scope::find(const std::wstring &name) {
-    if(map.find(name) == map.end()) {
-        return nullptr;
-    }
-    return map[name];
+void CompileContext::initializeScope(ScopeFlag flag) {
+    assert(scopes.size() == symbols.size());
+    SymbolTable::Pointer symtable = std::make_shared<SymbolTable>();
+    
+    scopes.push_back(flag);
+    symbols.push_back(symtable);
 }
 
+void CompileContext::finalizeScope(ScopeFlag flag) {
+    assert(scopes.size() == symbols.size());
+    
+    assert(scopes.back() == flag);
+    scopes.pop_back();
+    symbols.pop_back();
+}
 
-Var::Pointer ScopeVarFinder::find(const std::wstring& name) {
-    for(auto scope: scopes) {
-        Var::Pointer variable = scope->find(name);
-        if(variable != nullptr) {
-            return variable;
+SymbolTable::Pointer CompileContext::curSymTable() {
+    assert(symbols.size() > 0 );
+    return symbols.back();
+}
+
+void CompileContext::visit(CompileStage stage, std::function<void ()> visit) {
+    entry(stage);
+    visit();
+    leave(stage);
+}
+
+void CompileContext::entry(CompileStage stage) {
+    stages.push_back(stage);
+}
+
+void CompileContext::leave(CompileStage stage) {
+    assert(stages.size() > 0);
+    assert(stages.back() == stage);
+    stages.pop_back();
+}
+
+CompileStage CompileContext::curStage() const {
+    assert(stages.size() > 0);
+    return stages.back();
+}
+
+Symbol::Pointer CompileContext::lookup(const std::wstring &name) {
+    for (auto iterator = symbols.rbegin(); iterator != symbols.rend(); iterator ++) {
+        auto symtable = *iterator;
+        auto symbol = symtable->find(name);
+        if(symbol != nullptr) {
+            return symbol;
         }
     }
     
     return nullptr;
 }
 
-
-CompileContext::CompileContext() {
-    initializeScope(globalScope);
-}
-
-void CompileContext::initializeScope(ScopeFlag flag) {
-    assert(scopes.size() == symbols.size());
-    SymTable::Pointer symtable = std::make_shared<SymTable>();
-    
-    scopes.push_back(flag);
-    symbols.push_back(symtable);
-}
-
-SymTable::Pointer CompileContext::currentSymbolTable() {
-    assert(symbols.size() > 0 );
-    return symbols.back();
+bool CompileContext::insert(Symbol::Pointer symbol) {
+    auto symtable = curSymTable();
+    return symtable->insert(symbol);
 }
 
 void CompileContext::initializeGlobalScope() {
     
     assert(symbols.size() == 1); // only the global scope
     
-    auto table = currentSymbolTable();
+    auto table = curSymTable();
     
-    for(size_t index = 0 ; index < Global::funcTable.size(); index ++) {
-        auto func = Global::funcTable[index];
-        auto symbol = std::make_shared<Symbol>(SymbolFlag::funcSymbol, func->name);
-        symbol->index = index;
+    for(int index = 0 ; index < Global::functions.size(); index ++) {
+        auto func = Global::functions[index];
+        auto symbol = std::shared_ptr<Symbol>(new Symbol{
+            .name = func->name,
+            .flag = SymbolFlag::funcSymbol,
+            .index = index,
+        });
         table->insert(symbol);
     }
 }
