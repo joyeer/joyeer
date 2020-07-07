@@ -15,6 +15,8 @@ enum SymbolFlag {
     mutableSymbol =     1 << 5,
     immutableSymbol =   1 << 6,
     
+    typeSymbol =        1 << 10,
+    
     // delcare & variable symbol
     declMutableVarSymbol =          SymbolFlag::declSymbol | SymbolFlag::varSymbol | SymbolFlag::mutableSymbol,
     declImmutableVarSymbol =        SymbolFlag::declSymbol | SymbolFlag::varSymbol | SymbolFlag::immutableSymbol,
@@ -24,9 +26,13 @@ enum SymbolFlag {
 struct Symbol {
     typedef std::shared_ptr<Symbol> Pointer;
 public:
-    int index;
     SymbolFlag flag;
     std::wstring name;
+    union {
+        int index;
+        int addressOfFunc;
+        int addressOfClass;
+    };
 };
 
 

@@ -148,8 +148,11 @@ struct FuncDecl: Node {
     Node::Pointer returnType;
     
     // Additional information
-    SymbolTable::Pointer symbols;
-
+    SymbolTable::Pointer symtable;
+    
+    // Symbol of function declaration
+    Symbol::Pointer symbol;
+    
     FuncDecl(Node::Pointer identifier, Node::Pointer parameterClause, Node::Pointer returnType, Node::Pointer codeBlock);
     
     const std::wstring getFuncName();
@@ -229,10 +232,13 @@ struct FuncCallExpr: Node {
     IdentifierExpr::Pointer identifier;
     std::vector<ArguCallExpr::Pointer> arguments;
     
+    
     // Function's symbol
     Symbol::Pointer symbol;
     
     FuncCallExpr(IdentifierExpr::Pointer identifier, std::vector<ArguCallExpr::Pointer> arguments);
+    
+    std::wstring getFunctionName();
 };
 
 struct MemberExpr: Node {

@@ -1,3 +1,6 @@
-func add(left:int, right: int): int {
+func add(left:Int, right: Int): Int {
     return left + right
 }
+
+var a = add(left:10, right:10)
+print(message: a)

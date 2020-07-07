@@ -6,22 +6,6 @@
 #include <string>
 #include "instruction.h"
 
-#define JrType_Void         0
-
-#define JrType_Int          1
-#define JrType_Float        2
-#define JrType_Double       3
-#define JrType_Long         4
-#define JrType_String       8
-
-#define JrType_Object       10
-
-struct JrType {
-    uint32_t kind;
-    // index to the type tables
-    uint32_t index;
-};
- 
 typedef int64_t     JrInt;
 typedef int64_t     JrInt64;
 typedef int32_t     JrInt32;
@@ -32,6 +16,41 @@ typedef uint64_t    JrUInt64;
 typedef uint32_t    JrUInt32;
 typedef uint16_t    JrUInt16;
 typedef uint8_t     JrUInt8;
+
+#define JrType_Void         0
+
+#define JrType_Int          1
+#define JrType_Float        2
+#define JrType_Double       3
+#define JrType_Long         4
+#define JrType_String       8
+
+#define JrType_Any          9
+#define JrType_Object       10
+
+
+struct JrType {
+    typedef std::shared_ptr<JrType> Pointer;
+    const static JrType::Pointer Any;
+    
+    int16_t kind;
+    std::wstring name;
+    
+    // index to the type tables
+    int addressOfType;
+};
+
+struct JrPrimaryType: public JrType {
+    typedef std::shared_ptr<JrPrimaryType> Pointer;
+    
+    const static JrPrimaryType::Pointer Int;
+    const static JrPrimaryType::Pointer Float;
+};
+ 
+struct JrObjectType: public JrType {
+    typedef std::shared_ptr<JrObjectType> Pointer;
+    
+};
 
 struct JrVar {
     typedef std::shared_ptr<JrVar> Pointer;

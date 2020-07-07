@@ -121,6 +121,17 @@ identifier(identifier),
 arguments(arguments) {
 }
 
+std::wstring FuncCallExpr::getFunctionName() {
+    std::wstring name = identifier->getName();
+    name += L"(";
+    for(auto& argument: arguments) {
+        name += argument->label->token->rawValue;
+        name += L":";
+    }
+    name += L")";
+    return name;
+}
+
 MemberExpr::MemberExpr(std::shared_ptr<Node> parent, std::shared_ptr<Node> member):
 Node(SyntaxKind::memberExpr),
 parent(parent),

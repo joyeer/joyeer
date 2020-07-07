@@ -41,10 +41,10 @@ public:
      e.g. func add(value1:int, value2:float, descriptor:string)
      the descriptor will be [JrType_Int] [JrType_Float] [JrType_String] [RefIndexOfStringInDataSection]
      */
-    std::vector<JrType> paramTypes;
+    std::vector<JrType::Pointer> paramTypes;
     
     // Function's return type
-    JrType  returnType;
+    JrType::Pointer  returnType;
     
     // Variables
     std::vector<JrVar> localVars;

@@ -1,6 +1,15 @@
 #include "runtime.h"
 #include <cassert>
 
+const JrType::Pointer JrType::Any = std::make_shared<JrType>(JrType{JrType_Any, L"Any"});
+const JrPrimaryType::Pointer JrPrimaryType::Int = std::shared_ptr<JrPrimaryType>(new JrPrimaryType {
+    { .kind = JrType_Int, .name = L"Int" }
+});
+
+const JrPrimaryType::Pointer JrPrimaryType::Float = std::shared_ptr<JrPrimaryType>(new JrPrimaryType {
+    { .kind = JrType_Float, .name = L"Float"}
+});
+
 JrRuntimeStack::JrRuntimeStack() {
     pointer = data;
 }

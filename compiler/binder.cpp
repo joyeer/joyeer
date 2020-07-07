@@ -109,7 +109,7 @@ Node::Pointer Binder::bind(VarDecl::Pointer decl) {
     
     auto pattern = decl->pattern;
     auto symtable = context->curSymTable();
-    auto name = pattern->identifier->token->rawValue;
+    auto name = pattern->identifier->getName();
     
     if(symtable->find(name) != nullptr) {
         Diagnostics::reportError(L"[Error] duplicate variable name");
@@ -165,20 +165,6 @@ Node::Pointer Binder::bind(FuncCallExpr::Pointer decl) {
     }
     decl->arguments = argus;
     
-    std::wstring name = decl->identifier->getName();
-    name += L"(";
-    for(auto& argument: decl->arguments) {
-        name += argument->label->token->rawValue;
-        name += L":";
-    }
-    name += L")";
-    
-    auto symbol = context->lookup(name);
-    if(symbol == nullptr) {
-        Diagnostics::reportError(L"[Error]Cannot find the function");
-    }
-    
-    decl->symbol = symbol;
     return decl;
 }
 
@@ -200,8 +186,27 @@ Node::Pointer Binder::bind(PrefixExpr::Pointer decl) {
 Node::Pointer Binder::bind(IdentifierExpr::Pointer decl) {
     switch (context->curStage()) {
         case visitFuncNameDecl:
-        case visitFuncParamDecl:
             return decl;
+        case visitFuncParamDecl: {
+            auto name = decl->getName();
+            
+            auto symtable = context->curSymTable();
+            
+            // In current symtable, we find same name symbol, report it as error
+            if(symtable->find(name) != nullptr) {
+                Diagnostics::reportError(L"[Error] duplicate variable name");
+            }
+            
+            auto symbol = std::shared_ptr<Symbol>(new Symbol{
+                .name = name,
+                .flag = SymbolFlag::varSymbol
+            });
+            
+            symtable->insert(symbol);
+            decl->symbol = symbol;
+            return decl;
+        }
+            
         default: {
             auto table = context->curSymTable();
             auto symbol = context->lookup(decl->token->rawValue);
@@ -369,18 +374,41 @@ Node::Pointer Binder::bind(CodeBlock::Pointer decl) {
 }
 
 Node::Pointer Binder::bind(FuncDecl::Pointer decl) {
-    context->initializeScope(ScopeFlag::funcScope);
+    
     auto symtable = context->curSymTable();
-    decl->symbols = symtable;
+    auto function = std::make_shared<JrFunction>();
+    function->name = decl->getFuncName();
+    function->kind = JrFunction_VM;
+    
+    Global::registerFunction(function);
+    
+    if(symtable->find(function->name) != nullptr) {
+        Diagnostics::reportError(L"[Error] Dupliate function name");
+    }
+    
+    auto symbol = std::shared_ptr<Symbol>(new Symbol {
+        .name = function->name,
+        .flag = funcSymbol,
+        .addressOfFunc = function->addressOfFunc
+    });
+    
+    // Start to Bind sub
+    
+    symtable = context->curSymTable();
+    decl->symtable = symtable;
+    
+    
+    symtable->insert(symbol);
+    decl->symbol = symbol;
     
     // visit func decleration
     context->visit(visitFuncDecl, [this, decl]() {
-        
         // start to process function name
         context->visit(visitFuncNameDecl, [this, decl]() {
             decl->identifier = bind(decl->identifier);
         });
         
+        context->initializeScope(ScopeFlag::funcScope);
         // start to process function parameters
         context->visit(visitFuncParamDecl, [this, decl]() {
             decl->parameterClause = bind(decl->parameterClause);
@@ -391,10 +419,12 @@ Node::Pointer Binder::bind(FuncDecl::Pointer decl) {
         }
         
         decl->codeBlock = bind(decl->codeBlock);
+        context->finalizeScope(ScopeFlag::funcScope);
     });
 
-    context->finalizeScope(ScopeFlag::funcScope);
-        
+    
+    
+    
   
     return decl;
 }
@@ -403,23 +433,6 @@ Node::Pointer Binder::bind(ParameterClause::Pointer decl) {
     std::vector<Pattern::Pointer> parameters;
     for(auto parameter: decl->parameters) {
         parameters.push_back(std::static_pointer_cast<Pattern>(bind(parameter)));
-    }
-    
-    for(auto parameter: decl->parameters) {
-        auto name = parameter->identifier->token->rawValue;
-        
-        auto symtable = context->curSymTable();
-        
-        // In current symtable, we find same name symbol, report it as error
-        if(symtable->find(name) != nullptr) {
-            Diagnostics::reportError(L"[Error] duplicate variable name");
-        }
-        
-        auto symbol = std::shared_ptr<Symbol>(new Symbol{
-            .name = name,
-            .flag = SymbolFlag::varSymbol
-        });
-        
     }
     
     decl->parameters = parameters;
@@ -433,7 +446,6 @@ Node::Pointer Binder::bind(Pattern::Pointer decl) {
 }
 
 Node::Pointer Binder::bind(TypeDecl::Pointer decl) {
-    decl->identifier = std::static_pointer_cast<IdentifierExpr>(bind(decl->identifier));
     return decl;
 }
 

@@ -48,6 +48,15 @@ void CompileContext::leave(CompileStage stage) {
     stages.pop_back();
 }
 
+void CompileContext::entry(SymbolTable::Pointer table) {
+    symbols.push_back(table);
+}
+
+void CompileContext::leave(SymbolTable::Pointer table) {
+    assert(symbols.back() == table);
+    symbols.pop_back();
+}
+
 CompileStage CompileContext::curStage() const {
     assert(stages.size() > 0);
     return stages.back();
@@ -82,6 +91,16 @@ void CompileContext::initializeGlobalScope() {
             .name = func->name,
             .flag = SymbolFlag::funcSymbol,
             .index = index,
+        });
+        table->insert(symbol);
+    }
+    
+    for(int index = 0; index < Global::types.size(); index ++ ) {
+        auto type = Global::types[index];
+        auto symbol = std::shared_ptr<Symbol>(new Symbol{
+            .name = type->name,
+            .flag = SymbolFlag::typeSymbol,
+            .index = index
         });
         table->insert(symbol);
     }

@@ -49,6 +49,10 @@ public:
     
     SymbolTable::Pointer curSymTable() ;
     
+    void entry(SymbolTable::Pointer table);
+    
+    void leave(SymbolTable::Pointer table);
+    
 protected:
     // initializ global scope, e.g. buildin functions/object etc
     void initializeGlobalScope();

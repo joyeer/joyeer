@@ -130,7 +130,7 @@ void IRGen::emit(FuncCallExpr::Pointer funcCallExpr) {
         emit(argument);
     }
     
-    auto funcIndex = funcCallExpr->symbol->index;
+    auto funcIndex = funcCallExpr->symbol->addressOfFunc;
     writer.write({
         .opcode = OP_INVOKE,
         .value = (int32_t)funcIndex
@@ -287,14 +287,7 @@ void IRGen::emit(FuncDecl::Pointer node) {
     generator.emit(node->codeBlock);
     auto instructions = generator.getInstructions();
     
-    // FuncDecl's all variable
-    auto function = std::make_shared<JrFunction>();
-    function->name = node->getFuncName();
-    function->kind = JrFunction_VM;
-    function->instructions = instructions;
     
-    
-    Global::registerFunction(function);
 }
 
 void IRGen::emit(ReturnStatement::Pointer node) {

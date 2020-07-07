@@ -3,13 +3,38 @@
 #include "runtime.h"
 #include <iostream>
 
-std::vector<JrFunction::Pointer> initGlobalFunctionTable() ;
+std::vector<JrFunction::Pointer> initGlobalFunctionTable();
+std::vector<JrType::Pointer> initGlobalTypeTable();
 
-const static std::unordered_map<std::wstring, JrFunction::Pointer>  globalFunctionTableMap;
 
-std::vector<JrFunction::Pointer> Global::functions = initGlobalFunctionTable();
+void Global::initGlobalTables() {
+    Global::types = initGlobalTypeTable();
+    Global::functions =initGlobalFunctionTable();
 
+}
+
+std::vector<JrType::Pointer> Global::types = {};
 std::vector<std::wstring> Global::strings = {};
+std::vector<JrFunction::Pointer> Global::functions = {};
+
+//////////////////////////////////////////////////////////////////////////////////////////////////
+// init the types tables
+
+std::vector<JrType::Pointer> initGlobalTypeTable() {
+    auto types = std::vector<JrType::Pointer> ({
+        JrPrimaryType::Int,
+        JrPrimaryType::Float,
+        JrType::Any
+    });
+    
+    return types;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////
+// init the function tables
+static std::unordered_map<std::wstring, JrFunction::Pointer>  funtionsMap;
+
+/// functions
 
 void Global::registerFunction(JrFunction::Pointer func) {
     func->addressOfFunc = functions.size();
@@ -29,8 +54,8 @@ std::vector<JrFunction::Pointer> initGlobalFunctionTable() {
             .name = L"print(message:)",
             .kind = JrFunction_Native,
             .paramCount = 1,
-            .paramTypes = {{ .kind = JrType_Object, .index = 0}},
-            .returnType = { .kind = JrType_Void, .index = 0 },
+//            .paramTypes = {{ .name = L"Any", .kind = JrType_Object, .index = 0}},
+//            .returnType = { .name = L"Void", .kind = JrType_Void, .index = 0 },
             .nativeCode = new JrPrintNativeCode(),
             .addressOfFunc = 0
         })
@@ -38,3 +63,5 @@ std::vector<JrFunction::Pointer> initGlobalFunctionTable() {
     
     return functions;
 }
+
+
