@@ -83,7 +83,10 @@ struct TypeDecl: Node {
     IdentifierExpr::Pointer identifier;
     bool isOptional;
     
+    Symbol::Pointer symbol;
+    
     TypeDecl(IdentifierExpr::Pointer identifier, bool isOptional);
+    
     
 };
 

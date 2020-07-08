@@ -188,25 +188,8 @@ Node::Pointer Binder::bind(IdentifierExpr::Pointer decl) {
         case visitFuncNameDecl:
             return decl;
         case visitFuncParamDecl: {
-            auto name = decl->getName();
-            
-            auto symtable = context->curSymTable();
-            
-            // In current symtable, we find same name symbol, report it as error
-            if(symtable->find(name) != nullptr) {
-                Diagnostics::reportError(L"[Error] duplicate variable name");
-            }
-            
-            auto symbol = std::shared_ptr<Symbol>(new Symbol{
-                .name = name,
-                .flag = SymbolFlag::varSymbol
-            });
-            
-            symtable->insert(symbol);
-            decl->symbol = symbol;
             return decl;
         }
-            
         default: {
             auto table = context->curSymTable();
             auto symbol = context->lookup(decl->token->rawValue);
@@ -391,24 +374,20 @@ Node::Pointer Binder::bind(FuncDecl::Pointer decl) {
         .flag = funcSymbol,
         .addressOfFunc = function->addressOfFunc
     });
-    
-    // Start to Bind sub
-    
-    symtable = context->curSymTable();
-    decl->symtable = symtable;
-    
-    
     symtable->insert(symbol);
     decl->symbol = symbol;
     
+    
+    context->initializeScope(ScopeFlag::funcScope);
     // visit func decleration
     context->visit(visitFuncDecl, [this, decl]() {
+        
         // start to process function name
         context->visit(visitFuncNameDecl, [this, decl]() {
             decl->identifier = bind(decl->identifier);
         });
         
-        context->initializeScope(ScopeFlag::funcScope);
+        
         // start to process function parameters
         context->visit(visitFuncParamDecl, [this, decl]() {
             decl->parameterClause = bind(decl->parameterClause);
@@ -419,13 +398,13 @@ Node::Pointer Binder::bind(FuncDecl::Pointer decl) {
         }
         
         decl->codeBlock = bind(decl->codeBlock);
-        context->finalizeScope(ScopeFlag::funcScope);
+        
     });
-
+    // Start to Bind sub
+    decl->symtable = context->curSymTable();
     
+    context->finalizeScope(ScopeFlag::funcScope);
     
-    
-  
     return decl;
 }
 

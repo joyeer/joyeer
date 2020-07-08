@@ -1,6 +1,11 @@
 func add(left:Int, right: Int): Int {
-    return left + right
+    var i = left + right
+    if i - 10 {
+        return 9
+    } else {
+        return 10
+    }
 }
 
-var a = add(left:10, right:10)
+var a = add(left:10, right:12)
 print(message: a)

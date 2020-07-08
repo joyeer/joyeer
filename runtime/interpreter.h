@@ -7,7 +7,7 @@
 
 struct JrInterpreter {
 public:
-    JrInterpreter(JrRuntimeContext* context);
+    JrInterpreter(JrRuntimeContext::Pointer context);
     
     void run(JrFunction::Pointer function);
     
@@ -30,8 +30,9 @@ private:
     void exec_ifle(const Instruction& instrunction);
     
     void exec_goto(const Instruction& instruction);
+    void exec_ireturn(const Instruction& instruction);
     
-    JrRuntimeContext* context;
+    JrRuntimeContext::Pointer context;
 };
 
 #endif

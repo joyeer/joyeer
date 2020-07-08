@@ -42,7 +42,7 @@ void Global::registerFunction(JrFunction::Pointer func) {
 }
 
 struct JrPrintNativeCode : public JrNativeCode {
-    void operator()(JrRuntimeContext* context, JrFunction* func) {
+    virtual void operator()(JrRuntimeContext::Pointer context, JrFunction::Pointer func) {
         uint32_t value = context->stack->pop4();
         std::cout << value << std::endl;
     }

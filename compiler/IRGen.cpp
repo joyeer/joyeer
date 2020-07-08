@@ -120,9 +120,12 @@ void IRGen::emit(SourceBlock::Pointer block) {
         });
     }
     
-    for(auto& statement: block->statements) {
-        emit(statement);
-    }
+    context->visit(visitSourceBlock, [this, block]() {
+        for(auto& statement: block->statements) {
+            emit(statement);
+        }
+    });
+    
 }
 
 void IRGen::emit(FuncCallExpr::Pointer funcCallExpr) {
@@ -193,10 +196,10 @@ void IRGen::emit(PrefixExpr::Pointer node) {
 }
 
 void IRGen::emit(IdentifierExpr::Pointer node) {
-    
     auto symbol = node->symbol;
     if(symbol == nullptr) {
         Diagnostics::reportError(L"[Error][GenCode]");
+        return;
     }
     
     if((symbol->flag & varSymbol) == varSymbol) {
@@ -204,8 +207,11 @@ void IRGen::emit(IdentifierExpr::Pointer node) {
             .opcode = OP_ILOAD,
             .value = symbol->index
         });
+        
+        return;
     }
-    
+
+    return;
     // Step2: try to find the symbol in symbols
 }
 
@@ -276,9 +282,11 @@ void IRGen::emit(IfStatement::Pointer node) {
 }
 
 void IRGen::emit(CodeBlock::Pointer node) {
-    for(auto statement: node->statements) {
-        emit(statement);
-    }
+    context->visit(visitCodeBlock, [this, node]() {
+        for(auto statement: node->statements) {
+            emit(statement);
+        }
+    });
 }
 
 void IRGen::emit(FuncDecl::Pointer node) {
@@ -287,7 +295,20 @@ void IRGen::emit(FuncDecl::Pointer node) {
     generator.emit(node->codeBlock);
     auto instructions = generator.getInstructions();
     
+    auto function = Global::functions[node->symbol->addressOfFunc];
+    assert(function != nullptr && function->instructions.size() == 0);
+    function->instructions = instructions;
     
+    auto symbols = node->symtable->allVarSymbols();
+    
+    for(auto symbol: symbols) {
+        symbol->index = function->localVars.size();
+        function->localVars.push_back(JrVar {
+            .name = symbol->name
+        });
+    }
+
+
 }
 
 void IRGen::emit(ReturnStatement::Pointer node) {

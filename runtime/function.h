@@ -5,8 +5,7 @@
 #include "runtime.h"
 
 struct JrRuntimeContext;
-struct JrFunction;
-
+struct JrNativeCode;
 
 struct JrCode {
     typedef std::shared_ptr<JrCode> Pointer;
@@ -16,13 +15,6 @@ struct JrCode {
     
     JrCode(uint32_t size);
     virtual ~JrCode();
-};
-
-
-struct JrNativeCode {
-    typedef std::shared_ptr<JrNativeCode> Pointer;
-    
-    virtual void operator() (JrRuntimeContext *context, JrFunction* func);
 };
 
 #define JrFunction_Native       1
@@ -62,5 +54,12 @@ public:
 public:
     ~JrFunction();
 };
+
+struct JrNativeCode {
+    typedef std::shared_ptr<JrNativeCode> Pointer;
+    
+    virtual void operator() (JrRuntimeContext::Pointer context, JrFunction::Pointer func);
+};
+
 
 #endif

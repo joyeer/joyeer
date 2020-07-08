@@ -12,6 +12,7 @@ void TypeChecker::verify(Node::Pointer node) {
             verify(std::static_pointer_cast<SourceBlock>(node));
             break;
         case type:
+            verify(std::static_pointer_cast<TypeDecl>(node));
             break;
         case arrayType:
             break;
@@ -36,14 +37,17 @@ void TypeChecker::verify(Node::Pointer node) {
         case classDecl:
             break;
         case parameterClause:
+            verify(std::static_pointer_cast<ParameterClause>(node));
             break;
         case codeBlock:
+            verify(std::static_pointer_cast<CodeBlock>(node));
             break;
         case forInStatement:
             break;
         case ifStatement:
             break;
         case expr:
+            verify(std::static_pointer_cast<Expr>(node));
             break;
         case selfExpr:
             break;
@@ -52,6 +56,7 @@ void TypeChecker::verify(Node::Pointer node) {
         case prefixExpr:
             break;
         case identifierExpr:
+            verify(std::static_pointer_cast<IdentifierExpr>(node));
             break;
         case parenthesizedExpr:
             break;
@@ -75,6 +80,7 @@ void TypeChecker::verify(Node::Pointer node) {
         case operatorExpr:
             break;
         case returnStatement:
+            verify(std::static_pointer_cast<ReturnStatement>(node));
             break;
     }
 }
@@ -89,6 +95,16 @@ void TypeChecker::verify(SourceBlock::Pointer node) {
 
 void TypeChecker::verify(FuncDecl::Pointer node) {
     context->entry(node->symtable);
+    
+    
+    context->visit(visitFuncParamDecl, [this, node]() {
+        auto function = Global::functions[node->symbol->addressOfFunc];
+        auto parameterClause = std::static_pointer_cast<ParameterClause>(node->parameterClause);
+        verify(parameterClause);
+        function->paramCount = parameterClause->parameters.size();
+    });
+    
+    verify(node->codeBlock);
     
     context->leave(node->symtable);
 }
@@ -107,4 +123,84 @@ void TypeChecker::verify(FuncCallExpr::Pointer node) {
 
 void TypeChecker::verify(VarDecl::Pointer node) {
     verify(node->initializer);
+}
+
+void TypeChecker::verify(ParameterClause::Pointer node) {
+    auto symtable = context->curSymTable();
+    for(auto param: node->parameters) {
+        verify(param);
+    }
+    
+    int i = 0;
+    for(auto param: node->parameters) {
+        param->identifier->symbol->index = i;
+        i ++;
+    }
+}
+
+void TypeChecker::verify(Pattern::Pointer node) {
+    verify(node->identifier);
+    verify(node->type);
+    
+    // binding the identifier symbol's type to Pattern type's symbols' type
+    node->identifier->symbol->addressOfType = node->type->symbol->addressOfType;
+}
+
+void TypeChecker::verify(IdentifierExpr::Pointer node) {
+    auto name = node->getName();
+    switch (context->curStage()) {
+        case visitFuncParamDecl: {
+
+            auto symtable = context->curSymTable();
+
+            // In current symtable, we find same name symbol, report it as error
+            if(symtable->find(name) != nullptr) {
+                Diagnostics::reportError(L"[Error] duplicate variable name");
+            }
+
+            auto symbol = std::shared_ptr<Symbol>(new Symbol{
+                .name = name,
+                .flag = SymbolFlag::declImmutableVarSymbol
+            });
+
+            symtable->insert(symbol);
+            node->symbol = symbol;
+        }
+            break;
+        case visitExpr: {
+            auto symbol = context->lookup(name);
+            node->symbol = symbol;
+            
+        }
+            break;
+        default:
+            break;
+    }
+    
+}
+
+void TypeChecker::verify(TypeDecl::Pointer node) {
+    auto symbol = context->lookup(node->identifier->getName());
+    node->symbol = symbol;
+}
+
+void TypeChecker::verify(CodeBlock::Pointer node) {
+    context->visit(visitCodeBlock, [this, node]() {
+        for(auto statement: node->statements) {
+            verify(statement);
+        }
+    });
+}
+
+void TypeChecker::verify(ReturnStatement::Pointer node) {
+    verify(node->expr);
+}
+
+void TypeChecker::verify(Expr::Pointer node) {
+    context->visit(visitExpr, [this, node]() {
+        for(auto n: node->nodes) {
+            verify(n);
+        }
+    });
+    
 }

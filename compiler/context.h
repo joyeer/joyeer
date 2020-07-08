@@ -22,6 +22,10 @@ enum CompileStage {
     visitFuncDecl,          // process func declaration
     visitFuncNameDecl,      // process func name
     visitFuncParamDecl,
+    
+    visitFuncCall,
+    visitFuncParamsCall,
+    visitExpr,
 };
 
 class CompileContext {

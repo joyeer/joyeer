@@ -1,9 +1,8 @@
 #ifndef __joyeer_runtime_instruction_h__
 #define __joyeer_runtime_instruction_h__
 
-#include <stdint.h>
-#include <cstddef>
 #include <vector>
+#include <unordered_map>
 
 enum Opcode {
     OP_NOP = 0x00,
@@ -40,7 +39,7 @@ enum Opcode {
 
 struct Instruction {
     Opcode opcode;
-    int32_t value;
+    int32_t value = -1;
 };
 
 struct JrCodeWriter {
@@ -52,7 +51,8 @@ struct JrCodeWriter {
 };
 
 struct JrInstructionDebugPrinter {
-    
+    const static std::unordered_map<Opcode, std::wstring> maps;
+    void print(const std::vector<Instruction>& instructions);
 };
 
 #endif

@@ -1,7 +1,8 @@
 #include "interpreter.h"
 #include "buildin.h"
+#include <iostream>
 
-JrInterpreter::JrInterpreter(JrRuntimeContext* context):
+JrInterpreter::JrInterpreter(JrRuntimeContext::Pointer context):
 context(context) {
 }
 
@@ -11,6 +12,11 @@ void JrInterpreter::run(JrFunction::Pointer function) {
     auto frame = prepareStackFrame(function);
     context->stack->push(frame);
     context->frame = frame;
+    
+    std::wcout << L">[call][function]:" << function->name << std::endl;
+    JrInstructionDebugPrinter debugPrinter;
+    debugPrinter.print(function->instructions);
+    std::wcout << L">===[call][function]" << std::endl;
     
     pointer = function->instructions.begin();
     end = function->instructions.end();
@@ -54,12 +60,17 @@ void JrInterpreter::run(JrFunction::Pointer function) {
             case OP_GOTO:
                 exec_goto(instruction);
                 break;
+            case OP_IRETURN:
+                exec_ireturn(instruction);
+                return;
             default:
                 break;
         }
         
         pointer ++;
+        
     }
+    
 }
 
 JrFunctionFrame::Pointer JrInterpreter::prepareStackFrame(JrFunction::Pointer func) {
@@ -67,8 +78,8 @@ JrFunctionFrame::Pointer JrInterpreter::prepareStackFrame(JrFunction::Pointer fu
     frame->addressOfFunc = func->addressOfFunc;
     
     uint8_t* baseAddress = context->stack->pointer;
-    uint8_t* address = baseAddress;
-    frame->startAddress = address;
+    uint8_t* address = baseAddress - (4 * func->paramCount);
+    frame->startAddress = address ;
     for(auto var : func->localVars) {
         frame->addressOfVariables.push_back(address);
         // TODO: Update with sizeof variable
@@ -96,7 +107,10 @@ void JrInterpreter::exec_iload(const Instruction &instruction) {
 void JrInterpreter::exec_invoke(const Instruction &instruction) {
     auto func = Global::functions[instruction.value];
     if(func->kind == JrFunction_Native) {
-        (*func->nativeCode)(context, func.get());
+        (*func->nativeCode)(context, func);
+    } else if(func->kind == JrFunction_VM) {
+        JrInterpreter interpreter(context);
+        interpreter.run(func);
     }
 }
 
@@ -141,4 +155,10 @@ void JrInterpreter::exec_ifle(const Instruction &instrunction) {
 void JrInterpreter::exec_goto(const Instruction &instruction) {
     auto value1 = context->stack->pop4();
     pointer += instruction.value;
+}
+
+void JrInterpreter::exec_ireturn(const Instruction &instruction) {
+    auto value = context->stack->pop4();
+    context->stack->restore(context->frame->startAddress);
+    context->stack->push4(value);
 }

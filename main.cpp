@@ -48,8 +48,8 @@ int main(int argc, char** argv) {
     
     auto function  = irGen.getFunction();
     
-    JrRuntimeContext context;
-    JrInterpreter interpreter(&context);
+    auto context = std::make_shared<JrRuntimeContext>();
+    JrInterpreter interpreter(context);
     interpreter.run(function);
     
     return 0;

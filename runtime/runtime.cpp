@@ -15,7 +15,10 @@ JrRuntimeStack::JrRuntimeStack() {
 }
 
 void JrRuntimeStack::push(JrFunctionFrame::Pointer frame) {
-    assert(frame->startAddress == pointer);
+    pointer = frame->endAddress;
+}
+
+void JrRuntimeStack::pop(JrFunctionFrame::Pointer frame) {
     pointer = frame->endAddress;
 }
 
@@ -29,8 +32,11 @@ uint32_t JrRuntimeStack::pop4() {
     return *(uint32_t*)pointer;
 }
 
+void JrRuntimeStack::restore(uint8_t *address) {
+    pointer = address;
+}
+
 void JrRuntimeStack::storeValueForVariable(uint8_t *addressOfVariable, int value) {
-    assert(addressOfVariable < pointer);
     *(int*)addressOfVariable = value;
 }
 
@@ -40,10 +46,9 @@ int JrRuntimeStack::intValueOfVariable(uint8_t *addressOfVariable) {
 }
 
 JrRuntimeContext::JrRuntimeContext() {
-    stack = new JrRuntimeStack();
+    stack = std::make_shared<JrRuntimeStack>();
 }
 
 JrRuntimeContext::~JrRuntimeContext() {
-    delete stack;
 }
 

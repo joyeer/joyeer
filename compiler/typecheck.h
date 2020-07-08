@@ -15,6 +15,13 @@ private:
     void verify(FuncDecl::Pointer node);
     void verify(FuncCallExpr::Pointer node);
     void verify(VarDecl::Pointer node);
+    void verify(ParameterClause::Pointer node);
+    void verify(Pattern::Pointer node);
+    void verify(IdentifierExpr::Pointer node);
+    void verify(TypeDecl::Pointer node);
+    void verify(CodeBlock::Pointer node);
+    void verify(ReturnStatement::Pointer node);
+    void verify(Expr::Pointer node);
     
     CompileContext::Pointer context;
 };
