@@ -23,6 +23,7 @@ void TypeChecker::verify(Node::Pointer node) {
         case importDecl:
             break;
         case constantDecl:
+            verify(std::static_pointer_cast<ConstDecl>(node));
             break;
         case varDecl:
             verify(std::static_pointer_cast<VarDecl>(node));
@@ -45,6 +46,7 @@ void TypeChecker::verify(Node::Pointer node) {
         case forInStatement:
             break;
         case ifStatement:
+            verify(std::static_pointer_cast<IfStatement>(node));
             break;
         case expr:
             verify(std::static_pointer_cast<Expr>(node));
@@ -59,6 +61,7 @@ void TypeChecker::verify(Node::Pointer node) {
             verify(std::static_pointer_cast<IdentifierExpr>(node));
             break;
         case parenthesizedExpr:
+            verify(std::static_pointer_cast<ParenthesizedExpr>(node));
             break;
         case arguCallExpr:
             break;
@@ -68,12 +71,14 @@ void TypeChecker::verify(Node::Pointer node) {
         case memberExpr:
             break;
         case literalExpr:
+            verify(std::static_pointer_cast<LiteralExpr>(node));
             break;
         case arrayLiteralExpr:
             break;
         case dictLiteralExpr:
             break;
         case assignmentExpr:
+            verify(std::static_pointer_cast<AssignmentExpr>(node));
             break;
         case binaryExpr:
             break;
@@ -87,9 +92,12 @@ void TypeChecker::verify(Node::Pointer node) {
 
 void TypeChecker::verify(SourceBlock::Pointer node) {
     context->entry(node->symtable);
-    for(auto statement: node->statements) {
-        verify(statement);
-    }
+    context->visit(visitSourceBlock, [this, node](){
+        for(auto statement: node->statements) {
+            verify(statement);
+        }
+    });
+    
     context->leave(node->symtable);
 }
 
@@ -173,6 +181,8 @@ void TypeChecker::verify(IdentifierExpr::Pointer node) {
             
         }
             break;
+        case visitAssignExpr:
+            break;
         default:
             break;
     }
@@ -203,4 +213,39 @@ void TypeChecker::verify(Expr::Pointer node) {
         }
     });
     
+}
+
+void TypeChecker::verify(ConstDecl::Pointer node) {
+    verify(node->initializer);
+}
+
+void TypeChecker::verify(LiteralExpr::Pointer node) {
+    
+}
+
+void TypeChecker::verify(AssignmentExpr::Pointer node) {
+    context->visit(visitAssignExpr, [this, node](){
+        verify(node->identifier);
+    });
+    
+    
+    verify(node->expr);
+}
+
+void TypeChecker::verify(ParenthesizedExpr::Pointer node) {
+    verify(node->expr);
+}
+
+void TypeChecker::verify(IfStatement::Pointer node) {
+    verify(node->condition);
+    
+    context->visit(visitCodeBlock, [this, node](){
+        verify(node->ifCodeBlock);
+    });
+    
+    if(node->elseCodeBlock != nullptr) {
+        context->visit(visitCodeBlock, [this, node](){
+            verify(node->elseCodeBlock);
+        });
+    }
 }

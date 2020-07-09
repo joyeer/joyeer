@@ -22,6 +22,11 @@ private:
     void verify(CodeBlock::Pointer node);
     void verify(ReturnStatement::Pointer node);
     void verify(Expr::Pointer node);
+    void verify(ConstDecl::Pointer node);
+    void verify(LiteralExpr::Pointer node);
+    void verify(AssignmentExpr::Pointer node);
+    void verify(ParenthesizedExpr::Pointer node);
+    void verify(IfStatement::Pointer node);
     
     CompileContext::Pointer context;
 };

@@ -219,7 +219,7 @@ void IRGen::emit(AssignmentExpr::Pointer node) {
     emit(node->expr);
     writer.write({
         .opcode = OP_ISTORE,
-//        .value = node->identifier->varRef->index
+        .value = node->identifier->symbol->index
     });
 }
 
