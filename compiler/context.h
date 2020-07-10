@@ -19,6 +19,8 @@ enum CompileStage {
     visitSourceBlock,
     visitCodeBlock,
     visitClassDecl,
+    visitVarDecl,
+    visitLetDecl,
     visitFuncDecl,          // process func declaration
     visitFuncNameDecl,      // process func name
     visitFuncParamDecl,

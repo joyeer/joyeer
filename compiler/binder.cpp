@@ -26,12 +26,10 @@ Node::Pointer Binder::bind(std::shared_ptr<Node> node) {
             return bind(std::static_pointer_cast<Pattern>(node));
         case importDecl:
             break;
-        case constantDecl:
-            return bind(std::static_pointer_cast<ConstDecl>(node));
+        case letDecl:
+            return bind(std::static_pointer_cast<LetDecl>(node));
         case varDecl:
             return bind(std::static_pointer_cast<VarDecl>(node));
-        case letDecl:
-            break;
         case funcDecl:
             return bind(std::static_pointer_cast<FuncDecl>(node));
         case constructorDecl:
@@ -118,10 +116,12 @@ Node::Pointer Binder::bind(VarDecl::Pointer decl) {
     // double check the domplciate
     auto symbol = std::shared_ptr<Symbol>(new Symbol{
         .name = name,
-        .flag = SymbolFlag::declMutableVarSymbol
+        .flag = SymbolFlag::mutableVarSymbol
     });
+    
     symtable->insert(symbol);
     decl->symbol = symbol;
+    decl->pattern->identifier->symbol = symbol;
     
     if(decl->initializer != nullptr) {
         decl->initializer = bind(decl->initializer);
@@ -130,7 +130,7 @@ Node::Pointer Binder::bind(VarDecl::Pointer decl) {
     return decl;
 }
 
-Node::Pointer Binder::bind(ConstDecl::Pointer decl) {
+Node::Pointer Binder::bind(LetDecl::Pointer decl) {
     auto pattern = decl->pattern;
     auto name = pattern->getIdentifierName();
     
@@ -141,11 +141,12 @@ Node::Pointer Binder::bind(ConstDecl::Pointer decl) {
     
     auto symbol = std::shared_ptr<Symbol>(new Symbol{
         .name = name,
-        .flag = SymbolFlag::declImmutableVarSymbol
+        .flag = SymbolFlag::immutableVarSymbol
     });
     
     table->insert(symbol);
     decl->symbol = symbol;
+    decl->pattern->identifier->symbol = symbol;
     
     if(decl->initializer != nullptr) {
         decl->initializer = bind(decl->initializer);
@@ -386,7 +387,6 @@ Node::Pointer Binder::bind(FuncDecl::Pointer decl) {
         context->visit(visitFuncNameDecl, [this, decl]() {
             decl->identifier = bind(decl->identifier);
         });
-        
         
         // start to process function parameters
         context->visit(visitFuncParamDecl, [this, decl]() {

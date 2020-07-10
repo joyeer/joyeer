@@ -34,13 +34,11 @@ void IRGen::emit(Node::Pointer node) {
             break;
         case importDecl:
             break;
-        case constantDecl:
-            emit(std::static_pointer_cast<ConstDecl>(node));
+        case letDecl:
+            emit(std::static_pointer_cast<LetDecl>(node));
             break;
         case varDecl:
             emit(std::static_pointer_cast<VarDecl>(node));
-            break;
-        case letDecl:
             break;
         case funcDecl:
             emit(std::static_pointer_cast<FuncDecl>(node));
@@ -169,7 +167,7 @@ void IRGen::emit(LiteralExpr::Pointer node) {
     }
 }
 
-void IRGen::emit(ConstDecl::Pointer node) {
+void IRGen::emit(LetDecl::Pointer node) {
     emit(node->initializer);
     
     // TODO: detect the variable's type

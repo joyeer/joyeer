@@ -15,11 +15,16 @@ enum SymbolFlag {
     mutableSymbol =     1 << 5,
     immutableSymbol =   1 << 6,
     
+    // this is a type symbol
     typeSymbol =        1 << 10,
+    typeUnfixedSymbol =   1 << 11,
     
     // delcare & variable symbol
-    declMutableVarSymbol =          SymbolFlag::declSymbol | SymbolFlag::varSymbol | SymbolFlag::mutableSymbol,
-    declImmutableVarSymbol =        SymbolFlag::declSymbol | SymbolFlag::varSymbol | SymbolFlag::immutableSymbol,
+    mutableVarSymbol =          declSymbol | varSymbol | mutableSymbol,
+    unfixedMutableVarSymbol =   mutableVarSymbol | typeUnfixedSymbol,
+    immutableVarSymbol =        declSymbol | varSymbol | immutableSymbol,
+    unfixedImmutableVarSymbol = immutableVarSymbol | typeUnfixedSymbol,
+    
 };
 
 

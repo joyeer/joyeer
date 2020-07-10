@@ -10,6 +10,10 @@ const JrPrimaryType::Pointer JrPrimaryType::Float = std::shared_ptr<JrPrimaryTyp
     { .kind = JrType_Float, .name = L"Float"}
 });
 
+const JrPrimaryType::Pointer JrPrimaryType::Boolean = std::shared_ptr<JrPrimaryType>(new JrPrimaryType {
+    {.kind = JrType_Boolean, .name = L"Boolean"}
+});
+
 JrRuntimeStack::JrRuntimeStack() {
     pointer = data;
 }

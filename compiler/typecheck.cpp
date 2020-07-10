@@ -1,6 +1,7 @@
 #include "typecheck.h"
 #include "runtime/buildin.h"
 #include "diagnostic.h"
+#include <cassert>
 
 TypeChecker::TypeChecker(CompileContext::Pointer context):
 context(context) {
@@ -22,13 +23,11 @@ void TypeChecker::verify(Node::Pointer node) {
             break;
         case importDecl:
             break;
-        case constantDecl:
-            verify(std::static_pointer_cast<ConstDecl>(node));
+        case letDecl:
+            verify(std::static_pointer_cast<LetDecl>(node));
             break;
         case varDecl:
             verify(std::static_pointer_cast<VarDecl>(node));
-            break;
-        case letDecl:
             break;
         case funcDecl:
             verify(std::static_pointer_cast<FuncDecl>(node));
@@ -104,13 +103,25 @@ void TypeChecker::verify(SourceBlock::Pointer node) {
 void TypeChecker::verify(FuncDecl::Pointer node) {
     context->entry(node->symtable);
     
-    
+    auto function = Global::functions[node->symbol->addressOfFunc];
     context->visit(visitFuncParamDecl, [this, node]() {
-        auto function = Global::functions[node->symbol->addressOfFunc];
         auto parameterClause = std::static_pointer_cast<ParameterClause>(node->parameterClause);
         verify(parameterClause);
-        function->paramCount = parameterClause->parameters.size();
+        
     });
+    
+    
+    assert(function->paramTypes.size() == 0);
+    // Binding function's type
+    auto parameterClause = std::static_pointer_cast<ParameterClause>(node->parameterClause);
+    for(auto parameter: parameterClause->parameters) {
+        auto symbol = parameter->type->symbol;
+        
+        //
+        assert((symbol->flag & typeSymbol) == typeSymbol);
+        function->paramTypes.push_back(Global::types[symbol->addressOfType]);
+    }
+    
     
     verify(node->codeBlock);
     
@@ -126,11 +137,38 @@ void TypeChecker::verify(FuncCallExpr::Pointer node) {
     }
     
     node->symbol = symbol;
-    
 }
 
 void TypeChecker::verify(VarDecl::Pointer node) {
-    verify(node->initializer);
+    context->visit(visitVarDecl, [this, node]() {
+        verify(node->pattern);
+    });
+    
+    if(node->pattern->type == nullptr) {
+        // change the symbol to unfixed symbol
+        node->symbol->flag = unfixedMutableVarSymbol;
+    }
+    
+    if(node->initializer != nullptr) {
+        verify(node->initializer);
+    }
+    
+}
+
+
+void TypeChecker::verify(LetDecl::Pointer node) {
+    context->visit(visitLetDecl, [this, node]() {
+        verify(node->pattern);
+    });
+    
+    if(node->pattern->type == nullptr) {
+        // change the symbol to unfixed symbol
+        node->symbol->flag = unfixedImmutableVarSymbol;
+    }
+    
+    if(node->initializer != nullptr) {
+        verify(node->initializer);
+    }
 }
 
 void TypeChecker::verify(ParameterClause::Pointer node) {
@@ -148,35 +186,38 @@ void TypeChecker::verify(ParameterClause::Pointer node) {
 
 void TypeChecker::verify(Pattern::Pointer node) {
     verify(node->identifier);
-    verify(node->type);
-    
-    // binding the identifier symbol's type to Pattern type's symbols' type
-    node->identifier->symbol->addressOfType = node->type->symbol->addressOfType;
+    if(node->type != nullptr) {
+        verify(node->type);
+        // binding the identifier symbol's type to Pattern type's symbols' type
+        node->identifier->symbol->addressOfType = node->type->symbol->addressOfType;
+    }
 }
 
 void TypeChecker::verify(IdentifierExpr::Pointer node) {
     auto name = node->getName();
     switch (context->curStage()) {
-        case visitFuncParamDecl: {
+        case visitFuncParamDecl: { // visit function delcaration's parameter part
 
             auto symtable = context->curSymTable();
 
             // In current symtable, we find same name symbol, report it as error
             if(symtable->find(name) != nullptr) {
-                Diagnostics::reportError(L"[Error] duplicate variable name");
+                Diagnostics::reportError(L"[Error] duplicate function variable name");
             }
 
             auto symbol = std::shared_ptr<Symbol>(new Symbol{
                 .name = name,
-                .flag = SymbolFlag::declImmutableVarSymbol
+                .flag = SymbolFlag::immutableVarSymbol
             });
 
             symtable->insert(symbol);
             node->symbol = symbol;
         }
             break;
-        case visitExpr: {
+        case visitExpr:
+        case visitCodeBlock: {
             auto symbol = context->lookup(name);
+            assert(symbol != nullptr);
             node->symbol = symbol;
             
         }
@@ -195,11 +236,14 @@ void TypeChecker::verify(TypeDecl::Pointer node) {
 }
 
 void TypeChecker::verify(CodeBlock::Pointer node) {
+    assert(node->symbols != nullptr);
+    context->entry(node->symbols);
     context->visit(visitCodeBlock, [this, node]() {
         for(auto statement: node->statements) {
             verify(statement);
         }
     });
+    context->leave(node->symbols);
 }
 
 void TypeChecker::verify(ReturnStatement::Pointer node) {
@@ -215,21 +259,19 @@ void TypeChecker::verify(Expr::Pointer node) {
     
 }
 
-void TypeChecker::verify(ConstDecl::Pointer node) {
-    verify(node->initializer);
-}
 
 void TypeChecker::verify(LiteralExpr::Pointer node) {
     
 }
 
 void TypeChecker::verify(AssignmentExpr::Pointer node) {
-    context->visit(visitAssignExpr, [this, node](){
-        verify(node->identifier);
-    });
     
-    
+    verify(node->identifier);
     verify(node->expr);
+    
+    auto leftType = typeOf(node->identifier);
+    auto rightType = typeOf(node->expr);
+    
 }
 
 void TypeChecker::verify(ParenthesizedExpr::Pointer node) {
@@ -247,5 +289,23 @@ void TypeChecker::verify(IfStatement::Pointer node) {
         context->visit(visitCodeBlock, [this, node](){
             verify(node->elseCodeBlock);
         });
+    }
+}
+
+JrType::Pointer TypeChecker::typeOf(Node::Pointer node) {
+    switch (node->kind) {
+        case identifierExpr:
+            break;
+        default:
+            break;
+    }
+}
+
+JrType::Pointer TypeChecker::typeOf(IdentifierExpr::Pointer node) {
+    switch(node->symbol->flag) {
+        case varSymbol:
+            break;
+        default:
+            break;
     }
 }

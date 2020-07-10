@@ -23,6 +23,7 @@ typedef uint8_t     JrUInt8;
 #define JrType_Float        2
 #define JrType_Double       3
 #define JrType_Long         4
+#define JrType_Boolean      5
 #define JrType_String       8
 
 #define JrType_Any          9
@@ -33,7 +34,7 @@ struct JrType {
     typedef std::shared_ptr<JrType> Pointer;
     const static JrType::Pointer Any;
     
-    int16_t kind;
+    int kind;
     std::wstring name;
     
     // index to the type tables
@@ -45,6 +46,7 @@ struct JrPrimaryType: public JrType {
     
     const static JrPrimaryType::Pointer Int;
     const static JrPrimaryType::Pointer Float;
+    const static JrPrimaryType::Pointer Boolean;
 };
  
 struct JrObjectType: public JrType {

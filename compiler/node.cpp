@@ -13,8 +13,8 @@ token(token) {
     
 }
 
-ConstDecl::ConstDecl(Pattern::Pointer pattern, std::shared_ptr<Node> initializer):
-Node(SyntaxKind::constantDecl),
+LetDecl::LetDecl(Pattern::Pointer pattern, std::shared_ptr<Node> initializer):
+Node(SyntaxKind::letDecl),
 pattern(pattern),
 initializer(initializer) {
 }
@@ -267,9 +267,9 @@ void NodeDebugPrinter::print(Node::Pointer node) {
         case importDecl:
             std::wcout << L"+importDecl" ;
             break;
-        case constantDecl: {
+        case letDecl: {
             std::wcout << L"+constantDecl" ;
-            auto n = std::static_pointer_cast<ConstDecl>(node);
+            auto n = std::static_pointer_cast<LetDecl>(node);
             incTab();
             print(n->pattern);
             print(n->initializer);
@@ -285,9 +285,6 @@ void NodeDebugPrinter::print(Node::Pointer node) {
             print(n->initializer);
             decTab();
         }
-            break;
-        case letDecl:
-            std::wcout << L"+letDecl" ;
             break;
         case funcDecl: {
             std::wcout << L"+funcDecl" ;

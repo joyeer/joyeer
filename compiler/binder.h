@@ -20,7 +20,7 @@ protected:
     
     Node::Pointer bind(ClassDecl::Pointer classDecl);
     
-    Node::Pointer bind(ConstDecl::Pointer decl);
+    Node::Pointer bind(LetDecl::Pointer decl);
     
     Node::Pointer bind(VarDecl::Pointer varDecl);
     

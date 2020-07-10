@@ -28,7 +28,7 @@ protected:
     
     void emit(LiteralExpr::Pointer node);
     
-    void emit(ConstDecl::Pointer node);
+    void emit(LetDecl::Pointer node);
     
     void emit(VarDecl::Pointer node);
     

@@ -14,9 +14,8 @@ enum SyntaxKind {
     pattern,
     
     importDecl,
-    constantDecl,
-    varDecl,
     letDecl,
+    varDecl,
     funcDecl,
     constructorDecl,
     classDecl,
@@ -102,15 +101,15 @@ struct Pattern: public Node {
 
 };
 
-struct ConstDecl: Node {
-    typedef std::shared_ptr<ConstDecl> Pointer;
+struct LetDecl: Node {
+    typedef std::shared_ptr<LetDecl> Pointer;
     
     Pattern::Pointer pattern;
     Node::Pointer initializer;
     
     Symbol::Pointer symbol;
 
-    ConstDecl(Pattern::Pointer pattern, std::shared_ptr<Node> initializer);
+    LetDecl(Pattern::Pointer pattern, std::shared_ptr<Node> initializer);
 };
 
 struct VarDecl: public Node {

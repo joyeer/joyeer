@@ -28,3 +28,11 @@ if a {
 }
 
 print(message: 100)
+
+func add(left:Int, right: Int): Int {
+    var i = left + right
+    return i
+}
+
+a = add(left:10, right: 12)
+print(message: a)

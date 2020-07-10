@@ -24,6 +24,7 @@ std::vector<JrType::Pointer> initGlobalTypeTable() {
     auto types = std::vector<JrType::Pointer> ({
         JrPrimaryType::Int,
         JrPrimaryType::Float,
+        JrPrimaryType::Boolean,
         JrType::Any
     });
     

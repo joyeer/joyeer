@@ -3,6 +3,7 @@
 
 #include "node.h"
 #include "context.h"
+#include "runtime/runtime.h"
 
 class TypeChecker {
 public:
@@ -22,11 +23,14 @@ private:
     void verify(CodeBlock::Pointer node);
     void verify(ReturnStatement::Pointer node);
     void verify(Expr::Pointer node);
-    void verify(ConstDecl::Pointer node);
+    void verify(LetDecl::Pointer node);
     void verify(LiteralExpr::Pointer node);
     void verify(AssignmentExpr::Pointer node);
     void verify(ParenthesizedExpr::Pointer node);
     void verify(IfStatement::Pointer node);
+    
+    JrType::Pointer typeOf(Node::Pointer node);
+    JrType::Pointer typeOf(IdentifierExpr::Pointer node);
     
     CompileContext::Pointer context;
 };
