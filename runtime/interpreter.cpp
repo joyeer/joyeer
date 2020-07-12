@@ -78,7 +78,7 @@ JrFunctionFrame::Pointer JrInterpreter::prepareStackFrame(JrFunction::Pointer fu
     frame->addressOfFunc = func->addressOfFunc;
     
     uint8_t* baseAddress = context->stack->pointer;
-    uint8_t* address = baseAddress - (4 * func->paramCount);
+    uint8_t* address = baseAddress - (4 * func->paramTypes.size());
     frame->startAddress = address ;
     for(auto var : func->localVars) {
         frame->addressOfVariables.push_back(address);

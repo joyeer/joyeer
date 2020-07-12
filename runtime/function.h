@@ -28,7 +28,6 @@ public:
     
     uint8_t kind;
     // The maximun count of parameter count is 0xFF
-    uint8_t paramCount;
     /**
      e.g. func add(value1:int, value2:float, descriptor:string)
      the descriptor will be [JrType_Int] [JrType_Float] [JrType_String] [RefIndexOfStringInDataSection]

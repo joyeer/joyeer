@@ -131,13 +131,14 @@ void TypeChecker::verify(FuncDecl::Pointer node) {
         function->paramTypes.push_back(type);
         
         // register function's parameter as variable in function
-        auto addressOfVariable = (int)function->localVars.size();
+        auto addressOfVariable = (int)function->localVars.size();        
+        parameter->identifier->symbol->addressOfVariable = addressOfVariable;
+
         function->localVars.push_back(JrVar{
             .type = type,
             .index = addressOfVariable
         });
         
-        symbol->addressOfVariable = addressOfVariable;
     }
     
     
@@ -184,12 +185,13 @@ void TypeChecker::verify(VarDecl::Pointer node) {
     // declare the local variable in function
     auto function = context->curFunction();
     auto addressOfVariable = (int)function->localVars.size();
+    node->symbol->addressOfVariable = addressOfVariable;
     function->localVars.push_back(JrVar {
         .type = Global::types[node->symbol->addressOfType],
         .index = addressOfVariable
     });
     
-    node->symbol->addressOfVariable = addressOfVariable;
+    
 }
 
 void TypeChecker::verify(LetDecl::Pointer node) {
@@ -209,12 +211,12 @@ void TypeChecker::verify(LetDecl::Pointer node) {
     // declare the local variable in function
     auto function = context->curFunction();
     auto addressOfVariable = (int)function->localVars.size();
+    node->symbol->addressOfVariable = addressOfVariable;
     function->localVars.push_back(JrVar {
         .type = Global::types[node->symbol->addressOfType],
         .index = addressOfVariable
     });
-    
-    node->symbol->addressOfVariable = addressOfVariable;
+
 }
 
 void TypeChecker::verify(ParameterClause::Pointer node) {

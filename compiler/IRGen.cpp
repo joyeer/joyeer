@@ -162,7 +162,7 @@ void IRGen::emit(LetDecl::Pointer node) {
     // TODO: detect the variable's type
     writer.write({
         .opcode = OP_ISTORE,
-        .value = node->symbol->index
+        .value = node->symbol->addressOfVariable
     });
     
 }
@@ -173,7 +173,7 @@ void IRGen::emit(VarDecl::Pointer node) {
     // TODO: detect the variable's type
     writer.write({
         .opcode = OP_ISTORE,
-        .value = node->symbol->index
+        .value = node->symbol->addressOfVariable
     });
 }
 
@@ -286,17 +286,6 @@ void IRGen::emit(FuncDecl::Pointer node) {
     auto function = Global::functions[node->symbol->addressOfFunc];
     assert(function != nullptr && function->instructions.size() == 0);
     function->instructions = instructions;
-    
-    auto symbols = node->symtable->allVarSymbols();
-    
-    for(auto symbol: symbols) {
-        symbol->index = function->localVars.size();
-        function->localVars.push_back(JrVar {
-            .name = symbol->name
-        });
-    }
-
-
 }
 
 void IRGen::emit(ReturnStatement::Pointer node) {

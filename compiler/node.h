@@ -92,8 +92,8 @@ struct TypeDecl: Node {
 struct Pattern: public Node {
     typedef std::shared_ptr<Pattern> Pointer;
     
-    IdentifierExpr::Pointer identifier;
-    TypeDecl::Pointer type;
+    IdentifierExpr::Pointer identifier; // the name of pattern
+    TypeDecl::Pointer type; // the type of pattern, optinal nullptr
     
     Pattern(IdentifierExpr::Pointer identifier, TypeDecl::Pointer type);
     
