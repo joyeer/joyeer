@@ -57,9 +57,10 @@ public:
     SymbolTable::Pointer curSymTable() ;
     
     void entry(SymbolTable::Pointer table);
-    
     void leave(SymbolTable::Pointer table);
     
+    
+    JrFunction::Pointer curFunction();
     void entry(JrFunction::Pointer function);
     void leave(JrFunction::Pointer function);
     

@@ -41,6 +41,7 @@ public:
         int addressOfClass;
     };
     
+    // locate the var symbol's variable position in function
     union {
         int addressOfVariable;
     };

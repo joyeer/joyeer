@@ -192,7 +192,7 @@ void IRGen::emit(IdentifierExpr::Pointer node) {
     if((symbol->flag & varSymbol) == varSymbol) {
         writer.write({
             .opcode = OP_ILOAD,
-            .value = symbol->index
+            .value = symbol->addressOfVariable
         });
         
         return;

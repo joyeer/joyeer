@@ -57,6 +57,11 @@ void CompileContext::leave(SymbolTable::Pointer table) {
     symbols.pop_back();
 }
 
+JrFunction::Pointer CompileContext::curFunction() {
+    assert(functions.size() > 0 );
+    return functions.back();
+}
+
 void CompileContext::entry(JrFunction::Pointer function) {
     functions.push_back(function);
 }

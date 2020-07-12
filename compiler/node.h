@@ -280,6 +280,7 @@ struct SourceBlock: Node {
     
     std::vector<Node::Pointer> statements;
     
+    std::wstring filename;
     SymbolTable::Pointer symtable; // source symbol
     Symbol::Pointer symbol;
     

@@ -91,7 +91,12 @@ void TypeChecker::verify(Node::Pointer node) {
 }
 
 void TypeChecker::verify(SourceBlock::Pointer node) {
+    
+    assert(node->symbol->flag == funcSymbol);
+    auto function = Global::functions[node->symbol->addressOfFunc];
+    assert(function != nullptr);
     context->entry(node->symtable);
+    context->entry(function);
     
     context->visit(visitSourceBlock, [this, node](){
         for(auto statement: node->statements) {
@@ -99,6 +104,7 @@ void TypeChecker::verify(SourceBlock::Pointer node) {
         }
     });
     
+    context->leave(function);
     context->leave(node->symtable);
 }
 
@@ -121,11 +127,22 @@ void TypeChecker::verify(FuncDecl::Pointer node) {
         auto symbol = parameter->type->symbol;
         
         assert((symbol->flag & typeSymbol) == typeSymbol);
-        function->paramTypes.push_back(Global::types[symbol->addressOfType]);
+        auto type = Global::types[symbol->addressOfType];
+        function->paramTypes.push_back(type);
+        
+        // register function's parameter as variable in function
+        auto addressOfVariable = (int)function->localVars.size();
+        function->localVars.push_back(JrVar{
+            .type = type,
+            .index = addressOfVariable
+        });
+        
+        symbol->addressOfVariable = addressOfVariable;
     }
     
-    verify(node->codeBlock);
     
+    
+    verify(node->codeBlock);
     context->leave(function);
     context->leave(node->symtable);
 }
@@ -159,13 +176,21 @@ void TypeChecker::verify(VarDecl::Pointer node) {
         verify(node->initializer);
     }
     
-    // Verify the type
-    
+    // Verify the type of expression
     if(node->initializer != nullptr) {
         auto rightType = typeOf(node->initializer);
     }
+    
+    // declare the local variable in function
+    auto function = context->curFunction();
+    auto addressOfVariable = (int)function->localVars.size();
+    function->localVars.push_back(JrVar {
+        .type = Global::types[node->symbol->addressOfType],
+        .index = addressOfVariable
+    });
+    
+    node->symbol->addressOfVariable = addressOfVariable;
 }
-
 
 void TypeChecker::verify(LetDecl::Pointer node) {
     context->visit(visitLetDecl, [this, node]() {
@@ -180,6 +205,16 @@ void TypeChecker::verify(LetDecl::Pointer node) {
     if(node->initializer != nullptr) {
         verify(node->initializer);
     }
+    
+    // declare the local variable in function
+    auto function = context->curFunction();
+    auto addressOfVariable = (int)function->localVars.size();
+    function->localVars.push_back(JrVar {
+        .type = Global::types[node->symbol->addressOfType],
+        .index = addressOfVariable
+    });
+    
+    node->symbol->addressOfVariable = addressOfVariable;
 }
 
 void TypeChecker::verify(ParameterClause::Pointer node) {

@@ -56,7 +56,7 @@ struct JrObjectType: public JrType {
 
 struct JrVar {
     typedef std::shared_ptr<JrVar> Pointer;
-    JrType type;
+    JrType::Pointer type;
     std::wstring name;
     int index;
 };
