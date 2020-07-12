@@ -22,10 +22,18 @@ JrRuntimeStack::JrRuntimeStack() {
 
 void JrRuntimeStack::push(JrFunctionFrame::Pointer frame) {
     pointer = frame->endAddress;
+    frames.push(frame);
 }
 
 void JrRuntimeStack::pop(JrFunctionFrame::Pointer frame) {
     pointer = frame->endAddress;
+    assert(frames.top() == frame);
+    frames.pop();
+}
+
+JrFunctionFrame::Pointer JrRuntimeStack::topFrame() {
+    assert(frames.size() > 0);
+    return frames.top();
 }
 
 void JrRuntimeStack::push4(uint32_t value) {

@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 #include <vector>
+#include <stack>
 #include <string>
 #include "instruction.h"
 
@@ -89,12 +90,15 @@ struct JrRuntimeStack {
     
     JrRuntimeStack();
     
+    std::stack<JrFunctionFrame::Pointer> frames;
     uint8_t* pointer;
     uint8_t data[JrRuntimeStack::Size];
     
     // push the FunctionFrame into stack
     void push(JrFunctionFrame::Pointer frame);
     void pop(JrFunctionFrame::Pointer frame);
+    
+    JrFunctionFrame::Pointer topFrame();
     
     void push4(uint32_t value);
     
@@ -106,6 +110,8 @@ struct JrRuntimeStack {
     int intValueOfVariable(uint8_t* addressOfVariable);
     
     uint32_t pop4();
+    
+    
 };
 
 // The runtime context for VM
@@ -117,7 +123,6 @@ struct JrRuntimeContext {
     
     JrRuntimeStack::Pointer stack;
     
-    JrFunctionFrame::Pointer frame;
     
 };
 

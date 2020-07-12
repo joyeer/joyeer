@@ -11,7 +11,6 @@ void JrInterpreter::run(JrFunction::Pointer function) {
     
     auto frame = prepareStackFrame(function);
     context->stack->push(frame);
-    context->frame = frame;
     
     std::wcout << L">[call][function]:" << function->name << std::endl;
     JrInstructionDebugPrinter debugPrinter;
@@ -91,13 +90,13 @@ JrFunctionFrame::Pointer JrInterpreter::prepareStackFrame(JrFunction::Pointer fu
 void JrInterpreter::exec_istore(const Instruction &instruction) {
     auto value = context->stack->pop4();
     auto variableIndex = instruction.value;
-    auto addressOfVariable = context->frame->addressOfVariables[variableIndex];
+    auto addressOfVariable = context->stack->topFrame()->addressOfVariables[variableIndex];
     context->stack->storeValueForVariable(addressOfVariable, value);
 }
 
 void JrInterpreter::exec_iload(const Instruction &instruction) {
     auto variableIndex = instruction.value;
-    auto addressOfVarible = context->frame->addressOfVariables[variableIndex];
+    auto addressOfVarible = context->stack->topFrame()->addressOfVariables[variableIndex];
     auto value = context->stack->intValueOfVariable(addressOfVarible);
     context->stack->push4(value);
 }
@@ -157,6 +156,6 @@ void JrInterpreter::exec_goto(const Instruction &instruction) {
 
 void JrInterpreter::exec_ireturn(const Instruction &instruction) {
     auto value = context->stack->pop4();
-    context->stack->restore(context->frame->startAddress);
+    context->stack->pop(context->stack->topFrame());
     context->stack->push4(value);
 }
