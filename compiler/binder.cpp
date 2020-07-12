@@ -82,8 +82,20 @@ Node::Pointer Binder::bind(std::shared_ptr<Node> node) {
 
 SourceBlock::Pointer Binder::bind(SourceBlock::Pointer sourceBlock) {
     
+    auto function = std::make_shared<JrFunction>();
+    function->name = L"__FILE__";
+    function->kind = JrFunction_VM;
+    Global::registerFunction(function);
+    auto symbol = std::shared_ptr<Symbol>(new Symbol {
+        .name = function->name,
+        .flag = funcSymbol,
+        .addressOfFunc = function->addressOfFunc
+    });
+    
+    sourceBlock->symbol = symbol;
     context->initializeScope(ScopeFlag::sourceScope);
     sourceBlock->symtable = context->curSymTable();
+    
     
     context->visit(visitSourceBlock, [sourceBlock, this]() {
         auto nodes = std::vector<Node::Pointer>();
@@ -97,6 +109,57 @@ SourceBlock::Pointer Binder::bind(SourceBlock::Pointer sourceBlock) {
     context->finalizeScope(ScopeFlag::sourceScope);
     
     return sourceBlock;
+}
+
+Node::Pointer Binder::bind(FuncDecl::Pointer decl) {
+    
+    auto symtable = context->curSymTable();
+    auto function = std::make_shared<JrFunction>();
+    function->name = decl->getFuncName();
+    function->kind = JrFunction_VM;
+    
+    Global::registerFunction(function);
+    
+    if(symtable->find(function->name) != nullptr) {
+        Diagnostics::reportError(L"[Error] Dupliate function name");
+    }
+    
+    auto symbol = std::shared_ptr<Symbol>(new Symbol {
+        .name = function->name,
+        .flag = funcSymbol,
+        .addressOfFunc = function->addressOfFunc
+    });
+    symtable->insert(symbol);
+    decl->symbol = symbol;
+    
+    
+    context->initializeScope(ScopeFlag::funcScope);
+    // visit func decleration
+    context->visit(visitFuncDecl, [this, decl]() {
+        
+        // start to process function name
+        context->visit(visitFuncNameDecl, [this, decl]() {
+            decl->identifier = bind(decl->identifier);
+        });
+        
+        // start to process function parameters
+        context->visit(visitFuncParamDecl, [this, decl]() {
+            decl->parameterClause = bind(decl->parameterClause);
+        });
+        
+        if(decl->returnType != nullptr) {
+            decl->returnType = bind(decl->returnType);
+        }
+        
+        decl->codeBlock = bind(decl->codeBlock);
+        
+    });
+    // Start to Bind sub
+    decl->symtable = context->curSymTable();
+    
+    context->finalizeScope(ScopeFlag::funcScope);
+    
+    return decl;
 }
 
 Node::Pointer Binder::bind(ClassDecl::Pointer classDecl) {
@@ -121,7 +184,6 @@ Node::Pointer Binder::bind(VarDecl::Pointer decl) {
     
     symtable->insert(symbol);
     decl->symbol = symbol;
-    decl->pattern->identifier->symbol = symbol;
     
     if(decl->initializer != nullptr) {
         decl->initializer = bind(decl->initializer);
@@ -146,7 +208,6 @@ Node::Pointer Binder::bind(LetDecl::Pointer decl) {
     
     table->insert(symbol);
     decl->symbol = symbol;
-    decl->pattern->identifier->symbol = symbol;
     
     if(decl->initializer != nullptr) {
         decl->initializer = bind(decl->initializer);
@@ -185,16 +246,23 @@ Node::Pointer Binder::bind(PrefixExpr::Pointer decl) {
 }
 
 Node::Pointer Binder::bind(IdentifierExpr::Pointer decl) {
+    auto name = decl->getName();
+    auto table = context->curSymTable();
     switch (context->curStage()) {
-        case visitFuncNameDecl:
-            return decl;
         case visitFuncParamDecl: {
+            if(table->find(name) != nullptr) {
+                Diagnostics::reportError(L"[Error] duplicate variable declaration in fucntion");
+            }
+            
+            auto symbol = std::shared_ptr<Symbol>(new Symbol {
+                .flag = SymbolFlag::immutableVarSymbol,
+                .name = name
+            });
+            table->insert(symbol);
+            decl->symbol = symbol;
             return decl;
         }
         default: {
-            auto table = context->curSymTable();
-            auto symbol = context->lookup(decl->token->rawValue);
-            decl->symbol = symbol;
             return decl;
         }
     }
@@ -357,56 +425,6 @@ Node::Pointer Binder::bind(CodeBlock::Pointer decl) {
     return decl;
 }
 
-Node::Pointer Binder::bind(FuncDecl::Pointer decl) {
-    
-    auto symtable = context->curSymTable();
-    auto function = std::make_shared<JrFunction>();
-    function->name = decl->getFuncName();
-    function->kind = JrFunction_VM;
-    
-    Global::registerFunction(function);
-    
-    if(symtable->find(function->name) != nullptr) {
-        Diagnostics::reportError(L"[Error] Dupliate function name");
-    }
-    
-    auto symbol = std::shared_ptr<Symbol>(new Symbol {
-        .name = function->name,
-        .flag = funcSymbol,
-        .addressOfFunc = function->addressOfFunc
-    });
-    symtable->insert(symbol);
-    decl->symbol = symbol;
-    
-    
-    context->initializeScope(ScopeFlag::funcScope);
-    // visit func decleration
-    context->visit(visitFuncDecl, [this, decl]() {
-        
-        // start to process function name
-        context->visit(visitFuncNameDecl, [this, decl]() {
-            decl->identifier = bind(decl->identifier);
-        });
-        
-        // start to process function parameters
-        context->visit(visitFuncParamDecl, [this, decl]() {
-            decl->parameterClause = bind(decl->parameterClause);
-        });
-        
-        if(decl->returnType != nullptr) {
-            decl->returnType = bind(decl->returnType);
-        }
-        
-        decl->codeBlock = bind(decl->codeBlock);
-        
-    });
-    // Start to Bind sub
-    decl->symtable = context->curSymTable();
-    
-    context->finalizeScope(ScopeFlag::funcScope);
-    
-    return decl;
-}
 
 Node::Pointer Binder::bind(ParameterClause::Pointer decl) {
     std::vector<Pattern::Pointer> parameters;

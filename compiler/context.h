@@ -2,6 +2,7 @@
 #define __joyeer_compiler_context_h__
 
 #include "symtable.h"
+#include "runtime/function.h"
 #include <string>
 #include <memory>
 #include <vector>
@@ -26,7 +27,6 @@ enum CompileStage {
     visitFuncParamDecl,
     
     visitFuncCall,
-    visitFuncParamsCall,
     visitAssignExpr,
     visitExpr,
 };
@@ -60,6 +60,9 @@ public:
     
     void leave(SymbolTable::Pointer table);
     
+    void entry(JrFunction::Pointer function);
+    void leave(JrFunction::Pointer function);
+    
 protected:
     // initializ global scope, e.g. buildin functions/object etc
     void initializeGlobalScope();
@@ -74,6 +77,9 @@ protected:
     std::vector<SymbolTable::Pointer> symbols;
     std::vector<ScopeFlag> scopes;
     std::vector<CompileStage> stages;
+    
+    // parsing function stacks
+    std::vector<JrFunction::Pointer> functions;
 };
 
 #endif

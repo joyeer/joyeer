@@ -104,19 +104,8 @@ void IRGen::emit(Node::Pointer node) {
 
 void IRGen::emit(SourceBlock::Pointer block) {
     
-    assert(func == nullptr);
-    func = std::make_shared<JrFunction>();
-    func->name = L"__FILE__";
-    func->kind = JrFunction_VM;
-    
-    auto symbols = block->symtable->allVarSymbols();
-    
-    for(auto symbol: symbols) {
-        symbol->index = func->localVars.size();
-        func->localVars.push_back(JrVar{
-            .name = symbol->name
-        });
-    }
+    assert(block->symbol->flag == funcSymbol);
+    func = Global::functions[block->symbol->addressOfFunc];
     
     context->visit(visitSourceBlock, [this, block]() {
         for(auto& statement: block->statements) {
@@ -293,6 +282,7 @@ void IRGen::emit(FuncDecl::Pointer node) {
     generator.emit(node->codeBlock);
     auto instructions = generator.getInstructions();
     
+    assert(node->symbol->flag == funcSymbol);
     auto function = Global::functions[node->symbol->addressOfFunc];
     assert(function != nullptr && function->instructions.size() == 0);
     function->instructions = instructions;
@@ -319,6 +309,5 @@ void IRGen::emit(ReturnStatement::Pointer node) {
     writer.write({
         .opcode = op
     });
-    
-    
+
 }

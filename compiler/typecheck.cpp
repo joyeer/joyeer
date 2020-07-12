@@ -63,6 +63,7 @@ void TypeChecker::verify(Node::Pointer node) {
             verify(std::static_pointer_cast<ParenthesizedExpr>(node));
             break;
         case arguCallExpr:
+            verify(std::static_pointer_cast<ArguCallExpr>(node));
             break;
         case functionCallExpr:
             verify(std::static_pointer_cast<FuncCallExpr>(node));
@@ -91,6 +92,7 @@ void TypeChecker::verify(Node::Pointer node) {
 
 void TypeChecker::verify(SourceBlock::Pointer node) {
     context->entry(node->symtable);
+    
     context->visit(visitSourceBlock, [this, node](){
         for(auto statement: node->statements) {
             verify(statement);
@@ -104,12 +106,13 @@ void TypeChecker::verify(FuncDecl::Pointer node) {
     context->entry(node->symtable);
     
     auto function = Global::functions[node->symbol->addressOfFunc];
+    context->entry(function);
+    
     context->visit(visitFuncParamDecl, [this, node]() {
         auto parameterClause = std::static_pointer_cast<ParameterClause>(node->parameterClause);
         verify(parameterClause);
         
     });
-    
     
     assert(function->paramTypes.size() == 0);
     // Binding function's type
@@ -117,14 +120,13 @@ void TypeChecker::verify(FuncDecl::Pointer node) {
     for(auto parameter: parameterClause->parameters) {
         auto symbol = parameter->type->symbol;
         
-        //
         assert((symbol->flag & typeSymbol) == typeSymbol);
         function->paramTypes.push_back(Global::types[symbol->addressOfType]);
     }
     
-    
     verify(node->codeBlock);
     
+    context->leave(function);
     context->leave(node->symtable);
 }
 
@@ -137,6 +139,10 @@ void TypeChecker::verify(FuncCallExpr::Pointer node) {
     }
     
     node->symbol = symbol;
+    
+    for(auto argument: node->arguments) {
+        verify(argument);
+    }
 }
 
 void TypeChecker::verify(VarDecl::Pointer node) {
@@ -153,6 +159,11 @@ void TypeChecker::verify(VarDecl::Pointer node) {
         verify(node->initializer);
     }
     
+    // Verify the type
+    
+    if(node->initializer != nullptr) {
+        auto rightType = typeOf(node->initializer);
+    }
 }
 
 
@@ -176,12 +187,6 @@ void TypeChecker::verify(ParameterClause::Pointer node) {
     for(auto param: node->parameters) {
         verify(param);
     }
-    
-    int i = 0;
-    for(auto param: node->parameters) {
-        param->identifier->symbol->index = i;
-        i ++;
-    }
 }
 
 void TypeChecker::verify(Pattern::Pointer node) {
@@ -196,33 +201,18 @@ void TypeChecker::verify(Pattern::Pointer node) {
 void TypeChecker::verify(IdentifierExpr::Pointer node) {
     auto name = node->getName();
     switch (context->curStage()) {
-        case visitFuncParamDecl: { // visit function delcaration's parameter part
-
-            auto symtable = context->curSymTable();
-
-            // In current symtable, we find same name symbol, report it as error
-            if(symtable->find(name) != nullptr) {
-                Diagnostics::reportError(L"[Error] duplicate function variable name");
-            }
-
-            auto symbol = std::shared_ptr<Symbol>(new Symbol{
-                .name = name,
-                .flag = SymbolFlag::immutableVarSymbol
-            });
-
-            symtable->insert(symbol);
-            node->symbol = symbol;
-        }
-            break;
+        case visitSourceBlock:
         case visitExpr:
         case visitCodeBlock: {
             auto symbol = context->lookup(name);
             assert(symbol != nullptr);
+            assert(node->symbol == nullptr);
             node->symbol = symbol;
-            
         }
             break;
         case visitAssignExpr:
+        case visitFuncParamDecl:
+        case visitVarDecl:
             break;
         default:
             break;
@@ -292,20 +282,67 @@ void TypeChecker::verify(IfStatement::Pointer node) {
     }
 }
 
+void TypeChecker::verify(ArguCallExpr::Pointer node) {
+    verify(node->expr);
+}
+
 JrType::Pointer TypeChecker::typeOf(Node::Pointer node) {
     switch (node->kind) {
         case identifierExpr:
-            break;
+            return typeOf(std::static_pointer_cast<IdentifierExpr>(node));
+        case expr:
+            return typeOf(std::static_pointer_cast<Expr>(node));
+        case functionCallExpr:
+            return typeOf(std::static_pointer_cast<FuncCallExpr>(node));
         default:
-            break;
+            assert(false);
     }
 }
 
 JrType::Pointer TypeChecker::typeOf(IdentifierExpr::Pointer node) {
+    
     switch(node->symbol->flag) {
         case varSymbol:
-            break;
+        case mutableVarSymbol:
+        case immutableVarSymbol:
+        case unfixedMutableVarSymbol:
+            return Global::types[node->symbol->addressOfType];
         default:
-            break;
+            assert(false);
     }
+}
+
+JrType::Pointer TypeChecker::typeOf(Expr::Pointer node) {
+    assert(node->binaries.size() == 0);
+    assert(node->prefix == nullptr);
+    
+    std::stack<JrType::Pointer> stack;
+    for(auto n: node->nodes) {
+        if(n->kind == operatorExpr) {
+            auto leftType = stack.top();
+            stack.pop();
+            auto rightType = stack.top();
+            stack.pop();
+            
+            if(leftType->kind == rightType->kind) {
+                stack.push(leftType);
+            } else {
+                stack.push(leftType);
+                Diagnostics::reportError(L"type should be same");
+            }
+            //TODO double check
+            
+        } else {
+            auto type = typeOf(n);
+            stack.push(type);
+        }
+    }
+    
+    assert(stack.size() == 1);
+    return stack.top();
+}
+
+JrType::Pointer TypeChecker::typeOf(FuncCallExpr::Pointer node) {
+    auto function = Global::functions[node->symbol->addressOfFunc];
+    return function->returnType;
 }

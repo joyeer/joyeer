@@ -57,6 +57,15 @@ void CompileContext::leave(SymbolTable::Pointer table) {
     symbols.pop_back();
 }
 
+void CompileContext::entry(JrFunction::Pointer function) {
+    functions.push_back(function);
+}
+
+void CompileContext::leave(JrFunction::Pointer function) {
+    assert(functions.back() == function);
+    functions.pop_back();
+}
+
 CompileStage CompileContext::curStage() const {
     assert(stages.size() > 0);
     return stages.back();

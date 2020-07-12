@@ -33,7 +33,7 @@ typedef uint8_t     JrUInt8;
 struct JrType {
     typedef std::shared_ptr<JrType> Pointer;
     const static JrType::Pointer Any;
-    
+    const static JrType::Pointer Void;
     int kind;
     std::wstring name;
     

@@ -281,6 +281,7 @@ struct SourceBlock: Node {
     std::vector<Node::Pointer> statements;
     
     SymbolTable::Pointer symtable; // source symbol
+    Symbol::Pointer symbol;
     
     SourceBlock(std::vector<Node::Pointer> statements);
 };

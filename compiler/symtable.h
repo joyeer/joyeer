@@ -33,11 +33,16 @@ struct Symbol {
 public:
     SymbolFlag flag;
     std::wstring name;
+    
     union {
         int index;
         int addressOfType;
         int addressOfFunc;
         int addressOfClass;
+    };
+    
+    union {
+        int addressOfVariable;
     };
 };
 

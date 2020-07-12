@@ -2,6 +2,8 @@
 #include <cassert>
 
 const JrType::Pointer JrType::Any = std::make_shared<JrType>(JrType{JrType_Any, L"Any"});
+const JrType::Pointer JrType::Void = std::make_shared<JrType>(JrType{JrType_Void, L"Void"});
+
 const JrPrimaryType::Pointer JrPrimaryType::Int = std::shared_ptr<JrPrimaryType>(new JrPrimaryType {
     { .kind = JrType_Int, .name = L"Int" }
 });
