@@ -1,7 +1,6 @@
-func add(left:Int, right: Int): Int {
-    var i = left + right
-    return i
-}
+let b = 11
+var a = 13
 
-var a = add(left:10, right: 12)
+print(message: a)
+a = b 
 print(message: a)

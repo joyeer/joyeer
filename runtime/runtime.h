@@ -45,6 +45,11 @@ struct JrPrimaryType: public JrType {
     typedef std::shared_ptr<JrPrimaryType> Pointer;
     
     const static JrPrimaryType::Pointer Int;
+    const static JrPrimaryType::Pointer Int8;
+    const static JrPrimaryType::Pointer Int16;
+    const static JrPrimaryType::Pointer Int32;
+    const static JrPrimaryType::Pointer Int64;
+    
     const static JrPrimaryType::Pointer Float;
     const static JrPrimaryType::Pointer Boolean;
 };

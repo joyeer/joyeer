@@ -33,7 +33,9 @@ private:
     JrType::Pointer typeOf(Node::Pointer node);
     JrType::Pointer typeOf(IdentifierExpr::Pointer node);
     JrType::Pointer typeOf(Expr::Pointer node);
+    JrType::Pointer typeOf(LiteralExpr::Pointer node);
     JrType::Pointer typeOf(FuncCallExpr::Pointer node);
+    JrType::Pointer typeOf(ParenthesizedExpr::Pointer node);
     
     CompileContext::Pointer context;
 };

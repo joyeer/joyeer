@@ -131,7 +131,7 @@ void TypeChecker::verify(FuncDecl::Pointer node) {
         function->paramTypes.push_back(type);
         
         // register function's parameter as variable in function
-        auto addressOfVariable = (int)function->localVars.size();        
+        auto addressOfVariable = (int)function->localVars.size();
         parameter->identifier->symbol->addressOfVariable = addressOfVariable;
 
         function->localVars.push_back(JrVar{
@@ -250,6 +250,7 @@ void TypeChecker::verify(IdentifierExpr::Pointer node) {
         case visitAssignExpr:
         case visitFuncParamDecl:
         case visitVarDecl:
+        case visitLetDecl:
             break;
         default:
             break;
@@ -331,6 +332,10 @@ JrType::Pointer TypeChecker::typeOf(Node::Pointer node) {
             return typeOf(std::static_pointer_cast<Expr>(node));
         case functionCallExpr:
             return typeOf(std::static_pointer_cast<FuncCallExpr>(node));
+        case literalExpr:
+            return typeOf(std::static_pointer_cast<LiteralExpr>(node));
+        case parenthesizedExpr:
+            return typeOf(std::static_pointer_cast<ParenthesizedExpr>(node));
         default:
             assert(false);
     }
@@ -343,6 +348,7 @@ JrType::Pointer TypeChecker::typeOf(IdentifierExpr::Pointer node) {
         case mutableVarSymbol:
         case immutableVarSymbol:
         case unfixedMutableVarSymbol:
+        case unfixedImmutableVarSymbol:
             return Global::types[node->symbol->addressOfType];
         default:
             assert(false);
@@ -379,7 +385,22 @@ JrType::Pointer TypeChecker::typeOf(Expr::Pointer node) {
     return stack.top();
 }
 
+JrType::Pointer TypeChecker::typeOf(LiteralExpr::Pointer node) {
+    switch(node->literal->kind) {
+        case booleanLiteral:
+            return JrPrimaryType::Boolean;
+        case decimalLiteral:
+            return JrPrimaryType::Int;
+        default:
+            assert(false);
+    }
+}
+
 JrType::Pointer TypeChecker::typeOf(FuncCallExpr::Pointer node) {
     auto function = Global::functions[node->symbol->addressOfFunc];
     return function->returnType;
+}
+
+JrType::Pointer TypeChecker::typeOf(ParenthesizedExpr::Pointer node) {
+    return typeOf(node->expr);
 }

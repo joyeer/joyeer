@@ -65,8 +65,7 @@ void JrInterpreter::run(JrFunction::Pointer function) {
                 return;
             default:
                 break;
-        }
-        
+        } 
         pointer ++;
         
     }
@@ -86,7 +85,6 @@ JrFunctionFrame::Pointer JrInterpreter::prepareStackFrame(JrFunction::Pointer fu
         address += 4;
     }
     frame->endAddress = address;
-    
     return frame;
 }
 
