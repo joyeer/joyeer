@@ -25,10 +25,14 @@ pattern(pattern),
 initializer(initializer) {
 }
 
-ClassDecl::ClassDecl(std::shared_ptr<Token> name, std::vector<std::shared_ptr<Node>> members):
+ClassDecl::ClassDecl(Token::Pointer name, std::vector<Node::Pointer> members):
 Node(SyntaxKind::classDecl),
 name(name),
 members(members) {
+}
+
+const std::wstring& ClassDecl::getName() {
+    return name->rawValue;
 }
 
 ParameterClause::ParameterClause(std::vector<std::shared_ptr<Pattern>> parameters):
@@ -69,6 +73,17 @@ ConstructorDecl::ConstructorDecl(std::shared_ptr<Node> parameterClause, std::sha
 Node(SyntaxKind::constructorDecl),
 parameterClause(parameterClause),
 codeBlock(codeBlock) {
+}
+
+const std::wstring ConstructorDecl::getName() {
+    std::wstringstream ss;
+    ss << L"init(";
+    auto parameterClause = std::static_pointer_cast<ParameterClause>(this->parameterClause);
+    for(auto parameter: parameterClause->parameters) {
+        ss << parameter->getIdentifierName() << L":";
+    }
+    ss << L")";
+    return ss.str();
 }
 
 Expr::Expr(Node::Pointer prefix, std::vector<Node::Pointer> binaries):
@@ -297,11 +312,22 @@ void NodeDebugPrinter::print(Node::Pointer node) {
             decTab();
         }
             break;
-        case constructorDecl:
+        case constructorDecl: {
             std::wcout << L"+constructorDecl" ;
+            auto n = std::static_pointer_cast<ConstructorDecl>(node);
+            incTab();
+            print(n->parameterClause);
+            print(n->codeBlock);
+            decTab();
+        }
             break;
-        case classDecl:
+        case classDecl: {
             std::wcout << L"+classDecl" ;
+            auto members = std::static_pointer_cast<ClassDecl>(node);
+            incTab();
+            print(members->members);
+            decTab();
+        }
             break;
         case parameterClause: {
             std::wcout << L"+parameterClause" ;

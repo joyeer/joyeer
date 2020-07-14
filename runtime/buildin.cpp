@@ -42,6 +42,11 @@ void Global::registerFunction(JrFunction::Pointer func) {
     functions.push_back(func);
 }
 
+void Global::registerObjectType(JrObjectType::Pointer type) {
+    type->addressOfType = types.size();
+    types.push_back(type);
+}
+
 struct JrPrintNativeCode : public JrNativeCode {
     virtual void operator()(JrRuntimeContext::Pointer context, JrFunction::Pointer func) {
         uint32_t value = context->stack->pop4();

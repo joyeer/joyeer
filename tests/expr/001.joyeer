@@ -34,5 +34,5 @@ func add(left:Int, right: Int): Int {
     return i
 }
 
-a = add(left:10, right: 12)
+a = add(left:10, right:12)
 print(message: a)

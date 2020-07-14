@@ -55,14 +55,16 @@ public:
     bool insert(Symbol::Pointer symbol);
     
     SymbolTable::Pointer curSymTable() ;
-    
     void entry(SymbolTable::Pointer table);
     void leave(SymbolTable::Pointer table);
-    
     
     JrFunction::Pointer curFunction();
     void entry(JrFunction::Pointer function);
     void leave(JrFunction::Pointer function);
+    
+    JrType::Pointer curType();
+    void entry(JrType::Pointer type);
+    void leave(JrType::Pointer type);
     
 protected:
     // initializ global scope, e.g. buildin functions/object etc
@@ -81,6 +83,9 @@ protected:
     
     // parsing function stacks
     std::vector<JrFunction::Pointer> functions;
+    
+    // parsing class/struct/enum stacks
+    std::vector<JrType::Pointer> types;
 };
 
 #endif

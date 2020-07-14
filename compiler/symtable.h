@@ -11,9 +11,10 @@ enum SymbolFlag {
     refSymbol =         1 << 1,
     classSymbol =       1 << 2,
     funcSymbol =        1 << 3,
-    varSymbol =         1 << 4,
-    mutableSymbol =     1 << 5,
-    immutableSymbol =   1 << 6,
+    constructorSymbol = 1 << 4,
+    varSymbol =         1 << 5,
+    mutableSymbol =     1 << 6,
+    immutableSymbol =   1 << 7,
     
     // this is a type symbol
     typeSymbol =        1 << 10,

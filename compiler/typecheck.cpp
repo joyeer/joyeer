@@ -324,6 +324,10 @@ void TypeChecker::verify(ArguCallExpr::Pointer node) {
     verify(node->expr);
 }
 
+void TypeChecker::verify(ClassDecl::Pointer node) {
+    
+}
+
 JrType::Pointer TypeChecker::typeOf(Node::Pointer node) {
     switch (node->kind) {
         case identifierExpr:

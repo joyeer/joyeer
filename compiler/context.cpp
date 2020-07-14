@@ -57,6 +57,19 @@ void CompileContext::leave(SymbolTable::Pointer table) {
     symbols.pop_back();
 }
 
+JrType::Pointer CompileContext::curType() {
+    return types.back();
+}
+
+void CompileContext::entry(JrType::Pointer type) {
+    types.push_back(type);
+}
+
+void CompileContext::leave(JrType::Pointer type) {
+    assert(types.back() == type);
+    types.pop_back();
+}
+
 JrFunction::Pointer CompileContext::curFunction() {
     assert(functions.size() > 0 );
     return functions.back();

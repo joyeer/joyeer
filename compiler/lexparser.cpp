@@ -147,9 +147,13 @@ void LexParser::parse() {
             case '#':
                 parsePunctuation(iterator - 1);
                 break;
+            case ';':
+                parsePunctuation(iterator - 1);
+                break;
             case '\"':
                 parseStringLiteral();
                 break;
+                
             default:
                 break;
             }

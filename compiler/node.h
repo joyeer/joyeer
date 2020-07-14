@@ -127,10 +127,12 @@ struct VarDecl: public Node {
 struct ClassDecl: Node {
     typedef std::shared_ptr<ClassDecl> Pointer;
     
-    std::shared_ptr<Token> name;
-    std::vector<std::shared_ptr<Node>> members;
+    Token::Pointer name;
+    std::vector<Node::Pointer> members;
 
-    ClassDecl(std::shared_ptr<Token> name, std::vector<std::shared_ptr<Node>> members);
+    ClassDecl(Token::Pointer name, std::vector<Node::Pointer> members);
+    
+    const std::wstring& getName();
 };
 
 struct ParameterClause: Node {
@@ -166,7 +168,13 @@ struct ConstructorDecl: Node {
     Node::Pointer parameterClause;
     Node::Pointer codeBlock;
     
+    Symbol::Pointer symbol;
+    SymbolTable::Pointer symtable;
+    
     ConstructorDecl(Node::Pointer parameterClause, Node::Pointer codeBlock);
+    
+    // return constructor's symbol name e.g. init(...)
+    const std::wstring getName();
 };
 
 struct Expr : Node {

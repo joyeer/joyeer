@@ -29,6 +29,7 @@ private:
     void verify(ParenthesizedExpr::Pointer node);
     void verify(IfStatement::Pointer node);
     void verify(ArguCallExpr::Pointer node);
+    void verify(ClassDecl::Pointer node);
     
     JrType::Pointer typeOf(Node::Pointer node);
     JrType::Pointer typeOf(IdentifierExpr::Pointer node);

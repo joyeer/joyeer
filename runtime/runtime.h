@@ -58,6 +58,8 @@ struct JrPrimaryType: public JrType {
 struct JrObjectType: public JrType {
     typedef std::shared_ptr<JrObjectType> Pointer;
     
+    std::vector<int> virtualFunctions;
+    std::vector<int> staticFunctions;
 };
 
 struct JrVar {

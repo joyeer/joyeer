@@ -162,8 +162,85 @@ Node::Pointer Binder::bind(FuncDecl::Pointer decl) {
     return decl;
 }
 
-Node::Pointer Binder::bind(ClassDecl::Pointer classDecl) {
-    return classDecl;
+Node::Pointer Binder::bind(ConstructorDecl::Pointer decl) {
+    auto symtable = context->curSymTable();
+    auto function = std::make_shared<JrFunction>();
+    function->name = decl->getName();
+    function->kind = JrFunction_VM;
+    
+    auto type = context->curType();
+    
+    if(symtable->find(function->name) != nullptr) {
+        Diagnostics::reportError(L"[Error] Dupliate constructor name");
+    }
+    
+    auto symbol = std::shared_ptr<Symbol>(new Symbol {
+        .name = function->name,
+        .flag = constructorSymbol,
+        .addressOfFunc = function->addressOfFunc
+    });
+    symtable->insert(symbol);
+    decl->symbol = symbol;
+    
+    
+    context->initializeScope(ScopeFlag::funcScope);
+    // visit func decleration
+    context->visit(visitFuncDecl, [this, decl]() {
+        
+        // start to process function parameters
+        context->visit(visitFuncParamDecl, [this, decl]() {
+            decl->parameterClause = bind(decl->parameterClause);
+        });
+        
+        decl->codeBlock = bind(decl->codeBlock);
+        
+    });
+    // Start to Bind sub
+    decl->symtable = context->curSymTable();
+    
+    context->finalizeScope(ScopeFlag::funcScope);
+    
+    return decl;
+
+}
+
+Node::Pointer Binder::bind(ClassDecl::Pointer decl) {
+    
+    auto symtable = context->curSymTable();
+    auto name = decl->getName();
+    
+    if(symtable->find(name) != nullptr) {
+        Diagnostics::reportError(L"[Error] duplicate class name");
+    }
+    
+    auto symbol = Symbol::Pointer(new Symbol {
+        .flag = classSymbol,
+        .name = name
+    });
+    
+    auto objectType = JrObjectType::Pointer(new JrObjectType {
+        {
+            .name = name,
+            .kind = JrType_Object
+        }
+    });
+    
+    symbol->addressOfType = objectType->addressOfType;
+    Global::registerObjectType(objectType);
+    
+    context->initializeScope(classScope);
+    context->entry(objectType);
+    context->visit(visitClassDecl, [this, decl]() {
+        std::vector<Node::Pointer> result;
+        for(auto member: decl->members) {
+            result.push_back(bind(member));
+        }
+        decl->members = result;
+    });
+    context->leave(objectType);
+    context->finalizeScope(classScope);
+    
+    return decl;
 }
 
 Node::Pointer Binder::bind(VarDecl::Pointer decl) {
@@ -215,9 +292,7 @@ Node::Pointer Binder::bind(LetDecl::Pointer decl) {
     return decl;
 }
 
-Node::Pointer Binder::bind(ConstructorDecl::Pointer decl) {
-    return decl;
-}
+
 
 Node::Pointer Binder::bind(FuncCallExpr::Pointer decl) {
     // go down to bind argument
