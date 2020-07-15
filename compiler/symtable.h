@@ -7,14 +7,16 @@
 #include <vector>
 
 enum SymbolFlag {
+    
     declSymbol =        1,
     refSymbol =         1 << 1,
     classSymbol =       1 << 2,
     funcSymbol =        1 << 3,
-    constructorSymbol = 1 << 4,
-    varSymbol =         1 << 5,
-    mutableSymbol =     1 << 6,
-    immutableSymbol =   1 << 7,
+    fieldSymbol =       1 << 4,
+    constructorSymbol = 1 << 5,
+    varSymbol =         1 << 6,
+    mutableSymbol =     1 << 7,
+    immutableSymbol =   1 << 8,
     
     // this is a type symbol
     typeSymbol =        1 << 10,
@@ -25,6 +27,10 @@ enum SymbolFlag {
     unfixedMutableVarSymbol =   mutableVarSymbol | typeUnfixedSymbol,
     immutableVarSymbol =        declSymbol | varSymbol | immutableSymbol,
     unfixedImmutableVarSymbol = immutableVarSymbol | typeUnfixedSymbol,
+    
+    // declare field symbols
+    mutableFieldSymbol =        declSymbol | fieldSymbol | mutableSymbol,
+    immutableFieldSymbol  =     declSymbol | fieldSymbol | immutableSymbol
     
 };
 
@@ -45,6 +51,7 @@ public:
     // locate the var symbol's variable position in function
     union {
         int addressOfVariable;
+        int addressOfField;
     };
 };
 

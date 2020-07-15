@@ -455,7 +455,7 @@ void NodeDebugPrinter::print(Node::Pointer node) {
             std::wcout << L"+assignmentExpr" ;
             auto n = std::static_pointer_cast<AssignmentExpr>(node);
             incTab();
-            print(n->identifier);
+            print(n->left);
             print(n->expr);
             decTab();
         }

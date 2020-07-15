@@ -16,6 +16,12 @@ const JrPrimaryType::Pointer JrPrimaryType::Boolean = std::shared_ptr<JrPrimaryT
     {.kind = JrType_Boolean, .name = L"Boolean"}
 });
 
+
+void JrObjectType::registerField(JrField::Pointer field) {
+    field->addressOfField = virtualFields.size();
+    virtualFields.push_back(field);
+}
+
 JrRuntimeStack::JrRuntimeStack() {
     pointer = data;
 }

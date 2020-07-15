@@ -47,7 +47,7 @@ Node::Pointer Binder::bind(std::shared_ptr<Node> node) {
         case expr:
             return bind(std::static_pointer_cast<Expr>(node));
         case selfExpr:
-            break;
+            return bind(std::static_pointer_cast<SelfExpr>(node));
         case postfixExpr:
             break;
         case prefixExpr:
@@ -182,7 +182,6 @@ Node::Pointer Binder::bind(ConstructorDecl::Pointer decl) {
     symtable->insert(symbol);
     decl->symbol = symbol;
     
-    
     context->initializeScope(ScopeFlag::funcScope);
     // visit func decleration
     context->visit(visitFuncDecl, [this, decl]() {
@@ -217,16 +216,18 @@ Node::Pointer Binder::bind(ClassDecl::Pointer decl) {
         .flag = classSymbol,
         .name = name
     });
+    symtable->insert(symbol);
     
-    auto objectType = JrObjectType::Pointer(new JrObjectType {
-        {
+    auto objectType = JrObjectType::Pointer(new JrObjectType {{
             .name = name,
             .kind = JrType_Object
         }
     });
     
-    symbol->addressOfType = objectType->addressOfType;
     Global::registerObjectType(objectType);
+    symbol->addressOfType = objectType->addressOfType;
+    decl->symbol = symbol;
+    decl->symtable = symtable;
     
     context->initializeScope(classScope);
     context->entry(objectType);
@@ -252,18 +253,30 @@ Node::Pointer Binder::bind(VarDecl::Pointer decl) {
     if(symtable->find(name) != nullptr) {
         Diagnostics::reportError(L"[Error] duplicate variable name");
     }
-    
+     
     // double check the domplciate
+    auto symbolFlag = context->curStage() == visitClassDecl ? mutableVarSymbol : mutableSymbol;
     auto symbol = std::shared_ptr<Symbol>(new Symbol{
         .name = name,
-        .flag = SymbolFlag::mutableVarSymbol
+        .flag = symbolFlag
     });
     
     symtable->insert(symbol);
     decl->symbol = symbol;
+    decl->pattern->identifier->symbol = symbol;
     
     if(decl->initializer != nullptr) {
         decl->initializer = bind(decl->initializer);
+    }
+    
+    if(context->curStage() == visitClassDecl) {
+        auto type = std::static_pointer_cast<JrObjectType>(context->curType());
+        auto field = JrField::Pointer(new JrField {
+            .type = type,
+            .name = name
+        });
+        type->registerField(field);
+        symbol->addressOfField = field->addressOfField;
     }
     
     return decl;
@@ -347,15 +360,23 @@ Node::Pointer Binder::bind(Expr::Pointer decl) {
     
     // If binary is assignment
     if(decl->binaries.size() == 1 && decl->binaries[0]->kind == assignmentExpr) {
-        if(decl->prefix->kind != identifierExpr) {
-            Diagnostics::reportError(L"[Error] left of assignment expression must be a variable");
-            return decl;
+        if(decl->prefix->kind == identifierExpr) {
+            auto identifier = std::static_pointer_cast<IdentifierExpr>(bind(decl->prefix));
+            auto assignmentExpr = std::static_pointer_cast<AssignmentExpr>(bind(decl->binaries[0]));
+            assignmentExpr->left = identifier;
+            return assignmentExpr;
         }
-
-        auto identifier = std::static_pointer_cast<IdentifierExpr>(bind(decl->prefix));
-        auto assignmentExpr = std::static_pointer_cast<AssignmentExpr>(bind(decl->binaries[0]));
-        assignmentExpr->identifier = identifier;
-        return assignmentExpr;
+        
+        if(decl->prefix->kind == selfExpr) {
+            auto selfExpr = std::static_pointer_cast<SelfExpr>(bind(decl->prefix));
+            auto assignmentExpr = std::static_pointer_cast<AssignmentExpr>(bind(decl->binaries[0]));
+            assignmentExpr->left = selfExpr;
+            return assignmentExpr;
+        }
+        
+        Diagnostics::reportError(L"[Error] left of assignment expression must be a variable");
+        return decl;
+        
     }
     
     
@@ -525,5 +546,12 @@ Node::Pointer Binder::bind(ReturnStatement::Pointer decl) {
     if(decl->expr != nullptr) {
         decl->expr = bind(decl->expr);
     }
+    return decl;
+}
+
+Node::Pointer Binder::bind(SelfExpr::Pointer decl) {
+    assert(decl->identifier != nullptr);
+    
+    decl->identifier = std::static_pointer_cast<IdentifierExpr>(bind(decl->identifier));
     return decl;
 }

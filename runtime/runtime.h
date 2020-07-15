@@ -42,6 +42,14 @@ struct JrType {
     int addressOfType;
 };
 
+struct JrField {
+    typedef std::shared_ptr<JrField> Pointer;
+    
+    std::wstring name;
+    JrType::Pointer type;
+    int addressOfField = -1;
+};
+
 struct JrPrimaryType: public JrType {
     typedef std::shared_ptr<JrPrimaryType> Pointer;
     
@@ -60,7 +68,15 @@ struct JrObjectType: public JrType {
     
     std::vector<int> virtualFunctions;
     std::vector<int> staticFunctions;
+    
+    std::vector<JrField::Pointer> virtualFields;
+    std::vector<JrField::Pointer> staticFields;
+    
+    
+    void registerField(JrField::Pointer field);
+    
 };
+
 
 struct JrVar {
     typedef std::shared_ptr<JrVar> Pointer;

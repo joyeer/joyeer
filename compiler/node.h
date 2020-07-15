@@ -85,8 +85,6 @@ struct TypeDecl: Node {
     Symbol::Pointer symbol;
     
     TypeDecl(IdentifierExpr::Pointer identifier, bool isOptional);
-    
-    
 };
 
 struct Pattern: public Node {
@@ -129,7 +127,10 @@ struct ClassDecl: Node {
     
     Token::Pointer name;
     std::vector<Node::Pointer> members;
-
+    
+    Symbol::Pointer symbol;
+    SymbolTable::Pointer symtable;
+    
     ClassDecl(Token::Pointer name, std::vector<Node::Pointer> members);
     
     const std::wstring& getName();
@@ -223,7 +224,7 @@ struct AssignmentExpr: Node {
     Node::Pointer expr;
     
     // After binded, the identifier will be binded 
-    IdentifierExpr::Pointer identifier;
+    Node::Pointer left;
     AssignmentExpr(std::shared_ptr<Node> expr);
 };
 

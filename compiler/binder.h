@@ -38,6 +38,7 @@ protected:
     Node::Pointer bind(ParameterClause::Pointer decl);
     Node::Pointer bind(Pattern::Pointer decl);
     Node::Pointer bind(ReturnStatement::Pointer decl);
+    Node::Pointer bind(SelfExpr::Pointer decl);
     
 private:
     CompileContext::Pointer context;

@@ -204,10 +204,16 @@ void IRGen::emit(IdentifierExpr::Pointer node) {
 
 void IRGen::emit(AssignmentExpr::Pointer node) {
     emit(node->expr);
-    writer.write({
-        .opcode = OP_ISTORE,
-        .value = node->identifier->symbol->addressOfVariable
-    });
+    if(node->left->kind == identifierExpr) {
+        auto identifierExpr = std::static_pointer_cast<IdentifierExpr>(node->left);
+        writer.write({
+            .opcode = OP_ISTORE,
+            .value = identifierExpr->symbol->addressOfVariable
+        });
+    } else {
+        assert(false);
+    }
+    
 }
 
 void IRGen::emit(Expr::Pointer node) {

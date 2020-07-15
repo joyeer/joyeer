@@ -35,6 +35,7 @@ void TypeChecker::verify(Node::Pointer node) {
         case constructorDecl:
             break;
         case classDecl:
+            verify(std::static_pointer_cast<ClassDecl>(node));
             break;
         case parameterClause:
             verify(std::static_pointer_cast<ParameterClause>(node));
@@ -260,6 +261,9 @@ void TypeChecker::verify(IdentifierExpr::Pointer node) {
 
 void TypeChecker::verify(TypeDecl::Pointer node) {
     auto symbol = context->lookup(node->identifier->getName());
+    if(symbol == nullptr) {
+        Diagnostics::reportError(L"[Error]Cannot find type");
+    }
     node->symbol = symbol;
 }
 
@@ -294,10 +298,10 @@ void TypeChecker::verify(LiteralExpr::Pointer node) {
 
 void TypeChecker::verify(AssignmentExpr::Pointer node) {
     
-    verify(node->identifier);
+    verify(node->left);
     verify(node->expr);
     
-    auto leftType = typeOf(node->identifier);
+    auto leftType = typeOf(node->left);
     auto rightType = typeOf(node->expr);
     
 }
@@ -325,7 +329,15 @@ void TypeChecker::verify(ArguCallExpr::Pointer node) {
 }
 
 void TypeChecker::verify(ClassDecl::Pointer node) {
+    context->entry(node->symtable);
     
+    context->visit(CompileStage::visitClassDecl, [this, node]() {
+        for(auto member: node->members) {
+            verify(member);
+        }
+    });
+    
+    context->leave(node->symtable);
 }
 
 JrType::Pointer TypeChecker::typeOf(Node::Pointer node) {
