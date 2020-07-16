@@ -35,14 +35,16 @@ int main(int argc, char** argv) {
     Binder binder(compileContext);
     binder.bind(sourceBlock);
     
-    NodeDebugPrinter debugPrinter;
-    debugPrinter.print(sourceBlock);
-    std::wcout << std::endl;
+    NodeDebugPrinter binderDebugger(L"asm.binder.txt");
+    binderDebugger.print(sourceBlock);
+    binderDebugger.close();
     
     TypeChecker typeChecker(compileContext);
     typeChecker.verify(std::static_pointer_cast<Node>(sourceBlock));
     
-    
+    NodeDebugPrinter typecheckerDebugger(L"asm.typechecker.txt");
+    typecheckerDebugger.print(sourceBlock);
+    typecheckerDebugger.close();
     
     IRGen irGen(compileContext);
     irGen.emit(std::static_pointer_cast<Node>(sourceBlock));

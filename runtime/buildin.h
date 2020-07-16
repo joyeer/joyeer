@@ -1,7 +1,7 @@
 #ifndef __joyeer_runtime_buildin_h__
 #define __joyeer_runtime_buildin_h__
 
-
+#include <fstream>
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -9,9 +9,6 @@
 #include "function.h"
 
 struct Global {
-    
-    // global variables
-    static std::vector<JrVar::Pointer> variables;
     
     // global functions
     static std::vector<JrFunction::Pointer> functions;
@@ -32,4 +29,10 @@ struct Global {
     static void initGlobalTables();
 };
 
+class TableDebugPrinter {
+public:
+    TableDebugPrinter(const std::wstring filename);
+private:
+    std::wofstream output;
+};
 #endif

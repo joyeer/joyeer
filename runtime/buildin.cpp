@@ -69,3 +69,7 @@ std::vector<JrFunction::Pointer> initGlobalFunctionTable() {
 }
 
 
+TableDebugPrinter::TableDebugPrinter(const std::wstring filename) {
+    output.open(filename);
+}
+

@@ -6,12 +6,18 @@
 
 enum Opcode {
     OP_NOP = 0x00,
+    
+    OP_OCONST_NIL,
     OP_ICONST,
     OP_ICONST_64,
     OP_SCONST,
     
     OP_ISTORE,
+    
+    OP_OLOAD,
     OP_ILOAD,
+    
+    OP_PUTFIELD,
     
     OP_IADD,
     OP_ISUB,

@@ -11,12 +11,15 @@ void JrCodeWriter::write(const std::vector<Instruction> &inss) {
 
 const std::unordered_map<Opcode, std::wstring> JrInstructionDebugPrinter::maps = {
     { OP_NOP, L"nop" },
+    { OP_OCONST_NIL, L"const.nil" },
     { OP_ICONST, L"const.int" },
     { OP_ICONST_64, L"const.int.64" },
     { OP_SCONST, L"const.string" },
     
     { OP_ISTORE, L"store.int" },
     { OP_ILOAD, L"load.int" },
+    { OP_OLOAD, L"oload" },
+    { OP_PUTFIELD, L"putfield"},
     
     { OP_IADD, L"add.int" },
     { OP_ISUB, L"sub.int" },

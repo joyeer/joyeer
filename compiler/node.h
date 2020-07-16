@@ -4,6 +4,7 @@
 #include "token.h"
 #include "symtable.h"
 #include "context.h"
+#include <fstream>
 
 enum SyntaxKind {
     sourceBlock = 1L,
@@ -338,15 +339,23 @@ struct ReturnStatement: Node {
 };
 
 
+// ASM node printer
 struct NodeDebugPrinter {
+    NodeDebugPrinter(const std::wstring filename);
+    
     void print(Node::Pointer node);
+    void close();
+    
+protected:
     void print(std::vector<Node::Pointer> nodes);
     void print(SymbolTable::Pointer symtable);
     void printTab();
     void incTab();
     void decTab();
     
+private:
     int size = 0;
+    std::wofstream output;
 };
 
 #endif

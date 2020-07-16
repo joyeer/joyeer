@@ -44,8 +44,10 @@ void IRGen::emit(Node::Pointer node) {
             emit(std::static_pointer_cast<FuncDecl>(node));
             break;
         case constructorDecl:
+            emit(std::static_pointer_cast<ConstructorDecl>(node));
             break;
         case classDecl:
+            emit(std::static_pointer_cast<ClassDecl>(node));
             break;
         case parameterClause:
             break;
@@ -151,8 +153,14 @@ void IRGen::emit(LiteralExpr::Pointer node) {
                 .value = node->literal->rawValue == L"true" ? 1 : 0
             });
             break;
+        case nilLiteral:
+            writer.write({
+                .opcode = OP_OCONST_NIL
+            });
+            break;
         default:
-            break;;
+            assert(false);
+            break;
     }
 }
 
@@ -198,6 +206,7 @@ void IRGen::emit(IdentifierExpr::Pointer node) {
         return;
     }
 
+    assert(false);
     return;
     // Step2: try to find the symbol in symbols
 }
@@ -210,6 +219,18 @@ void IRGen::emit(AssignmentExpr::Pointer node) {
             .opcode = OP_ISTORE,
             .value = identifierExpr->symbol->addressOfVariable
         });
+    } else if( node->left->kind == selfExpr ) {
+        auto selfExpr = std::static_pointer_cast<SelfExpr>(node->left);
+        
+        writer.write({
+            .opcode = OP_OLOAD,
+            .value = 0      // first varible is the self object
+        });
+        
+        writer.write({
+            .opcode = OP_PUTFIELD
+        });
+        
     } else {
         assert(false);
     }
@@ -299,10 +320,29 @@ void IRGen::emit(ReturnStatement::Pointer node) {
     if(node->expr != nullptr) {
         emit(node->expr);
         op = OP_IRETURN;
-        
     }
+    
     writer.write({
         .opcode = op
     });
+}
 
+void IRGen::emit(ClassDecl::Pointer node) {
+    for(auto member: node->members) {
+        if(member->kind == funcDecl || member->kind == constructorDecl) {
+            emit(member);
+        }
+    }
+}
+
+void IRGen::emit(ConstructorDecl::Pointer node) {
+    
+    IRGen generator(context);
+    generator.emit(node->codeBlock);
+    auto instructions = generator.getInstructions();
+    
+    assert(node->symbol->flag == constructorSymbol);
+    auto function = Global::functions[node->symbol->addressOfFunc];
+    assert(function != nullptr && function->instructions.size() == 0);
+    function->instructions = instructions;
 }
