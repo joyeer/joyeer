@@ -9,14 +9,13 @@
 enum SymbolFlag {
     
     declSymbol =        1,
-    refSymbol =         1 << 1,
-    classSymbol =       1 << 2,
-    funcSymbol =        1 << 3,
-    fieldSymbol =       1 << 4,
-    constructorSymbol = 1 << 5,
-    varSymbol =         1 << 6,
-    mutableSymbol =     1 << 7,
-    immutableSymbol =   1 << 8,
+    thisSymbol =        1 << 1,
+    funcSymbol =        1 << 2,
+    fieldSymbol =       1 << 3,
+    constructorSymbol = 1 << 4,
+    varSymbol =         1 << 5,
+    mutableSymbol =     1 << 6,
+    immutableSymbol =   1 << 7,
     
     // this is a type symbol
     typeSymbol =        1 << 10,
@@ -42,7 +41,7 @@ public:
     std::wstring name;
     
     union {
-        int index;
+        int index = -1;
         int addressOfType;
         int addressOfFunc;
         int addressOfClass;
@@ -50,7 +49,7 @@ public:
     
     // locate the var symbol's variable position in function
     union {
-        int addressOfVariable;
+        int addressOfVariable = -1;
         int addressOfField;
     };
 };
@@ -60,6 +59,7 @@ class SymbolTable {
 public:
     typedef std::shared_ptr<SymbolTable> Pointer;
     typedef std::weak_ptr<SymbolTable> WeakPointer;
+    
 public:
     SymbolTable();
     
@@ -69,13 +69,10 @@ public:
     // find symbol by a given name
     Symbol::Pointer find(const std::wstring& name) const;
     
-    std::vector<Symbol::Pointer> allVarSymbols() const;
-
     // Parent's
     SymbolTable::WeakPointer parent;
     std::vector<SymbolTable::Pointer> children;
     
-private:
     std::unordered_map<std::wstring, Symbol::Pointer> symbols;
 };
 

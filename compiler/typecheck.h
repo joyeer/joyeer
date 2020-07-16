@@ -14,6 +14,7 @@ public:
 private:
     void verify(SourceBlock::Pointer node);
     void verify(FuncDecl::Pointer node);
+    void verify(ConstructorDecl::Pointer node);
     void verify(FuncCallExpr::Pointer node);
     void verify(VarDecl::Pointer node);
     void verify(ParameterClause::Pointer node);
@@ -30,6 +31,7 @@ private:
     void verify(IfStatement::Pointer node);
     void verify(ArguCallExpr::Pointer node);
     void verify(ClassDecl::Pointer node);
+    void verify(SelfExpr::Pointer node);
     
     JrType::Pointer typeOf(Node::Pointer node);
     JrType::Pointer typeOf(IdentifierExpr::Pointer node);
@@ -37,6 +39,7 @@ private:
     JrType::Pointer typeOf(LiteralExpr::Pointer node);
     JrType::Pointer typeOf(FuncCallExpr::Pointer node);
     JrType::Pointer typeOf(ParenthesizedExpr::Pointer node);
+    JrType::Pointer typeOf(SelfExpr::Pointer node);
     
     CompileContext::Pointer context;
 };

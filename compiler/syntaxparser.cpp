@@ -635,26 +635,22 @@ IdentifierExpr::Pointer SyntaxParser::tryParseIdentifierExpr() {
 std::shared_ptr<Token> SyntaxParser::tryParseLiteral()
 {
     std::shared_ptr<Token> literal = tryEat(TokenKind::stringLiteral);
-    if (literal != nullptr)
-    {
+    if (literal != nullptr) {
         return literal;
     }
 
     literal = tryEat(TokenKind::decimalLiteral);
-    if (literal != nullptr)
-    {
+    if (literal != nullptr) {
         return literal;
     }
 
     literal = tryEat(TokenKind::floatLiteral);
-    if (literal != nullptr)
-    {
+    if (literal != nullptr) {
         return literal;
     }
 
     literal = tryEat(TokenKind::nilLiteral);
-    if (literal != nullptr)
-    {
+    if (literal != nullptr) {
         return literal;
     }
 

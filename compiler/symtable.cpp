@@ -30,18 +30,3 @@ Symbol::Pointer SymbolTable::find(const std::wstring& name) const {
     
     return nullptr;
 }
-
-std::vector<Symbol::Pointer> SymbolTable::allVarSymbols() const {
-    std::vector<Symbol::Pointer> result;
-    for(auto symbol: symbols) {
-        if((symbol.second->flag & declSymbol) == declSymbol) {
-            result.push_back(symbol.second);
-        }
-    }
-    
-    for(auto table: children) {
-        auto symbols = table->allVarSymbols();
-        result.insert(result.end(), std::begin(symbols), std::end(symbols));
-    }
-    return result;
-}

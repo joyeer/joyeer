@@ -19,22 +19,25 @@ typedef uint16_t    JrUInt16;
 typedef uint8_t     JrUInt8;
 
 #define JrType_Void         0
-
 #define JrType_Int          1
 #define JrType_Float        2
 #define JrType_Double       3
 #define JrType_Long         4
 #define JrType_Boolean      5
-#define JrType_String       8
+#define JrType_String       7
 
-#define JrType_Any          9
+#define JrType_Any          8
+#define JrType_Nil          9
 #define JrType_Object       10
+
 
 
 struct JrType {
     typedef std::shared_ptr<JrType> Pointer;
     const static JrType::Pointer Any;
     const static JrType::Pointer Void;
+    const static JrType::Pointer Nil;
+    
     int kind;
     std::wstring name;
     
@@ -77,12 +80,13 @@ struct JrObjectType: public JrType {
     
 };
 
-
 struct JrVar {
     typedef std::shared_ptr<JrVar> Pointer;
     JrType::Pointer type;
     std::wstring name;
-    int index;
+    
+    int addressOfVariable;
+    int addressOfObject;
 };
 
 struct JrFunctionFrame {

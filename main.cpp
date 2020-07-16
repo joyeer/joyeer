@@ -35,13 +35,14 @@ int main(int argc, char** argv) {
     Binder binder(compileContext);
     binder.bind(sourceBlock);
     
-    std::wcout << std::endl << L"====bind==="<<std::endl;
     NodeDebugPrinter debugPrinter;
     debugPrinter.print(sourceBlock);
-    std::wcout << std::endl << L"====end====" << std::endl;
-
+    std::wcout << std::endl;
+    
     TypeChecker typeChecker(compileContext);
     typeChecker.verify(std::static_pointer_cast<Node>(sourceBlock));
+    
+    
     
     IRGen irGen(compileContext);
     irGen.emit(std::static_pointer_cast<Node>(sourceBlock));

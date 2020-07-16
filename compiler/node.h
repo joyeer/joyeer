@@ -175,7 +175,7 @@ struct ConstructorDecl: Node {
     ConstructorDecl(Node::Pointer parameterClause, Node::Pointer codeBlock);
     
     // return constructor's symbol name e.g. init(...)
-    const std::wstring getName();
+    const std::wstring getName(JrType::Pointer ownerType);
 };
 
 struct Expr : Node {
@@ -281,6 +281,9 @@ struct SelfExpr: Node {
     
     IdentifierExpr::Pointer identifier;
     
+    // this symbol point to self's pointing object
+    Symbol::Pointer symbol;
+    
     SelfExpr(IdentifierExpr::Pointer identifier);
 };
 
@@ -301,7 +304,7 @@ struct CodeBlock: Node {
     
     std::vector<Node::Pointer> statements;
 
-    SymbolTable::Pointer symbols;
+    SymbolTable::Pointer symtable;
     CodeBlock(std::vector<Node::Pointer> statements);
 
 };
@@ -338,6 +341,7 @@ struct ReturnStatement: Node {
 struct NodeDebugPrinter {
     void print(Node::Pointer node);
     void print(std::vector<Node::Pointer> nodes);
+    void print(SymbolTable::Pointer symtable);
     void printTab();
     void incTab();
     void decTab();

@@ -33,6 +33,7 @@ void TypeChecker::verify(Node::Pointer node) {
             verify(std::static_pointer_cast<FuncDecl>(node));
             break;
         case constructorDecl:
+            verify(std::static_pointer_cast<ConstructorDecl>(node));
             break;
         case classDecl:
             verify(std::static_pointer_cast<ClassDecl>(node));
@@ -52,6 +53,7 @@ void TypeChecker::verify(Node::Pointer node) {
             verify(std::static_pointer_cast<Expr>(node));
             break;
         case selfExpr:
+            verify(std::static_pointer_cast<SelfExpr>(node));
             break;
         case postfixExpr:
             break;
@@ -137,16 +139,48 @@ void TypeChecker::verify(FuncDecl::Pointer node) {
 
         function->localVars.push_back(JrVar{
             .type = type,
-            .index = addressOfVariable
+            .addressOfVariable = addressOfVariable
         });
         
     }
-    
-    
-    
     verify(node->codeBlock);
     context->leave(function);
     context->leave(node->symtable);
+}
+
+void TypeChecker::verify(ConstructorDecl::Pointer node) {
+    auto function = Global::functions[node->symbol->addressOfFunc];
+    context->entry(node->symtable);
+    context->entry(function);
+    
+    context->visit(visitFuncParamDecl, [this, node]() {
+        verify(node->parameterClause);
+    });
+    
+    assert(function->paramTypes.size() == 0);
+    // Binding function's type
+    auto parameterClause = std::static_pointer_cast<ParameterClause>(node->parameterClause);
+    for(auto parameter: parameterClause->parameters) {
+        auto symbol = parameter->type->symbol;
+        
+        assert((symbol->flag & typeSymbol) == typeSymbol);
+        auto type = Global::types[symbol->addressOfType];
+        function->paramTypes.push_back(type);
+        
+        // register function's parameter as variable in function
+        auto addressOfVariable = (int)function->localVars.size();
+        parameter->identifier->symbol->addressOfVariable = addressOfVariable;
+
+        function->localVars.push_back(JrVar{
+            .type = type,
+            .addressOfVariable = addressOfVariable
+        });
+        
+    }
+    verify(node->codeBlock);
+    context->leave(function);
+    context->leave(node->symtable);
+
 }
 
 void TypeChecker::verify(FuncCallExpr::Pointer node) {
@@ -189,10 +223,8 @@ void TypeChecker::verify(VarDecl::Pointer node) {
     node->symbol->addressOfVariable = addressOfVariable;
     function->localVars.push_back(JrVar {
         .type = Global::types[node->symbol->addressOfType],
-        .index = addressOfVariable
+        .addressOfVariable = addressOfVariable
     });
-    
-    
 }
 
 void TypeChecker::verify(LetDecl::Pointer node) {
@@ -215,7 +247,7 @@ void TypeChecker::verify(LetDecl::Pointer node) {
     node->symbol->addressOfVariable = addressOfVariable;
     function->localVars.push_back(JrVar {
         .type = Global::types[node->symbol->addressOfType],
-        .index = addressOfVariable
+        .addressOfVariable = addressOfVariable
     });
 
 }
@@ -243,6 +275,9 @@ void TypeChecker::verify(IdentifierExpr::Pointer node) {
         case visitExpr:
         case visitCodeBlock: {
             auto symbol = context->lookup(name);
+            if(symbol == nullptr) {
+                Diagnostics::reportError(L"[Error] Cannot find variable");
+            }
             assert(symbol != nullptr);
             assert(node->symbol == nullptr);
             node->symbol = symbol;
@@ -268,14 +303,14 @@ void TypeChecker::verify(TypeDecl::Pointer node) {
 }
 
 void TypeChecker::verify(CodeBlock::Pointer node) {
-    assert(node->symbols != nullptr);
-    context->entry(node->symbols);
+    assert(node->symtable != nullptr);
+    context->entry(node->symtable);
     context->visit(visitCodeBlock, [this, node]() {
         for(auto statement: node->statements) {
             verify(statement);
         }
     });
-    context->leave(node->symbols);
+    context->leave(node->symtable);
 }
 
 void TypeChecker::verify(ReturnStatement::Pointer node) {
@@ -340,6 +375,12 @@ void TypeChecker::verify(ClassDecl::Pointer node) {
     context->leave(node->symtable);
 }
 
+void TypeChecker::verify(SelfExpr::Pointer node) {
+    if(node->identifier != nullptr) {
+        verify(node->identifier);
+    }
+}
+
 JrType::Pointer TypeChecker::typeOf(Node::Pointer node) {
     switch (node->kind) {
         case identifierExpr:
@@ -352,6 +393,8 @@ JrType::Pointer TypeChecker::typeOf(Node::Pointer node) {
             return typeOf(std::static_pointer_cast<LiteralExpr>(node));
         case parenthesizedExpr:
             return typeOf(std::static_pointer_cast<ParenthesizedExpr>(node));
+        case selfExpr:
+            return typeOf(std::static_pointer_cast<SelfExpr>(node));
         default:
             assert(false);
     }
@@ -407,6 +450,8 @@ JrType::Pointer TypeChecker::typeOf(LiteralExpr::Pointer node) {
             return JrPrimaryType::Boolean;
         case decimalLiteral:
             return JrPrimaryType::Int;
+        case nilLiteral:
+            return JrPrimaryType::Nil;
         default:
             assert(false);
     }
@@ -419,4 +464,8 @@ JrType::Pointer TypeChecker::typeOf(FuncCallExpr::Pointer node) {
 
 JrType::Pointer TypeChecker::typeOf(ParenthesizedExpr::Pointer node) {
     return typeOf(node->expr);
+}
+
+JrType::Pointer TypeChecker::typeOf(SelfExpr::Pointer node) {
+    return typeOf(node->identifier);
 }

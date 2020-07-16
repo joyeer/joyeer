@@ -165,15 +165,16 @@ Node::Pointer Binder::bind(FuncDecl::Pointer decl) {
 Node::Pointer Binder::bind(ConstructorDecl::Pointer decl) {
     auto symtable = context->curSymTable();
     auto function = std::make_shared<JrFunction>();
-    function->name = decl->getName();
-    function->kind = JrFunction_VM;
-    
     auto type = context->curType();
+    function->name = decl->getName(type);
+    function->kind = JrFunction_VM;
     
     if(symtable->find(function->name) != nullptr) {
         Diagnostics::reportError(L"[Error] Dupliate constructor name");
     }
     
+    // register this functin in global function tables
+    Global::registerFunction(function);
     auto symbol = std::shared_ptr<Symbol>(new Symbol {
         .name = function->name,
         .flag = constructorSymbol,
@@ -213,7 +214,7 @@ Node::Pointer Binder::bind(ClassDecl::Pointer decl) {
     }
     
     auto symbol = Symbol::Pointer(new Symbol {
-        .flag = classSymbol,
+        .flag = typeSymbol,
         .name = name
     });
     symtable->insert(symbol);
@@ -227,17 +228,41 @@ Node::Pointer Binder::bind(ClassDecl::Pointer decl) {
     Global::registerObjectType(objectType);
     symbol->addressOfType = objectType->addressOfType;
     decl->symbol = symbol;
-    decl->symtable = symtable;
     
     context->initializeScope(classScope);
+    decl->symtable = context->curSymTable();
     context->entry(objectType);
-    context->visit(visitClassDecl, [this, decl]() {
+    bool hasCustomizedConstructor = false;
+    context->visit(visitClassDecl, [this, decl, symtable, &hasCustomizedConstructor]() {
         std::vector<Node::Pointer> result;
         for(auto member: decl->members) {
             result.push_back(bind(member));
+            if(member->kind == constructorDecl) {
+                // if its constructor, we should register it in parent's symbol table
+                auto cdecl = std::static_pointer_cast<ConstructorDecl>(member);
+                symtable->insert(cdecl->symbol);
+                hasCustomizedConstructor = true;
+            }
         }
         decl->members = result;
     });
+    
+    if(hasCustomizedConstructor == false) {
+        // if has no customize constructors , we will bind an default constructor
+        auto defaultConstructor = std::make_shared<JrFunction>();
+        defaultConstructor->name = name + L"()";
+        defaultConstructor->kind = JrFunction_VM;
+        defaultConstructor->returnType = objectType;
+        
+        Global::registerFunction(defaultConstructor);
+        
+        auto symbol = Symbol::Pointer(new Symbol{
+            .name = defaultConstructor->name,
+            .flag = constructorSymbol,
+            .addressOfFunc = defaultConstructor->addressOfFunc
+        });
+        symtable->insert(symbol);
+    }
     context->leave(objectType);
     context->finalizeScope(classScope);
     
@@ -505,7 +530,7 @@ Node::Pointer Binder::bind(CodeBlock::Pointer decl) {
     
     context->initializeScope(ScopeFlag::codeBlockScope);
     auto table = context->curSymTable();
-    decl->symbols = table;
+    decl->symtable = table;
     
     // start to process code block
     context->visit(visitCodeBlock, [decl, this]() {

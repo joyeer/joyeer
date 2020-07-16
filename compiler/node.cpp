@@ -75,9 +75,9 @@ parameterClause(parameterClause),
 codeBlock(codeBlock) {
 }
 
-const std::wstring ConstructorDecl::getName() {
+const std::wstring ConstructorDecl::getName(JrType::Pointer type) {
     std::wstringstream ss;
-    ss << L"init(";
+    ss << type->name << L"(";
     auto parameterClause = std::static_pointer_cast<ParameterClause>(this->parameterClause);
     for(auto parameter: parameterClause->parameters) {
         ss << parameter->getIdentifierName() << L":";
@@ -216,6 +216,21 @@ expr(expr) {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+void NodeDebugPrinter::print(SymbolTable::Pointer symtable) {
+    std::wcout << std::endl;
+    printTab();
+    std::wcout << L"#symbol {" << std::endl;
+    incTab();
+    for(auto symbol: symtable->symbols) {
+        printTab();
+        std::wcout << symbol.second->name << L": " << symbol.second->addressOfFunc <<  L", " << symbol.second->addressOfVariable << std::endl;
+    }
+    decTab();
+    printTab();
+    std::wcout << L"}";
+    
+}
+
 void NodeDebugPrinter::print(std::vector<Node::Pointer> nodes) {
     std::wcout << std::endl;
     printTab();
@@ -248,6 +263,7 @@ void NodeDebugPrinter::print(Node::Pointer node) {
             std::wcout << L"+sourceBLock" ;
             auto n = std::static_pointer_cast<SourceBlock>(node);
             incTab();
+            print(n->symtable);
             for(auto statement: n->statements) {
                 print(statement);
             }
@@ -305,6 +321,7 @@ void NodeDebugPrinter::print(Node::Pointer node) {
             std::wcout << L"+funcDecl" ;
             auto n = std::static_pointer_cast<FuncDecl>(node);
             incTab();
+            print(n->symtable);
             print(n->identifier);
             print(n->parameterClause);
             print(n->returnType);
@@ -316,6 +333,7 @@ void NodeDebugPrinter::print(Node::Pointer node) {
             std::wcout << L"+constructorDecl" ;
             auto n = std::static_pointer_cast<ConstructorDecl>(node);
             incTab();
+            print(n->symtable);
             print(n->parameterClause);
             print(n->codeBlock);
             decTab();
@@ -325,6 +343,7 @@ void NodeDebugPrinter::print(Node::Pointer node) {
             std::wcout << L"+classDecl" ;
             auto members = std::static_pointer_cast<ClassDecl>(node);
             incTab();
+            print(members->symtable);
             print(members->members);
             decTab();
         }
@@ -345,6 +364,7 @@ void NodeDebugPrinter::print(Node::Pointer node) {
             auto n = std::static_pointer_cast<CodeBlock>(node);
             std::wcout << L"+codeBlock" ;
             incTab();
+            print(n->symtable);
             print(n->statements);
             decTab();
         }
