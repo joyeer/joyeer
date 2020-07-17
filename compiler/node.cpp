@@ -32,7 +32,7 @@ name(name),
 members(members) {
 }
 
-const std::wstring& ClassDecl::getName() {
+const std::wstring ClassDecl::getName() {
     return name->rawValue;
 }
 

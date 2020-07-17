@@ -40,6 +40,8 @@ private:
     JrType::Pointer typeOf(FuncCallExpr::Pointer node);
     JrType::Pointer typeOf(ParenthesizedExpr::Pointer node);
     JrType::Pointer typeOf(SelfExpr::Pointer node);
+    JrType::Pointer typeOf(Pattern::Pointer node);
+    JrType::Pointer typeOf(TypeDecl::Pointer node);
     
     CompileContext::Pointer context;
 };

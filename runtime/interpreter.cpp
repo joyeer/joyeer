@@ -12,13 +12,15 @@ void JrInterpreter::run(JrFunction::Pointer function) {
     auto frame = prepareStackFrame(function);
     context->stack->push(frame);
     
-    std::wcout << L">[call][function]:" << function->name << std::endl;
+    std::wcout << std::wstring(context->stack->frames.size() - 1, L'-') << L"$[function][entry] " << function->name << std::endl;
+    
     
     pointer = function->instructions.begin();
     end = function->instructions.end();
-    
+    JrInstructionDebugPrinter printer;
     while(pointer != end) {
         auto instruction = *pointer;
+        std::wcout << std::wstring(context->stack->frames.size() , L'-') << printer.print(instruction) << std::endl;
         switch(instruction.opcode) {
             case OP_ICONST:
                 context->stack->push4(instruction.value);
@@ -66,6 +68,7 @@ void JrInterpreter::run(JrFunction::Pointer function) {
         
     }
     
+    std::wcout << std::wstring(context->stack->frames.size() - 1, L'-') << L"$[function][leave] " << function->name << std::endl;
 }
 
 JrFunctionFrame::Pointer JrInterpreter::prepareStackFrame(JrFunction::Pointer func) {

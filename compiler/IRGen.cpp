@@ -115,6 +115,7 @@ void IRGen::emit(SourceBlock::Pointer block) {
         }
     });
     
+    func->instructions = getInstructions();
 }
 
 void IRGen::emit(FuncCallExpr::Pointer funcCallExpr) {

@@ -134,7 +134,7 @@ struct ClassDecl: Node {
     
     ClassDecl(Token::Pointer name, std::vector<Node::Pointer> members);
     
-    const std::wstring& getName();
+    const std::wstring getName();
 };
 
 struct ParameterClause: Node {

@@ -104,7 +104,7 @@ void FunctionTablePrinter::print() {
         output << L"    .localVars" << std::endl;
         int localVarIndex = 0;
         for(auto localVar: function->localVars) {
-            output << L"        #"<< localVarIndex << L": " << localVar.name << std::endl;
+            output << L"        #"<< localVarIndex << L": " << localVar.name << L", " << localVar.type->name << std::endl;
             localVarIndex ++;
         }
     
