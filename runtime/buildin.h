@@ -29,9 +29,22 @@ struct Global {
     static void initGlobalTables();
 };
 
-class TableDebugPrinter {
+class TypeTablePrinter {
 public:
-    TableDebugPrinter(const std::wstring filename);
+    TypeTablePrinter(const std::wstring filename);
+    void print();
+    void close();
+    
+private:
+    std::wofstream output;
+};
+
+class FunctionTablePrinter {
+public:
+    FunctionTablePrinter(const std::wstring filename);
+    void print();
+    void close();
+    
 private:
     std::wofstream output;
 };

@@ -1,5 +1,6 @@
 #include "instruction.h"
 #include <iostream>
+#include <sstream>
 
 void JrCodeWriter::write(const Instruction& instruction) {
     instructions.push_back(instruction);
@@ -41,8 +42,8 @@ const std::unordered_map<Opcode, std::wstring> JrInstructionDebugPrinter::maps =
     { OP_DEBUG, L"debug"}
 };
 
-void JrInstructionDebugPrinter::print(const std::vector<Instruction> &instructions) {
-    for(auto instruction: instructions) {
-        std::wcout << JrInstructionDebugPrinter::maps.find(instruction.opcode)->second << L"   " << instruction.value << std::endl;
-    }
+std::wstring JrInstructionDebugPrinter::print(const Instruction& instruction) {
+    std::wstringstream ss;
+    ss << JrInstructionDebugPrinter::maps.find(instruction.opcode)->second << L", " <<  instruction.value;
+    return ss.str();
 }

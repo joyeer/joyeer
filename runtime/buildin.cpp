@@ -68,8 +68,61 @@ std::vector<JrFunction::Pointer> initGlobalFunctionTable() {
     return functions;
 }
 
-
-TableDebugPrinter::TableDebugPrinter(const std::wstring filename) {
+TypeTablePrinter::TypeTablePrinter(const std::wstring filename) {
     output.open(filename);
 }
 
+void TypeTablePrinter::print() {
+    int index = 0;
+    for(auto type: Global::types) {
+        output << L"#" << index << L": " << type->name << std::endl;
+        index ++;
+    }
+}
+
+void TypeTablePrinter::close() {
+    output.close();
+}
+
+FunctionTablePrinter::FunctionTablePrinter(const std::wstring filename) {
+    output.open(filename);
+}
+
+void FunctionTablePrinter::print() {
+    int index = 0;
+    for(auto function: Global::functions) {
+        output << L"#" << index << L": " << function->name << std::endl;
+        // print the parameters:
+        output << L"    .params" << std::endl;
+        int paramIndex = 0;
+        for(auto param: function->paramTypes) {
+            output << L"        #"<< paramIndex << L": " << param->name << std::endl;
+            paramIndex ++;
+        }
+        
+        // print the local variables
+        output << L"    .localVars" << std::endl;
+        int localVarIndex = 0;
+        for(auto localVar: function->localVars) {
+            output << L"        #"<< localVarIndex << L": " << localVar.name << std::endl;
+            localVarIndex ++;
+        }
+    
+        // print the instructions
+        output << L"    .opcodes" << std::endl;
+        int instrunctionIndex = 0;
+        for(auto instruction: function->instructions) {
+            JrInstructionDebugPrinter instructionPrinter;
+            output << L"        #" << instrunctionIndex << L": " << instructionPrinter.print(instruction) << std::endl;
+            instrunctionIndex ++;
+        }
+        index ++;
+        
+        
+        output << L"------------------------------------------" << std::endl << std::endl;
+    }
+}
+
+void FunctionTablePrinter::close() {
+    output.close();
+}

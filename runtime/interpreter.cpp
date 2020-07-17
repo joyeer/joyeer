@@ -13,9 +13,6 @@ void JrInterpreter::run(JrFunction::Pointer function) {
     context->stack->push(frame);
     
     std::wcout << L">[call][function]:" << function->name << std::endl;
-    JrInstructionDebugPrinter debugPrinter;
-    debugPrinter.print(function->instructions);
-    std::wcout << L">===[call][function]" << std::endl;
     
     pointer = function->instructions.begin();
     end = function->instructions.end();

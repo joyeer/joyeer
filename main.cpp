@@ -49,6 +49,14 @@ int main(int argc, char** argv) {
     IRGen irGen(compileContext);
     irGen.emit(std::static_pointer_cast<Node>(sourceBlock));
     
+    TypeTablePrinter typePrinter(L"table.types.txt");
+    typePrinter.print();
+    typePrinter.close();
+    
+    FunctionTablePrinter funcPrinter(L"table.functions.txt");
+    funcPrinter.print();
+    funcPrinter.close();
+    
     auto function  = irGen.getFunction();
     
     auto context = std::make_shared<JrRuntimeContext>();

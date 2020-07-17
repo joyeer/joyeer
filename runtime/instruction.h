@@ -58,7 +58,7 @@ struct JrCodeWriter {
 
 struct JrInstructionDebugPrinter {
     const static std::unordered_map<Opcode, std::wstring> maps;
-    void print(const std::vector<Instruction>& instructions);
+    std::wstring print(const Instruction& instruction);
 };
 
 #endif
