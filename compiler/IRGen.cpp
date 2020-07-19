@@ -317,7 +317,7 @@ void IRGen::emit(FuncDecl::Pointer node) {
 }
 
 void IRGen::emit(ReturnStatement::Pointer node) {
-    Opcode op = OP_IRETURN;
+    Opcode op = OP_RETURN;
     if(node->expr != nullptr) {
         emit(node->expr);
         op = OP_IRETURN;

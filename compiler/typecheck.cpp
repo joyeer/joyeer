@@ -107,6 +107,7 @@ void TypeChecker::verify(SourceBlock::Pointer node) {
         }
     });
     
+    verifyReturnStatement(node);
     context->leave(function);
     context->leave(node->symtable);
 }
@@ -146,6 +147,11 @@ void TypeChecker::verify(FuncDecl::Pointer node) {
         
     }
     verify(node->codeBlock);
+    
+    // verify return
+    auto codeblock = std::static_pointer_cast<CodeBlock>(node->codeBlock);
+    verifyReturnStatement(codeblock);
+    
     context->leave(function);
     context->leave(node->symtable);
 }
@@ -193,6 +199,9 @@ void TypeChecker::verify(ConstructorDecl::Pointer node) {
         
     }
     verify(node->codeBlock);
+    auto codeblock = std::static_pointer_cast<CodeBlock>(node->codeBlock);
+    verifyReturnStatement(codeblock);
+    
     context->leave(function);
     context->leave(node->symtable);
 
@@ -512,4 +521,61 @@ JrType::Pointer TypeChecker::typeOf(Pattern::Pointer node) {
 JrType::Pointer TypeChecker::typeOf(TypeDecl::Pointer node) {
     assert(node->symbol->flag == typeSymbol);
     return Global::types[node->symbol->addressOfType];
+}
+
+void TypeChecker::verifyReturnStatement(SourceBlock::Pointer node) {
+    verifyReturnStatement(node->statements);
+}
+
+void TypeChecker::verifyReturnStatement(CodeBlock::Pointer node) {
+    verifyReturnStatement(node->statements);
+}
+
+void TypeChecker::verifyReturnStatement(std::vector<Node::Pointer>& statements) {
+    if(statements.size() == 0) {
+        statements.push_back(std::make_shared<ReturnStatement>(nullptr));
+    }
+    auto lastStatement = statements.back();
+    auto returnType = returnTypeOf(lastStatement);
+    if(returnType == nullptr) {
+        statements.push_back(std::make_shared<ReturnStatement>(nullptr));
+    }
+}
+
+JrType::Pointer TypeChecker::returnTypeOf(CodeBlock::Pointer node) {
+    if(node->statements.size() == 0) {
+        return nullptr;
+    }
+    
+    auto n = node->statements.back();
+    return returnTypeOf(n);
+}
+
+JrType::Pointer TypeChecker::returnTypeOf(IfStatement::Pointer node) {
+    JrType::Pointer ifBlock = returnTypeOf(node->ifCodeBlock);
+    if(ifBlock == nullptr || node->elseCodeBlock == nullptr) {
+        return ifBlock;
+    }
+    
+    JrType::Pointer elseBlock = returnTypeOf(node->elseCodeBlock);
+    if(elseBlock == nullptr) {
+        return nullptr; // else block don't have return statement
+    }
+    assert(ifBlock->kind == elseBlock->kind);
+    return ifBlock;
+}
+
+JrType::Pointer TypeChecker::returnTypeOf(Node::Pointer node) {
+    switch (node->kind) {
+        case codeBlock:
+            return returnTypeOf(std::static_pointer_cast<CodeBlock>(node));
+        
+        case ifStatement:
+            return returnTypeOf(std::static_pointer_cast<IfStatement>(node));
+        case assignmentExpr:
+        case identifierExpr:
+            return nullptr;
+        default:
+            assert(false);
+    }
 }

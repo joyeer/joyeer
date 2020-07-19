@@ -31,6 +31,9 @@ private:
     
     void exec_goto(const Instruction& instruction);
     void exec_ireturn(const Instruction& instruction);
+    void exec_return(const Instruction& instruction);
+        
+    void exec_oconst_nil(const Instruction& instruction);
     
     JrRuntimeContext::Pointer context;
 };

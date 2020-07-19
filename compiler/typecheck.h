@@ -43,6 +43,14 @@ private:
     JrType::Pointer typeOf(Pattern::Pointer node);
     JrType::Pointer typeOf(TypeDecl::Pointer node);
     
+    // Get Codeblock's return type
+    void verifyReturnStatement(SourceBlock::Pointer node);
+    void verifyReturnStatement(CodeBlock::Pointer node);
+    void verifyReturnStatement(std::vector<Node::Pointer>& statements);
+    JrType::Pointer returnTypeOf(Node::Pointer node);
+    JrType::Pointer returnTypeOf(IfStatement::Pointer node);
+    JrType::Pointer returnTypeOf(CodeBlock::Pointer node);
+    
     CompileContext::Pointer context;
 };
 

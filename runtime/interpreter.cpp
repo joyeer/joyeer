@@ -1,5 +1,6 @@
 #include "interpreter.h"
 #include "buildin.h"
+#include <cassert>
 #include <iostream>
 
 JrInterpreter::JrInterpreter(JrRuntimeContext::Pointer context):
@@ -24,6 +25,8 @@ void JrInterpreter::run(JrFunction::Pointer function) {
         switch(instruction.opcode) {
             case OP_ICONST:
                 context->stack->push4(instruction.value);
+                break;
+            case OP_OCONST_NIL:
                 break;
             case OP_SCONST:
                 context->stack->push4(instruction.value);
@@ -61,8 +64,11 @@ void JrInterpreter::run(JrFunction::Pointer function) {
             case OP_IRETURN:
                 exec_ireturn(instruction);
                 return;
+            case OP_RETURN:
+                exec_return(instruction);
+                return;
             default:
-                break;
+                assert(false);
         } 
         pointer ++;
         
@@ -158,4 +164,12 @@ void JrInterpreter::exec_ireturn(const Instruction &instruction) {
     auto value = context->stack->pop4();
     context->stack->pop(context->stack->topFrame());
     context->stack->push4(value);
+}
+
+void JrInterpreter::exec_return(const Instruction &instruction) {
+    context->stack->pop(context->stack->topFrame());
+}
+
+void JrInterpreter::exec_oconst_nil(const Instruction &instruction) {
+    
 }

@@ -17,6 +17,7 @@ enum Opcode {
     OP_OLOAD,
     OP_ILOAD,
     
+    OP_NEW,
     OP_PUTFIELD,
     
     OP_IADD,
