@@ -77,7 +77,6 @@ struct JrObjectType: public JrType {
     std::vector<JrField::Pointer> virtualFields;
     std::vector<JrField::Pointer> staticFields;
     
-    
     void registerField(JrField::Pointer field);
     
 };
@@ -124,6 +123,7 @@ struct JrRuntimeStack {
     
     JrFunctionFrame::Pointer topFrame();
     
+    void push(JrInt value);
     void push4(uint32_t value);
     
     void restore(uint8_t* address);
@@ -134,10 +134,11 @@ struct JrRuntimeStack {
     int intValueOfVariable(uint8_t* addressOfVariable);
     
     uint32_t pop4();
-    
+    JrInt pop();
     
 };
 
+struct JrGC;
 // The runtime context for VM
 struct JrRuntimeContext {
     typedef std::shared_ptr<JrRuntimeContext> Pointer;
@@ -146,8 +147,7 @@ struct JrRuntimeContext {
     ~JrRuntimeContext();
     
     JrRuntimeStack::Pointer stack;
-    
-    
+    JrGC* gc;
 };
 
 #endif

@@ -20,7 +20,7 @@ struct JrCode {
 enum JrFunctionKind  {
     jrFuncNative                    = 1,
     jrFuncVM                        = 1 << 1,
-    jrFuncConstructor               = jrFuncVM & ( 1 << 2)
+    jrFuncConstructor               = jrFuncVM | ( 1 << 2)
 };
 
 struct JrFunction {

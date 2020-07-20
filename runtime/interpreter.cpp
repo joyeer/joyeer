@@ -1,5 +1,6 @@
 #include "interpreter.h"
 #include "buildin.h"
+#include "gc.h"
 #include <cassert>
 #include <iostream>
 
@@ -20,12 +21,13 @@ void JrInterpreter::run(JrFunction::Pointer function) {
     JrInstructionDebugPrinter printer;
     while(pointer != end) {
         auto instruction = *pointer;
-        std::wcout << std::wstring(context->stack->frames.size() , L'-') << printer.print(instruction) << std::endl;
+//        std::wcout << std::wstring(context->stack->frames.size() , L'-') << printer.print(instruction) << std::endl;
         switch(instruction.opcode) {
             case OP_ICONST:
                 context->stack->push4(instruction.value);
                 break;
             case OP_OCONST_NIL:
+                exec_oconst_nil(instruction);
                 break;
             case OP_SCONST:
                 context->stack->push4(instruction.value);
@@ -62,10 +64,10 @@ void JrInterpreter::run(JrFunction::Pointer function) {
                 break;
             case OP_IRETURN:
                 exec_ireturn(instruction);
-                return; // finish the method's loop
+                goto exit_label;; // finish the method's loop
             case OP_RETURN:
                 exec_return(instruction);
-                return; // finish the method's loop
+                goto exit_label;; // finish the method's loop
             case OP_OLOAD:
                 exec_oload(instruction);
                 break;
@@ -75,11 +77,11 @@ void JrInterpreter::run(JrFunction::Pointer function) {
             default:
                 assert(false);
         } 
-        pointer ++;
-        
+        pointer ++;    
     }
     
-    std::wcout << std::wstring(context->stack->frames.size() - 1, L'-') << L"$[function][leave] " << function->name << std::endl;
+exit_label:
+    std::wcout << std::wstring(context->stack->frames.size(), L'-') << L"$[function][leave] " << function->name << std::endl;
 }
 
 JrFunctionFrame::Pointer JrInterpreter::prepareStackFrame(JrFunction::Pointer func) {
@@ -180,9 +182,19 @@ void JrInterpreter::exec_return(const Instruction &instruction) {
 }
 
 void JrInterpreter::exec_oconst_nil(const Instruction &instruction) {
-    
+    context->stack->push(0);
 }
 
 void JrInterpreter::exec_new(const Instruction &instruction) {
+    auto function = Global::functions[instruction.value];
+    assert(function->kind == jrFuncConstructor);
+    
+    auto returnType = function->returnType;
+    
+    assert(returnType->kind == JrType_Object);
+    auto objectType = std::static_pointer_cast<JrObjectType>(returnType);
+    auto objectRef = context->gc->alloc(objectType);
+    
+    
     
 }

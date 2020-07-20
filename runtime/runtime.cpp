@@ -1,5 +1,7 @@
 #include "runtime.h"
+#include "gc.h"
 #include <cassert>
+
 
 const JrType::Pointer JrType::Any = std::make_shared<JrType>(JrType{JrType_Any, L"Any"});
 const JrType::Pointer JrType::Void = std::make_shared<JrType>(JrType{JrType_Void, L"Void"});
@@ -48,9 +50,19 @@ void JrRuntimeStack::push4(uint32_t value) {
     pointer += 4;
 }
 
+void JrRuntimeStack::push(JrInt value) {
+    *(JrInt*)pointer = value;
+    pointer += sizeof(JrInt);
+}
+
 uint32_t JrRuntimeStack::pop4() {
     pointer -= 4;
     return *(uint32_t*)pointer;
+}
+
+JrInt JrRuntimeStack::pop() {
+    pointer -= sizeof(JrInt);
+    return *(JrInt*)pointer;
 }
 
 void JrRuntimeStack::restore(uint8_t *address) {
@@ -68,8 +80,11 @@ int JrRuntimeStack::intValueOfVariable(uint8_t *addressOfVariable) {
 
 JrRuntimeContext::JrRuntimeContext() {
     stack = std::make_shared<JrRuntimeStack>();
+    gc = new JrGC();
+    gc->objTable->registerObject((JrObject*)JrObject::nil);
 }
 
 JrRuntimeContext::~JrRuntimeContext() {
+    delete gc;
 }
 

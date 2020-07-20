@@ -58,6 +58,9 @@ void CompileContext::leave(SymbolTable::Pointer table) {
 }
 
 JrType::Pointer CompileContext::curType() {
+    if(types.size() == 0) {
+        return nullptr;
+    }
     return types.back();
 }
 

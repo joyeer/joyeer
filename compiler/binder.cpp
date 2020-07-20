@@ -113,6 +113,9 @@ SourceBlock::Pointer Binder::bind(SourceBlock::Pointer sourceBlock) {
 
 Node::Pointer Binder::bind(FuncDecl::Pointer decl) {
     
+    
+    auto type = context->curType();
+    
     auto symtable = context->curSymTable();
     auto function = std::make_shared<JrFunction>();
     function->name = decl->getFuncName();
@@ -132,6 +135,11 @@ Node::Pointer Binder::bind(FuncDecl::Pointer decl) {
     symtable->insert(symbol);
     decl->symbol = symbol;
     
+    if(type != nullptr && context->curStage() == visitClassDecl) {
+        // if the function inside of class declaration, we will register it as virtual functions
+        auto classType = std::static_pointer_cast<JrObjectType>(type);
+        classType->virtualFunctions.push_back(function->addressOfFunc);
+    }
     
     context->initializeScope(ScopeFlag::funcScope);
     // visit func decleration

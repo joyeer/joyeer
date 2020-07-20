@@ -3,8 +3,6 @@
 
 #include <vector>
 
-
-
 struct JrObjectHead {
     size_t  refCount;
     size_t  size;
@@ -12,17 +10,15 @@ struct JrObjectHead {
 };
 
 struct JrObject {
+    static const JrObject* nil;
+    
     JrObjectHead head;
     void*        data;
 };
 
 struct JrPrimaryObject {
     JrObjectHead head;
-    
 };
 
-struct JrObjectAlloc {
-    
-};
 
 #endif
