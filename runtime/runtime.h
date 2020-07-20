@@ -43,6 +43,8 @@ struct JrType {
     
     // index to the type tables
     int addressOfType;
+    
+    int size = sizeof(void*);
 };
 
 struct JrField {

@@ -50,6 +50,7 @@ private:
     JrType::Pointer returnTypeOf(Node::Pointer node);
     JrType::Pointer returnTypeOf(IfStatement::Pointer node);
     JrType::Pointer returnTypeOf(CodeBlock::Pointer node);
+    JrType::Pointer returnTypeOf(FuncCallExpr::Pointer node);
     
     CompileContext::Pointer context;
 };

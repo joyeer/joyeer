@@ -24,3 +24,11 @@ JrFunction::~JrFunction() {
             break;
     }
 }
+
+int JrFunction::totalSizeOfParams() {
+    int size = 0;
+    for(auto param: paramTypes) {
+        size += param->size;
+    }
+    return size;
+}

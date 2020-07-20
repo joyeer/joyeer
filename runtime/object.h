@@ -21,4 +21,8 @@ struct JrPrimaryObject {
     
 };
 
+struct JrObjectAlloc {
+    
+};
+
 #endif

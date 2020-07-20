@@ -15,7 +15,6 @@ void JrInterpreter::run(JrFunction::Pointer function) {
     
     std::wcout << std::wstring(context->stack->frames.size() - 1, L'-') << L"$[function][entry] " << function->name << std::endl;
     
-    
     pointer = function->instructions.begin();
     end = function->instructions.end();
     JrInstructionDebugPrinter printer;
@@ -67,6 +66,9 @@ void JrInterpreter::run(JrFunction::Pointer function) {
             case OP_RETURN:
                 exec_return(instruction);
                 return;
+            case OP_OLOAD:
+                exec_oload(instruction);
+                return;
             default:
                 assert(false);
         } 
@@ -82,12 +84,12 @@ JrFunctionFrame::Pointer JrInterpreter::prepareStackFrame(JrFunction::Pointer fu
     frame->addressOfFunc = func->addressOfFunc;
     
     uint8_t* baseAddress = context->stack->pointer;
-    uint8_t* address = baseAddress - (4 * func->paramTypes.size());
+    uint8_t* address = baseAddress - func->totalSizeOfParams();
     frame->startAddress = address ;
     for(auto var : func->localVars) {
         frame->addressOfVariables.push_back(address);
         // TODO: Update with sizeof variable
-        address += 4;
+        address += var.type->size;
     }
     frame->endAddress = address;
     return frame;
@@ -105,6 +107,10 @@ void JrInterpreter::exec_iload(const Instruction &instruction) {
     auto addressOfVarible = context->stack->topFrame()->addressOfVariables[variableIndex];
     auto value = context->stack->intValueOfVariable(addressOfVarible);
     context->stack->push4(value);
+}
+
+void JrInterpreter::exec_oload(const Instruction &instruction) {
+    
 }
 
 void JrInterpreter::exec_invoke(const Instruction &instruction) {

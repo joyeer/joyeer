@@ -52,6 +52,8 @@ public:
     
 public:
     ~JrFunction();
+    
+    int totalSizeOfParams();
 };
 
 struct JrNativeCode {

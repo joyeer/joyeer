@@ -20,7 +20,10 @@ private:
     
     void exec_invoke(const Instruction& instruction);
     void exec_istore(const Instruction& instruction);
+    
     void exec_iload(const Instruction& instruction);
+    void exec_oload(const Instruction& instruction);
+    
     void exec_iadd(const Instruction& instruction);
     void exec_imul(const Instruction& instruction);
     void exec_isub(const Instruction& instruction);

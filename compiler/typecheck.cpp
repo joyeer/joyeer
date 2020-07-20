@@ -565,13 +565,28 @@ JrType::Pointer TypeChecker::returnTypeOf(IfStatement::Pointer node) {
     return ifBlock;
 }
 
+JrType::Pointer TypeChecker::returnTypeOf(FuncCallExpr::Pointer node) {
+    auto function = Global::functions[node->symbol->addressOfFunc];
+    assert(function != nullptr);
+    return function->returnType;
+}
+
 JrType::Pointer TypeChecker::returnTypeOf(Node::Pointer node) {
     switch (node->kind) {
         case codeBlock:
             return returnTypeOf(std::static_pointer_cast<CodeBlock>(node));
-        
+        case returnStatement: {
+            auto returnStatement = std::static_pointer_cast<ReturnStatement>(node);
+            if(returnStatement->expr == nullptr) {
+                return JrType::Void;
+            } else {
+                return returnTypeOf(returnStatement->expr);
+            }
+        }
         case ifStatement:
             return returnTypeOf(std::static_pointer_cast<IfStatement>(node));
+        case functionCallExpr:
+            return returnTypeOf(std::static_pointer_cast<FuncCallExpr>(node));
         case assignmentExpr:
         case identifierExpr:
             return nullptr;
