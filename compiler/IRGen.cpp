@@ -123,12 +123,22 @@ void IRGen::emit(FuncCallExpr::Pointer funcCallExpr) {
         emit(argument);
     }
     
-    auto funcIndex = funcCallExpr->symbol->addressOfFunc;
-    writer.write({
-        .opcode = OP_INVOKE,
-        .value = (int32_t)funcIndex
-    });
+    auto function = Global::functions[funcCallExpr->symbol->addressOfFunc];
+    assert(function != nullptr);
+    if((function->kind & jrFuncConstructor) == jrFuncConstructor) {
+        writer.write({
+            .opcode = OP_NEW,
+            .value = (int32_t)function->addressOfFunc
+        });
+    } else {
+        writer.write({
+            .opcode = OP_INVOKE,
+            .value = (int32_t)function->addressOfFunc
+        });
+    }
 }
+    
+    
 
 void IRGen::emit(ArguCallExpr::Pointer node) {
     emit(node->expr);

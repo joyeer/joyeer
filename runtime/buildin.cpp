@@ -58,7 +58,7 @@ std::vector<JrFunction::Pointer> initGlobalFunctionTable() {
     std::vector<JrFunction::Pointer> functions = {
         std::shared_ptr<JrFunction>(new JrFunction {
             .name = L"print(message:)",
-            .kind = JrFunction_Native,
+            .kind = jrFuncNative,
             .paramTypes = { JrType::Any },
             .nativeCode = new JrPrintNativeCode(),
             .addressOfFunc = 0

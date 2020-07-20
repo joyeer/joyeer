@@ -15,13 +15,12 @@ void JrNativeCode::operator()(JrRuntimeContext::Pointer context, JrFunction::Poi
 
 
 JrFunction::~JrFunction() {
-    switch (kind) {
-        case JrFunction_Native:
-            delete nativeCode;
-            break;
-        case JrFunction_VM:
-            delete code;
-            break;
+    if((kind & jrFuncNative) == jrFuncNative) {
+        delete nativeCode;
+    }
+    
+    if((kind & jrFuncVM) == jrFuncVM) {
+        delete code;
     }
 }
 

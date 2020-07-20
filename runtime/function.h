@@ -17,8 +17,11 @@ struct JrCode {
     virtual ~JrCode();
 };
 
-#define JrFunction_Native       1
-#define JrFunction_VM           2
+enum JrFunctionKind  {
+    jrFuncNative                    = 1,
+    jrFuncVM                        = 1 << 1,
+    jrFuncConstructor               = jrFuncVM & ( 1 << 2)
+};
 
 struct JrFunction {
     typedef std::shared_ptr<JrFunction> Pointer;
@@ -26,7 +29,7 @@ struct JrFunction {
 public:
     std::wstring name;
     
-    uint8_t kind;
+    JrFunctionKind kind;
     // The maximun count of parameter count is 0xFF
     /**
      e.g. func add(value1:int, value2:float, descriptor:string)

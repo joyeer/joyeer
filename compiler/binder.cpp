@@ -84,7 +84,7 @@ SourceBlock::Pointer Binder::bind(SourceBlock::Pointer sourceBlock) {
     
     auto function = std::make_shared<JrFunction>();
     function->name = L"__FILE__";
-    function->kind = JrFunction_VM;
+    function->kind = jrFuncVM;
     Global::registerFunction(function);
     auto symbol = std::shared_ptr<Symbol>(new Symbol {
         .name = function->name,
@@ -116,7 +116,7 @@ Node::Pointer Binder::bind(FuncDecl::Pointer decl) {
     auto symtable = context->curSymTable();
     auto function = std::make_shared<JrFunction>();
     function->name = decl->getFuncName();
-    function->kind = JrFunction_VM;
+    function->kind = jrFuncVM;
     
     Global::registerFunction(function);
     
@@ -167,7 +167,7 @@ Node::Pointer Binder::bind(ConstructorDecl::Pointer decl) {
     auto function = std::make_shared<JrFunction>();
     auto type = context->curType();
     function->name = decl->getName(type);
-    function->kind = JrFunction_VM;
+    function->kind = jrFuncConstructor;
     
     if(symtable->find(function->name) != nullptr) {
         Diagnostics::reportError(L"[Error] Dupliate constructor name");
@@ -251,7 +251,7 @@ Node::Pointer Binder::bind(ClassDecl::Pointer decl) {
         // if has no customize constructors , we will bind an default constructor
         auto defaultConstructor = std::make_shared<JrFunction>();
         defaultConstructor->name = name + L"()";
-        defaultConstructor->kind = JrFunction_VM;
+        defaultConstructor->kind = jrFuncVM;
         defaultConstructor->returnType = objectType;
         
         Global::registerFunction(defaultConstructor);

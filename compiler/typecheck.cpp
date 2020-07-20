@@ -169,14 +169,7 @@ void TypeChecker::verify(ConstructorDecl::Pointer node) {
     
     assert(function->paramTypes.size() == 0);
     
-    // the first parameter is self type
-    function->paramTypes.push_back(ownerType);
-    assert(ownerType != nullptr);
-    function->localVars.push_back(JrVar {
-        .name = L"self",
-        .type = ownerType,
-        .addressOfVariable = 0
-    });
+    
     // Binding function's type
     auto parameterClause = std::static_pointer_cast<ParameterClause>(node->parameterClause);
     for(auto parameter: parameterClause->parameters) {
@@ -198,6 +191,15 @@ void TypeChecker::verify(ConstructorDecl::Pointer node) {
         });
         
     }
+    
+    // the last parameter is self type
+    function->paramTypes.push_back(ownerType);
+    assert(ownerType != nullptr);
+    function->localVars.push_back(JrVar {
+        .name = L"self",
+        .type = ownerType,
+        .addressOfVariable = 0
+    });
     verify(node->codeBlock);
     auto codeblock = std::static_pointer_cast<CodeBlock>(node->codeBlock);
     verifyReturnStatement(codeblock);

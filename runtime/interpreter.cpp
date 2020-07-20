@@ -62,13 +62,16 @@ void JrInterpreter::run(JrFunction::Pointer function) {
                 break;
             case OP_IRETURN:
                 exec_ireturn(instruction);
-                return;
+                return; // finish the method's loop
             case OP_RETURN:
                 exec_return(instruction);
-                return;
+                return; // finish the method's loop
             case OP_OLOAD:
                 exec_oload(instruction);
-                return;
+                break;
+            case OP_NEW:
+                exec_new(instruction);
+                break;
             default:
                 assert(false);
         } 
@@ -115,9 +118,9 @@ void JrInterpreter::exec_oload(const Instruction &instruction) {
 
 void JrInterpreter::exec_invoke(const Instruction &instruction) {
     auto func = Global::functions[instruction.value];
-    if(func->kind == JrFunction_Native) {
+    if((func->kind & jrFuncNative) == jrFuncNative) {
         (*func->nativeCode)(context, func);
-    } else if(func->kind == JrFunction_VM) {
+    } else if((func->kind & jrFuncVM) == jrFuncVM) {
         JrInterpreter interpreter(context);
         interpreter.run(func);
     }
@@ -177,5 +180,9 @@ void JrInterpreter::exec_return(const Instruction &instruction) {
 }
 
 void JrInterpreter::exec_oconst_nil(const Instruction &instruction) {
+    
+}
+
+void JrInterpreter::exec_new(const Instruction &instruction) {
     
 }
