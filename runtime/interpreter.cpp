@@ -24,13 +24,13 @@ void JrInterpreter::run(JrFunction::Pointer function) {
         std::wcout << std::wstring(context->stack->frames.size() , L'-') << printer.print(instruction) << std::endl;
         switch(instruction.opcode) {
             case OP_ICONST:
-                context->stack->push4(instruction.value);
+                context->stack->push(instruction.value);
                 break;
             case OP_OCONST_NIL:
                 exec_oconst_nil(instruction);
                 break;
             case OP_SCONST:
-                context->stack->push4(instruction.value);
+                context->stack->push(instruction.value);
                 break;
             case OP_INVOKE:
                 exec_invoke(instruction);
@@ -104,7 +104,7 @@ JrFunctionFrame::Pointer JrInterpreter::prepareStackFrame(JrFunction::Pointer fu
 }
 
 void JrInterpreter::exec_istore(const Instruction &instruction) {
-    auto value = context->stack->pop4();
+    auto value = context->stack->pop();
     auto variableIndex = instruction.value;
     auto addressOfVariable = context->stack->topFrame()->addressOfVariables[variableIndex];
     context->stack->storeValueForVariable(addressOfVariable, value);
@@ -114,11 +114,14 @@ void JrInterpreter::exec_iload(const Instruction &instruction) {
     auto variableIndex = instruction.value;
     auto addressOfVarible = context->stack->topFrame()->addressOfVariables[variableIndex];
     auto value = context->stack->intValueOfVariable(addressOfVarible);
-    context->stack->push4(value);
+    context->stack->push(value);
 }
 
 void JrInterpreter::exec_oload(const Instruction &instruction) {
-    
+    auto variableIndex = instruction.value;
+    auto addressOfVariable = context->stack->topFrame()->addressOfVariables[variableIndex];
+    auto value = context->stack->intValueOfVariable(addressOfVariable);
+    context->stack->push(value);
 }
 
 void JrInterpreter::exec_invoke(const Instruction &instruction) {
@@ -132,52 +135,52 @@ void JrInterpreter::exec_invoke(const Instruction &instruction) {
 }
 
 void JrInterpreter::exec_iadd(const Instruction &instruction) {
-    auto value1 = context->stack->pop4();
-    auto value2 = context->stack->pop4();
-    context->stack->push4(value1 + value2);
+    auto value1 = context->stack->pop();
+    auto value2 = context->stack->pop();
+    context->stack->push(value1 + value2);
 }
 
 void JrInterpreter::exec_imul(const Instruction &instruction) {
-    auto value1 = context->stack->pop4();
-    auto value2 = context->stack->pop4();
-    context->stack->push4(value1 * value2);
+    auto value1 = context->stack->pop();
+    auto value2 = context->stack->pop();
+    context->stack->push(value1 * value2);
 }
 
 void JrInterpreter::exec_isub(const Instruction &instruction) {
-    auto value1 = context->stack->pop4();
-    auto value2 = context->stack->pop4();
-    context->stack->push4(value2 - value1 );
+    auto value1 = context->stack->pop();
+    auto value2 = context->stack->pop();
+    context->stack->push(value2 - value1 );
 }
 
 void JrInterpreter::exec_idiv(const Instruction &instrunction) {
-    auto value1 = context->stack->pop4();
-    auto value2 = context->stack->pop4();
-    context->stack->push4(value2 / value1);
+    auto value1 = context->stack->pop();
+    auto value2 = context->stack->pop();
+    context->stack->push(value2 / value1);
 }
 
 void JrInterpreter::exec_irem(const Instruction &instrunction) {
-    auto value1 = context->stack->pop4();
-    auto value2 = context->stack->pop4();
+    auto value1 = context->stack->pop();
+    auto value2 = context->stack->pop();
     
-    context->stack->push4(value2 % value1);
+    context->stack->push(value2 % value1);
 }
 
 void JrInterpreter::exec_ifle(const Instruction &instrunction) {
-    auto value1 = context->stack->pop4();
+    auto value1 = context->stack->pop();
     if(value1 <= 0) {
         pointer += instrunction.value;
     }
 }
 
 void JrInterpreter::exec_goto(const Instruction &instruction) {
-    auto value1 = context->stack->pop4();
+    auto value1 = context->stack->pop();
     pointer += instruction.value;
 }
 
 void JrInterpreter::exec_ireturn(const Instruction &instruction) {
-    auto value = context->stack->pop4();
+    auto value = context->stack->pop();
     context->stack->pop(context->stack->topFrame());
-    context->stack->push4(value);
+    context->stack->push(value);
 }
 
 void JrInterpreter::exec_return(const Instruction &instruction) {
@@ -206,5 +209,5 @@ void JrInterpreter::exec_new(const Instruction &instruction) {
 }
 
 void JrInterpreter::exec_putfield(const Instruction &instruction) {
-    
+    auto frame = context->stack->topFrame();
 }

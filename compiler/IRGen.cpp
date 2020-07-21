@@ -209,16 +209,26 @@ void IRGen::emit(IdentifierExpr::Pointer node) {
     }
     
     if((symbol->flag & varSymbol) == varSymbol) {
-        writer.write({
-            .opcode = OP_ILOAD,
-            .value = symbol->addressOfVariable
-        });
+        auto type = Global::types[symbol->addressOfType];
+        
+        if(type == JrPrimaryType::Int) {
+            writer.write({
+                .opcode = OP_ILOAD,
+                .value = symbol->addressOfVariable
+            });
+        } else if(type->kind == JrType_Object || type->kind == JrType_Any ){
+            writer.write({
+                .opcode = OP_OLOAD,
+                .value = symbol->addressOfVariable
+            });
+        } else {
+            assert(false);
+        }
         
         return;
     }
 
     assert(false);
-    return;
     // Step2: try to find the symbol in symbols
 }
 
@@ -233,9 +243,11 @@ void IRGen::emit(AssignmentExpr::Pointer node) {
     } else if( node->left->kind == selfExpr ) {
         auto selfExpr = std::static_pointer_cast<SelfExpr>(node->left);
         
+        auto function = context->curFunction();
+        
         writer.write({
             .opcode = OP_OLOAD,
-            .value = 0      // first varible is the self object
+            .value = (int32_t)(function->paramTypes.size() - 1)      // last parameter is the self object
         });
         
         writer.write({

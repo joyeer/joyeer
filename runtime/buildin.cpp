@@ -49,7 +49,7 @@ void Global::registerObjectType(JrObjectType::Pointer type) {
 
 struct JrPrintNativeCode : public JrNativeCode {
     virtual void operator()(JrRuntimeContext::Pointer context, JrFunction::Pointer func) {
-        uint32_t value = context->stack->pop4();
+        uint32_t value = context->stack->pop();
         std::cout << value << std::endl;
     }
 };

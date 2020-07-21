@@ -45,19 +45,9 @@ JrFunctionFrame::Pointer JrRuntimeStack::topFrame() {
     return frames.top();
 }
 
-void JrRuntimeStack::push4(uint32_t value) {
-    *(uint32_t*)pointer = value;
-    pointer += 4;
-}
-
 void JrRuntimeStack::push(JrInt value) {
     *(JrInt*)pointer = value;
     pointer += sizeof(JrInt);
-}
-
-uint32_t JrRuntimeStack::pop4() {
-    pointer -= 4;
-    return *(uint32_t*)pointer;
 }
 
 JrInt JrRuntimeStack::pop() {
@@ -69,11 +59,11 @@ void JrRuntimeStack::restore(uint8_t *address) {
     pointer = address;
 }
 
-void JrRuntimeStack::storeValueForVariable(uint8_t *addressOfVariable, int value) {
-    *(int*)addressOfVariable = value;
+void JrRuntimeStack::storeValueForVariable(uint8_t *addressOfVariable, JrInt value) {
+    *(JrInt*)addressOfVariable = value;
 }
 
-int JrRuntimeStack::intValueOfVariable(uint8_t *addressOfVariable) {
+JrInt JrRuntimeStack::intValueOfVariable(uint8_t *addressOfVariable) {
     auto pointer = (int*)addressOfVariable;
     return *pointer;
 }
