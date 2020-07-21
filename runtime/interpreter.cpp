@@ -21,7 +21,7 @@ void JrInterpreter::run(JrFunction::Pointer function) {
     JrInstructionDebugPrinter printer;
     while(pointer != end) {
         auto instruction = *pointer;
-//        std::wcout << std::wstring(context->stack->frames.size() , L'-') << printer.print(instruction) << std::endl;
+        std::wcout << std::wstring(context->stack->frames.size() , L'-') << printer.print(instruction) << std::endl;
         switch(instruction.opcode) {
             case OP_ICONST:
                 context->stack->push4(instruction.value);
@@ -74,10 +74,13 @@ void JrInterpreter::run(JrFunction::Pointer function) {
             case OP_NEW:
                 exec_new(instruction);
                 break;
+            case OP_PUTFIELD:
+                exec_putfield(instruction);
+                break;
             default:
                 assert(false);
         } 
-        pointer ++;    
+        pointer ++;
     }
     
 exit_label:
@@ -194,7 +197,14 @@ void JrInterpreter::exec_new(const Instruction &instruction) {
     assert(returnType->kind == JrType_Object);
     auto objectType = std::static_pointer_cast<JrObjectType>(returnType);
     auto objectRef = context->gc->alloc(objectType);
+    auto frame = context->stack->topFrame();
+    auto addressOfVariable = frame->addressOfVariables[function->paramTypes.size() - 1];
+    context->stack->storeValueForVariable(addressOfVariable, objectRef);
     
-    
+    JrInterpreter interpreter(context);
+    interpreter.run(function);
+}
+
+void JrInterpreter::exec_putfield(const Instruction &instruction) {
     
 }

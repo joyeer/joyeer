@@ -315,15 +315,17 @@ void IRGen::emit(CodeBlock::Pointer node) {
 }
 
 void IRGen::emit(FuncDecl::Pointer node) {
+    assert(node->symbol->flag == funcSymbol);
+    auto function = Global::functions[node->symbol->addressOfFunc];
     
+    context->entry(function);
     IRGen generator(context);
     generator.emit(node->codeBlock);
     auto instructions = generator.getInstructions();
     
-    assert(node->symbol->flag == funcSymbol);
-    auto function = Global::functions[node->symbol->addressOfFunc];
     assert(function != nullptr && function->instructions.size() == 0);
     function->instructions = instructions;
+    context->leave(function);
 }
 
 void IRGen::emit(ReturnStatement::Pointer node) {
@@ -348,12 +350,17 @@ void IRGen::emit(ClassDecl::Pointer node) {
 
 void IRGen::emit(ConstructorDecl::Pointer node) {
     
+    assert(node->symbol->flag == constructorSymbol);
+    auto function = Global::functions[node->symbol->addressOfFunc];
+    
+    context->entry(function);
     IRGen generator(context);
     generator.emit(node->codeBlock);
     auto instructions = generator.getInstructions();
     
-    assert(node->symbol->flag == constructorSymbol);
-    auto function = Global::functions[node->symbol->addressOfFunc];
     assert(function != nullptr && function->instructions.size() == 0);
     function->instructions = instructions;
+    
+    context->leave(function);
+    
 }

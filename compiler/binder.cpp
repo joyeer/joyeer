@@ -176,7 +176,7 @@ Node::Pointer Binder::bind(ConstructorDecl::Pointer decl) {
     auto type = context->curType();
     function->name = decl->getName(type);
     function->kind = jrFuncConstructor;
-    
+    function->returnType = type;
     if(symtable->find(function->name) != nullptr) {
         Diagnostics::reportError(L"[Error] Dupliate constructor name");
     }
@@ -261,7 +261,11 @@ Node::Pointer Binder::bind(ClassDecl::Pointer decl) {
         defaultConstructor->name = name + L"()";
         defaultConstructor->kind = jrFuncVM;
         defaultConstructor->returnType = objectType;
-        
+        defaultConstructor->kind = jrFuncConstructor;
+        defaultConstructor->paramTypes.push_back(objectType);
+        defaultConstructor->instructions.push_back(Instruction {
+            .opcode = OP_RETURN
+        });
         Global::registerFunction(defaultConstructor);
         
         auto symbol = Symbol::Pointer(new Symbol{
