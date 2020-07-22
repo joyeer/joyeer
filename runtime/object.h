@@ -7,6 +7,7 @@ typedef int64_t     JrInt;
 typedef int64_t     JrInt64;
 typedef int32_t     JrInt32;
 typedef int16_t     JrInt16;
+typedef int8_t      JrInt8;
 
 typedef uint64_t    JrUInt;
 typedef uint64_t    JrUInt64;
@@ -27,16 +28,18 @@ typedef uint8_t     JrUInt8;
 #define JrType_Object       10
 
 struct JrObjectHead {
-    size_t  refCount;
-    size_t  size;
-    int     type;
+    JrInt  refCount;
+    JrInt  size;
+    JrInt  type;
 };
 
 struct JrObject {
     static const JrObject* nil;
     
     JrObjectHead head;
-    void*        data;
+    
+    void setField(JrInt objectRef, JrInt addressOfField);
+    JrInt getFieldAsObjectRef(JrInt addressOfField);
 };
 
 struct JrPrimaryObject {

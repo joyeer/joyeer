@@ -7,10 +7,7 @@ JrObject* JrObjectAlloc::alloc(JrObjectType::Pointer type) {
     for(auto field: type->virtualFields) {
         size += field->type->size;
     }
-    auto objectData = (void*)malloc(size);
-    auto object = (JrObject*)objectData;
-    object->data = (void*)((size_t)objectData + headSize);
-    return object;
+    return (JrObject*)malloc(size);
 }
 
 int JrObjectTable::registerObject(JrObject *object) {

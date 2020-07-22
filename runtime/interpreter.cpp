@@ -211,10 +211,10 @@ void JrInterpreter::exec_new(const Instruction &instruction) {
 
 void JrInterpreter::exec_putfield(const Instruction &instruction) {
     auto frame = context->stack->topFrame();
-    
+    auto addressOfField = instruction.value;
     auto objectRef = context->stack->pop();
     auto valueRef = context->stack->pop();
     
     auto object = context->gc->get(objectRef);
-    
+    object->setField(objectRef, addressOfField);
 }

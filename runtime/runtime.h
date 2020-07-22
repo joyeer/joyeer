@@ -1,8 +1,6 @@
 #ifndef __joyeer_runtime_runtime_h__
 #define __joyeer_runtime_runtime_h__
 
-#include <stdint.h>
-#include <vector>
 #include <stack>
 #include <string>
 #include "object.h"
@@ -28,7 +26,7 @@ struct JrField {
     
     std::wstring name;
     JrType::Pointer type;
-    int addressOfField = -1;
+    JrInt addressOfField = -1;
 };
 
 struct JrPrimaryType: public JrType {
