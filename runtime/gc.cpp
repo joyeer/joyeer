@@ -33,3 +33,7 @@ int JrGC::alloc(JrObjectType::Pointer type) {
     auto object = allocator->alloc(type);
     return objTable->registerObject(object);
 }
+
+JrObject* JrGC::get(int objectRef) {
+    return objTable->list[objectRef];
+}

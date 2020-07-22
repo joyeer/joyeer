@@ -8,8 +8,11 @@ JrInterpreter::JrInterpreter(JrRuntimeContext::Pointer context):
 context(context) {
 }
 
-
 void JrInterpreter::run(JrFunction::Pointer function) {
+    run(function, -1);
+}
+
+void JrInterpreter::run(JrFunction::Pointer function, int objectRef) {
     
     auto frame = prepareStackFrame(function);
     context->stack->push(frame);
@@ -200,14 +203,18 @@ void JrInterpreter::exec_new(const Instruction &instruction) {
     assert(returnType->kind == JrType_Object);
     auto objectType = std::static_pointer_cast<JrObjectType>(returnType);
     auto objectRef = context->gc->alloc(objectType);
-    auto frame = context->stack->topFrame();
-    auto addressOfVariable = frame->addressOfVariables[function->paramTypes.size() - 1];
-    context->stack->storeValueForVariable(addressOfVariable, objectRef);
+    context->stack->push(objectRef);
     
     JrInterpreter interpreter(context);
-    interpreter.run(function);
+    interpreter.run(function, objectRef);
 }
 
 void JrInterpreter::exec_putfield(const Instruction &instruction) {
     auto frame = context->stack->topFrame();
+    
+    auto objectRef = context->stack->pop();
+    auto valueRef = context->stack->pop();
+    
+    auto object = context->gc->get(objectRef);
+    
 }

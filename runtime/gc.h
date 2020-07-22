@@ -24,5 +24,7 @@ struct JrGC {
     ~JrGC();
     
     int alloc(JrObjectType::Pointer type);
+    
+    JrObject* get(int objectRef);
 };
 #endif

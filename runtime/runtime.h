@@ -5,32 +5,8 @@
 #include <vector>
 #include <stack>
 #include <string>
+#include "object.h"
 #include "instruction.h"
-
-typedef int64_t     JrInt;
-typedef int64_t     JrInt64;
-typedef int32_t     JrInt32;
-typedef int16_t     JrInt16;
-
-typedef uint64_t    JrUInt;
-typedef uint64_t    JrUInt64;
-typedef uint32_t    JrUInt32;
-typedef uint16_t    JrUInt16;
-typedef uint8_t     JrUInt8;
-
-#define JrType_Void         0
-#define JrType_Int          1
-#define JrType_Float        2
-#define JrType_Double       3
-#define JrType_Long         4
-#define JrType_Boolean      5
-#define JrType_String       7
-
-#define JrType_Any          8
-#define JrType_Nil          9
-#define JrType_Object       10
-
-
 
 struct JrType {
     typedef std::shared_ptr<JrType> Pointer;
@@ -125,8 +101,6 @@ struct JrRuntimeStack {
     
     void push(JrInt value);
     JrInt pop();
-    
-    void restore(uint8_t* address);
     
     // store the variable value at address at stack
     void storeValueForVariable(uint8_t* addressOfVariable, JrInt value);

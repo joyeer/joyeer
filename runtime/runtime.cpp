@@ -55,10 +55,6 @@ JrInt JrRuntimeStack::pop() {
     return *(JrInt*)pointer;
 }
 
-void JrRuntimeStack::restore(uint8_t *address) {
-    pointer = address;
-}
-
 void JrRuntimeStack::storeValueForVariable(uint8_t *addressOfVariable, JrInt value) {
     *(JrInt*)addressOfVariable = value;
 }

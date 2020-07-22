@@ -10,6 +10,7 @@ public:
     JrInterpreter(JrRuntimeContext::Pointer context);
     
     void run(JrFunction::Pointer function);
+    void run(JrFunction::Pointer function, int objectRef);
     
 private:
     std::vector<Instruction>::const_iterator pointer;

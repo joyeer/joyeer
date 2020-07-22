@@ -250,8 +250,10 @@ void IRGen::emit(AssignmentExpr::Pointer node) {
             .value = (int32_t)(function->paramTypes.size() - 1)      // last parameter is the self object
         });
         
+        auto addressOfField = selfExpr->identifier->symbol->addressOfField;
         writer.write({
-            .opcode = OP_PUTFIELD
+            .opcode = OP_PUTFIELD,
+            .value = addressOfField
         });
         
     } else {
