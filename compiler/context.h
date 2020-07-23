@@ -51,9 +51,6 @@ public:
     // look up name's mapped symbol
     Symbol::Pointer lookup(const std::wstring& name);
     
-    // insert an new Symbol in top symbol table
-    bool insert(Symbol::Pointer symbol);
-    
     SymbolTable::Pointer curSymTable() ;
     void entry(SymbolTable::Pointer table);
     void leave(SymbolTable::Pointer table);

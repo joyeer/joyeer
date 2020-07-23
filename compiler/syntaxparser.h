@@ -90,7 +90,8 @@ private:
     // dictionary-literal -> [ dictionary-literal-items ]  | [ : ]
     // dictionary-literal-items -> dictionary-literal-item, /opt/ | dictionary-literal-item, dictionary-literal-items
     // dictionary-literal-item -> expression: expression
-    std::shared_ptr<LiteralExpr> tryParseLiteralExpr();
+    LiteralExpr::Pointer tryParseLiteralExpr();
+    
 
     // parenthesized-expression -> `(` expression `)`
     Node::Pointer tryParseParenthesizedExpr();

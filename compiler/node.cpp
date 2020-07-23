@@ -160,6 +160,11 @@ literal(literal) {
     
 }
 
+ArrayLiteralExpr::ArrayLiteralExpr(std::vector<Node::Pointer> items):
+Node(arrayLiteralExpr),
+items(items) {
+}
+
 IdentifierExpr::IdentifierExpr(std::shared_ptr<Token> token):
 Node(SyntaxKind::identifierExpr),
 token(token) {

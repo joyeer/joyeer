@@ -269,6 +269,13 @@ struct LiteralExpr : Node {
     LiteralExpr(Token::Pointer literal);
 };
 
+struct ArrayLiteralExpr: Node {
+    typedef std::shared_ptr<ArrayLiteralExpr> Pointer;
+    
+    std::vector<Node::Pointer> items;
+    
+    ArrayLiteralExpr(std::vector<Node::Pointer> items);
+};
 
 struct ParenthesizedExpr: Node {
     typedef std::shared_ptr<ParenthesizedExpr> Pointer;

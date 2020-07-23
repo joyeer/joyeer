@@ -104,11 +104,6 @@ Symbol::Pointer CompileContext::lookup(const std::wstring &name) {
     return nullptr;
 }
 
-bool CompileContext::insert(Symbol::Pointer symbol) {
-    auto symtable = curSymTable();
-    return symtable->insert(symbol);
-}
-
 void CompileContext::initializeGlobalScope() {
     
     assert(symbols.size() == 1); // only the global scope
