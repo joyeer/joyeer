@@ -39,6 +39,7 @@ protected:
     
     void emit(ClassDecl::Pointer node);
     void emit(ConstructorDecl::Pointer node);
+    void emit(ArrayLiteralExpr::Pointer node);
 private:
     JrCodeWriter writer;
     

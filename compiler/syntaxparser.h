@@ -90,8 +90,8 @@ private:
     // dictionary-literal -> [ dictionary-literal-items ]  | [ : ]
     // dictionary-literal-items -> dictionary-literal-item, /opt/ | dictionary-literal-item, dictionary-literal-items
     // dictionary-literal-item -> expression: expression
-    LiteralExpr::Pointer tryParseLiteralExpr();
-    
+    Node::Pointer tryParseLiteralExpr();
+    Node::Pointer tryParseArrayLiteralExpr();
 
     // parenthesized-expression -> `(` expression `)`
     Node::Pointer tryParseParenthesizedExpr();

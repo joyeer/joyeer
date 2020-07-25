@@ -39,6 +39,7 @@ protected:
     Node::Pointer bind(Pattern::Pointer decl);
     Node::Pointer bind(ReturnStatement::Pointer decl);
     Node::Pointer bind(SelfExpr::Pointer decl);
+    Node::Pointer bind(ArrayLiteralExpr::Pointer decl);
     
 private:
     CompileContext::Pointer context;

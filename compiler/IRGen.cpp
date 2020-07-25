@@ -87,6 +87,7 @@ void IRGen::emit(Node::Pointer node) {
             emit(std::static_pointer_cast<LiteralExpr>(node));
             break;
         case arrayLiteralExpr:
+            emit(std::static_pointer_cast<ArrayLiteralExpr>(node));
             break;
         case dictLiteralExpr:
             break;
@@ -354,6 +355,10 @@ void IRGen::emit(ReturnStatement::Pointer node) {
     });
 }
 
+void IRGen::emit(ArrayLiteralExpr::Pointer node) {
+    
+}
+
 void IRGen::emit(ClassDecl::Pointer node) {
     for(auto member: node->members) {
         if(member->kind == funcDecl || member->kind == constructorDecl) {
@@ -378,3 +383,5 @@ void IRGen::emit(ConstructorDecl::Pointer node) {
     context->leave(function);
     
 }
+
+

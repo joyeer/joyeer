@@ -104,9 +104,6 @@ struct JrRuntimeStack {
     void storeValueForVariable(uint8_t* addressOfVariable, JrInt value);
     // get the int value of the variable
     JrInt intValueOfVariable(uint8_t* addressOfVariable);
-    
-    
-    
 };
 
 struct JrGC;

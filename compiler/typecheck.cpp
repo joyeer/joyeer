@@ -77,6 +77,7 @@ void TypeChecker::verify(Node::Pointer node) {
             verify(std::static_pointer_cast<LiteralExpr>(node));
             break;
         case arrayLiteralExpr:
+            verify(std::static_pointer_cast<ArrayLiteralExpr>(node));
             break;
         case dictLiteralExpr:
             break;
@@ -420,6 +421,12 @@ void TypeChecker::verify(SelfExpr::Pointer node) {
     }
 }
 
+void TypeChecker::verify(ArrayLiteralExpr::Pointer node) {
+    for(auto item: node->items) {
+        verify(item);
+    }
+}
+
 JrType::Pointer TypeChecker::typeOf(Node::Pointer node) {
     switch (node->kind) {
         case identifierExpr:
@@ -438,6 +445,8 @@ JrType::Pointer TypeChecker::typeOf(Node::Pointer node) {
             return typeOf(std::static_pointer_cast<Pattern>(node));
         case type:
             return typeOf(std::static_pointer_cast<TypeDecl>(node));
+        case arrayLiteralExpr:
+            return typeOf(std::static_pointer_cast<ArrayLiteralExpr>(node));
         default:
             assert(false);
     }
@@ -525,6 +534,22 @@ JrType::Pointer TypeChecker::typeOf(TypeDecl::Pointer node) {
     return Global::types[node->symbol->addressOfType];
 }
 
+JrType::Pointer TypeChecker::typeOf(ArrayLiteralExpr::Pointer node) {
+    JrType::Pointer previousType = nullptr;
+    for(auto item: node->items) {
+        auto type = typeOf(item);
+        if(previousType != nullptr) {
+            if(type->kind != previousType->kind) {
+                return JrType::Any;
+            }
+        }
+        
+        previousType = type;
+    }
+
+    return previousType;
+}
+
 void TypeChecker::verifyReturnStatement(SourceBlock::Pointer node) {
     verifyReturnStatement(node->statements);
 }
@@ -591,6 +616,8 @@ JrType::Pointer TypeChecker::returnTypeOf(Node::Pointer node) {
             return returnTypeOf(std::static_pointer_cast<FuncCallExpr>(node));
         case assignmentExpr:
         case identifierExpr:
+        case arrayLiteralExpr:
+        case varDecl:
             return nullptr;
         default:
             assert(false);

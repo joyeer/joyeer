@@ -571,12 +571,49 @@ std::shared_ptr<Node> SyntaxParser::tryParseSelfExpr() {
     return std::shared_ptr<Node>(new SelfExpr(identifier));
 }
 
-std::shared_ptr<LiteralExpr> SyntaxParser::tryParseLiteralExpr() {
-    std::shared_ptr<Token> literal = tryParseLiteral();
+Node::Pointer SyntaxParser::tryParseLiteralExpr() {
+    auto literal = tryParseLiteral();
     if (literal != nullptr) {
         return std::make_shared<LiteralExpr>(literal);
     }
+    
+    auto arrayLiteral = tryParseArrayLiteralExpr();
+    if(arrayLiteral != nullptr) {
+        return arrayLiteral;
+    }
     return nullptr;
+}
+
+Node::Pointer SyntaxParser::tryParseArrayLiteralExpr() {
+    if(tryEat(TokenKind::punctuation, Punctuations::OPEN_SQUARE_BRACKET) == nullptr) {
+        return nullptr;
+    }
+    
+    std::vector<Node::Pointer> items;
+    
+    auto item = tryParseExpr();
+    if(item !=  nullptr) {
+        items.push_back(item);
+        while (true) {
+            if(tryEat(TokenKind::punctuation, Punctuations::COMMA) == nullptr) {
+                break;
+            }
+            
+            auto expr = tryParseExpr();
+            if(expr == nullptr) {
+                Diagnostics::reportError(L"[Error] Array literal except expression here");
+                break;
+            }
+            
+            items.push_back(expr);
+        }
+    }
+    
+    if(tryEat(TokenKind::punctuation, Punctuations::CLOSE_SQUARE_BRACKET) == nullptr) {
+        Diagnostics::reportError(L"[Error] Array literal except expression here");
+    }
+    
+    return std::make_shared<ArrayLiteralExpr>(items);
 }
 
 Node::Pointer SyntaxParser::tryParseParenthesizedExpr() {

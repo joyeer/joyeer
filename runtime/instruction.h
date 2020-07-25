@@ -36,6 +36,8 @@ enum Opcode {
     OP_RETURN,
     OP_IRETURN,
     
+    OP_ONEWARRAY,
+    
     OP_INVOKE,
     
     OP_GOTO,

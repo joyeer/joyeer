@@ -1,6 +1,7 @@
 #include "buildin.h"
 #include "object.h"
 #include "runtime.h"
+#include "array.h"
 #include <iostream>
 
 std::vector<JrFunction::Pointer> initGlobalFunctionTable();
@@ -10,7 +11,11 @@ std::vector<JrType::Pointer> initGlobalTypeTable();
 void Global::initGlobalTables() {
     Global::types = initGlobalTypeTable();
     Global::functions =initGlobalFunctionTable();
-
+ 
+    // Init the array
+    JrArray::init();
+    registerFunction(JrArray_Append::Func);
+    registerFunction(JrArray_Size::Func);
 }
 
 std::vector<JrType::Pointer> Global::types = {};
@@ -64,6 +69,7 @@ std::vector<JrFunction::Pointer> initGlobalFunctionTable() {
             .addressOfFunc = 0
         })
     };
+    
     
     return functions;
 }

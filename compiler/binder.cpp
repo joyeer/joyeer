@@ -65,7 +65,7 @@ Node::Pointer Binder::bind(std::shared_ptr<Node> node) {
         case literalExpr:
             return bind(std::static_pointer_cast<LiteralExpr>(node));
         case arrayLiteralExpr:
-            break;
+            return bind(std::static_pointer_cast<ArrayLiteralExpr>(node));
         case dictLiteralExpr:
             break;
         case assignmentExpr:
@@ -590,5 +590,14 @@ Node::Pointer Binder::bind(SelfExpr::Pointer decl) {
     assert(decl->identifier != nullptr);
     
     decl->identifier = std::static_pointer_cast<IdentifierExpr>(bind(decl->identifier));
+    return decl;
+}
+
+Node::Pointer Binder::bind(ArrayLiteralExpr::Pointer decl) {
+    std::vector<Node::Pointer> result;
+    for(auto item: decl->items) {
+        result.push_back(bind(item));
+    }
+    decl->items = result;
     return decl;
 }

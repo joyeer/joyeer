@@ -475,8 +475,13 @@ void NodeDebugPrinter::print(Node::Pointer node) {
             output << L"+literalExpr(" << n->literal->rawValue << ")" ;
         }
             break;
-        case arrayLiteralExpr:
+        case arrayLiteralExpr: {
             output << L"+arrayLiteralExpr" ;
+            auto n = std::static_pointer_cast<ArrayLiteralExpr>(node);
+            incTab();
+            print(n->items);
+            decTab();
+        }
             break;
         case dictLiteralExpr:
             output << L"+dictLiteralExpr" ;
