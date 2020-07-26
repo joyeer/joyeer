@@ -12,10 +12,14 @@ set(SOURCES ${SOURCES}
     ${CMAKE_CURRENT_SOURCE_DIR}/interpreter.h
     ${CMAKE_CURRENT_SOURCE_DIR}/instruction.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/instruction.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/array.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/array.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/gc.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/gc.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/sys/array.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/sys/array.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/sys/primary.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/sys/primary.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/sys/print.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/sys/print.cpp
 )
 
 

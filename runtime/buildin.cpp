@@ -1,29 +1,31 @@
 #include "buildin.h"
-#include "object.h"
-#include "runtime.h"
-#include "array.h"
-#include <iostream>
+#include "runtime/sys/array.h"
+#include "runtime/sys/print.h"
 
-std::vector<JrFunction::Pointer> initGlobalFunctionTable();
 std::vector<JrType::Pointer> initGlobalTypeTable();
-
-
-void Global::initGlobalTables() {
-    Global::types = initGlobalTypeTable();
-    Global::functions =initGlobalFunctionTable();
- 
-    // Init the array
-    JrArray::init();
-    registerFunction(JrArray_Append::Func);
-    registerFunction(JrArray_Size::Func);
-}
 
 std::vector<JrType::Pointer> Global::types = {};
 std::vector<std::wstring> Global::strings = {};
 std::vector<JrFunction::Pointer> Global::functions = {};
 
-//////////////////////////////////////////////////////////////////////////////////////////////////
 // init the types tables
+static std::unordered_map<std::wstring, JrFunction::Pointer>  funtionsMap;
+
+void Global::initGlobalTables() {
+    Global::types = initGlobalTypeTable();
+
+    // Init print function
+    JrFuncPrint::init();
+    registerFunction(JrFuncPrint::Func);
+    
+    // Init the array
+    JrObjectIntArray::init();
+    registerObjectType(JrObjectIntArray::Type);
+    registerFunction(JrObjectIntArray_Append::Func);
+    registerFunction(JrObjectIntArray_Size::Func);
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////
 
 std::vector<JrType::Pointer> initGlobalTypeTable() {
     auto types = std::vector<JrType::Pointer> ({
@@ -35,11 +37,6 @@ std::vector<JrType::Pointer> initGlobalTypeTable() {
     
     return types;
 }
-
-//////////////////////////////////////////////////////////////////////////////////////////////////
-// init the function tables
-static std::unordered_map<std::wstring, JrFunction::Pointer>  funtionsMap;
-
 /// functions
 
 void Global::registerFunction(JrFunction::Pointer func) {
@@ -50,28 +47,6 @@ void Global::registerFunction(JrFunction::Pointer func) {
 void Global::registerObjectType(JrObjectType::Pointer type) {
     type->addressOfType = types.size();
     types.push_back(type);
-}
-
-struct JrPrintNativeCode : public JrNativeCode {
-    virtual void operator()(JrRuntimeContext::Pointer context, JrFunction::Pointer func) {
-        uint32_t value = context->stack->pop();
-        std::cout << value << std::endl;
-    }
-};
-
-std::vector<JrFunction::Pointer> initGlobalFunctionTable() {
-    std::vector<JrFunction::Pointer> functions = {
-        std::shared_ptr<JrFunction>(new JrFunction {
-            .name = L"print(message:)",
-            .kind = jrFuncNative,
-            .paramTypes = { JrType::Any },
-            .nativeCode = new JrPrintNativeCode(),
-            .addressOfFunc = 0
-        })
-    };
-    
-    
-    return functions;
 }
 
 TypeTablePrinter::TypeTablePrinter(const std::wstring filename) {

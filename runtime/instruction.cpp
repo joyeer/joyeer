@@ -40,7 +40,8 @@ const std::unordered_map<Opcode, std::wstring> JrInstructionDebugPrinter::maps =
     { OP_IRETURN, L"return.int" },
     { OP_INVOKE, L"invoke" },
     { OP_GOTO, L"goto"},
-    { OP_DEBUG, L"debug"}
+    { OP_DEBUG, L"debug"},
+    { OP_ONEWARRAY, L"new.array.object"}
 };
 
 std::wstring JrInstructionDebugPrinter::print(const Instruction& instruction) {

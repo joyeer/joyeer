@@ -80,6 +80,8 @@ void JrInterpreter::run(JrFunction::Pointer function, int objectRef) {
             case OP_PUTFIELD:
                 exec_putfield(instruction);
                 break;
+            case OP_ONEWARRAY:
+                break;
             default:
                 assert(false);
         } 
@@ -217,4 +219,12 @@ void JrInterpreter::exec_putfield(const Instruction &instruction) {
     
     auto object = context->gc->get(objectRef);
     object->setField(objectRef, addressOfField);
+}
+
+void JrInterpreter::exec_onewarray(const Instruction &instruction) {
+    auto objectCount = context->stack->pop();
+    
+    for(auto i = 0 ; i < objectCount ; i ++ ) {
+        
+    }
 }

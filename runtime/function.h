@@ -5,7 +5,7 @@
 #include "runtime.h"
 
 struct JrRuntimeContext;
-struct JrNativeCode;
+struct JrNativeFunc;
 
 struct JrCode {
     typedef std::shared_ptr<JrCode> Pointer;
@@ -27,40 +27,34 @@ struct JrFunction {
     typedef std::shared_ptr<JrFunction> Pointer;
     
 public:
-    std::wstring name;
+    ~JrFunction();
+    int totalSizeOfParams();
     
     JrFunctionKind kind;
-    // The maximun count of parameter count is 0xFF
-    /**
-     e.g. func add(value1:int, value2:float, descriptor:string)
-     the descriptor will be [JrType_Int] [JrType_Float] [JrType_String] [RefIndexOfStringInDataSection]
-     */
+    std::wstring name;
+    
+    // all types for param, for object class, the last param is self
     std::vector<JrType::Pointer> paramTypes;
     
     // Function's return type
     JrType::Pointer  returnType;
     
-    // Variables
+    // Local Variables
     std::vector<JrVar> localVars;
     
     std::vector<Instruction> instructions;
     
     union {
         JrCode* code;
-        JrNativeCode* nativeCode;
+        JrNativeFunc* nativeCode;
     };
     
     // address index of this function in function table
     int addressOfFunc;
-    
-public:
-    ~JrFunction();
-    
-    int totalSizeOfParams();
 };
 
-struct JrNativeCode {
-    typedef std::shared_ptr<JrNativeCode> Pointer;
+struct JrNativeFunc {
+    typedef std::shared_ptr<JrNativeFunc> Pointer;
     
     virtual void operator() (JrRuntimeContext::Pointer context, JrFunction::Pointer func);
 };

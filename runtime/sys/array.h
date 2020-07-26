@@ -1,10 +1,10 @@
-#ifndef __joyeer_runtime_array_h__
-#define __joyeer_runtime_array_h__
+#ifndef __joyeer_runtime_sys_array_h__
+#define __joyeer_runtime_sys_array_h__
 
-#include "function.h"
-#include "runtime.h"
+#include "runtime/function.h"
+#include "runtime/runtime.h"
 
-struct JrArray: JrObject {
+struct JrObjectIntArray: JrObject {
     const static JrObjectType::Pointer Type;
     
     std::vector<JrInt> slots;
@@ -12,14 +12,19 @@ struct JrArray: JrObject {
     static void init();
 };
 
-struct JrArray_Size : public JrNativeCode {
+struct JrObjectIntArray_Size : public JrNativeFunc {
     static JrFunction::Pointer Func;
     virtual void operator()(JrRuntimeContext::Pointer context, JrFunction::Pointer func);
 };
 
-struct JrArray_Append: public JrNativeCode {
+struct JrObjectIntArray_Append: public JrNativeFunc {
     static JrFunction::Pointer Func;
     virtual void operator()(JrRuntimeContext::Pointer context, JrFunction::Pointer func);
+};
+
+
+struct JrObjectObjectArray: JrObject {
+    
 };
 
 #endif

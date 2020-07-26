@@ -571,7 +571,7 @@ Node::Pointer Binder::bind(ParameterClause::Pointer decl) {
 
 Node::Pointer Binder::bind(Pattern::Pointer decl) {
     decl->identifier = std::static_pointer_cast<IdentifierExpr>(bind(decl->identifier));
-    decl->type = std::static_pointer_cast<TypeDecl>(bind(decl->type));
+    decl->typeDecl = std::static_pointer_cast<TypeDecl>(bind(decl->typeDecl));
     return decl;
 }
 

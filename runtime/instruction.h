@@ -1,6 +1,7 @@
 #ifndef __joyeer_runtime_instruction_h__
 #define __joyeer_runtime_instruction_h__
 
+#include "object.h"
 #include <vector>
 #include <unordered_map>
 
@@ -8,7 +9,7 @@ enum Opcode {
     OP_NOP = 0x00,
     
     OP_OCONST_NIL,
-    OP_ICONST,
+    OP_ICONST,      
     OP_ICONST_64,
     OP_SCONST,
     
@@ -48,7 +49,7 @@ enum Opcode {
 
 struct Instruction {
     Opcode opcode;
-    int32_t value = -1;
+    JrInt value = -1;
 };
 
 struct JrCodeWriter {

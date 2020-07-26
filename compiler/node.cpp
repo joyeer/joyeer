@@ -62,7 +62,7 @@ const std::wstring FuncDecl::getFuncName() {
 Pattern::Pattern(IdentifierExpr::Pointer identifier, TypeDecl::Pointer type):
 Node(SyntaxKind::pattern),
 identifier(identifier),
-type(type) {
+typeDecl(type) {
 }
 
 const std::wstring& Pattern::getIdentifierName() {
@@ -299,8 +299,8 @@ void NodeDebugPrinter::print(Node::Pointer node) {
             auto n = std::static_pointer_cast<Pattern>(node);
             incTab();
             print(n->identifier);
-            if(n->type != nullptr) {
-                print(n->type);
+            if(n->typeDecl != nullptr) {
+                print(n->typeDecl);
             }
             decTab();
         }

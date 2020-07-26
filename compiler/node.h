@@ -51,6 +51,9 @@ struct Node {
     typedef std::shared_ptr<Node> Pointer;
     
     SyntaxKind kind;
+
+    Symbol::Pointer symbol;
+    JrType::Pointer type;
     
 protected:
     Node(SyntaxKind kind);
@@ -92,7 +95,7 @@ struct Pattern: public Node {
     typedef std::shared_ptr<Pattern> Pointer;
     
     IdentifierExpr::Pointer identifier; // the name of pattern
-    TypeDecl::Pointer type; // the type of pattern, optinal nullptr
+    TypeDecl::Pointer typeDecl; // the type of pattern, optinal nullptr
     
     Pattern(IdentifierExpr::Pointer identifier, TypeDecl::Pointer type);
     
@@ -274,6 +277,7 @@ struct ArrayLiteralExpr: Node {
     
     std::vector<Node::Pointer> items;
     
+    Symbol::Pointer symbol;
     ArrayLiteralExpr(std::vector<Node::Pointer> items);
 };
 

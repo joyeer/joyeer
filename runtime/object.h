@@ -15,6 +15,9 @@ typedef uint32_t    JrUInt32;
 typedef uint16_t    JrUInt16;
 typedef uint8_t     JrUInt8;
 
+typedef JrInt*      JrPtr;
+typedef JrInt       JrObjectRef;
+
 #define JrType_Void         0
 #define JrType_Int          1
 #define JrType_Float        2

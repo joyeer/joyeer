@@ -1,5 +1,6 @@
 #include "typecheck.h"
 #include "runtime/buildin.h"
+#include "runtime/sys/array.h"
 #include "diagnostic.h"
 #include <cassert>
 
@@ -129,7 +130,7 @@ void TypeChecker::verify(FuncDecl::Pointer node) {
     // Binding function's type
     auto parameterClause = std::static_pointer_cast<ParameterClause>(node->parameterClause);
     for(auto parameter: parameterClause->parameters) {
-        auto symbol = parameter->type->symbol;
+        auto symbol = parameter->typeDecl->symbol;
         
         assert((symbol->flag & typeSymbol) == typeSymbol);
         auto type = Global::types[symbol->addressOfType];
@@ -174,7 +175,7 @@ void TypeChecker::verify(ConstructorDecl::Pointer node) {
     // Binding function's type
     auto parameterClause = std::static_pointer_cast<ParameterClause>(node->parameterClause);
     for(auto parameter: parameterClause->parameters) {
-        auto symbol = parameter->type->symbol;
+        auto symbol = parameter->typeDecl->symbol;
         
         assert((symbol->flag & typeSymbol) == typeSymbol);
         auto type = Global::types[symbol->addressOfType];
@@ -230,7 +231,7 @@ void TypeChecker::verify(VarDecl::Pointer node) {
         verify(node->pattern);
     });
     
-    if(node->pattern->type == nullptr) {
+    if(node->pattern->typeDecl == nullptr) {
         // change the symbol to unfixed symbol
         node->symbol->flag = unfixedMutableVarSymbol;
         node->symbol->addressOfType = JrType::Any->addressOfType;
@@ -244,7 +245,7 @@ void TypeChecker::verify(VarDecl::Pointer node) {
     if(node->initializer != nullptr) {
         auto rightType = typeOf(node->initializer);
         auto leftType = typeOf(node->pattern);
-        
+          
         auto function = context->curFunction();
     }
     
@@ -266,7 +267,7 @@ void TypeChecker::verify(LetDecl::Pointer node) {
         verify(node->pattern);
     });
     
-    if(node->pattern->type == nullptr) {
+    if(node->pattern->typeDecl == nullptr) {
         // change the symbol to unfixed symbol
         node->symbol->flag = unfixedImmutableVarSymbol;
         node->symbol->addressOfType = JrType::Any->addressOfType;
@@ -299,10 +300,10 @@ void TypeChecker::verify(ParameterClause::Pointer node) {
 
 void TypeChecker::verify(Pattern::Pointer node) {
     verify(node->identifier);
-    if(node->type != nullptr) {
-        verify(node->type);
+    if(node->typeDecl != nullptr) {
+        verify(node->typeDecl);
         // binding the identifier symbol's type to Pattern type's symbols' type
-        node->identifier->symbol->addressOfType = node->type->symbol->addressOfType;
+        node->identifier->symbol->addressOfType = node->typeDecl->symbol->addressOfType;
     }
 }
 
@@ -523,10 +524,10 @@ JrType::Pointer TypeChecker::typeOf(SelfExpr::Pointer node) {
 }
 
 JrType::Pointer TypeChecker::typeOf(Pattern::Pointer node) {
-    if(node->type == nullptr) {
+    if(node->typeDecl == nullptr) {
         return JrType::Any;
     }
-    return typeOf(node->type);
+    return typeOf(node->typeDecl);
 }
 
 JrType::Pointer TypeChecker::typeOf(TypeDecl::Pointer node) {
@@ -546,7 +547,11 @@ JrType::Pointer TypeChecker::typeOf(ArrayLiteralExpr::Pointer node) {
         
         previousType = type;
     }
-
+    
+    if(previousType->kind == JrType_Int) {
+        return JrObjectIntArray::Type;
+    }
+    assert(false);
     return previousType;
 }
 

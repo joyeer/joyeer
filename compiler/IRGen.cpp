@@ -307,14 +307,14 @@ void IRGen::emit(IfStatement::Pointer node) {
         // insert an goto instruction in ifInstructions;
         instructions.push_back({
             .opcode = OP_GOTO,
-            .value = static_cast<int32_t>(elseInstructions.size())
+            .value = static_cast<JrInt>(elseInstructions.size())
         });
     }
     
     emit(node->condition);
     writer.write({
         .opcode = OP_IFLE,
-        .value = static_cast<int32_t>(instructions.size())
+        .value = static_cast<JrInt>(instructions.size())
     });
     writer.write(instructions);
     writer.write(elseInstructions);
@@ -356,7 +356,19 @@ void IRGen::emit(ReturnStatement::Pointer node) {
 }
 
 void IRGen::emit(ArrayLiteralExpr::Pointer node) {
+    for(auto item: node->items) {
+        emit(item);
+    }
     
+    writer.write({
+        .opcode = OP_ICONST,
+        .value = static_cast<JrInt>(node->items.size())
+    });
+    
+    writer.write({
+        .opcode = OP_ONEWARRAY,
+        .value = JrType::Any->addressOfType
+    });
 }
 
 void IRGen::emit(ClassDecl::Pointer node) {
