@@ -68,7 +68,11 @@ private:
     // postfix-expression -> primary-expression
     // postfix-expression -> postfix-expression postfix-operator
     // postfix-expression -> function-call-expression
+    // postfix-expression -> subscript-expression
     Node::Pointer tryParsePostfixExpr();
+    
+    // try parse 
+    Node::Pointer tryParseSubscriptExpr();
     
     ArguCallExpr::Pointer tryParseArguCallExpr();
     

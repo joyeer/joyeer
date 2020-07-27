@@ -81,7 +81,8 @@ void IRGen::emit(Node::Pointer node) {
         case functionCallExpr:
             emit(std::static_pointer_cast<FuncCallExpr>(node));
             break;
-        case memberExpr:
+        case memberAccessExpr:
+            emit(std::static_pointer_cast<MemberAccessExpr>(node));
             break;
         case literalExpr:
             emit(std::static_pointer_cast<LiteralExpr>(node));
@@ -396,4 +397,7 @@ void IRGen::emit(ConstructorDecl::Pointer node) {
     
 }
 
-
+void IRGen::emit(MemberAccessExpr::Pointer node) {
+    emit(node->parent);
+    emit(node->member);
+}

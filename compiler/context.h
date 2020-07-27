@@ -63,6 +63,11 @@ public:
     void entry(JrType::Pointer type);
     void leave(JrType::Pointer type);
     
+    // Associate Type with symbol table
+    void associate(JrType::Pointer, SymbolTable::Pointer table);
+    // return assoicated symbol table with type
+    SymbolTable::Pointer symtableOfType(JrType::Pointer);
+    
 protected:
     // initializ global scope, e.g. buildin functions/object etc
     void initializeGlobalScope();
@@ -83,6 +88,8 @@ protected:
     
     // parsing class/struct/enum stacks
     std::vector<JrType::Pointer> types;
+    
+    std::unordered_map<JrInt, SymbolTable::Pointer> mapOfTypeAndSymbolTable;
 };
 
 #endif

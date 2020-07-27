@@ -36,6 +36,7 @@ protected:
     void emit(CodeBlock::Pointer node);
     void emit(FuncDecl::Pointer node);
     void emit(ReturnStatement::Pointer node);
+    void emit(MemberAccessExpr::Pointer node);
     
     void emit(ClassDecl::Pointer node);
     void emit(ConstructorDecl::Pointer node);

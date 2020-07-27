@@ -38,7 +38,7 @@ enum SyntaxKind {
     parenthesizedExpr,
     arguCallExpr,
     functionCallExpr,
-    memberExpr,
+    memberAccessExpr,
   
     literalExpr,
     arrayLiteralExpr,
@@ -64,7 +64,6 @@ struct IdentifierExpr: public Node {
     typedef std::shared_ptr<IdentifierExpr> Pointer;
     
     Token::Pointer token;
-    Symbol::Pointer symbol;
     
     IdentifierExpr(Token::Pointer token);
     
@@ -85,8 +84,6 @@ struct TypeDecl: Node {
     
     IdentifierExpr::Pointer identifier;
     bool isOptional;
-    
-    Symbol::Pointer symbol;
     
     TypeDecl(IdentifierExpr::Pointer identifier, bool isOptional);
 };
@@ -109,8 +106,6 @@ struct LetDecl: Node {
     Pattern::Pointer pattern;
     Node::Pointer initializer;
     
-    Symbol::Pointer symbol;
-
     LetDecl(Pattern::Pointer pattern, std::shared_ptr<Node> initializer);
 };
 
@@ -120,9 +115,6 @@ struct VarDecl: public Node {
     Pattern::Pointer pattern;
     Node::Pointer initializer;
     
-    // enrich
-    Symbol::Pointer symbol;
-
     VarDecl(Pattern::Pointer pattern, std::shared_ptr<Node> initializer);
 };
 
@@ -132,7 +124,6 @@ struct ClassDecl: Node {
     Token::Pointer name;
     std::vector<Node::Pointer> members;
     
-    Symbol::Pointer symbol;
     SymbolTable::Pointer symtable;
     
     ClassDecl(Token::Pointer name, std::vector<Node::Pointer> members);
@@ -159,9 +150,6 @@ struct FuncDecl: Node {
     // Additional information
     SymbolTable::Pointer symtable;
     
-    // Symbol of function declaration
-    Symbol::Pointer symbol;
-    
     FuncDecl(Node::Pointer identifier, Node::Pointer parameterClause, Node::Pointer returnType, Node::Pointer codeBlock);
     
     const std::wstring getFuncName();
@@ -173,7 +161,6 @@ struct ConstructorDecl: Node {
     Node::Pointer parameterClause;
     Node::Pointer codeBlock;
     
-    Symbol::Pointer symbol;
     SymbolTable::Pointer symtable;
     
     ConstructorDecl(Node::Pointer parameterClause, Node::Pointer codeBlock);
@@ -247,22 +234,18 @@ struct FuncCallExpr: Node {
     IdentifierExpr::Pointer identifier;
     std::vector<ArguCallExpr::Pointer> arguments;
     
-    
-    // Function's symbol
-    Symbol::Pointer symbol;
-    
     FuncCallExpr(IdentifierExpr::Pointer identifier, std::vector<ArguCallExpr::Pointer> arguments);
     
     std::wstring getFunctionName();
 };
 
-struct MemberExpr: Node {
-    typedef std::shared_ptr<MemberExpr> Pointer;
+struct MemberAccessExpr: Node {
+    typedef std::shared_ptr<MemberAccessExpr> Pointer;
     
     std::shared_ptr<Node> parent;
     std::shared_ptr<Node> member;
     
-    MemberExpr(std::shared_ptr<Node> parent, std::shared_ptr<Node> member);
+    MemberAccessExpr(std::shared_ptr<Node> parent, std::shared_ptr<Node> member);
 };
 
 struct LiteralExpr : Node {
@@ -277,7 +260,6 @@ struct ArrayLiteralExpr: Node {
     
     std::vector<Node::Pointer> items;
     
-    Symbol::Pointer symbol;
     ArrayLiteralExpr(std::vector<Node::Pointer> items);
 };
 
@@ -293,10 +275,15 @@ struct SelfExpr: Node {
     
     IdentifierExpr::Pointer identifier;
     
-    // this symbol point to self's pointing object
-    Symbol::Pointer symbol;
-    
     SelfExpr(IdentifierExpr::Pointer identifier);
+};
+
+struct SubscriptExpr: Node {
+    typedef std::shared_ptr<SubscriptExpr> Pointer;
+    
+    Expr::Pointer expr;
+    
+    SubscriptExpr(Expr::Pointer expr);
 };
 
 struct SourceBlock: Node {
@@ -306,7 +293,6 @@ struct SourceBlock: Node {
     
     std::wstring filename;
     SymbolTable::Pointer symtable; // source symbol
-    Symbol::Pointer symbol;
     
     SourceBlock(std::vector<Node::Pointer> statements);
 };

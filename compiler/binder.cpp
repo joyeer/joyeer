@@ -60,8 +60,8 @@ Node::Pointer Binder::bind(std::shared_ptr<Node> node) {
             return bind(std::static_pointer_cast<ArguCallExpr>(node));
         case functionCallExpr:
             return bind(std::static_pointer_cast<FuncCallExpr>(node));
-        case memberExpr:
-            break;
+        case memberAccessExpr:
+            return bind(std::static_pointer_cast<MemberAccessExpr>(node));
         case literalExpr:
             return bind(std::static_pointer_cast<LiteralExpr>(node));
         case arrayLiteralExpr:
@@ -95,7 +95,6 @@ SourceBlock::Pointer Binder::bind(SourceBlock::Pointer sourceBlock) {
     sourceBlock->symbol = symbol;
     context->initializeScope(ScopeFlag::sourceScope);
     sourceBlock->symtable = context->curSymTable();
-    
     
     context->visit(visitSourceBlock, [sourceBlock, this]() {
         auto nodes = std::vector<Node::Pointer>();
@@ -275,6 +274,9 @@ Node::Pointer Binder::bind(ClassDecl::Pointer decl) {
         });
         symtable->insert(symbol);
     }
+    
+    // assocated type with type's symbol 
+    context->associate(objectType, context->curSymTable());
     context->leave(objectType);
     context->finalizeScope(classScope);
     
@@ -599,5 +601,11 @@ Node::Pointer Binder::bind(ArrayLiteralExpr::Pointer decl) {
         result.push_back(bind(item));
     }
     decl->items = result;
+    return decl;
+}
+
+Node::Pointer Binder::bind(MemberAccessExpr::Pointer decl) {
+    decl->parent = bind(decl->parent);
+    decl->member = bind(decl->member);
     return decl;
 }

@@ -72,7 +72,8 @@ void TypeChecker::verify(Node::Pointer node) {
         case functionCallExpr:
             verify(std::static_pointer_cast<FuncCallExpr>(node));
             break;
-        case memberExpr:
+        case memberAccessExpr:
+            verify(std::static_pointer_cast<MemberAccessExpr>(node));
             break;
         case literalExpr:
             verify(std::static_pointer_cast<LiteralExpr>(node));
@@ -235,6 +236,7 @@ void TypeChecker::verify(VarDecl::Pointer node) {
         // change the symbol to unfixed symbol
         node->symbol->flag = unfixedMutableVarSymbol;
         node->symbol->addressOfType = JrType::Any->addressOfType;
+    
     }
     
     if(node->initializer != nullptr) {
@@ -245,7 +247,10 @@ void TypeChecker::verify(VarDecl::Pointer node) {
     if(node->initializer != nullptr) {
         auto rightType = typeOf(node->initializer);
         auto leftType = typeOf(node->pattern);
-          
+        // the node doesn't use
+        if(node->pattern->typeDecl == nullptr) {
+            node->symbol->addressOfType = rightType->addressOfType;
+        }
         auto function = context->curFunction();
     }
     
@@ -426,6 +431,19 @@ void TypeChecker::verify(ArrayLiteralExpr::Pointer node) {
     for(auto item: node->items) {
         verify(item);
     }
+}
+
+void TypeChecker::verify(MemberAccessExpr::Pointer node) {
+    verify(node->parent);
+    
+    auto type = Global::types[node->parent->symbol->addressOfType];
+    auto symtable = context->symtableOfType(type);
+    
+    context->entry(symtable);
+    // We will push access flags's symbols
+    verify(node->member);
+    
+    context->leave(symtable);
 }
 
 JrType::Pointer TypeChecker::typeOf(Node::Pointer node) {
@@ -623,6 +641,7 @@ JrType::Pointer TypeChecker::returnTypeOf(Node::Pointer node) {
         case identifierExpr:
         case arrayLiteralExpr:
         case varDecl:
+        case memberAccessExpr:
             return nullptr;
         default:
             assert(false);

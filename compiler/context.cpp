@@ -104,6 +104,17 @@ Symbol::Pointer CompileContext::lookup(const std::wstring &name) {
     return nullptr;
 }
 
+void CompileContext::associate(JrType::Pointer type, SymbolTable::Pointer table) {
+    mapOfTypeAndSymbolTable.insert({
+        type->addressOfType,
+        table
+    });
+}
+
+SymbolTable::Pointer CompileContext::symtableOfType(JrType::Pointer type) {
+    return mapOfTypeAndSymbolTable[type->addressOfType];
+}
+
 void CompileContext::initializeGlobalScope() {
     
     assert(symbols.size() == 1); // only the global scope

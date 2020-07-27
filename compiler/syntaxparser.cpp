@@ -466,7 +466,7 @@ Node::Pointer SyntaxParser::tryParsePostfixExpr() {
             if(expr == nullptr) {
                 return nullptr; // TODO: Report a grammar;
             }
-            std::shared_ptr<Node> memberExpr = std::shared_ptr<Node>(new MemberExpr(result, expr));
+            result = std::shared_ptr<Node>(new MemberAccessExpr(result, expr));
         }
     }
     

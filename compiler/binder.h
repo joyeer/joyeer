@@ -40,7 +40,7 @@ protected:
     Node::Pointer bind(ReturnStatement::Pointer decl);
     Node::Pointer bind(SelfExpr::Pointer decl);
     Node::Pointer bind(ArrayLiteralExpr::Pointer decl);
-    
+    Node::Pointer bind(MemberAccessExpr::Pointer decl);
 private:
     CompileContext::Pointer context;
 };

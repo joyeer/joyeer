@@ -148,8 +148,8 @@ std::wstring FuncCallExpr::getFunctionName() {
     return name;
 }
 
-MemberExpr::MemberExpr(std::shared_ptr<Node> parent, std::shared_ptr<Node> member):
-Node(SyntaxKind::memberExpr),
+MemberAccessExpr::MemberAccessExpr(std::shared_ptr<Node> parent, std::shared_ptr<Node> member):
+Node(SyntaxKind::memberAccessExpr),
 parent(parent),
 member(member) {
 }
@@ -467,8 +467,14 @@ void NodeDebugPrinter::print(Node::Pointer node) {
             decTab();
         }
             break;
-        case memberExpr:
+        case memberAccessExpr: {
+            auto n = std::static_pointer_cast<MemberAccessExpr>(node);
             output << L"+memberExpr" ;
+            incTab();
+            print(n->parent);
+            print(n->member);
+            decTab();
+        }
             break;
         case literalExpr: {
             auto n = std::static_pointer_cast<LiteralExpr>(node);

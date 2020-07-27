@@ -51,7 +51,7 @@ public:
     union {
         int addressOfVariable = -1;
         int addressOfField;
-        int addresOfAnyAssociatedType;          // 
+        int addresOfAnyAssociatedType; 
     };
 };
 

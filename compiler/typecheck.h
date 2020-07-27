@@ -33,6 +33,7 @@ private:
     void verify(ClassDecl::Pointer node);
     void verify(SelfExpr::Pointer node);
     void verify(ArrayLiteralExpr::Pointer node);
+    void verify(MemberAccessExpr::Pointer node);
     
     JrType::Pointer typeOf(Node::Pointer node);
     JrType::Pointer typeOf(IdentifierExpr::Pointer node);
