@@ -147,6 +147,8 @@ struct FuncDecl: Node {
     Node::Pointer codeBlock;
     Node::Pointer returnType;
     
+    JrType::Pointer ownerType = nullptr;
+    
     // Additional information
     SymbolTable::Pointer symtable;
     
@@ -233,6 +235,8 @@ struct FuncCallExpr: Node {
     
     IdentifierExpr::Pointer identifier;
     std::vector<ArguCallExpr::Pointer> arguments;
+    
+    JrType::Pointer ownerType = nullptr;
     
     FuncCallExpr(IdentifierExpr::Pointer identifier, std::vector<ArguCallExpr::Pointer> arguments);
     

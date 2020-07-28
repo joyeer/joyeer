@@ -114,7 +114,7 @@ Node::Pointer Binder::bind(FuncDecl::Pointer decl) {
     
     
     auto type = context->curType();
-    
+    decl->ownerType = type;
     auto symtable = context->curSymTable();
     auto function = std::make_shared<JrFunction>();
     function->name = decl->getFuncName();
@@ -410,6 +410,13 @@ Node::Pointer Binder::bind(Expr::Pointer decl) {
             auto selfExpr = std::static_pointer_cast<SelfExpr>(bind(decl->prefix));
             auto assignmentExpr = std::static_pointer_cast<AssignmentExpr>(bind(decl->binaries[0]));
             assignmentExpr->left = selfExpr;
+            return assignmentExpr;
+        }
+        
+        if(decl->prefix->kind == memberAccessExpr) {
+            auto memberAccessExpr = std::static_pointer_cast<MemberAccessExpr>(bind(decl->prefix));
+            auto assignmentExpr = std::static_pointer_cast<AssignmentExpr>(bind(decl->binaries[0]));
+            assignmentExpr->left = memberAccessExpr;
             return assignmentExpr;
         }
         

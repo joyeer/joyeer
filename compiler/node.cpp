@@ -50,7 +50,11 @@ codeBlock(codeBlock) {
 }
 
 const std::wstring FuncDecl::getFuncName() {
+    
     std::wstringstream ss;
+    if (ownerType != nullptr) {
+        ss << ownerType->name << L"@";
+    }
     ss << std::static_pointer_cast<IdentifierExpr>(identifier)->token->rawValue << L"(";
     for(auto p: std::static_pointer_cast<ParameterClause>(parameterClause)->parameters) {
         ss << p->identifier->token->rawValue << L":";
@@ -138,14 +142,17 @@ arguments(arguments) {
 }
 
 std::wstring FuncCallExpr::getFunctionName() {
-    std::wstring name = identifier->getName();
-    name += L"(";
-    for(auto& argument: arguments) {
-        name += argument->label->token->rawValue;
-        name += L":";
+    std::wstringstream ss;
+    if(ownerType != nullptr) {
+        ss << ownerType->name << L"@";
     }
-    name += L")";
-    return name;
+    ss << identifier->getName() << L"(";
+    for(auto& argument: arguments) {
+        ss << argument->label->token->rawValue;
+        ss << L":";
+    }
+    ss << L")";
+    return ss.str();
 }
 
 MemberAccessExpr::MemberAccessExpr(std::shared_ptr<Node> parent, std::shared_ptr<Node> member):

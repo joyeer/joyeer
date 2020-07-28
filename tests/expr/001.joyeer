@@ -37,34 +37,3 @@ func add(left:Int, right: Int): Int {
 a = add(left:10, right:12)
 print(message: a)
 
-class ListNode {
-	var previous: ListNode?
-	var next: ListNode?
-	var value: Any
-
-	init(previous: ListNode?, next: ListNode?, value: Any)  {
-		self.previous = previous
-		self.next = next
-		self.value = value
-	}
-}
-
-let root = ListNode(previous: nil, next: nil, value: 10)
-
-class List {
-	var root: ListNode? = nil
-	var cur: ListNode? = nil
-
-	func append(node: ListNode) {
-		if root == nil {
-			root = node
-			cur = root
-		} else {
-			cur.next = node
-			cur = node
-		}
-	}
-}
-
-var list = List()
-list.append(root)

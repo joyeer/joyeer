@@ -257,6 +257,7 @@ void IRGen::emit(AssignmentExpr::Pointer node) {
             .opcode = OP_PUTFIELD,
             .value = addressOfField
         });
+    } else if( node->left->kind == memberAccessExpr) {
         
     } else {
         assert(false);

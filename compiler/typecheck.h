@@ -45,6 +45,7 @@ private:
     JrType::Pointer typeOf(Pattern::Pointer node);
     JrType::Pointer typeOf(TypeDecl::Pointer node);
     JrType::Pointer typeOf(ArrayLiteralExpr::Pointer node);
+    JrType::Pointer typeOf(MemberAccessExpr::Pointer node);
     
     // Get Codeblock's return type
     void verifyReturnStatement(SourceBlock::Pointer node);

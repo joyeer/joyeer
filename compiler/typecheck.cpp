@@ -439,9 +439,22 @@ void TypeChecker::verify(MemberAccessExpr::Pointer node) {
     auto type = Global::types[node->parent->symbol->addressOfType];
     auto symtable = context->symtableOfType(type);
     
-    context->entry(symtable);
     // We will push access flags's symbols
+    context->entry(symtable);
+    switch(node->member->kind) {
+        case functionCallExpr: {
+            auto funcCallExpr = std::static_pointer_cast<FuncCallExpr>(node->member);
+            funcCallExpr->ownerType = type;
+        }
+            break;
+        case identifierExpr:
+            break;
+        default:
+            assert(false);
+    }
+    
     verify(node->member);
+    
     
     context->leave(symtable);
 }
@@ -466,6 +479,8 @@ JrType::Pointer TypeChecker::typeOf(Node::Pointer node) {
             return typeOf(std::static_pointer_cast<TypeDecl>(node));
         case arrayLiteralExpr:
             return typeOf(std::static_pointer_cast<ArrayLiteralExpr>(node));
+        case memberAccessExpr:
+            return typeOf(std::static_pointer_cast<MemberAccessExpr>(node));
         default:
             assert(false);
     }
@@ -571,6 +586,10 @@ JrType::Pointer TypeChecker::typeOf(ArrayLiteralExpr::Pointer node) {
     }
     assert(false);
     return previousType;
+}
+
+JrType::Pointer TypeChecker::typeOf(MemberAccessExpr::Pointer node) {
+    return typeOf(node->member);
 }
 
 void TypeChecker::verifyReturnStatement(SourceBlock::Pointer node) {
