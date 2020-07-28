@@ -50,8 +50,9 @@ public:
     // locate the var symbol's variable position in function
     union {
         int addressOfVariable = -1;
+        // the address of the field in Object
         int addressOfField;
-        int addresOfAnyAssociatedType; 
+        int addresOfAnyAssociatedType;
     };
 };
 

@@ -41,6 +41,8 @@ protected:
     Node::Pointer bind(SelfExpr::Pointer decl);
     Node::Pointer bind(ArrayLiteralExpr::Pointer decl);
     Node::Pointer bind(MemberAccessExpr::Pointer decl);
+    Node::Pointer bind(SubscriptExpr::Pointer decl);
+    
 private:
     CompileContext::Pointer context;
 };

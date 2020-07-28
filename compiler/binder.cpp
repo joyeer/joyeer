@@ -76,6 +76,8 @@ Node::Pointer Binder::bind(std::shared_ptr<Node> node) {
             return bind(std::static_pointer_cast<OperatorExpr>(node));
         case returnStatement:
             return bind(std::static_pointer_cast<ReturnStatement>(node));
+        case subscriptExpr:
+            return bind(std::static_pointer_cast<SubscriptExpr>(node));
     }
 }
 
@@ -614,5 +616,16 @@ Node::Pointer Binder::bind(ArrayLiteralExpr::Pointer decl) {
 Node::Pointer Binder::bind(MemberAccessExpr::Pointer decl) {
     decl->parent = bind(decl->parent);
     decl->member = bind(decl->member);
+    return decl;
+}
+
+Node::Pointer Binder::bind(SubscriptExpr::Pointer decl) {
+    decl->identifier = std::static_pointer_cast<IdentifierExpr>(bind(decl->identifier));
+    std::vector<Node::Pointer> exprs;
+    for(auto expr: decl->exprs) {
+        exprs.push_back(bind(expr));
+    }
+    decl->exprs = exprs;
+    
     return decl;
 }

@@ -191,6 +191,12 @@ Node(SyntaxKind::selfExpr),
 identifier(identifier) {
 }
 
+SubscriptExpr::SubscriptExpr(IdentifierExpr::Pointer identifier, std::vector<Node::Pointer> exprs):
+Node(subscriptExpr),
+identifier(identifier),
+exprs(exprs) { 
+}
+
 TypeDecl::TypeDecl(IdentifierExpr::Pointer identifier, bool isOptional):
 Node(SyntaxKind::type),
 identifier(identifier),

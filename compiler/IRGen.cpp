@@ -258,7 +258,21 @@ void IRGen::emit(AssignmentExpr::Pointer node) {
             .value = addressOfField
         });
     } else if( node->left->kind == memberAccessExpr) {
+        auto memberAccessExpr = std::static_pointer_cast<MemberAccessExpr>(node->left);
+        auto identifierExpr = std::static_pointer_cast<IdentifierExpr>(memberAccessExpr->parent);
+        writer.write({
+            .opcode = OP_ISTORE,
+            .value = identifierExpr->symbol->addressOfVariable
+        });
         
+//        switch (memberAccessExpr->member->kind) {
+//            case :
+//                <#statements#>
+//                break;
+//                
+//            default:
+//                break;
+//        }
     } else {
         assert(false);
     }

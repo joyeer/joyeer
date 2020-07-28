@@ -24,7 +24,7 @@ void JrInterpreter::run(JrFunction::Pointer function, int objectRef) {
     JrInstructionDebugPrinter printer;
     while(pointer != end) {
         auto instruction = *pointer;
-        std::wcout << std::wstring(context->stack->frames.size() , L'-') << printer.print(instruction) << std::endl;
+//        std::wcout << std::wstring(context->stack->frames.size() , L'-') << printer.print(instruction) << std::endl;
         switch(instruction.opcode) {
             case OP_ICONST:
                 context->stack->push(instruction.value);

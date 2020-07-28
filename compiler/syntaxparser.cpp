@@ -448,6 +448,16 @@ Node::Pointer SyntaxParser::tryParsePostfixExpr() {
         }
     }
     
+    Node::Pointer subscriptExpr = tryParseSubscriptExpr();
+    if(subscriptExpr != nullptr) {
+        auto postfixOperator = tryParsePostfixOperatorExpr();
+        if(postfixOperator == nullptr) {
+            result = subscriptExpr;
+        } else {
+            result = std::make_shared<PostfixExpr>(subscriptExpr, postfixOperator);
+        }
+    }
+    
     if(result == nullptr) {
         std::shared_ptr<Node> primaryExpr = tryParsePrimaryExpr();
         if(primaryExpr != nullptr) {
@@ -496,6 +506,7 @@ std::shared_ptr<Node> SyntaxParser::tryParseFuncCallExpr() {
             
             auto arguCall = tryParseArguCallExpr();
             if(arguCall == nullptr) {
+                Diagnostics::reportError(L"[Error]");
                 return nullptr; //TODO: Report a grammar error
             }
             
@@ -503,13 +514,53 @@ std::shared_ptr<Node> SyntaxParser::tryParseFuncCallExpr() {
         }
     }
     
-    
     if(tryEat(TokenKind::punctuation, Punctuations::CLOSE_ROUND_BRACKET) == nullptr) {
         return nullptr; // TODO: report an grammar error
     }
     
+    return std::make_shared<FuncCallExpr>(identifier, arguments);
+}
+
+Node::Pointer SyntaxParser::tryParseSubscriptExpr() {
+    std::vector<std::shared_ptr<Token>>::const_iterator mark = iterator;
+    auto identifier = tryParseIdentifierExpr();
+    if(identifier == nullptr) {
+        return nullptr;
+    }
     
-    return std::shared_ptr<Node>(new FuncCallExpr(identifier, arguments));
+    int loop = 0;
+    
+    std::vector<Node::Pointer> exprs;
+    while (true) {
+        if(tryEat(TokenKind::punctuation, Punctuations::OPEN_SQUARE_BRACKET) == nullptr) {
+            if(loop == 0) {
+                iterator = mark;
+                return nullptr;
+            }
+            break;
+        }
+        
+        auto expr = tryParseExpr();
+        if(expr == nullptr) {
+            Diagnostics::reportError(L"[Error] in array access");
+            return nullptr;
+        }
+        exprs.push_back(expr);
+        
+        if(tryEat(punctuation, Punctuations::CLOSE_SQUARE_BRACKET) == nullptr) {
+            Diagnostics::reportError(L"[Error] in array access");
+            return nullptr;
+        }
+        
+        loop ++;
+    }
+    
+    if( loop == 0 ) {
+        Diagnostics::reportError(L"[Error] in array access");
+        return nullptr;
+    }
+    return std::make_shared<SubscriptExpr>(identifier, exprs);
+    
 }
 
 ArguCallExpr::Pointer SyntaxParser::tryParseArguCallExpr() {

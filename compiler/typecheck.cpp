@@ -93,6 +93,11 @@ void TypeChecker::verify(Node::Pointer node) {
         case returnStatement:
             verify(std::static_pointer_cast<ReturnStatement>(node));
             break;
+        case subscriptExpr:
+            verify(std::static_pointer_cast<SubscriptExpr>(node));
+            break;
+        default:
+            assert(false);
     }
 }
 
@@ -459,6 +464,14 @@ void TypeChecker::verify(MemberAccessExpr::Pointer node) {
     context->leave(symtable);
 }
 
+void TypeChecker::verify(SubscriptExpr::Pointer node) {
+    verify(node->identifier);
+    
+    for(auto expr: node->exprs) {
+        verify(expr);
+    }
+}
+
 JrType::Pointer TypeChecker::typeOf(Node::Pointer node) {
     switch (node->kind) {
         case identifierExpr:
@@ -481,6 +494,8 @@ JrType::Pointer TypeChecker::typeOf(Node::Pointer node) {
             return typeOf(std::static_pointer_cast<ArrayLiteralExpr>(node));
         case memberAccessExpr:
             return typeOf(std::static_pointer_cast<MemberAccessExpr>(node));
+        case subscriptExpr:
+            return typeOf(std::static_pointer_cast<SubscriptExpr>(node));
         default:
             assert(false);
     }
@@ -590,6 +605,10 @@ JrType::Pointer TypeChecker::typeOf(ArrayLiteralExpr::Pointer node) {
 
 JrType::Pointer TypeChecker::typeOf(MemberAccessExpr::Pointer node) {
     return typeOf(node->member);
+}
+
+JrType::Pointer TypeChecker::typeOf(SubscriptExpr::Pointer node) {
+    return typeOf(node->identifier);
 }
 
 void TypeChecker::verifyReturnStatement(SourceBlock::Pointer node) {

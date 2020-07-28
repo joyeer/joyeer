@@ -39,6 +39,7 @@ enum SyntaxKind {
     arguCallExpr,
     functionCallExpr,
     memberAccessExpr,
+    subscriptExpr,
   
     literalExpr,
     arrayLiteralExpr,
@@ -285,9 +286,10 @@ struct SelfExpr: Node {
 struct SubscriptExpr: Node {
     typedef std::shared_ptr<SubscriptExpr> Pointer;
     
-    Expr::Pointer expr;
+    IdentifierExpr::Pointer identifier;
+    std::vector<Node::Pointer> exprs;
     
-    SubscriptExpr(Expr::Pointer expr);
+    SubscriptExpr(IdentifierExpr::Pointer identifier, std::vector<Node::Pointer> exprs);
 };
 
 struct SourceBlock: Node {
