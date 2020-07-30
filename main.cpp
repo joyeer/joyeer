@@ -8,7 +8,6 @@
 #include "compiler/typecheck.h"
 #include "compiler/IRGen.h"
 #include "compiler/diagnostic.h"
-
 #include "runtime/interpreter.h"
 #include "runtime/buildin.h"
 #include "compiler/context.h"

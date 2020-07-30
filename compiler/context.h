@@ -8,14 +8,6 @@
 #include <vector>
 #include <unordered_map>
 
-enum ScopeFlag {
-    globalScope,
-    sourceScope,
-    classScope,
-    funcScope,
-    codeBlockScope,
-};
-
 enum CompileStage {
     visitSourceBlock,
     visitCodeBlock,
@@ -37,12 +29,8 @@ public:
     
     CompileContext();
     
-    // initialize an new scope, e.g. when parsing an function/class, we will initialize an scope,
-    // basically, an scope is a Symtable
-    void initializeScope(ScopeFlag flag);
-    
-    // complete an scope
-    void finalizeScope(ScopeFlag flag);
+    void initializeSymTable();
+    void finalizeSymTable();
     
     void visit(CompileStage stage, std::function<void(void)> visit);
     
@@ -80,7 +68,8 @@ protected:
     
 protected:
     std::vector<SymbolTable::Pointer> symbols;
-    std::vector<ScopeFlag> scopes;
+    
+    // Copmpiling stage
     std::vector<CompileStage> stages;
     
     // parsing function stacks

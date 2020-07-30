@@ -95,7 +95,7 @@ SourceBlock::Pointer Binder::bind(SourceBlock::Pointer sourceBlock) {
     });
     
     sourceBlock->symbol = symbol;
-    context->initializeScope(ScopeFlag::sourceScope);
+    context->initializeSymTable();
     sourceBlock->symtable = context->curSymTable();
     
     context->visit(visitSourceBlock, [sourceBlock, this]() {
@@ -107,7 +107,7 @@ SourceBlock::Pointer Binder::bind(SourceBlock::Pointer sourceBlock) {
     });
     
     
-    context->finalizeScope(ScopeFlag::sourceScope);
+    context->finalizeSymTable();
     
     return sourceBlock;
 }
@@ -142,7 +142,7 @@ Node::Pointer Binder::bind(FuncDecl::Pointer decl) {
         classType->virtualFunctions.push_back(function->addressOfFunc);
     }
     
-    context->initializeScope(ScopeFlag::funcScope);
+    context->initializeSymTable();
     // visit func decleration
     context->visit(visitFuncDecl, [this, decl]() {
         
@@ -166,7 +166,7 @@ Node::Pointer Binder::bind(FuncDecl::Pointer decl) {
     // Start to Bind sub
     decl->symtable = context->curSymTable();
     
-    context->finalizeScope(ScopeFlag::funcScope);
+    context->finalizeSymTable();
     
     return decl;
 }
@@ -192,7 +192,7 @@ Node::Pointer Binder::bind(ConstructorDecl::Pointer decl) {
     symtable->insert(symbol);
     decl->symbol = symbol;
     
-    context->initializeScope(ScopeFlag::funcScope);
+    context->initializeSymTable();
     // visit func decleration
     context->visit(visitFuncDecl, [this, decl]() {
         
@@ -207,7 +207,7 @@ Node::Pointer Binder::bind(ConstructorDecl::Pointer decl) {
     // Start to Bind sub
     decl->symtable = context->curSymTable();
     
-    context->finalizeScope(ScopeFlag::funcScope);
+    context->finalizeSymTable();
     
     return decl;
 
@@ -238,7 +238,7 @@ Node::Pointer Binder::bind(ClassDecl::Pointer decl) {
     symbol->addressOfType = objectType->addressOfType;
     decl->symbol = symbol;
     
-    context->initializeScope(classScope);
+    context->initializeSymTable();
     decl->symtable = context->curSymTable();
     context->entry(objectType);
     bool hasCustomizedConstructor = false;
@@ -280,7 +280,7 @@ Node::Pointer Binder::bind(ClassDecl::Pointer decl) {
     // assocated type with type's symbol 
     context->associate(objectType, context->curSymTable());
     context->leave(objectType);
-    context->finalizeScope(classScope);
+    context->finalizeSymTable();
     
     return decl;
 }
@@ -551,7 +551,7 @@ Node::Pointer Binder::bind(IfStatement::Pointer decl) {
 
 Node::Pointer Binder::bind(CodeBlock::Pointer decl) {
     
-    context->initializeScope(ScopeFlag::codeBlockScope);
+    context->initializeSymTable();
     auto table = context->curSymTable();
     decl->symtable = table;
     
@@ -564,7 +564,7 @@ Node::Pointer Binder::bind(CodeBlock::Pointer decl) {
         decl->statements = statements;
     });
     
-    context->finalizeScope(codeBlockScope);
+    context->finalizeSymTable();
     
     return decl;
 }

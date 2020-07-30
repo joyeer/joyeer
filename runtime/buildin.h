@@ -19,6 +19,9 @@ struct Global {
     // global strings
     static std::vector<std::wstring> strings;
     
+    // global variables;
+    static std::vector<JrVar::Pointer> variables;
+    
     /// register an new function in global function table
     static void registerFunction(JrFunction::Pointer func);
     

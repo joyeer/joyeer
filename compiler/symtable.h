@@ -34,6 +34,12 @@ enum SymbolFlag {
 };
 
 
+enum SymbolScope: int8_t {
+    globalScope     =   1,
+    classScope      =   1 << 1,
+    functionScope   =   1 << 2,
+};
+
 struct Symbol {
     typedef std::shared_ptr<Symbol> Pointer;
 public:

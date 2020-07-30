@@ -54,9 +54,11 @@ struct Node {
     SyntaxKind kind;
 
     Symbol::Pointer symbol;
+    SymbolTable::Pointer symtable;
     JrType::Pointer type;
     
     virtual std::wstring getName();
+    
 protected:
     Node(SyntaxKind kind);
 
@@ -126,8 +128,6 @@ struct ClassDecl: Node {
     Token::Pointer name;
     std::vector<Node::Pointer> members;
     
-    SymbolTable::Pointer symtable;
-    
     ClassDecl(Token::Pointer name, std::vector<Node::Pointer> members);
     
     std::wstring getName();
@@ -151,9 +151,6 @@ struct FuncDecl: Node {
     
     JrType::Pointer ownerType = nullptr;
     
-    // Additional information
-    SymbolTable::Pointer symtable;
-    
     FuncDecl(Node::Pointer identifier, Node::Pointer parameterClause, Node::Pointer returnType, Node::Pointer codeBlock);
     
     const std::wstring getFuncName();
@@ -164,8 +161,6 @@ struct ConstructorDecl: Node {
     
     Node::Pointer parameterClause;
     Node::Pointer codeBlock;
-    
-    SymbolTable::Pointer symtable;
     
     ConstructorDecl(Node::Pointer parameterClause, Node::Pointer codeBlock);
     
@@ -299,8 +294,7 @@ struct SourceBlock: Node {
     std::vector<Node::Pointer> statements;
     
     std::wstring filename;
-    SymbolTable::Pointer symtable; // source symbol
-    
+
     SourceBlock(std::vector<Node::Pointer> statements);
 };
 
@@ -309,7 +303,6 @@ struct CodeBlock: Node {
     
     std::vector<Node::Pointer> statements;
 
-    SymbolTable::Pointer symtable;
     CodeBlock(std::vector<Node::Pointer> statements);
 
 };

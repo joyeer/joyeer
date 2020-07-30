@@ -7,23 +7,16 @@
 
 
 CompileContext::CompileContext() {
-    initializeScope(globalScope);
+    initializeSymTable();
     initializeGlobalScope();
 }
 
-void CompileContext::initializeScope(ScopeFlag flag) {
-    assert(scopes.size() == symbols.size());
+void CompileContext::initializeSymTable() {
     SymbolTable::Pointer symtable = std::make_shared<SymbolTable>();
-    
-    scopes.push_back(flag);
     symbols.push_back(symtable);
 }
 
-void CompileContext::finalizeScope(ScopeFlag flag) {
-    assert(scopes.size() == symbols.size());
-    
-    assert(scopes.back() == flag);
-    scopes.pop_back();
+void CompileContext::finalizeSymTable() {
     symbols.pop_back();
 }
 
