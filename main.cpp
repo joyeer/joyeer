@@ -30,6 +30,10 @@ int main(int argc, char** argv) {
     SyntaxParser syntaxParser(parser.tokens);
     SourceBlock::Pointer sourceBlock = syntaxParser.parse();
     
+    NodeDebugPrinter syntaxDebugger(L"asm.parser.txt");
+    syntaxDebugger.print(sourceBlock);
+    syntaxDebugger.close();
+    
     auto compileContext = std::make_shared<CompileContext>();
     
     Binder binder(compileContext);

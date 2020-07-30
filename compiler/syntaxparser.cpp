@@ -1,6 +1,6 @@
 #include "syntaxparser.h"
 #include "diagnostic.h"
-
+#include <cassert>
 
 SyntaxParser::SyntaxParser(const std::vector<std::shared_ptr<Token>> &tokens) : tokens(tokens)
 {
@@ -13,6 +13,7 @@ SourceBlock::Pointer SyntaxParser::parse() {
     while(iterator != endIterator) {
         std::shared_ptr<Node> decl = tryParseStatement();
         if(decl == nullptr) {
+            Diagnostics::reportError(L"[Error]");
             return nullptr; // TODO: report an grammar error;
         }
 
@@ -435,60 +436,73 @@ std::shared_ptr<Node> SyntaxParser::tryParsePrefixExpr() {
     }
 }
 
-Node::Pointer SyntaxParser::tryParsePostfixExpr() {
-    std::shared_ptr<Node> result = nullptr;
+Node::Pointer SyntaxParser::tryParsePostfixExpr(Node::Pointer postfixExpr) {
+    Node::Pointer result = postfixExpr;
     
-    std::shared_ptr<Node> funcCallExpr = tryParseFuncCallExpr();
+    if(postfixExpr == nullptr) {
+        auto primaryExpr = tryParsePrimaryExpr();
+        if(primaryExpr == nullptr) {
+            return postfixExpr;
+        }
+        auto postfixOperator = tryParsePostfixOperatorExpr();
+        if(postfixOperator == nullptr) {
+            result = primaryExpr;
+        } else {
+            result = std::make_shared<PostfixExpr>(primaryExpr, postfixOperator);
+        }
+    }
+    
+    auto funcCallExpr = tryParseFuncCallExpr(result);
     if(funcCallExpr != nullptr) {
-        auto postfixOperator = tryParsePostfixOperatorExpr();
-        if(postfixOperator == nullptr) {
-            result = funcCallExpr;
-        } else {
-            result = std::shared_ptr<Node>(new PostfixExpr(funcCallExpr, postfixOperator));
-        }
+        auto expr = tryParsePostfixExprWithPostfixOperator(funcCallExpr);
+        return tryParsePostfixExpr(expr);
     }
     
-    Node::Pointer subscriptExpr = tryParseSubscriptExpr();
+    auto subscriptExpr = tryParseSubscriptExpr(result);
     if(subscriptExpr != nullptr) {
-        auto postfixOperator = tryParsePostfixOperatorExpr();
-        if(postfixOperator == nullptr) {
-            result = subscriptExpr;
-        } else {
-            result = std::make_shared<PostfixExpr>(subscriptExpr, postfixOperator);
-        }
+        auto expr = tryParsePostfixExprWithPostfixOperator(subscriptExpr);
+        return tryParsePostfixExpr(expr);
     }
     
-    if(result == nullptr) {
-        std::shared_ptr<Node> primaryExpr = tryParsePrimaryExpr();
-        if(primaryExpr != nullptr) {
-            auto postfixOperator = tryParsePostfixOperatorExpr();
-            if(postfixOperator == nullptr) {
-                result = primaryExpr;
-            } else {
-                result = std::make_shared<PostfixExpr>(primaryExpr, postfixOperator);
-            }
-        }
-    }
-    
-    if(result != nullptr) {
-        if (tryEat(TokenKind::punctuation, Punctuations::DOT) != nullptr) {
-            std::shared_ptr<Node> expr = tryParsePostfixExpr();
-            if(expr == nullptr) {
-                return nullptr; // TODO: Report a grammar;
-            }
-            result = std::shared_ptr<Node>(new MemberAccessExpr(result, expr));
-        }
+    auto memberAccessExpr = tryParseMemberAccessExpr(result);
+    if(memberAccessExpr != nullptr) {
+        auto expr = tryParsePostfixExprWithPostfixOperator(memberAccessExpr);
+        return tryParsePostfixExpr(expr);
     }
     
     return result;
 }
 
-std::shared_ptr<Node> SyntaxParser::tryParseFuncCallExpr() {
-    std::vector<std::shared_ptr<Token>>::const_iterator mark = iterator;
-    auto identifier = tryParseIdentifierExpr();
-    if(identifier == nullptr) {
+Node::Pointer SyntaxParser::tryParsePostfixExprWithPostfixOperator(Node::Pointer postfixExpr) {
+    assert(postfixExpr != nullptr);
+    auto postfixOperator = tryParsePostfixOperatorExpr();
+    if(postfixOperator == nullptr) {
+        return postfixExpr;
+    } else {
+        return std::make_shared<PostfixExpr>(postfixExpr, postfixOperator);
+    }
+}
+
+Node::Pointer SyntaxParser::tryParseMemberAccessExpr(Node::Pointer postfixExpr) {
+    assert(postfixExpr != nullptr);
+    
+    if(tryEat(TokenKind::punctuation, Punctuations::DOT) == nullptr) {
         return nullptr;
     }
+    
+    auto identifierExpr = tryParseIdentifierExpr();
+    if(identifierExpr == nullptr) {
+        Diagnostics::reportError(L"[Error]");
+        return nullptr;
+    }
+    
+    return std::make_shared<MemberAccessExpr>(postfixExpr, identifierExpr);
+}
+
+Node::Pointer SyntaxParser::tryParseFuncCallExpr(Node::Pointer postfixExpr) {
+    std::vector<std::shared_ptr<Token>>::const_iterator mark = iterator;
+    
+    auto identifier = postfixExpr;
     
     if(tryEat(TokenKind::punctuation, Punctuations::OPEN_ROUND_BRACKET) == nullptr) {
         iterator = mark;
@@ -521,45 +535,25 @@ std::shared_ptr<Node> SyntaxParser::tryParseFuncCallExpr() {
     return std::make_shared<FuncCallExpr>(identifier, arguments);
 }
 
-Node::Pointer SyntaxParser::tryParseSubscriptExpr() {
-    std::vector<std::shared_ptr<Token>>::const_iterator mark = iterator;
-    auto identifier = tryParseIdentifierExpr();
-    if(identifier == nullptr) {
+Node::Pointer SyntaxParser::tryParseSubscriptExpr(Node::Pointer postfixExpr) {
+    assert(postfixExpr != nullptr);
+
+    
+    if(tryEat(TokenKind::punctuation, Punctuations::OPEN_SQUARE_BRACKET) == nullptr) {
         return nullptr;
     }
-    
-    int loop = 0;
-    
-    std::vector<Node::Pointer> exprs;
-    while (true) {
-        if(tryEat(TokenKind::punctuation, Punctuations::OPEN_SQUARE_BRACKET) == nullptr) {
-            if(loop == 0) {
-                iterator = mark;
-                return nullptr;
-            }
-            break;
-        }
-        
-        auto expr = tryParseExpr();
-        if(expr == nullptr) {
-            Diagnostics::reportError(L"[Error] in array access");
-            return nullptr;
-        }
-        exprs.push_back(expr);
-        
-        if(tryEat(punctuation, Punctuations::CLOSE_SQUARE_BRACKET) == nullptr) {
-            Diagnostics::reportError(L"[Error] in array access");
-            return nullptr;
-        }
-        
-        loop ++;
-    }
-    
-    if( loop == 0 ) {
+    auto expr = tryParseExpr();
+    if(expr == nullptr) {
         Diagnostics::reportError(L"[Error] in array access");
         return nullptr;
     }
-    return std::make_shared<SubscriptExpr>(identifier, exprs);
+    
+    if(tryEat(punctuation, Punctuations::CLOSE_SQUARE_BRACKET) == nullptr) {
+        Diagnostics::reportError(L"[Error] in array access");
+        return nullptr;
+    }
+    
+    return std::make_shared<SubscriptExpr>(postfixExpr, expr);
     
 }
 
@@ -684,9 +678,6 @@ Node::Pointer SyntaxParser::tryParseParenthesizedExpr() {
     }
 
     return std::make_shared<ParenthesizedExpr>(expr);
-}
-
-void SyntaxParser::tryParseConditionalOperator() {
 }
 
 OperatorExpr::Pointer SyntaxParser::tryParseOperatorExpr() {

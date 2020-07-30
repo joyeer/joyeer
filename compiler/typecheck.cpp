@@ -466,10 +466,8 @@ void TypeChecker::verify(MemberAccessExpr::Pointer node) {
 
 void TypeChecker::verify(SubscriptExpr::Pointer node) {
     verify(node->identifier);
+    verify(node->indexExpr);
     
-    for(auto expr: node->exprs) {
-        verify(expr);
-    }
 }
 
 JrType::Pointer TypeChecker::typeOf(Node::Pointer node) {

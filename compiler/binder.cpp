@@ -620,12 +620,8 @@ Node::Pointer Binder::bind(MemberAccessExpr::Pointer decl) {
 }
 
 Node::Pointer Binder::bind(SubscriptExpr::Pointer decl) {
-    decl->identifier = std::static_pointer_cast<IdentifierExpr>(bind(decl->identifier));
-    std::vector<Node::Pointer> exprs;
-    for(auto expr: decl->exprs) {
-        exprs.push_back(bind(expr));
-    }
-    decl->exprs = exprs;
+    decl->identifier = bind(decl->identifier);
+    decl->indexExpr = bind(decl->indexExpr);
     
     return decl;
 }

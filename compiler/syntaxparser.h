@@ -36,15 +36,10 @@ private:
     ////////////////////////////////////////////////////////////////////////////
 
     Node::Pointer tryParseCodeBlock();
-
     Node::Pointer tryParseStatement();
-
     Node::Pointer tryParseLoopStatement();
-
     Node::Pointer tryParseBranchStatement();
-
     Node::Pointer tryParseIfStatement();
-    
     Node::Pointer tryParseReturnStatement();
 
     ////////////////////////////////////////////////////////////////////////////
@@ -69,14 +64,16 @@ private:
     // postfix-expression -> postfix-expression postfix-operator
     // postfix-expression -> function-call-expression
     // postfix-expression -> subscript-expression
-    Node::Pointer tryParsePostfixExpr();
-    
-    // try parse 
-    Node::Pointer tryParseSubscriptExpr();
+    Node::Pointer tryParsePostfixExpr(Node::Pointer postfixExpr = nullptr);
+    // accept an PostfixExpr and try parse postfix-operator , and return the PostfixExpr;
+    Node::Pointer tryParsePostfixExprWithPostfixOperator(Node::Pointer postfixExpr);
+    // try parse subscript expr
+    Node::Pointer tryParseSubscriptExpr(Node::Pointer postfixExpr);
     
     ArguCallExpr::Pointer tryParseArguCallExpr();
     
-    Node::Pointer tryParseFuncCallExpr();
+    Node::Pointer tryParseFuncCallExpr(Node::Pointer postfixExpr);
+    Node::Pointer tryParseMemberAccessExpr(Node::Pointer postfixExpr);
 
     Node::Pointer tryParseBinaryExpr();
 
@@ -99,11 +96,8 @@ private:
 
     // parenthesized-expression -> `(` expression `)`
     Node::Pointer tryParseParenthesizedExpr();
-
-    void tryParseConditionalOperator();
     
     OperatorExpr::Pointer tryParseOperatorExpr();
-    
     OperatorExpr::Pointer tryParsePostfixOperatorExpr();
     
     // literal -> numeric-literal | string-literal | boolean-literal | nil-literal

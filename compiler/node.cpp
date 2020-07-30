@@ -3,9 +3,13 @@
 #include <iomanip>
 #include <sstream>
 #include <filesystem>
-
+#include <cassert>
 
 Node::Node(SyntaxKind k): kind(k) {
+}
+
+std::wstring Node::getName() {
+    return L"";
 }
 
 OperatorExpr::OperatorExpr(Token::Pointer token):
@@ -32,7 +36,7 @@ name(name),
 members(members) {
 }
 
-const std::wstring ClassDecl::getName() {
+std::wstring ClassDecl::getName() {
     return name->rawValue;
 }
 
@@ -135,9 +139,9 @@ label(identifier),
 expr(expr) {
 }
 
-FuncCallExpr::FuncCallExpr(IdentifierExpr::Pointer identifier, std::vector<ArguCallExpr::Pointer> arguments):
+FuncCallExpr::FuncCallExpr(Node::Pointer expr, std::vector<ArguCallExpr::Pointer> arguments):
 Node(SyntaxKind::functionCallExpr),
-identifier(identifier),
+identifier(expr),
 arguments(arguments) {
 }
 
@@ -177,7 +181,7 @@ Node(SyntaxKind::identifierExpr),
 token(token) {
 }
 
-const std::wstring& IdentifierExpr::getName() {
+std::wstring IdentifierExpr::getName() {
     return token->rawValue;
 }
 
@@ -191,10 +195,10 @@ Node(SyntaxKind::selfExpr),
 identifier(identifier) {
 }
 
-SubscriptExpr::SubscriptExpr(IdentifierExpr::Pointer identifier, std::vector<Node::Pointer> exprs):
+SubscriptExpr::SubscriptExpr(Node::Pointer identifier, Node::Pointer indexExpr):
 Node(subscriptExpr),
 identifier(identifier),
-exprs(exprs) { 
+indexExpr(indexExpr) {
 }
 
 TypeDecl::TypeDecl(IdentifierExpr::Pointer identifier, bool isOptional):
@@ -240,6 +244,9 @@ NodeDebugPrinter::NodeDebugPrinter(const std::wstring filename) {
 }
 
 void NodeDebugPrinter::print(SymbolTable::Pointer symtable) {
+    if(symtable == nullptr) {
+        return;
+    }
     output << std::endl;
     printTab();
     output << L"#symbol {" << std::endl;
@@ -542,6 +549,18 @@ void NodeDebugPrinter::print(Node::Pointer node) {
             decTab();
         }
             break;
+        case subscriptExpr: {
+            auto n = std::static_pointer_cast<SubscriptExpr>(node);
+            output << L"+subscriptExpr";
+            incTab();
+            print(n->identifier);
+            print(n->indexExpr);
+            decTab();
+            
+        }
+            break;
+        default:
+            assert(false);
     }
 }
 

@@ -56,6 +56,7 @@ struct Node {
     Symbol::Pointer symbol;
     JrType::Pointer type;
     
+    virtual std::wstring getName();
 protected:
     Node(SyntaxKind kind);
 
@@ -69,7 +70,7 @@ struct IdentifierExpr: public Node {
     IdentifierExpr(Token::Pointer token);
     
     // Return identifier's name
-    const std::wstring& getName();
+    virtual std::wstring getName();
 };
 
 struct OperatorExpr: Node {
@@ -129,7 +130,7 @@ struct ClassDecl: Node {
     
     ClassDecl(Token::Pointer name, std::vector<Node::Pointer> members);
     
-    const std::wstring getName();
+    std::wstring getName();
 };
 
 struct ParameterClause: Node {
@@ -234,12 +235,12 @@ struct ArguCallExpr: Node {
 struct FuncCallExpr: Node {
     typedef std::shared_ptr<FuncCallExpr> Pointer;
     
-    IdentifierExpr::Pointer identifier;
+    Node::Pointer identifier;
     std::vector<ArguCallExpr::Pointer> arguments;
     
     JrType::Pointer ownerType = nullptr;
     
-    FuncCallExpr(IdentifierExpr::Pointer identifier, std::vector<ArguCallExpr::Pointer> arguments);
+    FuncCallExpr(Node::Pointer expr, std::vector<ArguCallExpr::Pointer> arguments);
     
     std::wstring getFunctionName();
 };
@@ -247,10 +248,10 @@ struct FuncCallExpr: Node {
 struct MemberAccessExpr: Node {
     typedef std::shared_ptr<MemberAccessExpr> Pointer;
     
-    std::shared_ptr<Node> parent;
-    std::shared_ptr<Node> member;
+    Node::Pointer parent;
+    Node::Pointer member;
     
-    MemberAccessExpr(std::shared_ptr<Node> parent, std::shared_ptr<Node> member);
+    MemberAccessExpr(Node::Pointer parent, Node::Pointer member);
 };
 
 struct LiteralExpr : Node {
@@ -286,10 +287,10 @@ struct SelfExpr: Node {
 struct SubscriptExpr: Node {
     typedef std::shared_ptr<SubscriptExpr> Pointer;
     
-    IdentifierExpr::Pointer identifier;
-    std::vector<Node::Pointer> exprs;
+    Node::Pointer identifier;
+    Node::Pointer indexExpr;
     
-    SubscriptExpr(IdentifierExpr::Pointer identifier, std::vector<Node::Pointer> exprs);
+    SubscriptExpr(Node::Pointer identifier, Node::Pointer indexExpr);
 };
 
 struct SourceBlock: Node {
