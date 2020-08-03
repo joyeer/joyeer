@@ -249,7 +249,7 @@ void NodeDebugPrinter::print(SymbolTable::Pointer symtable) {
     }
     output << std::endl;
     printTab();
-    output << L"#symbol {" << std::endl;
+    output << L"#symtable {" << std::endl;
     incTab();
     for(auto symbol: symtable->symbols) {
         printTab();
@@ -258,7 +258,15 @@ void NodeDebugPrinter::print(SymbolTable::Pointer symtable) {
     decTab();
     printTab();
     output << L"}";
-    
+}
+
+void NodeDebugPrinter::print(Symbol::Pointer symbol) {
+    if(symbol == nullptr) {
+        return;
+    }
+    output << std::endl;
+    printTab();
+    output << L"@symbol-> name:\""<< symbol->name <<L"\", flag:" << symbol->flag << L", mutable:" << symbol->isMutable;
 }
 
 void NodeDebugPrinter::print(std::vector<Node::Pointer> nodes) {
@@ -290,10 +298,12 @@ void NodeDebugPrinter::print(Node::Pointer node) {
     
     switch (node->kind) {
         case sourceBlock: {
-            output << L"+sourceBLock" ;
+            
             auto n = std::static_pointer_cast<SourceBlock>(node);
+            output << L"+sourceBLock(filename: \"" << n->filename << L"\")" ;
             incTab();
             print(n->symtable);
+            print(n->symbol);
             for(auto statement: n->statements) {
                 print(statement);
             }
@@ -304,6 +314,8 @@ void NodeDebugPrinter::print(Node::Pointer node) {
             output << L"+type" ;
             auto n = std::static_pointer_cast<TypeDecl>(node);
             incTab();
+            print(n->symtable);
+            print(n->symbol);
             print(n->identifier);
             decTab();
         }
@@ -318,6 +330,8 @@ void NodeDebugPrinter::print(Node::Pointer node) {
             output << L"+pattern" ;
             auto n = std::static_pointer_cast<Pattern>(node);
             incTab();
+            print(n->symtable);
+            print(n->symbol);
             print(n->identifier);
             if(n->typeDecl != nullptr) {
                 print(n->typeDecl);
@@ -332,6 +346,8 @@ void NodeDebugPrinter::print(Node::Pointer node) {
             output << L"+constantDecl" ;
             auto n = std::static_pointer_cast<LetDecl>(node);
             incTab();
+            print(n->symtable);
+            print(n->symbol);
             print(n->pattern);
             print(n->initializer);
             decTab();
@@ -342,6 +358,8 @@ void NodeDebugPrinter::print(Node::Pointer node) {
             output << L"+varDecl" ;
             auto n = std::static_pointer_cast<VarDecl>(node);
             incTab();
+            print(n->symtable);
+            print(n->symbol);
             print(n->pattern);
             print(n->initializer);
             decTab();
@@ -352,6 +370,7 @@ void NodeDebugPrinter::print(Node::Pointer node) {
             auto n = std::static_pointer_cast<FuncDecl>(node);
             incTab();
             print(n->symtable);
+            print(n->symbol);
             print(n->identifier);
             print(n->parameterClause);
             print(n->returnType);
@@ -364,6 +383,7 @@ void NodeDebugPrinter::print(Node::Pointer node) {
             auto n = std::static_pointer_cast<ConstructorDecl>(node);
             incTab();
             print(n->symtable);
+            print(n->symbol);
             print(n->parameterClause);
             print(n->codeBlock);
             decTab();
@@ -374,6 +394,7 @@ void NodeDebugPrinter::print(Node::Pointer node) {
             auto members = std::static_pointer_cast<ClassDecl>(node);
             incTab();
             print(members->symtable);
+            print(members->symbol);
             print(members->members);
             decTab();
         }
@@ -382,6 +403,8 @@ void NodeDebugPrinter::print(Node::Pointer node) {
             output << L"+parameterClause" ;
             auto n = std::static_pointer_cast<ParameterClause>(node);
             incTab();
+            print(n->symtable);
+            print(n->symbol);
             std::vector<Node::Pointer> parameters;
             for(auto p: n->parameters) {
                 parameters.push_back(p);
@@ -395,6 +418,7 @@ void NodeDebugPrinter::print(Node::Pointer node) {
             output << L"+codeBlock" ;
             incTab();
             print(n->symtable);
+            print(n->symbol);
             print(n->statements);
             decTab();
         }
@@ -406,6 +430,8 @@ void NodeDebugPrinter::print(Node::Pointer node) {
             auto n = std::static_pointer_cast<IfStatement>(node);
             output << L"+ifStatement" ;
             incTab();
+            print(n->symtable);
+            print(n->symbol);
             print(n->condition);
             print(n->ifCodeBlock);
             print(n->elseCodeBlock);
@@ -416,6 +442,8 @@ void NodeDebugPrinter::print(Node::Pointer node) {
             output << L"+expr" ;
             auto n = std::static_pointer_cast<Expr>(node);
             incTab();
+            print(n->symtable);
+            print(n->symbol);
             if(n->prefix != nullptr) {
                 print(n->prefix);
             }
@@ -435,6 +463,8 @@ void NodeDebugPrinter::print(Node::Pointer node) {
             output << L"+postfixExpr" ;
             auto n = std::static_pointer_cast<PostfixExpr>(node);
             incTab();
+            print(n->symtable);
+            print(n->symbol);
             print(n->expr);
             print(n->op);
             decTab();
@@ -444,6 +474,8 @@ void NodeDebugPrinter::print(Node::Pointer node) {
             output << L"+prefixExpr" ;
             auto n = std::static_pointer_cast<PrefixExpr>(node);
             incTab();
+            print(n->symtable);
+            print(n->symbol);
             if(n->op != nullptr) {
                 print(n->op);
             }
@@ -456,13 +488,18 @@ void NodeDebugPrinter::print(Node::Pointer node) {
         case identifierExpr: {
             auto n = std::static_pointer_cast<IdentifierExpr>(node);
             output << L"+identifierExpr(" << n->token->rawValue << ")"; ;
-            
+            incTab();
+            print(n->symtable);
+            print(n->symbol);
+            decTab();
         }
             break;
         case parenthesizedExpr: {
             auto n = std::static_pointer_cast<ParenthesizedExpr>(node);
             output << L"+parenthesizedExpr" ;
             incTab();
+            print(n->symtable);
+            print(n->symbol);
             print(n->expr);
             decTab();
         }
@@ -471,6 +508,8 @@ void NodeDebugPrinter::print(Node::Pointer node) {
             output << L"+arguCallExpr" ;
             auto n = std::static_pointer_cast<ArguCallExpr>(node);
             incTab();
+            print(n->symtable);
+            print(n->symbol);
             print(n->label);
             print(n->expr);
             decTab();
@@ -480,6 +519,8 @@ void NodeDebugPrinter::print(Node::Pointer node) {
             output << L"+functionCallExpr" ;
             auto n = std::static_pointer_cast<FuncCallExpr>(node);
             incTab();
+            print(n->symtable);
+            print(n->symbol);
             print(n->identifier);
             for(auto argu: n->arguments) {
                 print(argu);
@@ -491,6 +532,8 @@ void NodeDebugPrinter::print(Node::Pointer node) {
             auto n = std::static_pointer_cast<MemberAccessExpr>(node);
             output << L"+memberExpr" ;
             incTab();
+            print(n->symtable);
+            print(n->symbol);
             print(n->parent);
             print(n->member);
             decTab();
@@ -499,12 +542,16 @@ void NodeDebugPrinter::print(Node::Pointer node) {
         case literalExpr: {
             auto n = std::static_pointer_cast<LiteralExpr>(node);
             output << L"+literalExpr(" << n->literal->rawValue << ")" ;
+            print(n->symtable);
+            print(n->symbol);
         }
             break;
         case arrayLiteralExpr: {
             output << L"+arrayLiteralExpr" ;
             auto n = std::static_pointer_cast<ArrayLiteralExpr>(node);
             incTab();
+            print(n->symtable);
+            print(n->symbol);
             print(n->items);
             decTab();
         }
@@ -516,6 +563,8 @@ void NodeDebugPrinter::print(Node::Pointer node) {
             output << L"+assignmentExpr" ;
             auto n = std::static_pointer_cast<AssignmentExpr>(node);
             incTab();
+            print(n->symtable);
+            print(n->symbol);
             print(n->left);
             print(n->expr);
             decTab();
@@ -525,8 +574,9 @@ void NodeDebugPrinter::print(Node::Pointer node) {
         case binaryExpr: {
             output << L"+binaryExpr" ;
             auto n = std::static_pointer_cast<BinaryExpr>(node);
-            
             incTab();
+            print(n->symtable);
+            print(n->symbol);
             if(n->op != nullptr) {
                 print(n->op);
             }
@@ -539,12 +589,18 @@ void NodeDebugPrinter::print(Node::Pointer node) {
         case operatorExpr: {
             auto n = std::static_pointer_cast<OperatorExpr>(node);
             output << L"+operatorExpr(" << n->token->rawValue << ")" ;
+            incTab();
+            print(n->symtable);
+            print(n->symbol);
+            decTab();
         }
             break;
         case returnStatement: {
             auto n = std::static_pointer_cast<ReturnStatement>(node);
             output << L"+returnStatement";
             incTab();
+            print(n->symtable);
+            print(n->symbol);
             print(n->expr);
             decTab();
         }
@@ -553,6 +609,8 @@ void NodeDebugPrinter::print(Node::Pointer node) {
             auto n = std::static_pointer_cast<SubscriptExpr>(node);
             output << L"+subscriptExpr";
             incTab();
+            print(n->symtable);
+            print(n->symbol);
             print(n->identifier);
             print(n->indexExpr);
             decTab();

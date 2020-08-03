@@ -33,17 +33,31 @@ enum SymbolFlag {
     
 };
 
-
 enum SymbolScope: int8_t {
     globalScope     =   1,
     classScope      =   1 << 1,
     functionScope   =   1 << 2,
+    fieldScope      =   1 << 3
+};
+
+enum SymbolKind: int8_t {
+    
+};
+
+enum AccessFlag: int8_t {
+    publicFlag      =   1,
+    protectedFlag   =   1 << 1,
+    internalFlag    =   1 << 2,
+    privateFlag     =   1 << 3
 };
 
 struct Symbol {
     typedef std::shared_ptr<Symbol> Pointer;
 public:
+    bool isMutable: 1 = true;
     SymbolFlag flag;
+    SymbolScope scope;
+    
     std::wstring name;
     
     union {

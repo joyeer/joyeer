@@ -7,7 +7,7 @@
 #include "diagnostic.h"
 #include "runtime/buildin.h"
 
-LexParser::LexParser(const std::string& filepath):
+LexParser::LexParser(const std::wstring& filepath):
 lineNumber(0) {
     open(filepath);
 }
@@ -298,7 +298,7 @@ void LexParser::parseStringLiteral() {
     tokens.push_back(stringLiteral);
 }
 
-void LexParser::open(const std::string& filename) {
+void LexParser::open(const std::wstring& filename) {
   std::wifstream wif(filename);
 
   std::wstringstream wss;

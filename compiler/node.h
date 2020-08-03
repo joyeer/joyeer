@@ -346,6 +346,7 @@ struct NodeDebugPrinter {
 protected:
     void print(std::vector<Node::Pointer> nodes);
     void print(SymbolTable::Pointer symtable);
+    void print(Symbol::Pointer symbol);
     void printTab();
     void incTab();
     void decTab();

@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include <filesystem>
 
 #include "runtime/runtime.h"
 #include "compiler/lexparser.h"
@@ -21,13 +22,14 @@ int main(int argc, char** argv) {
     
     Global::initGlobalTables();
     
-    auto filepath = std::string(argv[1]);
+    std::wstring filepath(argv[1], argv[1] + strlen(argv[1]));
     LexParser parser(filepath);
     parser.parse();
 
     
     SyntaxParser syntaxParser(parser.tokens);
     SourceBlock::Pointer sourceBlock = syntaxParser.parse();
+    sourceBlock->filename = std::filesystem::path(filepath).filename().wstring();
     
     NodeDebugPrinter syntaxDebugger(L"asm.parser.txt");
     syntaxDebugger.print(sourceBlock);

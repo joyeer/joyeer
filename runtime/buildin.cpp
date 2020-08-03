@@ -1,8 +1,7 @@
 #include "buildin.h"
 #include "runtime/sys/array.h"
 #include "runtime/sys/print.h"
-
-std::vector<JrType::Pointer> initGlobalTypeTable();
+#include "runtime/sys/module.h"
 
 std::vector<JrType::Pointer> Global::types = {};
 std::vector<std::wstring> Global::strings = {};
@@ -12,8 +11,17 @@ std::vector<JrFunction::Pointer> Global::functions = {};
 static std::unordered_map<std::wstring, JrFunction::Pointer>  funtionsMap;
 
 void Global::initGlobalTables() {
-    Global::types = initGlobalTypeTable();
 
+    // Register primary types
+    registerObjectType(JrType::Any);
+    registerObjectType(JrPrimaryType::Int);
+    registerObjectType(JrPrimaryType::Float);
+    registerObjectType(JrPrimaryType::Boolean);
+    
+    // Init Module
+    JrModule::init();
+    registerObjectType(JrModule::Type);
+    
     // Init print function
     JrFuncPrint::init();
     registerFunction(JrFuncPrint::Func);
@@ -23,32 +31,27 @@ void Global::initGlobalTables() {
     registerObjectType(JrObjectIntArray::Type);
     registerFunction(JrObjectIntArray_Append::Func);
     registerFunction(JrObjectIntArray_Size::Func);
+    
+    
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
-std::vector<JrType::Pointer> initGlobalTypeTable() {
-    auto types = std::vector<JrType::Pointer> ({
-        JrPrimaryType::Int,
-        JrPrimaryType::Float,
-        JrPrimaryType::Boolean,
-        JrType::Any
-    });
-    
-    return types;
-}
 /// functions
-
 void Global::registerFunction(JrFunction::Pointer func) {
     func->addressOfFunc = functions.size();
     functions.push_back(func);
 }
 
-void Global::registerObjectType(JrObjectType::Pointer type) {
+// Types
+void Global::registerObjectType(JrType::Pointer type) {
     type->addressOfType = types.size();
     types.push_back(type);
 }
 
+//////////////////////////////////////////////////////////////////////////////////////////////////
+// Debug printer
+//////////////////////////////////////////////////////////////////////////////////////////////////
 TypeTablePrinter::TypeTablePrinter(const std::wstring filename) {
     output.open(filename);
 }

@@ -191,11 +191,13 @@ std::shared_ptr<Node> SyntaxParser::tryParseClassDecl() {
 
     std::shared_ptr<Token> className = tryEat(TokenKind::identifier);
     if (className == nullptr ) {
-        return nullptr; // TODO: Error
+        Diagnostics::reportError(L"[Error]");
+        return nullptr;
     }
 
     if (tryEat(TokenKind::punctuation, Punctuations::OPEN_CURLY_BRACKET) == nullptr) {
-        return nullptr; // TODO: Error
+        Diagnostics::reportError(L"[Error]");
+        return nullptr;
     }
 
     std::vector<std::shared_ptr<Node>> members;
@@ -208,10 +210,11 @@ std::shared_ptr<Node> SyntaxParser::tryParseClassDecl() {
     }
     
     if (tryEat(TokenKind::punctuation, Punctuations::CLOSE_CURLY_BRACKET) == nullptr) {
-        return nullptr; // TODO: Error
+        Diagnostics::reportError(L"[Error]");
+        return nullptr;
     }
 
-    return std::shared_ptr<Node>(new ClassDecl(className, members));
+    return std::make_shared<ClassDecl>(className, members);
 }
 
 std::shared_ptr<Node> SyntaxParser::tryParseCodeBlock() {

@@ -9,12 +9,12 @@
 class LexParser {
 
 public:
-  LexParser(const std::string& filepath);
+  LexParser(const std::wstring& filepath);
   
   void parse();
 
 private:
-    void open(const std::string& filepath);
+    void open(const std::wstring& filepath);
 
     void parseStringIdentifier();
     

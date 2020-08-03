@@ -11,9 +11,10 @@ CompileContext::CompileContext() {
     initializeGlobalScope();
 }
 
-void CompileContext::initializeSymTable() {
+SymbolTable::Pointer CompileContext::initializeSymTable() {
     SymbolTable::Pointer symtable = std::make_shared<SymbolTable>();
     symbols.push_back(symtable);
+    return symtable;
 }
 
 void CompileContext::finalizeSymTable() {

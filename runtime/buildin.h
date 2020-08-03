@@ -26,7 +26,7 @@ struct Global {
     static void registerFunction(JrFunction::Pointer func);
     
     /// register an new object type in global table
-    static void registerObjectType(JrObjectType::Pointer type);
+    static void registerObjectType(JrType::Pointer type);
     
     /// initialize all global tables
     static void initGlobalTables();

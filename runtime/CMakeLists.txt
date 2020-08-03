@@ -20,6 +20,8 @@ set(SOURCES ${SOURCES}
     ${CMAKE_CURRENT_SOURCE_DIR}/sys/primary.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/sys/print.h
     ${CMAKE_CURRENT_SOURCE_DIR}/sys/print.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/sys/module.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/sys/module.cpp
 )
 
 

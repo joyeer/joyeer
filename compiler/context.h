@@ -29,11 +29,10 @@ public:
     
     CompileContext();
     
-    void initializeSymTable();
+    SymbolTable::Pointer initializeSymTable();
     void finalizeSymTable();
     
     void visit(CompileStage stage, std::function<void(void)> visit);
-    
     CompileStage curStage() const;
     
     // look up name's mapped symbol

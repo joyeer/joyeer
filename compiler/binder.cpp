@@ -1,6 +1,7 @@
 #include "binder.h"
 #include "diagnostic.h"
 #include "runtime/buildin.h"
+#include "runtime/sys/module.h"
 #include <cassert>
 
 
@@ -95,8 +96,10 @@ SourceBlock::Pointer Binder::bind(SourceBlock::Pointer sourceBlock) {
     });
     
     sourceBlock->symbol = symbol;
-    context->initializeSymTable();
-    sourceBlock->symtable = context->curSymTable();
+    sourceBlock->symtable = context->initializeSymTable();
+    
+    auto module = std::make_shared<JrModule>();
+    
     
     context->visit(visitSourceBlock, [sourceBlock, this]() {
         auto nodes = std::vector<Node::Pointer>();

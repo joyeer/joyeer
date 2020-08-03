@@ -103,6 +103,8 @@ void IRGen::emit(Node::Pointer node) {
         case returnStatement:
             emit(std::static_pointer_cast<ReturnStatement>(node));
             break;
+        default:
+            assert(false);
     }
 }
 
@@ -139,8 +141,6 @@ void IRGen::emit(FuncCallExpr::Pointer funcCallExpr) {
         });
     }
 }
-    
-    
 
 void IRGen::emit(ArguCallExpr::Pointer node) {
     emit(node->expr);
