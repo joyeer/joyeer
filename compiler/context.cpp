@@ -120,7 +120,7 @@ void CompileContext::initializeGlobalScope() {
         auto symbol = std::shared_ptr<Symbol>(new Symbol{
             .name = func->name,
             .flag = SymbolFlag::funcSymbol,
-            .index = index,
+            .addressOfFunc = index,
         });
         table->insert(symbol);
     }
@@ -130,7 +130,7 @@ void CompileContext::initializeGlobalScope() {
         auto symbol = std::shared_ptr<Symbol>(new Symbol{
             .name = type->name,
             .flag = SymbolFlag::typeSymbol,
-            .index = index
+            .addressOfType = index
         });
         table->insert(symbol);
     }

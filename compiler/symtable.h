@@ -8,28 +8,28 @@
 
 enum SymbolFlag {
     
-    declSymbol =        1,
     thisSymbol =        1 << 1,
     funcSymbol =        1 << 2,
     fieldSymbol =       1 << 3,
     constructorSymbol = 1 << 4,
     varSymbol =         1 << 5,
-    mutableSymbol =     1 << 6,
+    
     immutableSymbol =   1 << 7,
     
     // this is a type symbol
     typeSymbol =        1 << 10,
     typeUnfixedSymbol =   1 << 11,
     
+    moduleSymbol        = 1 << 12,
+    
     // delcare & variable symbol
-    mutableVarSymbol =          declSymbol | varSymbol | mutableSymbol,
-    unfixedMutableVarSymbol =   mutableVarSymbol | typeUnfixedSymbol,
-    immutableVarSymbol =        declSymbol | varSymbol | immutableSymbol,
+    unfixedMutableVarSymbol =   typeUnfixedSymbol,
+    immutableVarSymbol =        varSymbol | immutableSymbol,
     unfixedImmutableVarSymbol = immutableVarSymbol | typeUnfixedSymbol,
     
     // declare field symbols
-    mutableFieldSymbol =        declSymbol | fieldSymbol | mutableSymbol,
-    immutableFieldSymbol  =     declSymbol | fieldSymbol | immutableSymbol
+    mutableFieldSymbol =        fieldSymbol,
+    immutableFieldSymbol  =     fieldSymbol | immutableSymbol
     
 };
 
@@ -61,10 +61,10 @@ public:
     std::wstring name;
     
     union {
-        int index = -1;
-        int addressOfType;
+        // index address of type in Global::types
+        int addressOfType = -1;
+        // index address of function in Global::types
         int addressOfFunc;
-        int addressOfClass;
     };
     
     // locate the var symbol's variable position in function

@@ -59,7 +59,7 @@ Node::Pointer Binder::bind(std::shared_ptr<Node> node) {
             return bind(std::static_pointer_cast<ParenthesizedExpr>(node));
         case arguCallExpr:
             return bind(std::static_pointer_cast<ArguCallExpr>(node));
-        case functionCallExpr:
+        case funcCallExpr:
             return bind(std::static_pointer_cast<FuncCallExpr>(node));
         case memberAccessExpr:
             return bind(std::static_pointer_cast<MemberAccessExpr>(node));
@@ -85,22 +85,30 @@ Node::Pointer Binder::bind(std::shared_ptr<Node> node) {
 
 SourceBlock::Pointer Binder::bind(SourceBlock::Pointer sourceBlock) {
     
+    // Module constructor function
     auto function = std::make_shared<JrFunction>();
-    function->name = L"__FILE__";
+    function->name = L"Module@__MAIN__@" + sourceBlock->filename;
     function->kind = jrFuncVM;
     Global::registerFunction(function);
-    auto symbol = std::shared_ptr<Symbol>(new Symbol {
-        .name = function->name,
-        .flag = funcSymbol,
-        .addressOfFunc = function->addressOfFunc
+    
+    // Module class self
+    auto module = JrModuleType::Pointer(new JrModuleType {
+        {{.kind = JrType_Object}}
     });
+    Global::registerObjectType(module);
+    
+    module->name = L"Module@__FILE__@" + sourceBlock->filename;
+    auto symbol = Symbol::Pointer(new Symbol {
+        .name = module->name,
+        .flag = moduleSymbol,
+        .addressOfType = module->addressOfType
+    });
+    module->constructors.push_back(function->addressOfFunc);
     
     sourceBlock->symbol = symbol;
     sourceBlock->symtable = context->initializeSymTable();
     
-    auto module = std::make_shared<JrModule>();
-    
-    
+    context->entry(module);
     context->visit(visitSourceBlock, [sourceBlock, this]() {
         auto nodes = std::vector<Node::Pointer>();
         for(auto& statement : sourceBlock->statements) {
@@ -108,16 +116,13 @@ SourceBlock::Pointer Binder::bind(SourceBlock::Pointer sourceBlock) {
         }
         sourceBlock->statements = nodes;
     });
-    
-    
+    context->leave(module);
     context->finalizeSymTable();
     
     return sourceBlock;
 }
 
 Node::Pointer Binder::bind(FuncDecl::Pointer decl) {
-    
-    
     auto type = context->curType();
     decl->ownerType = type;
     auto symtable = context->curSymTable();
@@ -139,13 +144,19 @@ Node::Pointer Binder::bind(FuncDecl::Pointer decl) {
     symtable->insert(symbol);
     decl->symbol = symbol;
     
-    if(type != nullptr && context->curStage() == visitClassDecl) {
+    // If the parsing stage is visitClassDecl or visitSourceBlock, we will register function into target type
+    if(type != nullptr && (context->curStage() == visitClassDecl || context->curStage() == visitSourceBlock)) {
         // if the function inside of class declaration, we will register it as virtual functions
         auto classType = std::static_pointer_cast<JrObjectType>(type);
-        classType->virtualFunctions.push_back(function->addressOfFunc);
+        if(type->name == function->name) {
+            classType->constructors.push_back(function->addressOfFunc);
+        } else {
+            classType->virtualFunctions.push_back(function->addressOfFunc);
+        }
+        
     }
     
-    context->initializeSymTable();
+    decl->symtable = context->initializeSymTable();
     // visit func decleration
     context->visit(visitFuncDecl, [this, decl]() {
         
@@ -166,9 +177,6 @@ Node::Pointer Binder::bind(FuncDecl::Pointer decl) {
         decl->codeBlock = bind(decl->codeBlock);
         
     });
-    // Start to Bind sub
-    decl->symtable = context->curSymTable();
-    
     context->finalizeSymTable();
     
     return decl;
@@ -278,6 +286,7 @@ Node::Pointer Binder::bind(ClassDecl::Pointer decl) {
             .addressOfFunc = defaultConstructor->addressOfFunc
         });
         symtable->insert(symbol);
+        objectType->constructors.push_back(defaultConstructor->addressOfFunc);
     }
     
     // assocated type with type's symbol 
@@ -297,14 +306,16 @@ Node::Pointer Binder::bind(VarDecl::Pointer decl) {
     if(symtable->find(name) != nullptr) {
         Diagnostics::reportError(L"[Error] duplicate variable name");
     }
-     
+    
     // double check the domplciate
-    auto symbolFlag = context->curStage() == visitClassDecl ? mutableVarSymbol : mutableSymbol;
+    auto stage = context->curStage();
+    auto symbolFlag = (stage == visitClassDecl || stage == visitSourceBlock) ? fieldSymbol : varSymbol;
+    
     auto symbol = std::shared_ptr<Symbol>(new Symbol{
         .name = name,
         .flag = symbolFlag
     });
-    
+    symbol->isMutable = true;
     symtable->insert(symbol);
     decl->symbol = symbol;
     decl->pattern->identifier->symbol = symbol;
@@ -313,13 +324,15 @@ Node::Pointer Binder::bind(VarDecl::Pointer decl) {
         decl->initializer = bind(decl->initializer);
     }
     
-    if(context->curStage() == visitClassDecl) {
-        auto type = std::static_pointer_cast<JrObjectType>(context->curType());
-        auto field = JrField::Pointer(new JrField {
-            .type = type,
+    if(stage == visitClassDecl || stage == visitSourceBlock) {
+        // If var decl is a field, let's register it in type's field list
+        auto ownerType = std::static_pointer_cast<JrObjectType>(context->curType());
+        auto fieldType = decl->pattern->typeDecl != nullptr? Global::types[decl->pattern->typeDecl->symbol->addressOfType] : JrObjectType::Any;
+        auto field = JrFieldType::Pointer(new JrFieldType {
+            .type = fieldType,
             .name = name
         });
-        type->registerField(field);
+        ownerType->registerField(field);
         symbol->addressOfField = field->addressOfField;
     }
     
@@ -327,6 +340,7 @@ Node::Pointer Binder::bind(VarDecl::Pointer decl) {
 }
 
 Node::Pointer Binder::bind(LetDecl::Pointer decl) {
+    assert(false);
     auto pattern = decl->pattern;
     auto name = pattern->getIdentifierName();
     

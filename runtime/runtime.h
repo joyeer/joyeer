@@ -21,8 +21,8 @@ struct JrType {
     int size = sizeof(JrPtr);
 };
 
-struct JrField {
-    typedef std::shared_ptr<JrField> Pointer;
+struct JrFieldType {
+    typedef std::shared_ptr<JrFieldType> Pointer;
     
     std::wstring name;
     JrType::Pointer type;
@@ -45,13 +45,19 @@ struct JrPrimaryType: public JrType {
 struct JrObjectType: public JrType {
     typedef std::shared_ptr<JrObjectType> Pointer;
     
+    std::vector<int> constructors;
     std::vector<int> virtualFunctions;
     std::vector<int> staticFunctions;
     
-    std::vector<JrField::Pointer> virtualFields;
-    std::vector<JrField::Pointer> staticFields;
+    std::vector<JrFieldType::Pointer> virtualFields;
+    std::vector<JrFieldType::Pointer> staticFields;
     
-    void registerField(JrField::Pointer field);
+    void registerField(JrFieldType::Pointer field);
+    
+};
+
+// Speical type for module class
+struct JrModuleType: public JrObjectType {
     
 };
 

@@ -78,7 +78,7 @@ void IRGen::emit(Node::Pointer node) {
         case arguCallExpr:
             emit(std::static_pointer_cast<ArguCallExpr>(node));
             break;
-        case functionCallExpr:
+        case funcCallExpr:
             emit(std::static_pointer_cast<FuncCallExpr>(node));
             break;
         case memberAccessExpr:
@@ -103,6 +103,9 @@ void IRGen::emit(Node::Pointer node) {
         case returnStatement:
             emit(std::static_pointer_cast<ReturnStatement>(node));
             break;
+        case subscriptExpr:
+            emit(std::static_pointer_cast<SubscriptExpr>(node));
+            break;
         default:
             assert(false);
     }
@@ -110,8 +113,10 @@ void IRGen::emit(Node::Pointer node) {
 
 void IRGen::emit(SourceBlock::Pointer block) {
     
-    assert(block->symbol->flag == funcSymbol);
-    func = Global::functions[block->symbol->addressOfFunc];
+    assert(block->symbol->flag == moduleSymbol);
+    auto module = std::static_pointer_cast<JrModuleType>(Global::types[block->symbol->addressOfType]);
+    assert(module->constructors.size() == 1);
+    func = Global::functions[module->constructors.back()];
     
     context->visit(visitSourceBlock, [this, block]() {
         for(auto& statement: block->statements) {
@@ -415,4 +420,8 @@ void IRGen::emit(ConstructorDecl::Pointer node) {
 void IRGen::emit(MemberAccessExpr::Pointer node) {
     emit(node->parent);
     emit(node->member);
+}
+
+void IRGen::emit(SubscriptExpr::Pointer node) {
+    
 }

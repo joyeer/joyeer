@@ -37,7 +37,7 @@ enum SyntaxKind {
     identifierExpr,
     parenthesizedExpr,
     arguCallExpr,
-    functionCallExpr,
+    funcCallExpr,
     memberAccessExpr,
     subscriptExpr,
   
@@ -296,6 +296,8 @@ struct SourceBlock: Node {
     std::wstring filename;
 
     SourceBlock(std::vector<Node::Pointer> statements);
+    
+    virtual std::wstring getName();
 };
 
 struct CodeBlock: Node {

@@ -60,8 +60,19 @@ void TypeTablePrinter::print() {
     int index = 0;
     for(auto type: Global::types) {
         output << L"#" << index << L": " << type->name << std::endl;
+        if(type->kind == JrType_Object) {
+            auto objectType = std::static_pointer_cast<JrObjectType>(type);
+            for(auto field: objectType->virtualFields) {
+                print(field);
+            }
+        }
+        
         index ++;
     }
+}
+
+void TypeTablePrinter::print(JrFieldType::Pointer field) {
+    output << L"    @field: #" << field->addressOfField << L" " << field->name << L", " << field->type->name <<std::endl;
 }
 
 void TypeTablePrinter::close() {

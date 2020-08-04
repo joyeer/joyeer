@@ -140,7 +140,7 @@ expr(expr) {
 }
 
 FuncCallExpr::FuncCallExpr(Node::Pointer expr, std::vector<ArguCallExpr::Pointer> arguments):
-Node(SyntaxKind::functionCallExpr),
+Node(SyntaxKind::funcCallExpr),
 identifier(expr),
 arguments(arguments) {
 }
@@ -211,6 +211,11 @@ SourceBlock::SourceBlock(std::vector<std::shared_ptr<Node>> statements):
 Node(SyntaxKind::sourceBlock),
 statements(statements) {
 
+}
+
+std::wstring SourceBlock::getName() {
+    std::filesystem::path p = filename;
+    return p.replace_extension().wstring();
 }
 
 CodeBlock::CodeBlock(std::vector<std::shared_ptr<Node>> statements):
@@ -515,7 +520,7 @@ void NodeDebugPrinter::print(Node::Pointer node) {
             decTab();
         }
             break;
-        case functionCallExpr: {
+        case funcCallExpr: {
             output << L"+functionCallExpr" ;
             auto n = std::static_pointer_cast<FuncCallExpr>(node);
             incTab();

@@ -20,7 +20,7 @@ const JrPrimaryType::Pointer JrPrimaryType::Boolean = std::shared_ptr<JrPrimaryT
 });
 
 
-void JrObjectType::registerField(JrField::Pointer field) {
+void JrObjectType::registerField(JrFieldType::Pointer field) {
     field->addressOfField = virtualFields.size();
     virtualFields.push_back(field);
 }

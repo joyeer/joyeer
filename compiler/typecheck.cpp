@@ -69,7 +69,7 @@ void TypeChecker::verify(Node::Pointer node) {
         case arguCallExpr:
             verify(std::static_pointer_cast<ArguCallExpr>(node));
             break;
-        case functionCallExpr:
+        case funcCallExpr:
             verify(std::static_pointer_cast<FuncCallExpr>(node));
             break;
         case memberAccessExpr:
@@ -103,8 +103,11 @@ void TypeChecker::verify(Node::Pointer node) {
 
 void TypeChecker::verify(SourceBlock::Pointer node) {
     
-    assert(node->symbol->flag == funcSymbol);
-    auto function = Global::functions[node->symbol->addressOfFunc];
+    assert(node->symbol->flag == moduleSymbol);
+    auto module = std::static_pointer_cast<JrModuleType>(Global::types[node->symbol->addressOfType]);
+    // 
+    assert(module->constructors.size() == 1);
+    auto function = Global::functions[module->constructors.back()];
     assert(function != nullptr);
     context->entry(node->symtable);
     context->entry(function);
@@ -447,7 +450,7 @@ void TypeChecker::verify(MemberAccessExpr::Pointer node) {
     // We will push access flags's symbols
     context->entry(symtable);
     switch(node->member->kind) {
-        case functionCallExpr: {
+        case funcCallExpr: {
             auto funcCallExpr = std::static_pointer_cast<FuncCallExpr>(node->member);
             funcCallExpr->ownerType = type;
         }
@@ -476,7 +479,7 @@ JrType::Pointer TypeChecker::typeOf(Node::Pointer node) {
             return typeOf(std::static_pointer_cast<IdentifierExpr>(node));
         case expr:
             return typeOf(std::static_pointer_cast<Expr>(node));
-        case functionCallExpr:
+        case funcCallExpr:
             return typeOf(std::static_pointer_cast<FuncCallExpr>(node));
         case literalExpr:
             return typeOf(std::static_pointer_cast<LiteralExpr>(node));
@@ -503,7 +506,6 @@ JrType::Pointer TypeChecker::typeOf(IdentifierExpr::Pointer node) {
     
     switch(node->symbol->flag) {
         case varSymbol:
-        case mutableVarSymbol:
         case immutableVarSymbol:
         case unfixedMutableVarSymbol:
         case unfixedImmutableVarSymbol:
@@ -671,7 +673,7 @@ JrType::Pointer TypeChecker::returnTypeOf(Node::Pointer node) {
         }
         case ifStatement:
             return returnTypeOf(std::static_pointer_cast<IfStatement>(node));
-        case functionCallExpr:
+        case funcCallExpr:
             return returnTypeOf(std::static_pointer_cast<FuncCallExpr>(node));
         case assignmentExpr:
         case identifierExpr:
