@@ -10,17 +10,12 @@ class JrCodeWriter;
 
 class IRGen {
 public:
-    
     IRGen(CompileContext::Pointer context);
     
-    void emit(Node::Pointer node);
-    
-    std::vector<Instruction>& getInstructions();
-    
-    JrFunction::Pointer getFunction();
+    JrObjectType::Pointer emit(SourceBlock::Pointer block);
     
 protected:
-    void emit(SourceBlock::Pointer block);
+    void emit(Node::Pointer node);
     void emit(FuncCallExpr::Pointer node);
     void emit(ArguCallExpr::Pointer node);
     void emit(LiteralExpr::Pointer node);
@@ -45,10 +40,6 @@ protected:
     
 private:
     JrCodeWriter writer;
-    
-    // geneated function declaration
-    JrFunction::Pointer func;
-    
     CompileContext::Pointer context;
 };
 

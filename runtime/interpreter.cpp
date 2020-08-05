@@ -1,6 +1,7 @@
 #include "interpreter.h"
 #include "buildin.h"
 #include "gc.h"
+#include "runtime/sys/array.h"
 #include <cassert>
 #include <iostream>
 
@@ -8,8 +9,12 @@ JrInterpreter::JrInterpreter(JrRuntimeContext::Pointer context):
 context(context) {
 }
 
-void JrInterpreter::run(JrFunction::Pointer function) {
-    run(function, -1);
+void JrInterpreter::run(JrModuleType::Pointer module) {
+    auto objectRef = context->gc->alloc(module);
+    assert(module->constructors.size() == 1);
+    auto mainFunc = Global::functions[module->constructors.back()];
+    context->stack->push(objectRef);
+    run(mainFunc, objectRef);
 }
 
 void JrInterpreter::run(JrFunction::Pointer function, int objectRef) {
@@ -24,7 +29,7 @@ void JrInterpreter::run(JrFunction::Pointer function, int objectRef) {
     JrInstructionDebugPrinter printer;
     while(pointer != end) {
         auto instruction = *pointer;
-//        std::wcout << std::wstring(context->stack->frames.size() , L'-') << printer.print(instruction) << std::endl;
+        std::wcout << std::wstring(context->stack->frames.size() , L'-') << printer.print(instruction) << std::endl;
         switch(instruction.opcode) {
             case OP_ICONST:
                 context->stack->push(instruction.value);
@@ -81,6 +86,7 @@ void JrInterpreter::run(JrFunction::Pointer function, int objectRef) {
                 exec_putfield(instruction);
                 break;
             case OP_ONEWARRAY:
+                exec_onewarray(instruction);
                 break;
             default:
                 assert(false);
@@ -135,7 +141,7 @@ void JrInterpreter::exec_invoke(const Instruction &instruction) {
         (*func->nativeCode)(context, func);
     } else if((func->kind & jrFuncVM) == jrFuncVM) {
         JrInterpreter interpreter(context);
-        interpreter.run(func);
+        interpreter.run(func, -1);
     }
 }
 
@@ -224,7 +230,15 @@ void JrInterpreter::exec_putfield(const Instruction &instruction) {
 void JrInterpreter::exec_onewarray(const Instruction &instruction) {
     auto objectCount = context->stack->pop();
     
+    std::vector<JrInt> objects;
     for(auto i = 0 ; i < objectCount ; i ++ ) {
-        
+        objects.push_back(context->stack->pop());
     }
+    
+    auto objectRef = context->gc->alloc(JrObjectIntArray::Type);
+    
+    auto arrayObject = (JrObjectIntArray*)context->gc->get(objectRef);
+    arrayObject->slots = std::vector<JrInt>();
+    std::reverse_copy(objects.begin(), objects.end(), arrayObject->slots.begin());
+    context->stack->push(objectRef);
 }

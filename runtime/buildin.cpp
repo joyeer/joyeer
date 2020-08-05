@@ -31,7 +31,7 @@ void Global::initGlobalTables() {
     registerObjectType(JrObjectIntArray::Type);
     registerFunction(JrObjectIntArray_Append::Func);
     registerFunction(JrObjectIntArray_Size::Func);
-    
+    registerFunction(JrObjectIntArray_Get::Func);
     
 }
 
@@ -65,6 +65,13 @@ void TypeTablePrinter::print() {
             for(auto field: objectType->virtualFields) {
                 print(field);
             }
+            
+            for(auto addressOfFunc: objectType->constructors) {
+                print(addressOfFunc);
+            }
+            for(auto addressOfFunc: objectType->virtualFunctions) {
+                print(addressOfFunc);
+            }
         }
         
         index ++;
@@ -73,6 +80,12 @@ void TypeTablePrinter::print() {
 
 void TypeTablePrinter::print(JrFieldType::Pointer field) {
     output << L"    @field: #" << field->addressOfField << L" " << field->name << L", " << field->type->name <<std::endl;
+}
+
+void TypeTablePrinter::print(int addressOfFunc) {
+    auto func = Global::functions[addressOfFunc];
+    auto name = func->kind == jrFuncConstructor ? L"constructor" : L"method";
+    output << L"    @"<< name <<": #" << func->addressOfFunc << L" " << func->name <<std::endl;
 }
 
 void TypeTablePrinter::close() {

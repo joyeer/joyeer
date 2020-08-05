@@ -37,6 +37,7 @@ public:
     TypeTablePrinter(const std::wstring filename);
     void print();
     void print(JrFieldType::Pointer field);
+    void print(int addressOfFunc);
     void close();
     
 private:

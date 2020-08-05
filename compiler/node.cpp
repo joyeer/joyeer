@@ -271,7 +271,7 @@ void NodeDebugPrinter::print(Symbol::Pointer symbol) {
     }
     output << std::endl;
     printTab();
-    output << L"@symbol-> name:\""<< symbol->name <<L"\", flag:" << symbol->flag << L", mutable:" << symbol->isMutable;
+    output << L"@symbol-> name:\""<< symbol->name <<L"\", flag:\"" << debugStringOfSymbolFlag(symbol->flag) << L"\", mutable:" << symbol->isMutable;
 }
 
 void NodeDebugPrinter::print(std::vector<Node::Pointer> nodes) {

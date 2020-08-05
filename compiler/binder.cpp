@@ -85,17 +85,20 @@ Node::Pointer Binder::bind(std::shared_ptr<Node> node) {
 
 SourceBlock::Pointer Binder::bind(SourceBlock::Pointer sourceBlock) {
     
-    // Module constructor function
-    auto function = std::make_shared<JrFunction>();
-    function->name = L"Module@__MAIN__@" + sourceBlock->filename;
-    function->kind = jrFuncVM;
-    Global::registerFunction(function);
-    
     // Module class self
     auto module = JrModuleType::Pointer(new JrModuleType {
         {{.kind = JrType_Object}}
     });
     Global::registerObjectType(module);
+    
+    
+    // Module constructor function
+    auto function = std::make_shared<JrFunction>();
+    function->name = L"Module@__MAIN__@" + sourceBlock->filename;
+    function->kind = jrFuncConstructor;
+    function->paramTypes.push_back(module);
+    Global::registerFunction(function);
+    
     
     module->name = L"Module@__FILE__@" + sourceBlock->filename;
     auto symbol = Symbol::Pointer(new Symbol {
@@ -351,8 +354,10 @@ Node::Pointer Binder::bind(LetDecl::Pointer decl) {
     
     auto symbol = std::shared_ptr<Symbol>(new Symbol{
         .name = name,
-        .flag = SymbolFlag::immutableVarSymbol
+        .flag = SymbolFlag::varSymbol,
+        .isMutable = false
     });
+    
     
     table->insert(symbol);
     decl->symbol = symbol;
@@ -401,8 +406,9 @@ Node::Pointer Binder::bind(IdentifierExpr::Pointer decl) {
             }
             
             auto symbol = std::shared_ptr<Symbol>(new Symbol {
-                .flag = SymbolFlag::immutableVarSymbol,
-                .name = name
+                .flag = SymbolFlag::varSymbol,
+                .name = name,
+                .isMutable = false
             });
             table->insert(symbol);
             decl->symbol = symbol;

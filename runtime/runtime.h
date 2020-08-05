@@ -45,9 +45,9 @@ struct JrPrimaryType: public JrType {
 struct JrObjectType: public JrType {
     typedef std::shared_ptr<JrObjectType> Pointer;
     
-    std::vector<int> constructors;
-    std::vector<int> virtualFunctions;
-    std::vector<int> staticFunctions;
+    std::vector<JrInt> constructors;
+    std::vector<JrInt> virtualFunctions;
+    std::vector<JrInt> staticFunctions;
     
     std::vector<JrFieldType::Pointer> virtualFields;
     std::vector<JrFieldType::Pointer> staticFields;

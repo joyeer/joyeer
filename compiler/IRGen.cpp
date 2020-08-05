@@ -1,6 +1,7 @@
 #include "IRGen.h"
 #include "diagnostic.h"
 #include "runtime/buildin.h"
+#include "runtime/sys/array.h"
 #include <cassert>
 #include <unordered_map>
 
@@ -10,29 +11,10 @@ context(context) {
     
 }
 
-std::vector<Instruction>& IRGen::getInstructions() {
-    return writer.instructions;
-}
-
-JrFunction::Pointer IRGen::getFunction() {
-    func->instructions = getInstructions();
-    return func;
-}
-
 void IRGen::emit(Node::Pointer node) {
     switch (node->kind) {
         case sourceBlock:
             emit(std::static_pointer_cast<SourceBlock>(node));
-            break;
-        case type:
-            break;
-        case arrayType:
-            break;
-        case dictType:
-            break;
-        case pattern:
-            break;
-        case importDecl:
             break;
         case letDecl:
             emit(std::static_pointer_cast<LetDecl>(node));
@@ -61,10 +43,6 @@ void IRGen::emit(Node::Pointer node) {
             break;
         case expr:
             emit(std::static_pointer_cast<Expr>(node));
-            break;
-        case selfExpr:
-            break;
-        case postfixExpr:
             break;
         case prefixExpr:
             emit(std::static_pointer_cast<PrefixExpr>(node));
@@ -111,20 +89,25 @@ void IRGen::emit(Node::Pointer node) {
     }
 }
 
-void IRGen::emit(SourceBlock::Pointer block) {
+JrObjectType::Pointer IRGen::emit(SourceBlock::Pointer block) {
     
     assert(block->symbol->flag == moduleSymbol);
     auto module = std::static_pointer_cast<JrModuleType>(Global::types[block->symbol->addressOfType]);
     assert(module->constructors.size() == 1);
-    func = Global::functions[module->constructors.back()];
+    auto func = Global::functions[module->constructors.back()];
     
+    context->entry(module);
+    context->entry(func);
     context->visit(visitSourceBlock, [this, block]() {
         for(auto& statement: block->statements) {
             emit(statement);
         }
     });
+    context->leave(func);
+    context->leave(module);
     
-    func->instructions = getInstructions();
+    func->instructions = writer.instructions;
+    return module;
 }
 
 void IRGen::emit(FuncCallExpr::Pointer funcCallExpr) {
@@ -196,11 +179,30 @@ void IRGen::emit(LetDecl::Pointer node) {
 void IRGen::emit(VarDecl::Pointer node) {
     emit(node->initializer);
     
-    // TODO: detect the variable's type
-    writer.write({
-        .opcode = OP_ISTORE,
-        .value = node->symbol->addressOfVariable
-    });
+    auto function = context->curFunction();
+    switch (node->symbol->flag) {
+        case varSymbol:
+            writer.write({
+                .opcode = OP_ISTORE,
+                .value = node->symbol->addressOfVariable
+            });
+            break;
+        case fieldSymbol:
+            writer.write({
+                .opcode = OP_OLOAD,
+                .value = (int32_t)(function->paramTypes.size() - 1)      // last parameter is the self object
+            });
+
+            writer.write({
+                .opcode = OP_PUTFIELD,
+                .value = node->symbol->addressOfField
+            });
+            break;
+        default:
+            assert(false);
+    }
+    
+    
 }
 
 void IRGen::emit(PrefixExpr::Pointer node) {
@@ -317,13 +319,13 @@ void IRGen::emit(ParenthesizedExpr::Pointer node) {
 void IRGen::emit(IfStatement::Pointer node) {
     IRGen gen(context);
     gen.emit(node->ifCodeBlock);
-    auto instructions = gen.getInstructions();
+    auto instructions = writer.instructions;
     
     std::vector<Instruction> elseInstructions;
     if(node->elseCodeBlock != nullptr) {
         IRGen elseBlockGenerator(context);
         elseBlockGenerator.emit(node->elseCodeBlock);
-        elseInstructions = elseBlockGenerator.getInstructions();
+        elseInstructions = elseBlockGenerator.writer.instructions;
         
         // insert an goto instruction in ifInstructions;
         instructions.push_back({
@@ -357,7 +359,7 @@ void IRGen::emit(FuncDecl::Pointer node) {
     context->entry(function);
     IRGen generator(context);
     generator.emit(node->codeBlock);
-    auto instructions = generator.getInstructions();
+    auto instructions = generator.writer.instructions;
     
     assert(function != nullptr && function->instructions.size() == 0);
     function->instructions = instructions;
@@ -408,7 +410,7 @@ void IRGen::emit(ConstructorDecl::Pointer node) {
     context->entry(function);
     IRGen generator(context);
     generator.emit(node->codeBlock);
-    auto instructions = generator.getInstructions();
+    auto instructions = generator.writer.instructions;
     
     assert(function != nullptr && function->instructions.size() == 0);
     function->instructions = instructions;
@@ -424,4 +426,12 @@ void IRGen::emit(MemberAccessExpr::Pointer node) {
 
 void IRGen::emit(SubscriptExpr::Pointer node) {
     
+    // handle the index expr of array access
+    emit(node->indexExpr);
+    emit(node->identifier);
+    writer.write({
+        .opcode = OP_INVOKE,
+        .value = (int32_t)JrObjectIntArray_Get::Func->addressOfFunc
+    });
+
 }

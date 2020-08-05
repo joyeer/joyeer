@@ -2,6 +2,23 @@
 #include "diagnostic.h"
 #include "runtime/buildin.h"
 
+std::wstring debugStringOfSymbolFlag(SymbolFlag flag) {
+    switch (flag) {
+        case varSymbol:
+            return L"varSymbol";
+        case funcSymbol:
+            return L"funcSymbol";
+        case fieldSymbol:
+            return L"fieldSymbol";
+        case constructorSymbol:
+            return L"constructor";
+        case typeSymbol:
+            return L"type";
+        case moduleSymbol:
+            return L"module";
+    }
+}
+
 /////////////////////////////////////////////////////////////////
 // SymTable
 /////////////////////////////////////////////////////////////////

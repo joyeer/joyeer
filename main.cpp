@@ -52,7 +52,7 @@ int main(int argc, char** argv) {
     typecheckerDebugger.close();
     
     IRGen irGen(compileContext);
-    irGen.emit(std::static_pointer_cast<Node>(sourceBlock));
+    auto module = irGen.emit(sourceBlock);
     
     TypeTablePrinter typePrinter(L"table.types.txt");
     typePrinter.print();
@@ -62,11 +62,9 @@ int main(int argc, char** argv) {
     funcPrinter.print();
     funcPrinter.close();
     
-    auto function  = irGen.getFunction();
-    
     auto context = std::make_shared<JrRuntimeContext>();
     JrInterpreter interpreter(context);
-    interpreter.run(function);
+    interpreter.run(module);
     
     return 0;
 }

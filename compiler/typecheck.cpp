@@ -107,19 +107,27 @@ void TypeChecker::verify(SourceBlock::Pointer node) {
     auto module = std::static_pointer_cast<JrModuleType>(Global::types[node->symbol->addressOfType]);
     // 
     assert(module->constructors.size() == 1);
-    auto function = Global::functions[module->constructors.back()];
-    assert(function != nullptr);
+    auto constructor = Global::functions[module->constructors.back()];
+    assert(constructor != nullptr);
     context->entry(node->symtable);
-    context->entry(function);
-    
+    context->entry(module);
+    context->entry(constructor);
     context->visit(visitSourceBlock, [this, node](){
         for(auto statement: node->statements) {
             verify(statement);
         }
     });
     
+    // For Module's default consturctor
+    constructor->localVars.push_back(JrVar {
+        .name = L"self",
+        .type = module,
+        .addressOfVariable = static_cast<int>(constructor->localVars.size())
+    });
+
     verifyReturnStatement(node);
-    context->leave(function);
+    context->leave(constructor);
+    context->leave(module);
     context->leave(node->symtable);
 }
 
@@ -209,7 +217,7 @@ void TypeChecker::verify(ConstructorDecl::Pointer node) {
     function->localVars.push_back(JrVar {
         .name = L"self",
         .type = ownerType,
-        .addressOfVariable = 0
+        .addressOfVariable = static_cast<int>(function->localVars.size())
     });
     verify(node->codeBlock);
     auto codeblock = std::static_pointer_cast<CodeBlock>(node->codeBlock);
@@ -242,7 +250,7 @@ void TypeChecker::verify(VarDecl::Pointer node) {
     
     if(node->pattern->typeDecl == nullptr) {
         // change the symbol to unfixed symbol
-        node->symbol->flag = unfixedMutableVarSymbol;
+        node->symbol->isMutable = true;
         node->symbol->addressOfType = JrType::Any->addressOfType;
     
     }
@@ -263,16 +271,20 @@ void TypeChecker::verify(VarDecl::Pointer node) {
     }
     
     // declare the local variable in function
-    auto function = context->curFunction();
-    auto addressOfVariable = (int)function->localVars.size();
-    node->symbol->addressOfVariable = addressOfVariable;
-    
-    assert(Global::types[node->symbol->addressOfType] != nullptr);
-    function->localVars.push_back(JrVar {
-        .name = node->pattern->getIdentifierName(),
-        .type = Global::types[node->symbol->addressOfType],
-        .addressOfVariable = addressOfVariable
-    });
+    auto stage = context->curStage();
+    if(stage != visitSourceBlock && stage != visitClassDecl) {
+        auto function = context->curFunction();
+        auto addressOfVariable = (int)function->localVars.size();
+        node->symbol->addressOfVariable = addressOfVariable;
+        
+        assert(Global::types[node->symbol->addressOfType] != nullptr);
+        
+        function->localVars.push_back(JrVar {
+            .name = node->pattern->getIdentifierName(),
+            .type = Global::types[node->symbol->addressOfType],
+            .addressOfVariable = addressOfVariable
+        });
+    }
 }
 
 void TypeChecker::verify(LetDecl::Pointer node) {
@@ -282,7 +294,8 @@ void TypeChecker::verify(LetDecl::Pointer node) {
     
     if(node->pattern->typeDecl == nullptr) {
         // change the symbol to unfixed symbol
-        node->symbol->flag = unfixedImmutableVarSymbol;
+        node->symbol->flag = varSymbol;
+        node->symbol->isMutable = false;
         node->symbol->addressOfType = JrType::Any->addressOfType;
     }
     
@@ -506,10 +519,12 @@ JrType::Pointer TypeChecker::typeOf(IdentifierExpr::Pointer node) {
     
     switch(node->symbol->flag) {
         case varSymbol:
-        case immutableVarSymbol:
-        case unfixedMutableVarSymbol:
-        case unfixedImmutableVarSymbol:
             return Global::types[node->symbol->addressOfType];
+        case fieldSymbol: {
+            auto type = std::static_pointer_cast<JrObjectType>(context->curType());
+            auto field = type->virtualFields[node->symbol->addressOfField];
+            return Global::types[field->addressOfField];
+        }
         default:
             assert(false);
     }

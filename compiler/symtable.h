@@ -8,30 +8,17 @@
 
 enum SymbolFlag {
     
-    thisSymbol =        1 << 1,
-    funcSymbol =        1 << 2,
-    fieldSymbol =       1 << 3,
-    constructorSymbol = 1 << 4,
-    varSymbol =         1 << 5,
-    
-    immutableSymbol =   1 << 7,
+    varSymbol =             1,
+    funcSymbol =            2,
+    fieldSymbol =           3,
+    constructorSymbol =     4,
     
     // this is a type symbol
-    typeSymbol =        1 << 10,
-    typeUnfixedSymbol =   1 << 11,
-    
-    moduleSymbol        = 1 << 12,
-    
-    // delcare & variable symbol
-    unfixedMutableVarSymbol =   typeUnfixedSymbol,
-    immutableVarSymbol =        varSymbol | immutableSymbol,
-    unfixedImmutableVarSymbol = immutableVarSymbol | typeUnfixedSymbol,
-    
-    // declare field symbols
-    mutableFieldSymbol =        fieldSymbol,
-    immutableFieldSymbol  =     fieldSymbol | immutableSymbol
-    
+    typeSymbol =            5,
+    moduleSymbol =          6
 };
+
+std::wstring debugStringOfSymbolFlag(SymbolFlag flag);
 
 enum SymbolScope: int8_t {
     globalScope     =   1,
@@ -55,6 +42,7 @@ struct Symbol {
     typedef std::shared_ptr<Symbol> Pointer;
 public:
     bool isMutable: 1 = true;
+    bool isTypeFixed: 1 = true;
     SymbolFlag flag;
     SymbolScope scope;
     

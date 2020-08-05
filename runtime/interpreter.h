@@ -9,7 +9,7 @@ struct JrInterpreter {
 public:
     JrInterpreter(JrRuntimeContext::Pointer context);
     
-    void run(JrFunction::Pointer function);
+    void run(JrModuleType::Pointer module);
     void run(JrFunction::Pointer function, int objectRef);
     
 private:
