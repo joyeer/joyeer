@@ -3,7 +3,7 @@
 #include "runtime/sys/print.h"
 #include "runtime/sys/module.h"
 
-std::vector<JrType::Pointer> Global::types = {};
+std::vector<JrType*> Global::types = {};
 std::vector<std::wstring> Global::strings = {};
 std::vector<JrFunction::Pointer> Global::functions = {};
 
@@ -13,14 +13,14 @@ static std::unordered_map<std::wstring, JrFunction::Pointer>  funtionsMap;
 void Global::initGlobalTables() {
 
     // Register primary types
-    registerObjectType(JrType::Any);
-    registerObjectType(JrPrimaryType::Int);
-    registerObjectType(JrPrimaryType::Float);
-    registerObjectType(JrPrimaryType::Boolean);
+    registerObjectType((JrType*)JrType::Any);
+    registerObjectType((JrType*)JrPrimaryType::Int);
+    registerObjectType((JrType*)JrPrimaryType::Float);
+    registerObjectType((JrType*)JrPrimaryType::Boolean);
     
     // Init Module
     JrModule::init();
-    registerObjectType(JrModule::Type);
+    registerObjectType((JrType*)JrModule::Type);
     
     // Init print function
     JrFuncPrint::init();
@@ -28,7 +28,7 @@ void Global::initGlobalTables() {
     
     // Init the array
     JrObjectIntArray::init();
-    registerObjectType(JrObjectIntArray::Type);
+    registerObjectType((JrType*)JrObjectIntArray::Type);
     registerFunction(JrObjectIntArray_Append::Func);
     registerFunction(JrObjectIntArray_Size::Func);
     registerFunction(JrObjectIntArray_Get::Func);
@@ -44,7 +44,7 @@ void Global::registerFunction(JrFunction::Pointer func) {
 }
 
 // Types
-void Global::registerObjectType(JrType::Pointer type) {
+void Global::registerObjectType(JrType* type) {
     type->addressOfType = types.size();
     types.push_back(type);
 }
@@ -61,7 +61,7 @@ void TypeTablePrinter::print() {
     for(auto type: Global::types) {
         output << L"#" << index << L": " << type->name << std::endl;
         if(type->kind == JrType_Object) {
-            auto objectType = std::static_pointer_cast<JrObjectType>(type);
+            auto objectType = (JrObjectType*)type;
             for(auto field: objectType->virtualFields) {
                 print(field);
             }

@@ -86,9 +86,9 @@ Node::Pointer Binder::bind(std::shared_ptr<Node> node) {
 SourceBlock::Pointer Binder::bind(SourceBlock::Pointer sourceBlock) {
     
     // Module class self
-    auto module = JrModuleType::Pointer(new JrModuleType {
+    auto module = new JrModuleType {
         {{.kind = JrType_Object}}
-    });
+    };
     Global::registerObjectType(module);
     
     
@@ -150,7 +150,7 @@ Node::Pointer Binder::bind(FuncDecl::Pointer decl) {
     // If the parsing stage is visitClassDecl or visitSourceBlock, we will register function into target type
     if(type != nullptr && (context->curStage() == visitClassDecl || context->curStage() == visitSourceBlock)) {
         // if the function inside of class declaration, we will register it as virtual functions
-        auto classType = std::static_pointer_cast<JrObjectType>(type);
+        auto classType = (JrObjectType*)type;
         if(type->name == function->name) {
             classType->constructors.push_back(function->addressOfFunc);
         } else {
@@ -242,11 +242,11 @@ Node::Pointer Binder::bind(ClassDecl::Pointer decl) {
     });
     symtable->insert(symbol);
     
-    auto objectType = JrObjectType::Pointer(new JrObjectType {{
+    auto objectType = new JrObjectType {{
             .name = name,
             .kind = JrType_Object
         }
-    });
+    };
     
     Global::registerObjectType(objectType);
     symbol->addressOfType = objectType->addressOfType;
@@ -329,7 +329,7 @@ Node::Pointer Binder::bind(VarDecl::Pointer decl) {
     
     if(stage == visitClassDecl || stage == visitSourceBlock) {
         // If var decl is a field, let's register it in type's field list
-        auto ownerType = std::static_pointer_cast<JrObjectType>(context->curType());
+        auto ownerType = (JrObjectType*)context->curType();
         auto fieldType = decl->pattern->typeDecl != nullptr? Global::types[decl->pattern->typeDecl->symbol->addressOfType] : JrObjectType::Any;
         auto field = JrFieldType::Pointer(new JrFieldType {
             .type = fieldType,

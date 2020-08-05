@@ -55,7 +55,7 @@ struct Node {
 
     Symbol::Pointer symbol;
     SymbolTable::Pointer symtable;
-    JrType::Pointer type;
+    JrType* type;
     
     virtual std::wstring getName();
     
@@ -149,7 +149,7 @@ struct FuncDecl: Node {
     Node::Pointer codeBlock;
     Node::Pointer returnType;
     
-    JrType::Pointer ownerType = nullptr;
+    JrType* ownerType = nullptr;
     
     FuncDecl(Node::Pointer identifier, Node::Pointer parameterClause, Node::Pointer returnType, Node::Pointer codeBlock);
     
@@ -165,7 +165,7 @@ struct ConstructorDecl: Node {
     ConstructorDecl(Node::Pointer parameterClause, Node::Pointer codeBlock);
     
     // return constructor's symbol name e.g. init(...)
-    const std::wstring getName(JrType::Pointer ownerType);
+    const std::wstring getName(JrType* ownerType);
 };
 
 struct Expr : Node {
@@ -233,7 +233,7 @@ struct FuncCallExpr: Node {
     Node::Pointer identifier;
     std::vector<ArguCallExpr::Pointer> arguments;
     
-    JrType::Pointer ownerType = nullptr;
+    JrType* ownerType = nullptr;
     
     FuncCallExpr(Node::Pointer expr, std::vector<ArguCallExpr::Pointer> arguments);
     

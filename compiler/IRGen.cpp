@@ -89,10 +89,10 @@ void IRGen::emit(Node::Pointer node) {
     }
 }
 
-JrObjectType::Pointer IRGen::emit(SourceBlock::Pointer block) {
+JrModuleType* IRGen::emit(SourceBlock::Pointer block) {
     
     assert(block->symbol->flag == moduleSymbol);
-    auto module = std::static_pointer_cast<JrModuleType>(Global::types[block->symbol->addressOfType]);
+    auto module = (JrModuleType*)Global::types[block->symbol->addressOfType];
     assert(module->constructors.size() == 1);
     auto func = Global::functions[module->constructors.back()];
     

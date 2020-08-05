@@ -6,14 +6,14 @@
 #include "runtime.h"
 
 struct JrObjectTable {
-    std::vector<struct JrObject *> list;
+    std::vector<struct JrObject*> list;
     std::stack<int> freeSlots;
     
     int registerObject(JrObject* object);
 };
 
 struct JrObjectAlloc {
-    JrObject* alloc(JrObjectType::Pointer type);
+    JrObject* alloc(JrObjectType* type);
 };
 
 struct JrGC {
@@ -23,7 +23,7 @@ struct JrGC {
     JrGC();
     ~JrGC();
     
-    int alloc(JrObjectType::Pointer type);
+    int alloc(JrObjectType* type);
     
     JrObject* get(int objectRef);
 };

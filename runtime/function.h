@@ -34,10 +34,10 @@ public:
     std::wstring name;
     
     // all types for param, for object class, the last param is self
-    std::vector<JrType::Pointer> paramTypes;
+    std::vector<JrType*> paramTypes;
     
     // Function's return type
-    JrType::Pointer  returnType;
+    JrType*  returnType;
     
     // Local Variables
     std::vector<JrVar> localVars;

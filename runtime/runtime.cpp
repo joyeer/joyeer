@@ -3,21 +3,21 @@
 #include <cassert>
 
 
-const JrType::Pointer JrType::Any = std::shared_ptr<JrType>(new JrType{JrType_Any, L"Any"});
-const JrType::Pointer JrType::Void = std::shared_ptr<JrType>(new JrType{JrType_Void, L"Void"});
-const JrType::Pointer JrType::Nil = std::shared_ptr<JrType>(new JrType{JrType_Nil, L"nil"});
+JrType* JrType::Any = new JrType{JrType_Any, L"Any"};
+JrType* JrType::Void = new JrType{JrType_Void, L"Void"};
+JrType* JrType::Nil = new JrType{JrType_Nil, L"nil"};
 
-const JrPrimaryType::Pointer JrPrimaryType::Int = std::shared_ptr<JrPrimaryType>(new JrPrimaryType {
+JrPrimaryType* JrPrimaryType::Int = new JrPrimaryType {
     { .kind = JrType_Int, .name = L"Int" }
-});
+};
 
-const JrPrimaryType::Pointer JrPrimaryType::Float = std::shared_ptr<JrPrimaryType>(new JrPrimaryType {
+JrPrimaryType* JrPrimaryType::Float = new JrPrimaryType {
     { .kind = JrType_Float, .name = L"Float"}
-});
+};
 
-const JrPrimaryType::Pointer JrPrimaryType::Boolean = std::shared_ptr<JrPrimaryType>(new JrPrimaryType {
+JrPrimaryType* JrPrimaryType::Boolean = new JrPrimaryType {
     {.kind = JrType_Boolean, .name = L"Boolean"}
-});
+};
 
 
 void JrObjectType::registerField(JrFieldType::Pointer field) {

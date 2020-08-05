@@ -5,7 +5,7 @@
 #include "runtime/runtime.h"
 
 struct JrObjectIntArray: JrObject {
-    const static JrObjectType::Pointer Type;
+    static JrObjectType* Type;
     
     std::vector<JrInt> slots;
     

@@ -7,10 +7,9 @@
 #include "instruction.h"
 
 struct JrType {
-    typedef std::shared_ptr<JrType> Pointer;
-    const static JrType::Pointer Any;
-    const static JrType::Pointer Void;
-    const static JrType::Pointer Nil;
+    static JrType* Any;
+    static JrType* Void;
+    static JrType* Nil;
     
     int kind;
     std::wstring name;
@@ -25,25 +24,23 @@ struct JrFieldType {
     typedef std::shared_ptr<JrFieldType> Pointer;
     
     std::wstring name;
-    JrType::Pointer type;
+    JrType* type;
     JrInt addressOfField = -1;
 };
 
 struct JrPrimaryType: public JrType {
-    typedef std::shared_ptr<JrPrimaryType> Pointer;
     
-    const static JrPrimaryType::Pointer Int;
-    const static JrPrimaryType::Pointer Int8;
-    const static JrPrimaryType::Pointer Int16;
-    const static JrPrimaryType::Pointer Int32;
-    const static JrPrimaryType::Pointer Int64;
+    static JrPrimaryType* Int;
+    static JrPrimaryType* Int8;
+    static JrPrimaryType* Int16;
+    static JrPrimaryType* Int32;
+    static JrPrimaryType* Int64;
     
-    const static JrPrimaryType::Pointer Float;
-    const static JrPrimaryType::Pointer Boolean;
+    static JrPrimaryType* Float;
+    static JrPrimaryType* Boolean;
 };
  
 struct JrObjectType: public JrType {
-    typedef std::shared_ptr<JrObjectType> Pointer;
     
     std::vector<JrInt> constructors;
     std::vector<JrInt> virtualFunctions;
@@ -63,7 +60,7 @@ struct JrModuleType: public JrObjectType {
 
 struct JrVar {
     typedef std::shared_ptr<JrVar> Pointer;
-    JrType::Pointer type;
+    JrType* type;
     std::wstring name;
     
     int addressOfVariable;

@@ -36,27 +36,27 @@ private:
     void verify(MemberAccessExpr::Pointer node);
     void verify(SubscriptExpr::Pointer node);
     
-    JrType::Pointer typeOf(Node::Pointer node);
-    JrType::Pointer typeOf(IdentifierExpr::Pointer node);
-    JrType::Pointer typeOf(Expr::Pointer node);
-    JrType::Pointer typeOf(LiteralExpr::Pointer node);
-    JrType::Pointer typeOf(FuncCallExpr::Pointer node);
-    JrType::Pointer typeOf(ParenthesizedExpr::Pointer node);
-    JrType::Pointer typeOf(SelfExpr::Pointer node);
-    JrType::Pointer typeOf(Pattern::Pointer node);
-    JrType::Pointer typeOf(TypeDecl::Pointer node);
-    JrType::Pointer typeOf(ArrayLiteralExpr::Pointer node);
-    JrType::Pointer typeOf(MemberAccessExpr::Pointer node);
-    JrType::Pointer typeOf(SubscriptExpr::Pointer node);
+    JrType* typeOf(Node::Pointer node);
+    JrType* typeOf(IdentifierExpr::Pointer node);
+    JrType* typeOf(Expr::Pointer node);
+    JrType* typeOf(LiteralExpr::Pointer node);
+    JrType* typeOf(FuncCallExpr::Pointer node);
+    JrType* typeOf(ParenthesizedExpr::Pointer node);
+    JrType* typeOf(SelfExpr::Pointer node);
+    JrType* typeOf(Pattern::Pointer node);
+    JrType* typeOf(TypeDecl::Pointer node);
+    JrType* typeOf(ArrayLiteralExpr::Pointer node);
+    JrType* typeOf(MemberAccessExpr::Pointer node);
+    JrType* typeOf(SubscriptExpr::Pointer node);
     
     // Get Codeblock's return type
     void verifyReturnStatement(SourceBlock::Pointer node);
     void verifyReturnStatement(CodeBlock::Pointer node);
     void verifyReturnStatement(std::vector<Node::Pointer>& statements);
-    JrType::Pointer returnTypeOf(Node::Pointer node);
-    JrType::Pointer returnTypeOf(IfStatement::Pointer node);
-    JrType::Pointer returnTypeOf(CodeBlock::Pointer node);
-    JrType::Pointer returnTypeOf(FuncCallExpr::Pointer node);
+    JrType* returnTypeOf(Node::Pointer node);
+    JrType* returnTypeOf(IfStatement::Pointer node);
+    JrType* returnTypeOf(CodeBlock::Pointer node);
+    JrType* returnTypeOf(FuncCallExpr::Pointer node);
     
     CompileContext::Pointer context;
 };

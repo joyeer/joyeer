@@ -84,7 +84,7 @@ parameterClause(parameterClause),
 codeBlock(codeBlock) {
 }
 
-const std::wstring ConstructorDecl::getName(JrType::Pointer type) {
+const std::wstring ConstructorDecl::getName(JrType* type) {
     std::wstringstream ss;
     ss << type->name << L"(";
     auto parameterClause = std::static_pointer_cast<ParameterClause>(this->parameterClause);

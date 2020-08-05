@@ -1,7 +1,7 @@
 #include "gc.h"
 
 
-JrObject* JrObjectAlloc::alloc(JrObjectType::Pointer type) {
+JrObject* JrObjectAlloc::alloc(JrObjectType* type) {
     size_t headSize = sizeof(JrObjectHead);
     size_t size = headSize;
     for(auto field: type->virtualFields) {
@@ -26,7 +26,7 @@ JrGC::~JrGC() {
     delete objTable;
 }
 
-int JrGC::alloc(JrObjectType::Pointer type) {
+int JrGC::alloc(JrObjectType* type) {
     auto object = allocator->alloc(type);
     return objTable->registerObject(object);
 }

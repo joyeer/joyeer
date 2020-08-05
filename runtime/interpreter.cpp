@@ -9,7 +9,7 @@ JrInterpreter::JrInterpreter(JrRuntimeContext::Pointer context):
 context(context) {
 }
 
-void JrInterpreter::run(JrModuleType::Pointer module) {
+void JrInterpreter::run(JrModuleType* module) {
     auto objectRef = context->gc->alloc(module);
     assert(module->constructors.size() == 1);
     auto mainFunc = Global::functions[module->constructors.back()];
@@ -209,7 +209,7 @@ void JrInterpreter::exec_new(const Instruction &instruction) {
     auto returnType = function->returnType;
     
     assert(returnType->kind == JrType_Object);
-    auto objectType = std::static_pointer_cast<JrObjectType>(returnType);
+    auto objectType = (JrObjectType*)returnType;
     auto objectRef = context->gc->alloc(objectType);
     context->stack->push(objectRef);
     
@@ -235,7 +235,7 @@ void JrInterpreter::exec_onewarray(const Instruction &instruction) {
         objects.push_back(context->stack->pop());
     }
     
-    auto objectRef = context->gc->alloc(JrObjectIntArray::Type);
+    auto objectRef = context->gc->alloc((JrObjectType*)JrObjectIntArray::Type);
     
     auto arrayObject = (JrObjectIntArray*)context->gc->get(objectRef);
     arrayObject->slots = std::vector<JrInt>();

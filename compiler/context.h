@@ -46,14 +46,14 @@ public:
     void entry(JrFunction::Pointer function);
     void leave(JrFunction::Pointer function);
     
-    JrType::Pointer curType();
-    void entry(JrType::Pointer type);
-    void leave(JrType::Pointer type);
+    JrType* curType();
+    void entry(JrType* type);
+    void leave(JrType* type);
     
     // Associate Type with symbol table
-    void associate(JrType::Pointer, SymbolTable::Pointer table);
+    void associate(JrType*, SymbolTable::Pointer table);
     // return assoicated symbol table with type
-    SymbolTable::Pointer symtableOfType(JrType::Pointer);
+    SymbolTable::Pointer symtableOfType(JrType*);
     
 protected:
     // initializ global scope, e.g. buildin functions/object etc
@@ -75,7 +75,7 @@ protected:
     std::vector<JrFunction::Pointer> functions;
     
     // parsing class/struct/enum stacks
-    std::vector<JrType::Pointer> types;
+    std::vector<JrType*> types;
     
     std::unordered_map<JrInt, SymbolTable::Pointer> mapOfTypeAndSymbolTable;
 };

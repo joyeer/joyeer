@@ -14,7 +14,7 @@ struct Global {
     static std::vector<JrFunction::Pointer> functions;
     
     // global types
-    static std::vector<JrType::Pointer> types;
+    static std::vector<JrType*> types;
     
     // global strings
     static std::vector<std::wstring> strings;
@@ -26,7 +26,7 @@ struct Global {
     static void registerFunction(JrFunction::Pointer func);
     
     /// register an new object type in global table
-    static void registerObjectType(JrType::Pointer type);
+    static void registerObjectType(JrType* type);
     
     /// initialize all global tables
     static void initGlobalTables();

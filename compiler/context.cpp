@@ -51,18 +51,18 @@ void CompileContext::leave(SymbolTable::Pointer table) {
     symbols.pop_back();
 }
 
-JrType::Pointer CompileContext::curType() {
+JrType* CompileContext::curType() {
     if(types.size() == 0) {
         return nullptr;
     }
     return types.back();
 }
 
-void CompileContext::entry(JrType::Pointer type) {
+void CompileContext::entry(JrType* type) {
     types.push_back(type);
 }
 
-void CompileContext::leave(JrType::Pointer type) {
+void CompileContext::leave(JrType* type) {
     assert(types.back() == type);
     types.pop_back();
 }
@@ -98,14 +98,14 @@ Symbol::Pointer CompileContext::lookup(const std::wstring &name) {
     return nullptr;
 }
 
-void CompileContext::associate(JrType::Pointer type, SymbolTable::Pointer table) {
+void CompileContext::associate(JrType* type, SymbolTable::Pointer table) {
     mapOfTypeAndSymbolTable.insert({
         type->addressOfType,
         table
     });
 }
 
-SymbolTable::Pointer CompileContext::symtableOfType(JrType::Pointer type) {
+SymbolTable::Pointer CompileContext::symtableOfType(JrType* type) {
     return mapOfTypeAndSymbolTable[type->addressOfType];
 }
 

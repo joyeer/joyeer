@@ -12,7 +12,7 @@ void JrFuncPrint::init() {
     JrFuncPrint::Func = std::shared_ptr<JrFunction>(new JrFunction {
         .name = L"print(message:)",
         .kind = jrFuncNative,
-        .paramTypes = { JrType::Any },
+        .paramTypes = { (JrType*)JrType::Any },
         .nativeCode = new JrFuncPrint()
     });
 
