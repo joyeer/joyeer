@@ -5,7 +5,7 @@ JrObject* JrObjectAlloc::alloc(JrObjectType* type) {
     size_t headSize = sizeof(JrObjectHead);
     size_t size = headSize;
     for(auto field: type->virtualFields) {
-        size += field->type->size;
+        size += field->type->size();
     }
     return (JrObject*)malloc(size);
 }

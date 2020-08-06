@@ -5,7 +5,6 @@
 #include "runtime/runtime.h"
 
 struct JrModule: JrObject {
-    const static JrObjectType* Type;
     
     static void init();
 };

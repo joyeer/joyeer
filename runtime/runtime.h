@@ -17,7 +17,9 @@ struct JrType {
     // index to the type tables
     int addressOfType;
     
-    int size = sizeof(JrPtr);
+    JrType(int kind, const std::wstring& name);
+    
+    virtual JrInt size();
 };
 
 struct JrFieldType {
@@ -38,6 +40,8 @@ struct JrPrimaryType: public JrType {
     
     static JrPrimaryType* Float;
     static JrPrimaryType* Boolean;
+    
+    JrPrimaryType(int kind, const std::wstring& name);
 };
  
 struct JrObjectType: public JrType {
@@ -51,11 +55,12 @@ struct JrObjectType: public JrType {
     
     void registerField(JrFieldType::Pointer field);
     
+    JrObjectType(const std::wstring& name);
 };
 
 // Speical type for module class
 struct JrModuleType: public JrObjectType {
-    
+    JrModuleType(const std::wstring& name);
 };
 
 struct JrVar {

@@ -1,12 +1,7 @@
 #include "array.h"
 #include "runtime/gc.h"
 
-JrObjectType* JrObjectIntArray::Type = new JrObjectType {
-    {
-        .kind = JrType_Object,
-        .name = L"IntArray"
-    }
-};
+JrObjectType* JrObjectIntArray::Type = new JrObjectType(L"IntArray");
 
 JrFunction::Pointer JrObjectIntArray_Size::Func;
 JrFunction::Pointer JrObjectIntArray_Append::Func;

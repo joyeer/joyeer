@@ -7,22 +7,35 @@ JrType* JrType::Any = new JrType{JrType_Any, L"Any"};
 JrType* JrType::Void = new JrType{JrType_Void, L"Void"};
 JrType* JrType::Nil = new JrType{JrType_Nil, L"nil"};
 
-JrPrimaryType* JrPrimaryType::Int = new JrPrimaryType {
-    { .kind = JrType_Int, .name = L"Int" }
-};
+JrType::JrType(int kind, const std::wstring& name):
+kind(kind),
+name(name) {
+}
 
-JrPrimaryType* JrPrimaryType::Float = new JrPrimaryType {
-    { .kind = JrType_Float, .name = L"Float"}
-};
+JrInt JrType::size() {
+    return sizeof(JrInt) + ;
+}
 
-JrPrimaryType* JrPrimaryType::Boolean = new JrPrimaryType {
-    {.kind = JrType_Boolean, .name = L"Boolean"}
-};
+JrPrimaryType* JrPrimaryType::Int = new JrPrimaryType(JrType_Int, L"Int");
+JrPrimaryType* JrPrimaryType::Float = new JrPrimaryType(JrType_Float, L"Float");
+JrPrimaryType* JrPrimaryType::Boolean = new JrPrimaryType(JrType_Boolean, L"Boolean");
 
+JrPrimaryType::JrPrimaryType(int kind, const std::wstring& name):
+JrType(kind, name) {
+}
+
+JrObjectType::JrObjectType(const std::wstring& name):
+JrType(kind, name) {
+    
+}
 
 void JrObjectType::registerField(JrFieldType::Pointer field) {
     field->addressOfField = virtualFields.size();
     virtualFields.push_back(field);
+}
+
+JrModuleType::JrModuleType(const std::wstring& name):
+JrObjectType(name) {
 }
 
 JrRuntimeStack::JrRuntimeStack() {

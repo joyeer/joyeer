@@ -108,7 +108,7 @@ JrFunctionFrame::Pointer JrInterpreter::prepareStackFrame(JrFunction::Pointer fu
     for(auto var : func->localVars) {
         frame->addressOfVariables.push_back(address);
         // TODO: Update with sizeof variable
-        address += var.type->size;
+        address += var.type->size();
     }
     frame->endAddress = address;
     return frame;

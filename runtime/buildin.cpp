@@ -20,7 +20,6 @@ void Global::initGlobalTables() {
     
     // Init Module
     JrModule::init();
-    registerObjectType((JrType*)JrModule::Type);
     
     // Init print function
     JrFuncPrint::init();

@@ -86,11 +86,8 @@ Node::Pointer Binder::bind(std::shared_ptr<Node> node) {
 SourceBlock::Pointer Binder::bind(SourceBlock::Pointer sourceBlock) {
     
     // Module class self
-    auto module = new JrModuleType {
-        {{.kind = JrType_Object}}
-    };
+    auto module = new JrModuleType(L"Module@__FILE__@" + sourceBlock->filename);
     Global::registerObjectType(module);
-    
     
     // Module constructor function
     auto function = std::make_shared<JrFunction>();
@@ -99,8 +96,6 @@ SourceBlock::Pointer Binder::bind(SourceBlock::Pointer sourceBlock) {
     function->paramTypes.push_back(module);
     Global::registerFunction(function);
     
-    
-    module->name = L"Module@__FILE__@" + sourceBlock->filename;
     auto symbol = Symbol::Pointer(new Symbol {
         .name = module->name,
         .flag = moduleSymbol,
@@ -242,11 +237,7 @@ Node::Pointer Binder::bind(ClassDecl::Pointer decl) {
     });
     symtable->insert(symbol);
     
-    auto objectType = new JrObjectType {{
-            .name = name,
-            .kind = JrType_Object
-        }
-    };
+    auto objectType = new JrObjectType(name);
     
     Global::registerObjectType(objectType);
     symbol->addressOfType = objectType->addressOfType;
