@@ -85,6 +85,9 @@ void JrInterpreter::run(JrFunction::Pointer function, int objectRef) {
             case OP_PUTFIELD:
                 exec_putfield(instruction);
                 break;
+            case OP_GETFIELD:
+                exec_getfield(instruction);
+                break;
             case OP_ONEWARRAY:
                 exec_onewarray(instruction);
                 break;
@@ -224,7 +227,17 @@ void JrInterpreter::exec_putfield(const Instruction &instruction) {
     auto valueRef = context->stack->pop();
     
     auto object = context->gc->get(objectRef);
-    object->setField(objectRef, addressOfField);
+    object->setField(valueRef, addressOfField);
+}
+
+void JrInterpreter::exec_getfield(const Instruction &instruction) {
+    auto frame = context->stack->topFrame();
+    auto addressOfField = instruction.value;
+    
+    auto objectRef = context->stack->pop();
+    auto object = context->gc->get(objectRef);
+    auto fieldObjCRef = object->getFieldAsObjectRef(addressOfField);
+    context->stack->push(fieldObjCRef);
 }
 
 void JrInterpreter::exec_onewarray(const Instruction &instruction) {
@@ -238,7 +251,8 @@ void JrInterpreter::exec_onewarray(const Instruction &instruction) {
     auto objectRef = context->gc->alloc((JrObjectType*)JrObjectIntArray::Type);
     
     auto arrayObject = (JrObjectIntArray*)context->gc->get(objectRef);
-    arrayObject->slots = std::vector<JrInt>();
-    std::reverse_copy(objects.begin(), objects.end(), arrayObject->slots.begin());
+    for(auto iterator = objects.rbegin(); iterator != objects.rend(); iterator ++) {
+        arrayObject->slots->push_back(*iterator);
+    }
     context->stack->push(objectRef);
 }

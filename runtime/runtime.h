@@ -6,6 +6,10 @@
 #include "object.h"
 #include "instruction.h"
 
+
+typedef std::function<JrObject*(JrPtr)> JrObjectInitializer;
+typedef std::function<void(JrObject*)> JrObjectFinalizer;
+
 struct JrType {
     static JrType* Any;
     static JrType* Void;
@@ -20,6 +24,11 @@ struct JrType {
     JrType(int kind, const std::wstring& name);
     
     virtual JrInt size();
+    
+    // initialize the object after malloc memory data
+    JrObjectInitializer initializer = nullptr;
+    // finialize the object before release memory
+    JrObjectFinalizer finalizer = nullptr;
 };
 
 struct JrFieldType {
@@ -33,15 +42,12 @@ struct JrFieldType {
 struct JrPrimaryType: public JrType {
     
     static JrPrimaryType* Int;
-    static JrPrimaryType* Int8;
-    static JrPrimaryType* Int16;
-    static JrPrimaryType* Int32;
-    static JrPrimaryType* Int64;
-    
     static JrPrimaryType* Float;
     static JrPrimaryType* Boolean;
     
     JrPrimaryType(int kind, const std::wstring& name);
+    
+    virtual JrInt size();
 };
  
 struct JrObjectType: public JrType {
@@ -55,7 +61,10 @@ struct JrObjectType: public JrType {
     
     void registerField(JrFieldType::Pointer field);
     
-    JrObjectType(const std::wstring& name);
+    virtual JrInt size();
+    JrObjectType(const std::wstring& name,
+                 JrObjectInitializer initializer = nullptr,
+                 JrObjectFinalizer finalizer = nullptr);
 };
 
 // Speical type for module class

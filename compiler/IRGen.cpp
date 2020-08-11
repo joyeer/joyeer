@@ -217,7 +217,7 @@ void IRGen::emit(IdentifierExpr::Pointer node) {
         return;
     }
     
-    if((symbol->flag & varSymbol) == varSymbol) {
+    if(symbol->flag  == varSymbol) {
         auto type = Global::types[symbol->addressOfType];
         
         if(type == JrPrimaryType::Int) {
@@ -233,6 +233,19 @@ void IRGen::emit(IdentifierExpr::Pointer node) {
         } else {
             assert(false);
         }
+        
+        return;
+    } else if(symbol->flag == fieldSymbol) {
+        
+        auto function = context->curFunction();
+        writer.write({
+            .opcode = OP_OLOAD,
+            .value = (int32_t)(function->paramTypes.size() - 1)
+        });
+        writer.write({
+            .opcode = OP_GETFIELD,
+            .value = symbol->addressOfField
+        });
         
         return;
     }
@@ -271,15 +284,7 @@ void IRGen::emit(AssignmentExpr::Pointer node) {
             .opcode = OP_ISTORE,
             .value = identifierExpr->symbol->addressOfVariable
         });
-        
-//        switch (memberAccessExpr->member->kind) {
-//            case :
-//                <#statements#>
-//                break;
-//                
-//            default:
-//                break;
-//        }
+
     } else {
         assert(false);
     }

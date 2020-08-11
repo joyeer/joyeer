@@ -22,6 +22,7 @@ const std::unordered_map<Opcode, std::wstring> JrInstructionDebugPrinter::maps =
     { OP_ILOAD, L"load.int" },
     { OP_OLOAD, L"oload" },
     { OP_PUTFIELD, L"putfield"},
+    { OP_GETFIELD, L"getfield"},
     
     { OP_IADD, L"add.int" },
     { OP_ISUB, L"sub.int" },

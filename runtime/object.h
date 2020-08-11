@@ -33,7 +33,6 @@ typedef JrInt       JrObjectRef;
 struct JrObjectHead {
     JrInt  refCount;
     JrInt  size;
-    JrInt  type;
 };
 
 struct JrObject {

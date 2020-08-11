@@ -1,13 +1,13 @@
 #include "gc.h"
 
-
 JrObject* JrObjectAlloc::alloc(JrObjectType* type) {
-    size_t headSize = sizeof(JrObjectHead);
-    size_t size = headSize;
-    for(auto field: type->virtualFields) {
-        size += field->type->size();
+    size_t size = type->size();
+    auto object = (JrPtr)malloc(size);
+    if(type->initializer != nullptr) {
+        return type->initializer(object);
+    } else {
+        return (JrObject*)type;
     }
-    return (JrObject*)malloc(size);
 }
 
 int JrObjectTable::registerObject(JrObject *object) {

@@ -19,14 +19,8 @@ Node::Pointer Binder::bind(std::shared_ptr<Node> node) {
             return bind(std::static_pointer_cast<SourceBlock>(node));
         case type:
             return bind(std::static_pointer_cast<TypeDecl>(node));
-        case arrayType:
-            break;
-        case dictType:
-            break;
         case pattern:
             return bind(std::static_pointer_cast<Pattern>(node));
-        case importDecl:
-            break;
         case letDecl:
             return bind(std::static_pointer_cast<LetDecl>(node));
         case varDecl:
@@ -41,16 +35,12 @@ Node::Pointer Binder::bind(std::shared_ptr<Node> node) {
             return bind(std::static_pointer_cast<ParameterClause>(node));
         case codeBlock:
             return bind(std::static_pointer_cast<CodeBlock>(node));
-        case forInStatement:
-            break;
         case ifStatement:
             return bind(std::static_pointer_cast<IfStatement>(node));
         case expr:
             return bind(std::static_pointer_cast<Expr>(node));
         case selfExpr:
             return bind(std::static_pointer_cast<SelfExpr>(node));
-        case postfixExpr:
-            break;
         case prefixExpr:
             return bind(std::static_pointer_cast<PrefixExpr>(node));
         case identifierExpr:
@@ -67,8 +57,6 @@ Node::Pointer Binder::bind(std::shared_ptr<Node> node) {
             return bind(std::static_pointer_cast<LiteralExpr>(node));
         case arrayLiteralExpr:
             return bind(std::static_pointer_cast<ArrayLiteralExpr>(node));
-        case dictLiteralExpr:
-            break;
         case assignmentExpr:
             return bind(std::static_pointer_cast<AssignmentExpr>(node));
         case binaryExpr:
@@ -79,6 +67,8 @@ Node::Pointer Binder::bind(std::shared_ptr<Node> node) {
             return bind(std::static_pointer_cast<ReturnStatement>(node));
         case subscriptExpr:
             return bind(std::static_pointer_cast<SubscriptExpr>(node));
+        default:
+            assert(false);
     }
 }
 

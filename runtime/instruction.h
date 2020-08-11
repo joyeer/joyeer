@@ -20,6 +20,7 @@ enum Opcode {
     
     OP_NEW,
     OP_PUTFIELD,
+    OP_GETFIELD,
     
     OP_IADD,
     OP_ISUB,

@@ -40,6 +40,7 @@ private:
     void exec_oconst_nil(const Instruction& instruction);
     void exec_new(const Instruction& instruction);
     void exec_putfield(const Instruction& instruction);
+    void exec_getfield(const Instruction& instruction);
     void exec_onewarray(const Instruction& instruction);
     
     JrRuntimeContext::Pointer context;

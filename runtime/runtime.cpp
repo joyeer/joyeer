@@ -13,8 +13,11 @@ name(name) {
 }
 
 JrInt JrType::size() {
-    return sizeof(JrInt) + ;
+    return sizeof(JrInt);
 }
+////////////////////////////////////////////////////////////////
+// JrPrimaryType
+////////////////////////////////////////////////////////////////
 
 JrPrimaryType* JrPrimaryType::Int = new JrPrimaryType(JrType_Int, L"Int");
 JrPrimaryType* JrPrimaryType::Float = new JrPrimaryType(JrType_Float, L"Float");
@@ -24,15 +27,43 @@ JrPrimaryType::JrPrimaryType(int kind, const std::wstring& name):
 JrType(kind, name) {
 }
 
-JrObjectType::JrObjectType(const std::wstring& name):
-JrType(kind, name) {
-    
+JrInt JrPrimaryType::size() {
+    switch (kind) {
+        case JrType_Int:
+            return sizeof(JrInt);
+        default:
+            assert(false);
+    }
+}
+
+////////////////////////////////////////////////////////////////
+// JrObjectType
+////////////////////////////////////////////////////////////////
+
+JrObjectType::JrObjectType(const std::wstring& name, JrObjectInitializer initializer, JrObjectFinalizer finalizer):
+JrType(JrType_Object, name) {
+    this->initializer = initializer;
+    this->finalizer = finalizer;
 }
 
 void JrObjectType::registerField(JrFieldType::Pointer field) {
     field->addressOfField = virtualFields.size();
     virtualFields.push_back(field);
 }
+
+JrInt JrObjectType::size() {
+    size_t headSize = sizeof(JrObjectHead);
+    size_t size = headSize;
+    for(auto field: virtualFields) {
+        size += field->type->size();
+    }
+    
+    return size;
+}
+
+////////////////////////////////////////////////////////////////
+// JrModuleType
+////////////////////////////////////////////////////////////////
 
 JrModuleType::JrModuleType(const std::wstring& name):
 JrObjectType(name) {
