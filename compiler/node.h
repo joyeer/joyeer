@@ -156,7 +156,7 @@ struct FuncDecl: Node {
     Node::Pointer codeBlock;
     Node::Pointer returnType;
     
-    JrType* ownerType = nullptr;
+
     
     FuncDecl(Node::Pointer identifier, Node::Pointer parameterClause, Node::Pointer returnType, Node::Pointer codeBlock);
     

@@ -105,8 +105,8 @@ JrFunctionFrame::Pointer JrInterpreter::prepareStackFrame(JrFunction::Pointer fu
     auto frame = std::make_shared<JrFunctionFrame>();
     frame->addressOfFunc = func->addressOfFunc;
     
-    uint8_t* baseAddress = context->stack->pointer;
-    uint8_t* address = baseAddress - func->totalSizeOfParams();
+    JrInt baseAddress = context->stack->pointer;
+    JrInt address = baseAddress - func->totalSizeOfParams();
     frame->startAddress = address ;
     for(auto var : func->localVars) {
         frame->addressOfVariables.push_back(address);

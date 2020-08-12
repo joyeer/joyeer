@@ -86,14 +86,14 @@ struct JrFunctionFrame {
     typedef std::shared_ptr<JrFunctionFrame> Pointer;
     
     // the index of the function in function tables
-    int addressOfFunc;
+    JrInt addressOfFunc;
     
     // the address of this frame in stack
-    uint8_t* startAddress;
-    uint8_t* endAddress;
+    JrInt startAddress;
+    JrInt endAddress;
     
     // the addresses of variable in stack
-    std::vector<uint8_t*> addressOfVariables;
+    std::vector<JrInt> addressOfVariables;
 };
 
 
@@ -105,8 +105,8 @@ struct JrRuntimeStack {
     JrRuntimeStack();
     
     std::stack<JrFunctionFrame::Pointer> frames;
-    uint8_t* pointer;
-    uint8_t data[JrRuntimeStack::Size];
+    JrInt pointer;
+    JrInt8* data[JrRuntimeStack::Size];
     
     // push the FunctionFrame into stack
     void push(JrFunctionFrame::Pointer frame);
@@ -118,9 +118,9 @@ struct JrRuntimeStack {
     JrInt pop();
     
     // store the variable value at address at stack
-    void storeValueForVariable(uint8_t* addressOfVariable, JrInt value);
+    void storeValueForVariable(JrInt addressOfVariable, JrInt value);
     // get the int value of the variable
-    JrInt intValueOfVariable(uint8_t* addressOfVariable);
+    JrInt intValueOfVariable(JrInt addressOfVariable);
 };
 
 struct JrGC;

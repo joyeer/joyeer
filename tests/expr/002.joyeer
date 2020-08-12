@@ -1,3 +1,6 @@
-var array = [1, 2, 3]
-var a:[Int] = array[2]
+var b = 11
+var a = 13
+
+print(message: a)
+a = b 
 print(message: a)

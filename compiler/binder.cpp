@@ -112,7 +112,6 @@ SourceBlock::Pointer Binder::bind(SourceBlock::Pointer sourceBlock) {
 
 Node::Pointer Binder::bind(FuncDecl::Pointer decl) {
     auto type = context->curType();
-    decl->ownerType = type;
     auto symtable = context->curSymTable();
     auto function = std::make_shared<JrFunction>();
     function->name = decl->getFuncName();

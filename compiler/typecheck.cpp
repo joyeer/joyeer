@@ -79,6 +79,9 @@ void TypeChecker::verify(Node::Pointer node) {
         case arrayType:
             verify(std::static_pointer_cast<ArrayType>(node));
             break;
+        case operatorExpr:
+            // ignore it
+            break;
         default:
             assert(false);
     }
@@ -171,7 +174,6 @@ void TypeChecker::verify(ConstructorDecl::Pointer node) {
     
     assert(function->paramTypes.size() == 0);
     
-    
     // Binding function's type
     auto parameterClause = std::static_pointer_cast<ParameterClause>(node->parameterClause);
     for(auto parameter: parameterClause->parameters) {
@@ -213,14 +215,13 @@ void TypeChecker::verify(ConstructorDecl::Pointer node) {
 
 void TypeChecker::verify(FuncCallExpr::Pointer node) {
     auto name = node->getFunctionName();
-    
     auto symbol = context->lookup(name);
+    
     if(symbol == nullptr) {
         Diagnostics::reportError(L"[Error]Cannot find the function");
     }
     
     node->symbol = symbol;
-    
     for(auto argument: node->arguments) {
         verify(argument);
     }
@@ -569,6 +570,8 @@ JrType* TypeChecker::typeOf(LiteralExpr::Pointer node) {
 }
 
 JrType* TypeChecker::typeOf(FuncCallExpr::Pointer node) {
+    auto funcName = node->getFunctionName();
+    auto symbol = context->lookup(funcName);
     auto function = Global::functions[node->symbol->addressOfFunc];
     return function->returnType;
 }

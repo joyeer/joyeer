@@ -256,12 +256,27 @@ void IRGen::emit(IdentifierExpr::Pointer node) {
 
 void IRGen::emit(AssignmentExpr::Pointer node) {
     emit(node->expr);
+    
     if(node->left->kind == identifierExpr) {
         auto identifierExpr = std::static_pointer_cast<IdentifierExpr>(node->left);
-        writer.write({
-            .opcode = OP_ISTORE,
-            .value = identifierExpr->symbol->addressOfVariable
-        });
+        if(identifierExpr->symbol->flag == fieldSymbol) {
+            // If the identifier is a field
+            auto function = context->curFunction();
+            writer.write({
+                .opcode = OP_OLOAD,
+                .value = (JrInt)(function->paramTypes.size() - 1)      // last parameter is the self object
+            });
+            writer.write({
+                .opcode = OP_PUTFIELD,
+                .value = identifierExpr->symbol->addressOfField
+            });
+        } else {
+            writer.write({
+                .opcode = OP_ISTORE,
+                .value = identifierExpr->symbol->addressOfVariable
+            });
+        }
+        
     } else if( node->left->kind == selfExpr ) {
         auto selfExpr = std::static_pointer_cast<SelfExpr>(node->left);
         

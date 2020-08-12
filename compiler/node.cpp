@@ -54,11 +54,7 @@ codeBlock(codeBlock) {
 }
 
 const std::wstring FuncDecl::getFuncName() {
-    
     std::wstringstream ss;
-    if (ownerType != nullptr) {
-        ss << ownerType->name << L"@";
-    }
     ss << std::static_pointer_cast<IdentifierExpr>(identifier)->token->rawValue << L"(";
     for(auto p: std::static_pointer_cast<ParameterClause>(parameterClause)->parameters) {
         ss << p->identifier->token->rawValue << L":";
