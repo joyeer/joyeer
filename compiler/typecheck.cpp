@@ -14,15 +14,7 @@ void TypeChecker::verify(Node::Pointer node) {
             verify(std::static_pointer_cast<SourceBlock>(node));
             break;
         case type:
-            verify(std::static_pointer_cast<TypeDecl>(node));
-            break;
-        case arrayType:
-            break;
-        case dictType:
-            break;
-        case pattern:
-            break;
-        case importDecl:
+            verify(std::static_pointer_cast<Type>(node));
             break;
         case letDecl:
             verify(std::static_pointer_cast<LetDecl>(node));
@@ -45,8 +37,6 @@ void TypeChecker::verify(Node::Pointer node) {
         case codeBlock:
             verify(std::static_pointer_cast<CodeBlock>(node));
             break;
-        case forInStatement:
-            break;
         case ifStatement:
             verify(std::static_pointer_cast<IfStatement>(node));
             break;
@@ -55,10 +45,6 @@ void TypeChecker::verify(Node::Pointer node) {
             break;
         case selfExpr:
             verify(std::static_pointer_cast<SelfExpr>(node));
-            break;
-        case postfixExpr:
-            break;
-        case prefixExpr:
             break;
         case identifierExpr:
             verify(std::static_pointer_cast<IdentifierExpr>(node));
@@ -81,20 +67,17 @@ void TypeChecker::verify(Node::Pointer node) {
         case arrayLiteralExpr:
             verify(std::static_pointer_cast<ArrayLiteralExpr>(node));
             break;
-        case dictLiteralExpr:
-            break;
         case assignmentExpr:
             verify(std::static_pointer_cast<AssignmentExpr>(node));
-            break;
-        case binaryExpr:
-            break;
-        case operatorExpr:
             break;
         case returnStatement:
             verify(std::static_pointer_cast<ReturnStatement>(node));
             break;
         case subscriptExpr:
             verify(std::static_pointer_cast<SubscriptExpr>(node));
+            break;
+        case arrayType:
+            verify(std::static_pointer_cast<ArrayType>(node));
             break;
         default:
             assert(false);
@@ -147,7 +130,7 @@ void TypeChecker::verify(FuncDecl::Pointer node) {
     // Binding function's type
     auto parameterClause = std::static_pointer_cast<ParameterClause>(node->parameterClause);
     for(auto parameter: parameterClause->parameters) {
-        auto symbol = parameter->typeDecl->symbol;
+        auto symbol = parameter->type->symbol;
         
         assert((symbol->flag & typeSymbol) == typeSymbol);
         auto type = Global::types[symbol->addressOfType];
@@ -192,7 +175,7 @@ void TypeChecker::verify(ConstructorDecl::Pointer node) {
     // Binding function's type
     auto parameterClause = std::static_pointer_cast<ParameterClause>(node->parameterClause);
     for(auto parameter: parameterClause->parameters) {
-        auto symbol = parameter->typeDecl->symbol;
+        auto symbol = parameter->type->symbol;
         
         assert((symbol->flag & typeSymbol) == typeSymbol);
         auto type = Global::types[symbol->addressOfType];
@@ -248,11 +231,10 @@ void TypeChecker::verify(VarDecl::Pointer node) {
         verify(node->pattern);
     });
     
-    if(node->pattern->typeDecl == nullptr) {
+    if(node->pattern->type == nullptr) {
         // change the symbol to unfixed symbol
         node->symbol->isMutable = true;
         node->symbol->addressOfType = JrType::Any->addressOfType;
-    
     }
     
     if(node->initializer != nullptr) {
@@ -264,15 +246,21 @@ void TypeChecker::verify(VarDecl::Pointer node) {
         auto rightType = typeOf(node->initializer);
         auto leftType = typeOf(node->pattern);
         // the node doesn't use
-        if(node->pattern->typeDecl == nullptr) {
+        if(node->pattern->type == nullptr) {
             node->symbol->addressOfType = rightType->addressOfType;
         }
         auto function = context->curFunction();
     }
     
-    // declare the local variable in function
+    
     auto stage = context->curStage();
-    if(stage != visitSourceBlock && stage != visitClassDecl) {
+    if(stage == visitSourceBlock || stage == visitClassDecl) {
+        auto objectType = (JrObjectType*)(context->curType());
+        auto fieldType = objectType->virtualFields[node->symbol->addressOfField];
+        assert(fieldType->type == nullptr);
+        fieldType->type = Global::types[node->symbol->addressOfType];
+    } else {
+        // declare the local variable in function
         auto function = context->curFunction();
         auto addressOfVariable = (int)function->localVars.size();
         node->symbol->addressOfVariable = addressOfVariable;
@@ -292,7 +280,7 @@ void TypeChecker::verify(LetDecl::Pointer node) {
         verify(node->pattern);
     });
     
-    if(node->pattern->typeDecl == nullptr) {
+    if(node->pattern->type == nullptr) {
         // change the symbol to unfixed symbol
         node->symbol->flag = varSymbol;
         node->symbol->isMutable = false;
@@ -326,10 +314,11 @@ void TypeChecker::verify(ParameterClause::Pointer node) {
 
 void TypeChecker::verify(Pattern::Pointer node) {
     verify(node->identifier);
-    if(node->typeDecl != nullptr) {
-        verify(node->typeDecl);
+    if(node->type != nullptr) {
+        verify(node->type);
         // binding the identifier symbol's type to Pattern type's symbols' type
-        node->identifier->symbol->addressOfType = node->typeDecl->symbol->addressOfType;
+        auto type = typeOf(node->type);
+        node->identifier->symbol->addressOfType = type->addressOfType;
     }
 }
 
@@ -359,7 +348,7 @@ void TypeChecker::verify(IdentifierExpr::Pointer node) {
     
 }
 
-void TypeChecker::verify(TypeDecl::Pointer node) {
+void TypeChecker::verify(Type::Pointer node) {
     auto symbol = context->lookup(node->identifier->getName());
     if(symbol == nullptr) {
         Diagnostics::reportError(L"[Error]Cannot find type");
@@ -486,6 +475,10 @@ void TypeChecker::verify(SubscriptExpr::Pointer node) {
     
 }
 
+void TypeChecker::verify(ArrayType::Pointer node) {
+    verify(node->type);
+}
+
 JrType* TypeChecker::typeOf(Node::Pointer node) {
     switch (node->kind) {
         case identifierExpr:
@@ -503,13 +496,15 @@ JrType* TypeChecker::typeOf(Node::Pointer node) {
         case pattern:
             return typeOf(std::static_pointer_cast<Pattern>(node));
         case type:
-            return typeOf(std::static_pointer_cast<TypeDecl>(node));
+            return typeOf(std::static_pointer_cast<Type>(node));
         case arrayLiteralExpr:
             return typeOf(std::static_pointer_cast<ArrayLiteralExpr>(node));
         case memberAccessExpr:
             return typeOf(std::static_pointer_cast<MemberAccessExpr>(node));
         case subscriptExpr:
             return typeOf(std::static_pointer_cast<SubscriptExpr>(node));
+        case arrayType:
+            return typeOf(std::static_pointer_cast<ArrayType>(node));
         default:
             assert(false);
     }
@@ -587,13 +582,13 @@ JrType* TypeChecker::typeOf(SelfExpr::Pointer node) {
 }
 
 JrType* TypeChecker::typeOf(Pattern::Pointer node) {
-    if(node->typeDecl == nullptr) {
+    if(node->type == nullptr) {
         return JrType::Any;
     }
-    return typeOf(node->typeDecl);
+    return typeOf(node->type);
 }
 
-JrType* TypeChecker::typeOf(TypeDecl::Pointer node) {
+JrType* TypeChecker::typeOf(Type::Pointer node) {
     assert(node->symbol->flag == typeSymbol);
     return Global::types[node->symbol->addressOfType];
 }
@@ -624,6 +619,15 @@ JrType* TypeChecker::typeOf(MemberAccessExpr::Pointer node) {
 
 JrType* TypeChecker::typeOf(SubscriptExpr::Pointer node) {
     return typeOf(node->identifier);
+}
+
+JrType* TypeChecker::typeOf(ArrayType::Pointer node) {
+    auto type = typeOf(node->type);
+    if(type == JrPrimaryType::Int) {
+        return JrObjectIntArray::Type;
+    }
+    
+    assert(false);
 }
 
 void TypeChecker::verifyReturnStatement(SourceBlock::Pointer node) {

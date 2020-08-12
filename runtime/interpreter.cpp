@@ -227,6 +227,7 @@ void JrInterpreter::exec_putfield(const Instruction &instruction) {
     auto valueRef = context->stack->pop();
     
     auto object = context->gc->get(objectRef);
+    assert(object != nullptr);
     object->setField(valueRef, addressOfField);
 }
 

@@ -83,22 +83,29 @@ struct OperatorExpr: Node {
     OperatorExpr(Token::Pointer token);
 };
 
-struct TypeDecl: Node {
-    typedef std::shared_ptr<TypeDecl> Pointer;
+struct Type: Node {
+    typedef std::shared_ptr<Type> Pointer;
     
-    IdentifierExpr::Pointer identifier;
-    bool isOptional;
+    Node::Pointer identifier; // identifierExpr
     
-    TypeDecl(IdentifierExpr::Pointer identifier, bool isOptional);
+    Type(Node::Pointer identifier);
+};
+
+struct ArrayType: Node {
+    typedef std::shared_ptr<ArrayType> Pointer;
+    
+    Node::Pointer type;
+    
+    ArrayType(Node::Pointer type);
 };
 
 struct Pattern: public Node {
     typedef std::shared_ptr<Pattern> Pointer;
     
     IdentifierExpr::Pointer identifier; // the name of pattern
-    TypeDecl::Pointer typeDecl; // the type of pattern, optinal nullptr
+    Node::Pointer type; // the type of pattern, optinal nullptr
     
-    Pattern(IdentifierExpr::Pointer identifier, TypeDecl::Pointer type);
+    Pattern(IdentifierExpr::Pointer identifier, Node::Pointer type);
     
     const std::wstring& getIdentifierName();
 

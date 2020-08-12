@@ -67,10 +67,10 @@ const std::wstring FuncDecl::getFuncName() {
     return ss.str();
 }
 
-Pattern::Pattern(IdentifierExpr::Pointer identifier, TypeDecl::Pointer type):
+Pattern::Pattern(IdentifierExpr::Pointer identifier, Node::Pointer type):
 Node(SyntaxKind::pattern),
 identifier(identifier),
-typeDecl(type) {
+type(type) {
 }
 
 const std::wstring& Pattern::getIdentifierName() {
@@ -201,10 +201,14 @@ identifier(identifier),
 indexExpr(indexExpr) {
 }
 
-TypeDecl::TypeDecl(IdentifierExpr::Pointer identifier, bool isOptional):
+Type::Type(Node::Pointer identifier):
 Node(SyntaxKind::type),
-identifier(identifier),
-isOptional(isOptional) {
+identifier(identifier) {
+}
+
+ArrayType::ArrayType(Node::Pointer type):
+Node(SyntaxKind::arrayType),
+type(type) {
 }
 
 SourceBlock::SourceBlock(std::vector<std::shared_ptr<Node>> statements):
@@ -317,7 +321,7 @@ void NodeDebugPrinter::print(Node::Pointer node) {
             break;
         case type: {
             output << L"+type" ;
-            auto n = std::static_pointer_cast<TypeDecl>(node);
+            auto n = std::static_pointer_cast<Type>(node);
             incTab();
             print(n->symtable);
             print(n->symbol);
@@ -338,8 +342,8 @@ void NodeDebugPrinter::print(Node::Pointer node) {
             print(n->symtable);
             print(n->symbol);
             print(n->identifier);
-            if(n->typeDecl != nullptr) {
-                print(n->typeDecl);
+            if(n->type != nullptr) {
+                print(n->type);
             }
             decTab();
         }

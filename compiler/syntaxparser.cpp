@@ -348,25 +348,58 @@ Pattern::Pointer SyntaxParser::tryParsePattern() {
     return std::make_shared<Pattern>(identifier, type);
 }
 
-TypeDecl::Pointer SyntaxParser::tryParseTypeAnnotation() {
+Node::Pointer SyntaxParser::tryParseTypeAnnotation() {
     if(tryEat(TokenKind::punctuation, Punctuations::COLON) == nullptr) {
         return nullptr;
     }
     
-    TypeDecl::Pointer type = tryParseType();
+    auto type = tryParseType();
     if(type == nullptr ) {
-        return nullptr; // TODO: Report an error
+        Diagnostics::reportError(L"Error");
+        return nullptr;
     }
     return type;
 }
 
-TypeDecl::Pointer SyntaxParser::tryParseType() {
-    auto identifier = tryParseIdentifierExpr();
-    bool isOptinal = false;
-    if(tryEat(TokenKind::operators, Operators::QUESTION) != nullptr) {
-        isOptinal = true;
+
+Node::Pointer SyntaxParser::tryParseType() {
+    Node::Pointer type = nullptr;
+    type = tryParseTypeIdentifier();
+    if(type != nullptr) {
+        return type;
     }
-    return std::make_shared<TypeDecl>(identifier, isOptinal);
+    
+    type = tryParseTypeArray();
+    if(type != nullptr) {
+        return type;
+    }
+    
+    return nullptr;
+}
+
+Node::Pointer SyntaxParser::tryParseTypeIdentifier() {
+    auto type = tryParseIdentifierExpr();
+    if(type == nullptr) {
+        return nullptr;
+    }
+    return std::make_shared<Type>(type);
+}
+
+Node::Pointer SyntaxParser::tryParseTypeArray() {
+    if(tryEat(TokenKind::punctuation, Punctuations::OPEN_SQUARE_BRACKET) == nullptr) {
+        return nullptr;
+    }
+    
+    auto type = tryParseType();
+    if( type == nullptr) {
+        Diagnostics::reportError(L"Error");
+    }
+    
+    if(tryEat(TokenKind::punctuation, Punctuations::CLOSE_SQUARE_BRACKET) == nullptr) {
+        return nullptr;
+    }
+    
+    return std::make_shared<ArrayType>(type);
 }
 
 // expression -> prefix-expression binary-expressions /opt/

@@ -20,7 +20,7 @@ private:
     void verify(ParameterClause::Pointer node);
     void verify(Pattern::Pointer node);
     void verify(IdentifierExpr::Pointer node);
-    void verify(TypeDecl::Pointer node);
+    void verify(Type::Pointer node);
     void verify(CodeBlock::Pointer node);
     void verify(ReturnStatement::Pointer node);
     void verify(Expr::Pointer node);
@@ -35,6 +35,7 @@ private:
     void verify(ArrayLiteralExpr::Pointer node);
     void verify(MemberAccessExpr::Pointer node);
     void verify(SubscriptExpr::Pointer node);
+    void verify(ArrayType::Pointer node);
     
     JrType* typeOf(Node::Pointer node);
     JrType* typeOf(IdentifierExpr::Pointer node);
@@ -44,10 +45,11 @@ private:
     JrType* typeOf(ParenthesizedExpr::Pointer node);
     JrType* typeOf(SelfExpr::Pointer node);
     JrType* typeOf(Pattern::Pointer node);
-    JrType* typeOf(TypeDecl::Pointer node);
+    JrType* typeOf(Type::Pointer node);
     JrType* typeOf(ArrayLiteralExpr::Pointer node);
     JrType* typeOf(MemberAccessExpr::Pointer node);
     JrType* typeOf(SubscriptExpr::Pointer node);
+    JrType* typeOf(ArrayType::Pointer node);
     
     // Get Codeblock's return type
     void verifyReturnStatement(SourceBlock::Pointer node);

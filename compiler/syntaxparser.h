@@ -47,9 +47,11 @@ private:
     ////////////////////////////////////////////////////////////////////////////
     Pattern::Pointer tryParsePattern();
     
-    TypeDecl::Pointer tryParseTypeAnnotation();
+    Node::Pointer tryParseTypeAnnotation();
+    Node::Pointer tryParseTypeIdentifier();
+    Node::Pointer tryParseTypeArray();
     
-    TypeDecl::Pointer tryParseType();
+    Node::Pointer tryParseType();
 
     ////////////////////////////////////////////////////////////////////////////
     // Expressions

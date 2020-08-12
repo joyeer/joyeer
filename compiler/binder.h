@@ -21,7 +21,7 @@ protected:
     Node::Pointer bind(LetDecl::Pointer decl);
     Node::Pointer bind(VarDecl::Pointer varDecl);
     Node::Pointer bind(ConstructorDecl::Pointer decl);
-    Node::Pointer bind(TypeDecl::Pointer decl);
+    Node::Pointer bind(Type::Pointer decl);
     Node::Pointer bind(FuncCallExpr::Pointer decl);
     Node::Pointer bind(ArguCallExpr::Pointer decl);
     Node::Pointer bind(LiteralExpr::Pointer decl);

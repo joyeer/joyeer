@@ -1,1 +1,12 @@
-print(message: "Hello, world!")
+
+
+func sortArray(array:[Int], num:Int): [int] {
+    var startIndex = 0
+    var endIndex = array.size() - 1
+
+    while(startIndex < endIndex) {
+        
+    }
+}
+
+

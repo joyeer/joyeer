@@ -18,7 +18,7 @@ Node::Pointer Binder::bind(std::shared_ptr<Node> node) {
         case SyntaxKind::sourceBlock:
             return bind(std::static_pointer_cast<SourceBlock>(node));
         case type:
-            return bind(std::static_pointer_cast<TypeDecl>(node));
+            return bind(std::static_pointer_cast<Type>(node));
         case pattern:
             return bind(std::static_pointer_cast<Pattern>(node));
         case letDecl:
@@ -311,9 +311,7 @@ Node::Pointer Binder::bind(VarDecl::Pointer decl) {
     if(stage == visitClassDecl || stage == visitSourceBlock) {
         // If var decl is a field, let's register it in type's field list
         auto ownerType = (JrObjectType*)context->curType();
-        auto fieldType = decl->pattern->typeDecl != nullptr? Global::types[decl->pattern->typeDecl->symbol->addressOfType] : JrObjectType::Any;
         auto field = JrFieldType::Pointer(new JrFieldType {
-            .type = fieldType,
             .name = name
         });
         ownerType->registerField(field);
@@ -586,11 +584,11 @@ Node::Pointer Binder::bind(ParameterClause::Pointer decl) {
 
 Node::Pointer Binder::bind(Pattern::Pointer decl) {
     decl->identifier = std::static_pointer_cast<IdentifierExpr>(bind(decl->identifier));
-    decl->typeDecl = std::static_pointer_cast<TypeDecl>(bind(decl->typeDecl));
+    decl->type = std::static_pointer_cast<Type>(bind(decl->type));
     return decl;
 }
 
-Node::Pointer Binder::bind(TypeDecl::Pointer decl) {
+Node::Pointer Binder::bind(Type::Pointer decl) {
     return decl;
 }
 
