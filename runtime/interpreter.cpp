@@ -190,7 +190,6 @@ void JrInterpreter::exec_ifle(const Instruction &instrunction) {
 }
 
 void JrInterpreter::exec_goto(const Instruction &instruction) {
-    auto value1 = context->stack->pop();
     pointer += instruction.value;
 }
 
