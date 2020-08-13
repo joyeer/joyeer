@@ -4,7 +4,7 @@
 JrFunction::Pointer JrFuncPrint::Func;
 
 void JrFuncPrint::operator()(JrRuntimeContext::Pointer context, JrFunction::Pointer func) {
-    uint32_t value = context->stack->pop();
+    auto value = context->stack->pop();
     std::cout << value << std::endl;
 };
 

@@ -203,6 +203,13 @@ void IRGen::emit(VarDecl::Pointer node) {
 void IRGen::emit(PrefixExpr::Pointer node) {
     assert(node->expr != nullptr);
     emit(node->expr);
+    if(node->op->token->rawValue == Operators::MINUS) {
+        writer.write({
+            .opcode = OP_INEG
+        });
+    } else {
+        assert(false);
+    }
 }
 
 void IRGen::emit(IdentifierExpr::Pointer node) {

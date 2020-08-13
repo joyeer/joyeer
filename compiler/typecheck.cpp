@@ -82,6 +82,9 @@ void TypeChecker::verify(Node::Pointer node) {
         case arrayType:
             verify(std::static_pointer_cast<ArrayType>(node));
             break;
+        case prefixExpr:
+            verify(std::static_pointer_cast<PrefixExpr>(node));
+            break;
         case operatorExpr:
             // ignore it
             break;
@@ -491,6 +494,10 @@ void TypeChecker::verify(ArrayType::Pointer node) {
     verify(node->type);
 }
 
+void TypeChecker::verify(PrefixExpr::Pointer node) {
+    verify(node->expr);
+}
+
 JrType* TypeChecker::typeOf(Node::Pointer node) {
     switch (node->kind) {
         case identifierExpr:
@@ -517,6 +524,8 @@ JrType* TypeChecker::typeOf(Node::Pointer node) {
             return typeOf(std::static_pointer_cast<SubscriptExpr>(node));
         case arrayType:
             return typeOf(std::static_pointer_cast<ArrayType>(node));
+        case prefixExpr:
+            return typeOf(std::static_pointer_cast<PrefixExpr>(node));
         default:
             assert(false);
     }
@@ -642,6 +651,10 @@ JrType* TypeChecker::typeOf(ArrayType::Pointer node) {
     }
     
     assert(false);
+}
+
+JrType* TypeChecker::typeOf(PrefixExpr::Pointer node) {
+    return typeOf(node->expr);
 }
 
 void TypeChecker::verifyReturnStatement(SourceBlock::Pointer node) {

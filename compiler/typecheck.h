@@ -37,6 +37,7 @@ private:
     void verify(MemberAccessExpr::Pointer node);
     void verify(SubscriptExpr::Pointer node);
     void verify(ArrayType::Pointer node);
+    void verify(PrefixExpr::Pointer node);
     
     JrType* typeOf(Node::Pointer node);
     JrType* typeOf(IdentifierExpr::Pointer node);
@@ -51,6 +52,7 @@ private:
     JrType* typeOf(MemberAccessExpr::Pointer node);
     JrType* typeOf(SubscriptExpr::Pointer node);
     JrType* typeOf(ArrayType::Pointer node);
+    JrType* typeOf(PrefixExpr::Pointer node);
     
     // Get Codeblock's return type
     void verifyReturnStatement(SourceBlock::Pointer node);

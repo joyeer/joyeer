@@ -28,6 +28,7 @@ enum Opcode {
     OP_IMUL,
     OP_IDIV,
     OP_IREM,
+    OP_INEG,
     
     OP_IFEQ,    // == 0
     OP_IFNE,    // != 0

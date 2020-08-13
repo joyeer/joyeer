@@ -484,7 +484,7 @@ std::shared_ptr<Node> SyntaxParser::tryParseBinaryExpr() {
 std::shared_ptr<Node> SyntaxParser::tryParsePrefixExpr() {
     auto op = tryParseOperatorExpr();
     
-    std::shared_ptr<Node> postfixExpr = tryParsePostfixExpr();
+    auto postfixExpr = tryParsePostfixExpr();
     if(postfixExpr == nullptr) {
         // revert the prefix operator
         if(op != nullptr) {

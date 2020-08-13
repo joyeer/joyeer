@@ -4,9 +4,25 @@ func sortArray(array:[Int], num:Int): [int] {
     var startIndex = 0
     var endIndex = array.size() - 1
 
-    while(startIndex < endIndex) {
-        
+    while startIndex < endIndex {
+        while array[startIndex] < num && startIndex < endIndex {
+            startIndex = startIndex + 1
+        }
+
+        while array[endIndex] > num && startIndex < endIndex {
+            endIndex = endIndex - 1
+        }
+
+        var temp = array[startIndex]
+        array[startIndex] = array[endIndex]
+        array[endIndex] = temp
+
+        startIndex = startIndex + 1
+        endIndex = endIndex - 1
     }
+
+    return array
 }
 
+sortArray(array: [1, -1, 2, 4, 5], num: 4)
 

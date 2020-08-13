@@ -94,6 +94,9 @@ void JrInterpreter::run(JrFunction::Pointer function, int objectRef) {
             case OP_ICMP:
                 exec_icmp(instruction);
                 break;
+            case OP_INEG:
+                exec_ineg(instruction);
+                break;
             default:
                 assert(false);
         } 
@@ -180,6 +183,12 @@ void JrInterpreter::exec_irem(const Instruction &instrunction) {
     auto value2 = context->stack->pop();
     
     context->stack->push(value2 % value1);
+}
+
+void JrInterpreter::exec_ineg(const Instruction& instruction) {
+    auto value = context->stack->pop();
+    value = -value;
+    context->stack->push(value);
 }
 
 void JrInterpreter::exec_ifle(const Instruction &instrunction) {

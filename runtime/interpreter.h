@@ -28,10 +28,11 @@ private:
     void exec_iadd(const Instruction& instruction);
     void exec_imul(const Instruction& instruction);
     void exec_isub(const Instruction& instruction);
-    void exec_idiv(const Instruction& instrunction);
-    void exec_irem(const Instruction& instrunction);
-    void exec_icmp(const Instruction& instrunction);
-    void exec_ifle(const Instruction& instrunction);
+    void exec_idiv(const Instruction& instruction);
+    void exec_irem(const Instruction& instruction);
+    void exec_icmp(const Instruction& instruction);
+    void exec_ifle(const Instruction& instruction);
+    void exec_ineg(const Instruction& instruction);
     
     void exec_goto(const Instruction& instruction);
     void exec_ireturn(const Instruction& instruction);
