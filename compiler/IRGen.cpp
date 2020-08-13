@@ -31,12 +31,8 @@ void IRGen::emit(Node::Pointer node) {
         case classDecl:
             emit(std::static_pointer_cast<ClassDecl>(node));
             break;
-        case parameterClause:
-            break;
         case codeBlock:
             emit(std::static_pointer_cast<CodeBlock>(node));
-            break;
-        case forInStatement:
             break;
         case ifStatement:
             emit(std::static_pointer_cast<IfStatement>(node));
@@ -68,12 +64,8 @@ void IRGen::emit(Node::Pointer node) {
         case arrayLiteralExpr:
             emit(std::static_pointer_cast<ArrayLiteralExpr>(node));
             break;
-        case dictLiteralExpr:
-            break;
         case assignmentExpr:
             emit(std::static_pointer_cast<AssignmentExpr>(node));
-            break;
-        case binaryExpr:
             break;
         case operatorExpr:
             emit(std::static_pointer_cast<OperatorExpr>(node));
@@ -83,6 +75,9 @@ void IRGen::emit(Node::Pointer node) {
             break;
         case subscriptExpr:
             emit(std::static_pointer_cast<SubscriptExpr>(node));
+            break;
+        case whileStatement:
+            emit(std::static_pointer_cast<WhileStatement>(node));
             break;
         default:
             assert(false);
@@ -323,12 +318,14 @@ void IRGen::emit(OperatorExpr::Pointer node) {
             { Operators::PLUS, OP_IADD },
             { Operators::DIV, OP_IDIV },
             { Operators::MULTIPLY, OP_IMUL },
-            { Operators::PERCENTAGE, OP_IREM }
+            { Operators::PERCENTAGE, OP_IREM },
+            { Operators::GREATER, OP_ICMP },
         }
     };
     
+    assert(imaps.find(node->token->rawValue) != imaps.end());
     writer.write({
-        .opcode = imaps[node->token->rawValue]
+        .opcode = imaps[node->token->rawValue],
     });
 }
 
@@ -361,6 +358,27 @@ void IRGen::emit(IfStatement::Pointer node) {
     });
     writer.write(instructions);
     writer.write(elseInstructions);
+    
+}
+
+void IRGen::emit(WhileStatement::Pointer node) {
+    IRGen gen(context);
+    gen.emit(node->codeBlock);
+    
+    IRGen conditionGen(context);
+    conditionGen.emit(node->expr);
+    
+    auto position = writer.instructions.size();
+    writer.write(conditionGen.writer.instructions);
+    writer.write({
+        .opcode = OP_IFLE,
+        .value = static_cast<JrInt>(gen.writer.instructions.size() + 2)
+    });
+    writer.write(gen.writer.instructions);
+    writer.write({
+        .opcode = OP_GOTO,
+        .value = static_cast<JrInt>(position - writer.instructions.size() - 1)
+    });
     
 }
 

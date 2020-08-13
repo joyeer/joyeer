@@ -26,6 +26,7 @@ enum SyntaxKind {
     codeBlock,
     forInStatement,
     ifStatement,
+    whileStatement,
     returnStatement,
 
     expr,
@@ -155,9 +156,7 @@ struct FuncDecl: Node {
     Node::Pointer parameterClause;
     Node::Pointer codeBlock;
     Node::Pointer returnType;
-    
 
-    
     FuncDecl(Node::Pointer identifier, Node::Pointer parameterClause, Node::Pointer returnType, Node::Pointer codeBlock);
     
     const std::wstring getFuncName();
@@ -324,6 +323,15 @@ struct ForInStatement: Node {
     Node::Pointer codeBlock;
 
     ForInStatement(Node::Pointer pattern, Node::Pointer inExpr, Node::Pointer codeBlock);
+};
+
+struct WhileStatement: Node {
+    typedef std::shared_ptr<WhileStatement> Pointer;
+    
+    Node::Pointer expr;
+    Node::Pointer codeBlock;
+    
+    WhileStatement(Node::Pointer expr, Node::Pointer codeBlock);
 };
 
 struct IfStatement: Node {

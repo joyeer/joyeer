@@ -40,6 +40,9 @@ void TypeChecker::verify(Node::Pointer node) {
         case ifStatement:
             verify(std::static_pointer_cast<IfStatement>(node));
             break;
+        case whileStatement:
+            verify(std::static_pointer_cast<WhileStatement>(node));
+            break;
         case expr:
             verify(std::static_pointer_cast<Expr>(node));
             break;
@@ -414,6 +417,14 @@ void TypeChecker::verify(IfStatement::Pointer node) {
     }
 }
 
+void TypeChecker::verify(WhileStatement::Pointer node) {
+    verify(node->expr);
+    
+    context->visit(visitCodeBlock, [this, node]() {
+        verify(node->codeBlock);
+    });
+}
+
 void TypeChecker::verify(ArguCallExpr::Pointer node) {
     verify(node->expr);
 }
@@ -542,7 +553,7 @@ JrType* TypeChecker::typeOf(Expr::Pointer node) {
                 stack.push(leftType);
             } else {
                 stack.push(leftType);
-                Diagnostics::reportError(L"type should be same");
+//                Diagnostics::reportError(L"type should be same");
             }
             //TODO double check
             
@@ -675,6 +686,10 @@ JrType* TypeChecker::returnTypeOf(IfStatement::Pointer node) {
     return ifBlock;
 }
 
+JrType* TypeChecker::returnTypeOf(WhileStatement::Pointer node) {
+    return returnTypeOf(node->codeBlock);
+}
+
 JrType* TypeChecker::returnTypeOf(FuncCallExpr::Pointer node) {
     auto function = Global::functions[node->symbol->addressOfFunc];
     assert(function != nullptr);
@@ -697,6 +712,8 @@ JrType* TypeChecker::returnTypeOf(Node::Pointer node) {
             return returnTypeOf(std::static_pointer_cast<IfStatement>(node));
         case funcCallExpr:
             return returnTypeOf(std::static_pointer_cast<FuncCallExpr>(node));
+        case whileStatement:
+            return returnTypeOf(std::static_pointer_cast<WhileStatement>(node));
         case assignmentExpr:
         case identifierExpr:
         case arrayLiteralExpr:

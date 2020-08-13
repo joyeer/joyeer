@@ -37,6 +37,8 @@ Node::Pointer Binder::bind(std::shared_ptr<Node> node) {
             return bind(std::static_pointer_cast<CodeBlock>(node));
         case ifStatement:
             return bind(std::static_pointer_cast<IfStatement>(node));
+        case whileStatement:
+            return bind(std::static_pointer_cast<WhileStatement>(node));
         case expr:
             return bind(std::static_pointer_cast<Expr>(node));
         case selfExpr:
@@ -547,6 +549,12 @@ Node::Pointer Binder::bind(IfStatement::Pointer decl) {
     if(decl->elseCodeBlock != nullptr) {
         decl->elseCodeBlock = bind(decl->elseCodeBlock);
     }
+    return decl;
+}
+
+Node::Pointer Binder::bind(WhileStatement::Pointer decl) {
+    decl->expr = bind(decl->expr);
+    decl->codeBlock = bind(decl->codeBlock);
     return decl;
 }
 

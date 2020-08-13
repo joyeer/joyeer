@@ -29,6 +29,7 @@ private:
     void verify(AssignmentExpr::Pointer node);
     void verify(ParenthesizedExpr::Pointer node);
     void verify(IfStatement::Pointer node);
+    void verify(WhileStatement::Pointer node);
     void verify(ArguCallExpr::Pointer node);
     void verify(ClassDecl::Pointer node);
     void verify(SelfExpr::Pointer node);
@@ -59,6 +60,7 @@ private:
     JrType* returnTypeOf(IfStatement::Pointer node);
     JrType* returnTypeOf(CodeBlock::Pointer node);
     JrType* returnTypeOf(FuncCallExpr::Pointer node);
+    JrType* returnTypeOf(WhileStatement::Pointer node);
     
     CompileContext::Pointer context;
 };

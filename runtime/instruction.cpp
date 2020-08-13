@@ -24,6 +24,7 @@ const std::unordered_map<Opcode, std::wstring> JrInstructionDebugPrinter::maps =
     { OP_PUTFIELD, L"putfield"},
     { OP_GETFIELD, L"getfield"},
     
+    { OP_ICMP, L"cmp.int" },
     { OP_IADD, L"add.int" },
     { OP_ISUB, L"sub.int" },
     { OP_IMUL, L"mul.int" },

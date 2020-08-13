@@ -1,6 +1,5 @@
-var b = 11
-var a = 13
-
-print(message: a)
-a = b 
-print(message: a)
+var i = 10
+while i > 0 {
+    print(message: i)
+    i = i - 1
+}

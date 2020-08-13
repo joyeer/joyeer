@@ -223,10 +223,16 @@ Node(SyntaxKind::codeBlock),
 statements(statements) {
 }
 
-ForInStatement::ForInStatement(std::shared_ptr<Node> pattern, std::shared_ptr<Node> inExpr, std::shared_ptr<Node> codeBlock):
+ForInStatement::ForInStatement(Node::Pointer pattern, Node::Pointer inExpr, Node::Pointer codeBlock):
 Node(SyntaxKind::forInStatement),
 pattern(pattern),
 inExpr(inExpr),
+codeBlock(codeBlock) {
+}
+
+WhileStatement::WhileStatement(Node::Pointer expr, Node::Pointer codeBlock):
+Node(SyntaxKind::whileStatement),
+expr(expr),
 codeBlock(codeBlock) {
 }
 
@@ -574,7 +580,6 @@ void NodeDebugPrinter::print(Node::Pointer node) {
             print(n->expr);
             decTab();
         }
-            
             break;
         case binaryExpr: {
             output << L"+binaryExpr" ;
@@ -619,7 +624,15 @@ void NodeDebugPrinter::print(Node::Pointer node) {
             print(n->identifier);
             print(n->indexExpr);
             decTab();
-            
+        }
+            break;
+        case whileStatement: {
+            auto n = std::static_pointer_cast<WhileStatement>(node);
+            output << L"+whileStatement";
+            incTab();
+            print(n->expr);
+            print(n->codeBlock);
+            decTab();
         }
             break;
         default:

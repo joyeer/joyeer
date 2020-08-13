@@ -91,6 +91,8 @@ struct Operators {
     static const std::wstring MULTIPLY;             // *
     static const std::wstring DIV;                  // /
     static const std::wstring PERCENTAGE;           // %
+    static const std::wstring LESS;                 // <
+    static const std::wstring GREATER;              // >
     
     // get the operator's priority
     static OperatorPriority getPriority(const std::wstring& name);

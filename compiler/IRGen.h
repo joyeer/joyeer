@@ -28,6 +28,7 @@ protected:
     void emit(OperatorExpr::Pointer node);
     void emit(ParenthesizedExpr::Pointer node);
     void emit(IfStatement::Pointer node);
+    void emit(WhileStatement::Pointer node);
     void emit(CodeBlock::Pointer node);
     void emit(FuncDecl::Pointer node);
     void emit(ReturnStatement::Pointer node);

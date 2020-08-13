@@ -266,38 +266,65 @@ Node::Pointer SyntaxParser::tryParseStatement() {
         return returnStatement;
     }
     
+    auto whileStatement = tryparseWhileStatement();
+    if(whileStatement != nullptr) {
+        return whileStatement;
+    }
+    
     return nullptr;
 }
 
-std::shared_ptr<Node> SyntaxParser::tryParseLoopStatement() {
+Node::Pointer SyntaxParser::tryParseLoopStatement() {
     if(tryEat(TokenKind::keyword, Keywords::FOR) == nullptr) {
         return nullptr;
     }
 
-    std::shared_ptr<Node> pattern = tryParsePattern();
+    auto pattern = tryParsePattern();
     if(pattern == nullptr) {
+        Diagnostics::reportError(L"Error");
         return nullptr; // TODO: report an error;
     }
 
     if(tryEat(TokenKind::keyword, Keywords::IN) == nullptr) {
+        Diagnostics::reportError(L"Error");
         return nullptr; // TODO: report a grammar error
     }
 
-    std::shared_ptr<Node> expr = tryParseExpr();
+    auto expr = tryParseExpr();
     if(expr == nullptr) {
-
+        Diagnostics::reportError(L"Error");
     }
 
-    std::shared_ptr<Node> codeBlock = tryParseCodeBlock();
+    auto codeBlock = tryParseCodeBlock();
 
     return std::shared_ptr<Node>(std::make_shared<ForInStatement>(pattern, expr, codeBlock));
 }
 
-std::shared_ptr<Node> SyntaxParser::tryParseBranchStatement() {
+Node::Pointer SyntaxParser::tryparseWhileStatement() {
+    if(tryEat(TokenKind::keyword, Keywords::WHILE) == nullptr) {
+        return nullptr;
+    }
+    
+    auto expr = tryParseExpr();
+    if(expr == nullptr) {
+        Diagnostics::reportError(L"Error");
+        return nullptr;
+    }
+    
+    auto block = tryParseCodeBlock();
+    if(block == nullptr) {
+        Diagnostics::reportError(L"Error");
+        return nullptr;
+    }
+    
+    return std::make_shared<WhileStatement>(expr, block);
+}
+
+Node::Pointer SyntaxParser::tryParseBranchStatement() {
     return tryParseIfStatement();
 }
 
-std::shared_ptr<Node> SyntaxParser::tryParseIfStatement() {
+Node::Pointer SyntaxParser::tryParseIfStatement() {
     if(tryEat(TokenKind::keyword, Keywords::IF) == nullptr) {
         return nullptr;
     }
@@ -324,6 +351,7 @@ std::shared_ptr<Node> SyntaxParser::tryParseIfStatement() {
         if(elseStatement == nullptr) {
             return nullptr; // TODO: report an error, miss an else code block
         }
+        
         return std::shared_ptr<Node>(new IfStatement(condition, codeBlock, elseStatement));
     }
 }

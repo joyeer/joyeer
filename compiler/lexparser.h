@@ -15,9 +15,8 @@ public:
 
 private:
     void open(const std::wstring& filepath);
-
-    void parseStringIdentifier();
     
+    void parseStringIdentifier();
     void parseStringLiteral();
     void parseOctalLiteral(std::wstring::const_iterator startAt);
     void parseNumberLiteral(std::wstring::const_iterator startAt);

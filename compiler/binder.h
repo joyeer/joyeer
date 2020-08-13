@@ -33,6 +33,7 @@ protected:
     Node::Pointer bind(OperatorExpr::Pointer decl);
     Node::Pointer bind(ParenthesizedExpr::Pointer decl);
     Node::Pointer bind(IfStatement::Pointer decl);
+    Node::Pointer bind(WhileStatement::Pointer decl);
     Node::Pointer bind(CodeBlock::Pointer decl);
     Node::Pointer bind(FuncDecl::Pointer decl);
     Node::Pointer bind(ParameterClause::Pointer decl);

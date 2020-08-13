@@ -38,6 +38,7 @@ private:
     Node::Pointer tryParseCodeBlock();
     Node::Pointer tryParseStatement();
     Node::Pointer tryParseLoopStatement();
+    Node::Pointer tryparseWhileStatement();
     Node::Pointer tryParseBranchStatement();
     Node::Pointer tryParseIfStatement();
     Node::Pointer tryParseReturnStatement();
