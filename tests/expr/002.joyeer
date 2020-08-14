@@ -1,5 +1,4 @@
-var i = 10
-while i > 0 {
-    print(message: i)
-    i = i - 1
-}
+var array = [10, 11, 14]
+print(message: array[1])
+array[1] = 15
+print(message: array[1])

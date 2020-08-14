@@ -425,6 +425,12 @@ Node::Pointer Binder::bind(Expr::Pointer decl) {
             return assignmentExpr;
         }
         
+        if(decl->prefix->kind == subscriptExpr) {
+            auto subscriptExpr = std::static_pointer_cast<SubscriptExpr>(bind(decl->prefix));
+            auto assignmentExpr = std::static_pointer_cast<AssignmentExpr>(bind(decl->binaries[0]));
+            assignmentExpr->left = subscriptExpr;
+            return assignmentExpr;
+        }
         Diagnostics::reportError(L"[Error] left of assignment expression must be a variable");
         return decl;
         

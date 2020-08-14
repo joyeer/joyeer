@@ -31,6 +31,7 @@ void Global::initGlobalTables() {
     registerFunction(JrObjectIntArray_Append::Func);
     registerFunction(JrObjectIntArray_Size::Func);
     registerFunction(JrObjectIntArray_Get::Func);
+    registerFunction(JrObjectIntArray_Set::Func);
     
 }
 

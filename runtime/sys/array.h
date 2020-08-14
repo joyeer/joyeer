@@ -30,6 +30,11 @@ struct JrObjectIntArray_Get: public JrNativeFunc {
     virtual void operator()(JrRuntimeContext::Pointer context, JrFunction::Pointer func);
 };
 
+struct JrObjectIntArray_Set: public JrNativeFunc {
+    static JrFunction::Pointer Func;
+    virtual void operator()(JrRuntimeContext::Pointer context, JrFunction::Pointer func);
+};
+
 struct JrObjectObjectArray: JrObject {
     
 };

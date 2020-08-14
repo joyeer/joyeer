@@ -301,6 +301,16 @@ void IRGen::emit(AssignmentExpr::Pointer node) {
             .opcode = OP_ISTORE,
             .value = identifierExpr->symbol->addressOfVariable
         });
+    } else if(node->left->kind == subscriptExpr) {
+        
+        auto subscriptExpr = std::static_pointer_cast<SubscriptExpr>(node->left);
+        emit(subscriptExpr->indexExpr);
+        emit(subscriptExpr->identifier);
+        
+        writer.write({
+            .opcode = OP_INVOKE,
+            .value = JrObjectIntArray_Set::Func->addressOfFunc
+        });
 
     } else {
         assert(false);
@@ -478,7 +488,7 @@ void IRGen::emit(SubscriptExpr::Pointer node) {
     emit(node->identifier);
     writer.write({
         .opcode = OP_INVOKE,
-        .value = (int32_t)JrObjectIntArray_Get::Func->addressOfFunc
+        .value = JrObjectIntArray_Get::Func->addressOfFunc
     });
 
 }

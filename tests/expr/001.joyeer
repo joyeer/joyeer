@@ -42,7 +42,7 @@ var j = array[2]
 print(message: j)
 
 var i = 10
-while i > 0 {
+while i > 0 && i > 0 {
     print(message: i)
     i = i - 1
 }

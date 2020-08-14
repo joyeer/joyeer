@@ -35,6 +35,7 @@ JrObjectIntArray::~JrObjectIntArray() {
 JrFunction::Pointer JrObjectIntArray_Size::Func;
 JrFunction::Pointer JrObjectIntArray_Append::Func;
 JrFunction::Pointer JrObjectIntArray_Get::Func;
+JrFunction::Pointer JrObjectIntArray_Set::Func;
 
 void JrObjectIntArray_Size::operator()(JrRuntimeContext::Pointer context, JrFunction::Pointer func) {
     auto objectRef = context->stack->pop();
@@ -54,6 +55,18 @@ void JrObjectIntArray_Get::operator()(JrRuntimeContext::Pointer context, JrFunct
     
     auto value = (*arrayObject->slots)[arrayIndex];
     context->stack->push(value);
+}
+
+void JrObjectIntArray_Set::operator()(JrRuntimeContext::Pointer context, JrFunction::Pointer func) {
+    auto objectRef = context->stack->pop();
+    auto arrayIndex = context->stack->pop();
+    
+    auto value = context->stack->pop();
+    
+    auto object = context->gc->get(objectRef);
+    auto arrayObject = static_cast<JrObjectIntArray*>(object);
+    (*arrayObject->slots)[arrayIndex] = value;
+    
 }
 
 void JrObjectIntArray::init() {
@@ -79,5 +92,13 @@ void JrObjectIntArray::init() {
         .paramTypes = { (JrType*)JrObjectIntArray::Type, (JrType*)JrPrimaryType::Int },
         .returnType = (JrType*)JrPrimaryType::Int,
         .nativeCode = new JrObjectIntArray_Get()
+    });
+    
+    JrObjectIntArray_Set::Func = JrFunction::Pointer(new JrFunction {
+        .name = L"Array@set",
+        .kind = jrFuncNative,
+        .paramTypes = { (JrType*)JrObjectIntArray::Type, (JrType*)JrPrimaryType::Int },
+        .returnType = (JrType*)JrPrimaryType::Void,
+        .nativeCode = new JrObjectIntArray_Set()
     });
 }
