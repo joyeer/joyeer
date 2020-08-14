@@ -229,6 +229,9 @@ void TypeChecker::verify(FuncCallExpr::Pointer node) {
     auto symbol = context->lookup(name);
     
     if(symbol == nullptr) {
+        if(node->identifier->kind == identifierExpr) {
+            
+        }
         Diagnostics::reportError(L"[Error]Cannot find the function");
     }
     
@@ -403,7 +406,7 @@ void TypeChecker::verify(AssignmentExpr::Pointer node) {
     verify(node->expr);
     
     auto leftType = typeOf(node->left);
-    auto rightType = typeOf(node->expr);
+//    auto rightType = typeOf(node->expr);
     
 }
 

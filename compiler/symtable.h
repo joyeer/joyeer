@@ -47,6 +47,7 @@ public:
     SymbolScope scope;
     
     std::wstring name;
+    std::wstring alias;
     
     union {
         // index address of type in Global::types

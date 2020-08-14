@@ -1,4 +1,13 @@
-var array = [10, 12, 3, 12, 1]
+
+var array:[Int] = [1, 2, 3]
+var j = array[2]
+print(message: j)
+
+var i = 10
+while i > 0 && i > 0 {
+    print(message: i)
+    i = i - 1
+}
 
 var size = array.size()
 print(message:size)

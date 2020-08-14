@@ -399,7 +399,7 @@ void IRGen::emit(WhileStatement::Pointer node) {
     writer.write(conditionGen.writer.instructions);
     writer.write({
         .opcode = OP_IFLE,
-        .value = static_cast<JrInt>(gen.writer.instructions.size() + 2)
+        .value = static_cast<JrInt>(gen.writer.instructions.size() + 1)
     });
     writer.write(gen.writer.instructions);
     writer.write({

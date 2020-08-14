@@ -60,7 +60,7 @@ codeBlock(codeBlock) {
 
 std::wstring FuncDecl::getTypeName() {
     std::wstringstream ss;
-    if(identifier != nullptr) {
+    if(identifier != nullptr && identifier->symbol != nullptr) {
         ss << identifier->getTypeName();
         ss << L"@";
     }
