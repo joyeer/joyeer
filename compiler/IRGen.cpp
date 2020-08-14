@@ -326,7 +326,9 @@ void IRGen::emit(OperatorExpr::Pointer node) {
             { Operators::DIV, OP_IDIV },
             { Operators::MULTIPLY, OP_IMUL },
             { Operators::PERCENTAGE, OP_IREM },
-            { Operators::GREATER, OP_ICMP },
+            { Operators::GREATER, OP_ICMP_G },
+            { Operators::LESS, OP_ICMP_L },
+            { Operators::AND_AND, OP_IAND }
         }
     };
     

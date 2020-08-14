@@ -30,9 +30,11 @@ private:
     void exec_isub(const Instruction& instruction);
     void exec_idiv(const Instruction& instruction);
     void exec_irem(const Instruction& instruction);
-    void exec_icmp(const Instruction& instruction);
+    void exec_icmp_g(const Instruction& instruction);
+    void exec_icmp_l(const Instruction& instruction);
     void exec_ifle(const Instruction& instruction);
     void exec_ineg(const Instruction& instruction);
+    void exec_iand(const Instruction& instruction);
     
     void exec_goto(const Instruction& instruction);
     void exec_ireturn(const Instruction& instruction);

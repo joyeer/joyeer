@@ -68,6 +68,7 @@ const std::wstring Punctuations::DOT = L".";
 // Operators
 const std::wstring Operators::EQULAS = L"=";
 const std::wstring Operators::EQUAL_EQUAL = L"==";
+const std::wstring Operators::AND_AND = L"&&";
 const std::wstring Operators::QUESTION = L"?";
 const std::wstring Operators::POINT = L"!";
 const std::wstring Operators::PLUS = L"+";
@@ -82,6 +83,7 @@ std::unordered_map<std::wstring, OperatorPriority> initOperatorPriorities() {
     std::unordered_map<std::wstring, OperatorPriority> result {
         { Operators::EQULAS, OperatorPriority::high },
         { Operators::EQUAL_EQUAL, OperatorPriority::high },
+        { Operators::AND_AND, OperatorPriority::low },
         { Operators::QUESTION, OperatorPriority::high },
         { Operators::POINT, OperatorPriority::high },
         { Operators::PLUS, OperatorPriority::low },
@@ -89,8 +91,8 @@ std::unordered_map<std::wstring, OperatorPriority> initOperatorPriorities() {
         { Operators::MULTIPLY, OperatorPriority::high },
         { Operators::DIV, OperatorPriority::high },
         { Operators::PERCENTAGE, OperatorPriority::high },
-        { Operators::GREATER, OperatorPriority::low },
-        { Operators::LESS, OperatorPriority::low }
+        { Operators::GREATER, OperatorPriority::high },
+        { Operators::LESS, OperatorPriority::high }
     };
     return result;
 }

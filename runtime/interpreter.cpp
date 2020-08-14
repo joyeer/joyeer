@@ -91,11 +91,17 @@ void JrInterpreter::run(JrFunction::Pointer function, int objectRef) {
             case OP_ONEWARRAY:
                 exec_onewarray(instruction);
                 break;
-            case OP_ICMP:
-                exec_icmp(instruction);
+            case OP_ICMP_G:
+                exec_icmp_g(instruction);
+                break;
+            case OP_ICMP_L:
+                exec_icmp_l(instruction);
                 break;
             case OP_INEG:
                 exec_ineg(instruction);
+                break;
+            case OP_IAND:
+                exec_iand(instruction);
                 break;
             default:
                 assert(false);
@@ -191,6 +197,13 @@ void JrInterpreter::exec_ineg(const Instruction& instruction) {
     context->stack->push(value);
 }
 
+void JrInterpreter::exec_iand(const Instruction &instruction) {
+    auto rightValue = context->stack->pop();
+    auto leftValue = context->stack->pop();
+    
+    context->stack->push(leftValue > 0 && rightValue > 0);
+}
+
 void JrInterpreter::exec_ifle(const Instruction &instrunction) {
     auto value1 = context->stack->pop();
     if(value1 <= 0) {
@@ -269,9 +282,16 @@ void JrInterpreter::exec_onewarray(const Instruction &instruction) {
     context->stack->push(objectRef);
 }
 
-void JrInterpreter::exec_icmp(const Instruction &instrunction) {
+void JrInterpreter::exec_icmp_g(const Instruction &instrunction) {
     auto rightValue = context->stack->pop();
     auto leftValue = context->stack->pop();
     
     context->stack->push(leftValue > rightValue);
+}
+
+void JrInterpreter::exec_icmp_l(const Instruction &instruction) {
+    auto rightValue = context->stack->pop();
+    auto leftValue = context->stack->pop();
+    
+    context->stack->push(leftValue < rightValue);
 }

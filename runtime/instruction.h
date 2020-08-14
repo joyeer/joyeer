@@ -22,7 +22,9 @@ enum Opcode {
     OP_PUTFIELD,
     OP_GETFIELD,
     
-    OP_ICMP,
+    OP_IAND,
+    OP_ICMP_G,
+    OP_ICMP_L,
     OP_IADD,
     OP_ISUB,
     OP_IMUL,

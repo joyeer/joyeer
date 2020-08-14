@@ -100,6 +100,13 @@ void LexParser::parse() {
                 parseOperator(iterator - 1);
                 break;
             case '&':
+                if (iterator != endIterator) {
+                    if (*iterator == '&') {
+                        iterator ++;
+                        pushOperator(TokenKind::operators, Operators::AND_AND, iterator);
+                        continue;
+                    }
+                }
                 parseOperator(iterator - 1);
                 break;
             case '|':
@@ -153,7 +160,6 @@ void LexParser::parse() {
             case '\"':
                 parseStringLiteral();
                 break;
-                
             default:
                 break;
             }
