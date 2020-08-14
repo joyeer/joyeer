@@ -23,7 +23,7 @@ struct Global {
     static std::vector<JrVar::Pointer> variables;
     
     /// register an new function in global function table
-    static void registerFunction(JrFunction::Pointer func);
+    static void registerFunction(JrFunction::Pointer func, JrType* ownerType);
     
     /// register an new object type in global table
     static void registerObjectType(JrType* type);

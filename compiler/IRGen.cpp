@@ -106,24 +106,32 @@ JrModuleType* IRGen::emit(SourceBlock::Pointer block) {
 }
 
 void IRGen::emit(FuncCallExpr::Pointer funcCallExpr) {
-    for(auto argument : funcCallExpr->arguments) {
-        emit(argument);
-    }
-    
-    auto function = Global::functions[funcCallExpr->symbol->addressOfFunc];
-    assert(function != nullptr);
-    if((function->kind & jrFuncConstructor) == jrFuncConstructor) {
-        writer.write({
-            .opcode = OP_NEW,
-            .value = (int32_t)function->addressOfFunc
-        });
-    } else {
-        writer.write({
-            .opcode = OP_INVOKE,
-            .value = (int32_t)function->addressOfFunc
-        });
-    }
+    context->visit(visitFuncCall, [this, funcCallExpr](){
+        for(auto argument : funcCallExpr->arguments) {
+            emit(argument);
+        }
+        
+        auto function = Global::functions[funcCallExpr->symbol->addressOfFunc];
+        assert(function != nullptr);
+        if((function->kind & jrFuncConstructor) == jrFuncConstructor) {
+            writer.write({
+                .opcode = OP_NEW,
+                .value = (int32_t)function->addressOfFunc
+            });
+        } else {
+            if(funcCallExpr->identifier->kind == memberAccessExpr) {
+                emit(funcCallExpr->identifier);
+            }
+            
+            writer.write({
+                .opcode = OP_INVOKE,
+                .value = (int32_t)function->addressOfFunc
+            });
+            
+        }
+    });
 }
+
 
 void IRGen::emit(ArguCallExpr::Pointer node) {
     emit(node->expr);
@@ -478,7 +486,10 @@ void IRGen::emit(ConstructorDecl::Pointer node) {
 
 void IRGen::emit(MemberAccessExpr::Pointer node) {
     emit(node->parent);
-    emit(node->member);
+    if(context->curStage() != visitFuncCall) {
+        emit(node->member);
+    }
+    
 }
 
 void IRGen::emit(SubscriptExpr::Pointer node) {

@@ -1,6 +1,8 @@
 #include "array.h"
 #include "runtime/gc.h"
 #include "runtime/object.h"
+#include "runtime/buildin.h"
+
 
 auto JrObjectIntArrayInitializer = [](JrPtr memory) -> JrObject* {
     return new(memory) JrObjectIntArray;
@@ -40,6 +42,10 @@ JrFunction::Pointer JrObjectIntArray_Set::Func;
 void JrObjectIntArray_Size::operator()(JrRuntimeContext::Pointer context, JrFunction::Pointer func) {
     auto objectRef = context->stack->pop();
     auto arrayIndex = context->stack->pop();
+    auto object = context->gc->get(objectRef);
+    auto arrayObject = static_cast<JrObjectIntArray*>(object);
+    
+    context->stack->push(arrayObject->slots->size());
 }
 
 void JrObjectIntArray_Append::operator()(JrRuntimeContext::Pointer context, JrFunction::Pointer func) {
@@ -71,34 +77,41 @@ void JrObjectIntArray_Set::operator()(JrRuntimeContext::Pointer context, JrFunct
 
 void JrObjectIntArray::init() {
     JrObjectIntArray_Size::Func = JrFunction::Pointer(new JrFunction{
-        .name = L"Array@size",
+        .name = L"Array<Int>@size()",
         .kind = jrFuncNative,
-        .paramTypes = { (JrType*)JrObjectIntArray::Type },
-        .returnType = (JrType*)JrPrimaryType::Int,
+        .paramTypes = { JrObjectIntArray::Type },
+        .returnType = JrPrimaryType::Int,
         .nativeCode = new JrObjectIntArray_Size(),
     });
     
     JrObjectIntArray_Append::Func = JrFunction::Pointer(new JrFunction {
-        .name = L"Array@append",
+        .name = L"Array<Int>@append(value:)",
         .kind = jrFuncNative,
-        .paramTypes = { (JrType*)JrObjectIntArray::Type, (JrType*)JrType::Any },
-        .returnType = (JrType*)JrPrimaryType::Void,
+        .paramTypes = { JrObjectIntArray::Type, JrType::Any },
+        .returnType = JrPrimaryType::Void,
         .nativeCode = new JrObjectIntArray_Append()
     });
     
     JrObjectIntArray_Get::Func = JrFunction::Pointer(new JrFunction {
-        .name = L"Array@get",
+        .name = L"Array<Int>@get(index:)",
         .kind = jrFuncNative,
-        .paramTypes = { (JrType*)JrObjectIntArray::Type, (JrType*)JrPrimaryType::Int },
-        .returnType = (JrType*)JrPrimaryType::Int,
+        .paramTypes = { JrObjectIntArray::Type, JrPrimaryType::Int },
+        .returnType = JrPrimaryType::Int,
         .nativeCode = new JrObjectIntArray_Get()
     });
     
     JrObjectIntArray_Set::Func = JrFunction::Pointer(new JrFunction {
-        .name = L"Array@set",
+        .name = L"Array<Int>@set(index:value:)",
         .kind = jrFuncNative,
-        .paramTypes = { (JrType*)JrObjectIntArray::Type, (JrType*)JrPrimaryType::Int },
-        .returnType = (JrType*)JrPrimaryType::Void,
+        .paramTypes = { JrObjectIntArray::Type, JrPrimaryType::Int },
+        .returnType = JrPrimaryType::Void,
         .nativeCode = new JrObjectIntArray_Set()
     });
+    
+    Global::registerObjectType(JrObjectIntArray::Type);
+    Global::registerFunction(JrObjectIntArray_Append::Func, JrObjectIntArray::Type);
+    Global::registerFunction(JrObjectIntArray_Size::Func, JrObjectIntArray::Type);
+    Global::registerFunction(JrObjectIntArray_Get::Func, JrObjectIntArray::Type);
+    Global::registerFunction(JrObjectIntArray_Set::Func, JrObjectIntArray::Type);
+    
 }

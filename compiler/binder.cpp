@@ -86,7 +86,7 @@ SourceBlock::Pointer Binder::bind(SourceBlock::Pointer sourceBlock) {
     function->name = L"Module@__MAIN__@" + sourceBlock->filename;
     function->kind = jrFuncConstructor;
     function->paramTypes.push_back(module);
-    Global::registerFunction(function);
+    Global::registerFunction(function, module);
     
     auto symbol = Symbol::Pointer(new Symbol {
         .name = module->name,
@@ -116,10 +116,10 @@ Node::Pointer Binder::bind(FuncDecl::Pointer decl) {
     auto type = context->curType();
     auto symtable = context->curSymTable();
     auto function = std::make_shared<JrFunction>();
-    function->name = decl->getFuncName();
+    function->name = decl->getTypeName();
     function->kind = jrFuncVM;
     
-    Global::registerFunction(function);
+    Global::registerFunction(function, type);
     
     if(symtable->find(function->name) != nullptr) {
         Diagnostics::reportError(L"[Error] Dupliate function name");
@@ -183,7 +183,7 @@ Node::Pointer Binder::bind(ConstructorDecl::Pointer decl) {
     }
     
     // register this functin in global function tables
-    Global::registerFunction(function);
+    Global::registerFunction(function, type);
     auto symbol = std::shared_ptr<Symbol>(new Symbol {
         .name = function->name,
         .flag = constructorSymbol,
@@ -263,7 +263,7 @@ Node::Pointer Binder::bind(ClassDecl::Pointer decl) {
         defaultConstructor->instructions.push_back(Instruction {
             .opcode = OP_RETURN
         });
-        Global::registerFunction(defaultConstructor);
+        Global::registerFunction(defaultConstructor, objectType);
         
         auto symbol = Symbol::Pointer(new Symbol{
             .name = defaultConstructor->name,

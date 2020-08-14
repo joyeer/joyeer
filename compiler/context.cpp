@@ -43,10 +43,12 @@ void CompileContext::leave(CompileStage stage) {
 }
 
 void CompileContext::entry(SymbolTable::Pointer table) {
+    assert(table != nullptr);
     symbols.push_back(table);
 }
 
 void CompileContext::leave(SymbolTable::Pointer table) {
+    assert(table != nullptr);
     assert(symbols.back() == table);
     symbols.pop_back();
 }

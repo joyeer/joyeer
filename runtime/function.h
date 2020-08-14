@@ -51,6 +51,8 @@ public:
     
     // address index of this function in function table
     int addressOfFunc;
+    // address index of owner type in global type table
+    int addressOfOwnerType;
 };
 
 struct JrNativeFunc {

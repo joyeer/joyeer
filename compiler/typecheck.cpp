@@ -220,7 +220,12 @@ void TypeChecker::verify(ConstructorDecl::Pointer node) {
 }
 
 void TypeChecker::verify(FuncCallExpr::Pointer node) {
-    auto name = node->getFunctionName();
+    
+    if(node->identifier->kind == memberAccessExpr) {
+        verify(node->identifier);
+    }
+    
+    auto name = node->getTypeName();
     auto symbol = context->lookup(name);
     
     if(symbol == nullptr) {
@@ -463,25 +468,16 @@ void TypeChecker::verify(MemberAccessExpr::Pointer node) {
     
     auto type = Global::types[node->parent->symbol->addressOfType];
     auto symtable = context->symtableOfType(type);
-    
-    // We will push access flags's symbols
-    context->entry(symtable);
-    switch(node->member->kind) {
-        case funcCallExpr: {
-            auto funcCallExpr = std::static_pointer_cast<FuncCallExpr>(node->member);
-            funcCallExpr->ownerType = type;
-        }
-            break;
-        case identifierExpr:
-            break;
-        default:
-            assert(false);
+        
+    if(symtable != nullptr) {
+        // We will push access flags's symbols
+        context->entry(symtable);
     }
     
     verify(node->member);
-    
-    
-    context->leave(symtable);
+    if(symtable != nullptr) {
+        context->leave(symtable);
+    }
 }
 
 void TypeChecker::verify(SubscriptExpr::Pointer node) {
@@ -590,7 +586,7 @@ JrType* TypeChecker::typeOf(LiteralExpr::Pointer node) {
 }
 
 JrType* TypeChecker::typeOf(FuncCallExpr::Pointer node) {
-    auto funcName = node->getFunctionName();
+    auto funcName = node->getTypeName();
     auto symbol = context->lookup(funcName);
     auto function = Global::functions[node->symbol->addressOfFunc];
     return function->returnType;

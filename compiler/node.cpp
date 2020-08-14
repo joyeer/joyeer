@@ -4,11 +4,16 @@
 #include <sstream>
 #include <filesystem>
 #include <cassert>
+#include "runtime/buildin.h"
 
 Node::Node(SyntaxKind k): kind(k) {
 }
 
 std::wstring Node::getName() {
+    return L"";
+}
+
+std::wstring Node::getTypeName() {
     return L"";
 }
 
@@ -53,8 +58,12 @@ returnType(returnType),
 codeBlock(codeBlock) {
 }
 
-const std::wstring FuncDecl::getFuncName() {
+std::wstring FuncDecl::getTypeName() {
     std::wstringstream ss;
+    if(identifier != nullptr) {
+        ss << identifier->getTypeName();
+        ss << L"@";
+    }
     ss << std::static_pointer_cast<IdentifierExpr>(identifier)->token->rawValue << L"(";
     for(auto p: std::static_pointer_cast<ParameterClause>(parameterClause)->parameters) {
         ss << p->identifier->token->rawValue << L":";
@@ -62,6 +71,7 @@ const std::wstring FuncDecl::getFuncName() {
     ss << L")";
     return ss.str();
 }
+
 
 Pattern::Pattern(IdentifierExpr::Pointer identifier, Node::Pointer type):
 Node(SyntaxKind::pattern),
@@ -141,12 +151,10 @@ identifier(expr),
 arguments(arguments) {
 }
 
-std::wstring FuncCallExpr::getFunctionName() {
+std::wstring FuncCallExpr::getTypeName() {
     std::wstringstream ss;
-    if(ownerType != nullptr) {
-        ss << ownerType->name << L"@";
-    }
-    ss << identifier->getName() << L"(";
+
+    ss << identifier->getTypeName() << L"(";
     for(auto& argument: arguments) {
         ss << argument->label->token->rawValue;
         ss << L":";
@@ -159,6 +167,12 @@ MemberAccessExpr::MemberAccessExpr(std::shared_ptr<Node> parent, std::shared_ptr
 Node(SyntaxKind::memberAccessExpr),
 parent(parent),
 member(member) {
+}
+
+std::wstring MemberAccessExpr::getTypeName() {
+    std::wstringstream ss;
+    ss << parent->getTypeName() << L"@" << member->getName();
+    return ss.str();
 }
 
 LiteralExpr::LiteralExpr(std::shared_ptr<Token> literal):
@@ -179,6 +193,18 @@ token(token) {
 
 std::wstring IdentifierExpr::getName() {
     return token->rawValue;
+}
+
+std::wstring IdentifierExpr::getTypeName() {
+    if(symbol != nullptr && (symbol->flag == varSymbol || symbol->flag == fieldSymbol)) {
+        auto type = Global::types[symbol->addressOfType];
+        assert(type != nullptr);
+        return type->name;
+    } else {
+        return token->rawValue;
+    }
+    
+    assert(false);
 }
 
 ParenthesizedExpr::ParenthesizedExpr(std::shared_ptr<Node> expr):

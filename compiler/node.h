@@ -59,6 +59,8 @@ struct Node {
     JrType* type;
     
     virtual std::wstring getName();
+    // The type name of the Node
+    virtual std::wstring getTypeName();
     
 protected:
     Node(SyntaxKind kind);
@@ -74,6 +76,7 @@ struct IdentifierExpr: public Node {
     
     // Return identifier's name
     virtual std::wstring getName();
+    virtual std::wstring getTypeName();
 };
 
 struct OperatorExpr: Node {
@@ -159,7 +162,7 @@ struct FuncDecl: Node {
 
     FuncDecl(Node::Pointer identifier, Node::Pointer parameterClause, Node::Pointer returnType, Node::Pointer codeBlock);
     
-    const std::wstring getFuncName();
+    virtual std::wstring getTypeName();
 };
 
 struct ConstructorDecl: Node {
@@ -239,11 +242,10 @@ struct FuncCallExpr: Node {
     Node::Pointer identifier;
     std::vector<ArguCallExpr::Pointer> arguments;
     
-    JrType* ownerType = nullptr;
     
     FuncCallExpr(Node::Pointer expr, std::vector<ArguCallExpr::Pointer> arguments);
     
-    std::wstring getFunctionName();
+    virtual std::wstring getTypeName();
 };
 
 struct MemberAccessExpr: Node {
@@ -253,6 +255,8 @@ struct MemberAccessExpr: Node {
     Node::Pointer member;
     
     MemberAccessExpr(Node::Pointer parent, Node::Pointer member);
+    
+    virtual std::wstring getTypeName();
 };
 
 struct LiteralExpr : Node {

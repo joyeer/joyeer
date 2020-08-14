@@ -23,23 +23,23 @@ void Global::initGlobalTables() {
     
     // Init print function
     JrFuncPrint::init();
-    registerFunction(JrFuncPrint::Func);
+    registerFunction(JrFuncPrint::Func, nullptr);
     
     // Init the array
     JrObjectIntArray::init();
-    registerObjectType((JrType*)JrObjectIntArray::Type);
-    registerFunction(JrObjectIntArray_Append::Func);
-    registerFunction(JrObjectIntArray_Size::Func);
-    registerFunction(JrObjectIntArray_Get::Func);
-    registerFunction(JrObjectIntArray_Set::Func);
-    
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
 /// functions
-void Global::registerFunction(JrFunction::Pointer func) {
+void Global::registerFunction(JrFunction::Pointer func, JrType* ownerType) {
     func->addressOfFunc = functions.size();
+    if(ownerType != nullptr) {
+        func->addressOfOwnerType = ownerType->addressOfType;
+    } else {
+        func->addressOfOwnerType = -1;
+    }
+    
     functions.push_back(func);
 }
 
@@ -125,7 +125,6 @@ void FunctionTablePrinter::print() {
             instrunctionIndex ++;
         }
         index ++;
-        
         
         output << L"------------------------------------------" << std::endl << std::endl;
     }
