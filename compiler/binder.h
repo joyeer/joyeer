@@ -43,6 +43,7 @@ protected:
     Node::Pointer bind(ArrayLiteralExpr::Pointer decl);
     Node::Pointer bind(MemberAccessExpr::Pointer decl);
     Node::Pointer bind(SubscriptExpr::Pointer decl);
+    Node::Pointer bind(ArrayType::Pointer decl);
     
 private:
     CompileContext::Pointer context;

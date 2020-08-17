@@ -136,6 +136,9 @@ void TypeChecker::verify(FuncDecl::Pointer node) {
     });
     
     assert(function->paramTypes.size() == 0);
+    verify(node->returnType);
+    function->returnType = typeOf(node->returnType);
+    
     // Binding function's type
     auto parameterClause = std::static_pointer_cast<ParameterClause>(node->parameterClause);
     for(auto parameter: parameterClause->parameters) {
@@ -155,7 +158,6 @@ void TypeChecker::verify(FuncDecl::Pointer node) {
             .type = type,
             .addressOfVariable = addressOfVariable
         });
-        
     }
     verify(node->codeBlock);
     
@@ -333,6 +335,12 @@ void TypeChecker::verify(Pattern::Pointer node) {
         verify(node->type);
         // binding the identifier symbol's type to Pattern type's symbols' type
         auto type = typeOf(node->type);
+        if(node->type->symbol == nullptr) {
+            node->type->symbol = std::shared_ptr<Symbol>(new Symbol{
+                .addressOfType = type->addressOfType,
+                .flag = typeSymbol
+            });
+        }
         node->identifier->symbol->addressOfType = type->addressOfType;
     }
 }
@@ -472,15 +480,19 @@ void TypeChecker::verify(MemberAccessExpr::Pointer node) {
     auto type = Global::types[node->parent->symbol->addressOfType];
     auto symtable = context->symtableOfType(type);
         
-    if(symtable != nullptr) {
-        // We will push access flags's symbols
-        context->entry(symtable);
-    }
     
-    verify(node->member);
-    if(symtable != nullptr) {
-        context->leave(symtable);
-    }
+    context->visit(visitMemberAccess, [this, node, symtable](){
+        if(symtable != nullptr) {
+            // We will push access flags's symbols
+            context->entry(symtable);
+        }
+        
+        verify(node->member);
+        if(symtable != nullptr) {
+            context->leave(symtable);
+        }
+    });
+    
 }
 
 void TypeChecker::verify(SubscriptExpr::Pointer node) {
@@ -491,6 +503,7 @@ void TypeChecker::verify(SubscriptExpr::Pointer node) {
 
 void TypeChecker::verify(ArrayType::Pointer node) {
     verify(node->type);
+    
 }
 
 void TypeChecker::verify(PrefixExpr::Pointer node) {

@@ -69,6 +69,8 @@ Node::Pointer Binder::bind(std::shared_ptr<Node> node) {
             return bind(std::static_pointer_cast<ReturnStatement>(node));
         case subscriptExpr:
             return bind(std::static_pointer_cast<SubscriptExpr>(node));
+        case arrayType:
+            return bind(std::static_pointer_cast<ArrayType>(node));
         default:
             assert(false);
     }
@@ -638,5 +640,10 @@ Node::Pointer Binder::bind(SubscriptExpr::Pointer decl) {
     decl->identifier = bind(decl->identifier);
     decl->indexExpr = bind(decl->indexExpr);
     
+    return decl;
+}
+
+Node::Pointer Binder::bind(ArrayType::Pointer decl) {
+    decl->type = bind(decl->type);
     return decl;
 }

@@ -23,7 +23,8 @@ void Global::initGlobalTables() {
     
     // Init print function
     JrFuncPrint::init();
-    registerFunction(JrFuncPrint::Func, nullptr);
+    JrFuncObjectPrint::init();
+    
     
     // Init the array
     JrObjectIntArray::init();

@@ -11,6 +11,13 @@ struct JrFuncPrint : public JrNativeFunc {
     static void init();
 };
 
+struct JrFuncObjectPrint: public JrNativeFunc {
+    static JrFunction::Pointer Func;
+    
+    virtual void operator()(JrRuntimeContext::Pointer context, JrFunction::Pointer func);
+    
+    static void init();
+};
 
 #endif
 
