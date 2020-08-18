@@ -5,19 +5,21 @@ func sortArray(array:[Int], num:Int): [Int] {
     var endIndex = array.size() 
     endIndex = endIndex - 1
 
+    
     while startIndex < endIndex {
-        while array[startIndex] < num && startIndex < endIndex {
+        while array[startIndex] < num  {
             startIndex = startIndex + 1
         }
-
-        while array[endIndex] > num && startIndex < endIndex {
+        while array[endIndex] > num  {
             endIndex = endIndex - 1
         }
-
-        var temp = array[startIndex]
-        array[startIndex] = array[endIndex]
-        array[endIndex] = temp
-
+    
+        if startIndex < endIndex {
+            var temp:Int = array[startIndex]
+            array[startIndex] = array[endIndex]
+            array[endIndex] = temp
+        }
+        
         startIndex = startIndex + 1
         endIndex = endIndex - 1
     }
@@ -25,6 +27,6 @@ func sortArray(array:[Int], num:Int): [Int] {
     return array
 }
 
-var result = sortArray(array: [6, 10, 2, 4, -1], num: -1)
+var result = sortArray(array: [6, 1, 2, -4, 5], num: 2)
 print(object: result)
 

@@ -136,8 +136,10 @@ void TypeChecker::verify(FuncDecl::Pointer node) {
     });
     
     assert(function->paramTypes.size() == 0);
-    verify(node->returnType);
-    function->returnType = typeOf(node->returnType);
+    if(node->returnType != nullptr) {
+        verify(node->returnType);
+        function->returnType = typeOf(node->returnType);
+    }
     
     // Binding function's type
     auto parameterClause = std::static_pointer_cast<ParameterClause>(node->parameterClause);

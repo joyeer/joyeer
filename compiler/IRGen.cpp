@@ -107,6 +107,7 @@ JrModuleType* IRGen::emit(SourceBlock::Pointer block) {
 
 void IRGen::emit(FuncCallExpr::Pointer funcCallExpr) {
     context->visit(visitFuncCall, [this, funcCallExpr](){
+        
         for(auto argument : funcCallExpr->arguments) {
             emit(argument);
         }
@@ -363,7 +364,7 @@ void IRGen::emit(ParenthesizedExpr::Pointer node) {
 void IRGen::emit(IfStatement::Pointer node) {
     IRGen gen(context);
     gen.emit(node->ifCodeBlock);
-    auto instructions = writer.instructions;
+    auto instructions = gen.writer.instructions;
     
     std::vector<Instruction> elseInstructions;
     if(node->elseCodeBlock != nullptr) {

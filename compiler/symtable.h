@@ -27,10 +27,6 @@ enum SymbolScope: int8_t {
     fieldScope      =   1 << 3
 };
 
-enum SymbolKind: int8_t {
-    
-};
-
 enum AccessFlag: int8_t {
     publicFlag      =   1,
     protectedFlag   =   1 << 1,
@@ -47,7 +43,6 @@ public:
     SymbolScope scope;
     
     std::wstring name;
-    std::wstring alias;
     
     union {
         // index address of type in Global::types

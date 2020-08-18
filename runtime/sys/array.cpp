@@ -41,7 +41,6 @@ JrFunction::Pointer JrObjectIntArray_Set::Func;
 
 void JrObjectIntArray_Size::operator()(JrRuntimeContext::Pointer context, JrFunction::Pointer func) {
     auto objectRef = context->stack->pop();
-    auto arrayIndex = context->stack->pop();
     auto object = context->gc->get(objectRef);
     auto arrayObject = static_cast<JrObjectIntArray*>(object);
     

@@ -123,7 +123,7 @@ JrFunctionFrame::Pointer JrInterpreter::prepareStackFrame(JrFunction::Pointer fu
     for(auto var : func->localVars) {
         frame->addressOfVariables.push_back(address);
         // TODO: Update with sizeof variable
-        address += var.type->size();
+        address += 8;
     }
     frame->endAddress = address;
     return frame;
@@ -152,6 +152,7 @@ void JrInterpreter::exec_oload(const Instruction &instruction) {
 
 void JrInterpreter::exec_invoke(const Instruction &instruction) {
     auto func = Global::functions[instruction.value];
+    std::wcout << func->name << std::endl;
     if((func->kind & jrFuncNative) == jrFuncNative) {
         (*func->nativeCode)(context, func);
     } else if((func->kind & jrFuncVM) == jrFuncVM) {
