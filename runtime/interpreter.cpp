@@ -236,7 +236,7 @@ void JrInterpreter::exec_new(const Instruction &instruction) {
     
     auto returnType = function->returnType;
     
-    assert(returnType->kind == JrType_Object);
+    assert(returnType->kind == typeObject);
     auto objectType = (JrObjectType*)returnType;
     auto objectRef = context->gc->alloc(objectType);
     context->stack->push(objectRef);

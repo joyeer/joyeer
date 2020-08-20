@@ -15,13 +15,13 @@ struct JrType {
     static JrType* Void;
     static JrType* Nil;
     
-    int kind;
+    JrTypeKind kind;
     std::wstring name;
     
     // index to the type tables
     int addressOfType;
     
-    JrType(int kind, const std::wstring& name);
+    JrType(JrTypeKind kind, const std::wstring& name);
     
     virtual JrInt size();
     
@@ -45,7 +45,7 @@ struct JrPrimaryType: public JrType {
     static JrPrimaryType* Float;
     static JrPrimaryType* Boolean;
     
-    JrPrimaryType(int kind, const std::wstring& name);
+    JrPrimaryType(JrTypeKind kind, const std::wstring& name);
     
     virtual JrInt size();
 };

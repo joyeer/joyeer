@@ -643,7 +643,7 @@ JrType* TypeChecker::typeOf(ArrayLiteralExpr::Pointer node) {
         previousType = type;
     }
     
-    if(previousType->kind == JrType_Int) {
+    if(previousType->kind == typeInt) {
         return JrObjectIntArray::Type;
     }
     assert(false);

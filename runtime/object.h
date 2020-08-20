@@ -18,17 +18,18 @@ typedef uint8_t     JrUInt8;
 typedef JrInt*      JrPtr;
 typedef JrInt       JrObjectRef;
 
-#define JrType_Void         0
-#define JrType_Int          1
-#define JrType_Float        2
-#define JrType_Double       3
-#define JrType_Long         4
-#define JrType_Boolean      5
-#define JrType_String       7
-
-#define JrType_Any          8
-#define JrType_Nil          9
-#define JrType_Object       10
+enum JrTypeKind: JrUInt8 {
+    typeVoid = 0x01,
+    typeInt,
+    typeFloat,
+    typeDouble,
+    typeLong,
+    typeBoolean,
+    typeString,
+    typeAny,
+    typeNil,
+    typeObject
+};
 
 struct JrObjectHead {
     JrInt  refCount;
@@ -46,6 +47,10 @@ struct JrObject {
 
 struct JrPrimaryObject {
     JrObjectHead head;
+};
+
+struct JrValueHold {
+    
 };
  
 #endif

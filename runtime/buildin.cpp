@@ -61,7 +61,7 @@ void TypeTablePrinter::print() {
     int index = 0;
     for(auto type: Global::types) {
         output << L"#" << index << L": " << type->name << std::endl;
-        if(type->kind == JrType_Object) {
+        if(type->kind == typeObject) {
             auto objectType = (JrObjectType*)type;
             for(auto field: objectType->virtualFields) {
                 print(field);

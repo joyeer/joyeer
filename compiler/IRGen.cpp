@@ -236,7 +236,7 @@ void IRGen::emit(IdentifierExpr::Pointer node) {
                 .opcode = OP_ILOAD,
                 .value = symbol->addressOfVariable
             });
-        } else if(type->kind == JrType_Object || type->kind == JrType_Any ){
+        } else if(type->kind == typeObject || type->kind == typeAny ){
             writer.write({
                 .opcode = OP_OLOAD,
                 .value = symbol->addressOfVariable
