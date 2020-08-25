@@ -20,7 +20,7 @@ void JrInterpreter::run(JrModuleType* module) {
 void JrInterpreter::run(JrFunction::Pointer function, int objectRef) {
     
     auto frame = prepareStackFrame(function);
-    context->stack->push(frame);
+    context->stack->startFuncCall(frame);
     
     std::wcout << std::wstring(context->stack->frames.size() - 1, L'-') << L"$[function][entry] " << function->name << std::endl;
     
@@ -122,7 +122,6 @@ JrFunctionFrame::Pointer JrInterpreter::prepareStackFrame(JrFunction::Pointer fu
     frame->startAddress = address ;
     for(auto var : func->localVars) {
         frame->addressOfVariables.push_back(address);
-        // TODO: Update with sizeof variable
         address += 8;
     }
     frame->endAddress = address;
@@ -218,15 +217,16 @@ void JrInterpreter::exec_goto(const Instruction &instruction) {
 
 void JrInterpreter::exec_ireturn(const Instruction &instruction) {
     auto value = context->stack->pop();
-    context->stack->pop(context->stack->topFrame());
+    context->stack->endFuncCall(context->stack->topFrame());
     context->stack->push(value);
 }
 
 void JrInterpreter::exec_return(const Instruction &instruction) {
-    context->stack->pop(context->stack->topFrame());
+    context->stack->endFuncCall(context->stack->topFrame());
 }
 
 void JrInterpreter::exec_oconst_nil(const Instruction &instruction) {
+    assert(false);
     context->stack->push(0);
 }
 

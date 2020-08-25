@@ -106,11 +106,11 @@ struct JrRuntimeStack {
     
     std::stack<JrFunctionFrame::Pointer> frames;
     JrInt pointer;
-    JrInt8* data[JrRuntimeStack::Size];
+    JrByte data[JrRuntimeStack::Size];
     
     // push the FunctionFrame into stack
-    void push(JrFunctionFrame::Pointer frame);
-    void pop(JrFunctionFrame::Pointer frame);
+    void startFuncCall(JrFunctionFrame::Pointer frame);
+    void endFuncCall(JrFunctionFrame::Pointer frame);
     
     JrFunctionFrame::Pointer topFrame();
     

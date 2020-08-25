@@ -73,12 +73,12 @@ JrRuntimeStack::JrRuntimeStack() {
     pointer = 0;
 }
 
-void JrRuntimeStack::push(JrFunctionFrame::Pointer frame) {
+void JrRuntimeStack::startFuncCall(JrFunctionFrame::Pointer frame) {
     pointer = frame->endAddress;
     frames.push(frame);
 }
 
-void JrRuntimeStack::pop(JrFunctionFrame::Pointer frame) {
+void JrRuntimeStack::endFuncCall(JrFunctionFrame::Pointer frame) {
     pointer = frame->endAddress;
     assert(frames.top() == frame);
     frames.pop();
