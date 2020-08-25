@@ -9,7 +9,7 @@ JrFunction::Pointer JrFuncPrint::Func;
 
 void JrFuncPrint::operator()(JrRuntimeContext::Pointer context, JrFunction::Pointer func) {
     auto value = context->stack->pop();
-    std::cout << value << std::endl;
+    std::cout << value.intValue << std::endl;
 };
 
 void JrFuncPrint::init() {
@@ -28,7 +28,7 @@ JrFunction::Pointer JrFuncObjectPrint::Func;
 void JrFuncObjectPrint::operator()(JrRuntimeContext::Pointer context, JrFunction::Pointer func) {
     auto objectRef = context->stack->pop();
     
-    auto object = context->gc->get(objectRef);
+    auto object = context->gc->get(objectRef.objRefValue);
     auto arrayObject = static_cast<JrObjectIntArray*>(object);
     
     std::wcout << L"[";
@@ -36,7 +36,7 @@ void JrFuncObjectPrint::operator()(JrRuntimeContext::Pointer context, JrFunction
         if(i > 0) {
             std::wcout << L", ";
         }
-        std::wcout << (*arrayObject->slots)[i];
+        std::wcout << (*arrayObject->slots)[i].intValue;
         
     }
     std::wcout << L"]" << std::endl;

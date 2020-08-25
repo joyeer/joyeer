@@ -89,22 +89,22 @@ JrFunctionFrame::Pointer JrRuntimeStack::topFrame() {
     return frames.top();
 }
 
-void JrRuntimeStack::push(JrInt value) {
-    *(JrInt*)(data + pointer) = value;
-    pointer += sizeof(JrInt);
+void JrRuntimeStack::push(JrValueHold value) {
+    *(JrValueHold*)(data + pointer) = value;
+    pointer += sizeof(JrValueHold);
 }
 
-JrInt JrRuntimeStack::pop() {
-    pointer -= sizeof(JrInt);
-    return *(JrInt*)(data + pointer);
+JrValueHold JrRuntimeStack::pop() {
+    pointer -= sizeof(JrValueHold);
+    return *(JrValueHold*)(data + pointer);
 }
 
-void JrRuntimeStack::storeValueForVariable(JrInt addressOfVariable, JrInt value) {
-    *(JrInt*)(data + addressOfVariable) = value;
+void JrRuntimeStack::storeValueForVariable(JrInt addressOfVariable, JrValueHold value) {
+    *(JrValueHold*)(data + addressOfVariable) = value;
 }
 
-JrInt JrRuntimeStack::intValueOfVariable(JrInt addressOfVariable) {
-    auto pointer = (JrInt*)(data + addressOfVariable);
+JrValueHold JrRuntimeStack::intValueOfVariable(JrInt addressOfVariable) {
+    auto pointer = (JrValueHold*)(data + addressOfVariable);
     return *pointer;
 }
 

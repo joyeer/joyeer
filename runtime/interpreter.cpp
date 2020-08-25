@@ -13,7 +13,7 @@ void JrInterpreter::run(JrModuleType* module) {
     auto objectRef = context->gc->alloc(module);
     assert(module->constructors.size() == 1);
     auto mainFunc = Global::functions[module->constructors.back()];
-    context->stack->push(objectRef);
+    context->stack->push({.kind = typeObject, .objRefValue = objectRef});
     run(mainFunc, objectRef);
 }
 
@@ -32,13 +32,10 @@ void JrInterpreter::run(JrFunction::Pointer function, int objectRef) {
         std::wcout << std::wstring(context->stack->frames.size() , L'-') << L"[stack:" << context->stack->pointer << L"] #" << pointer - function->instructions.begin() << L" " << printer.print(instruction) << std::endl;
         switch(instruction.opcode) {
             case OP_ICONST:
-                context->stack->push(instruction.value);
+                context->stack->push({ .kind = typeInt, .intValue = instruction.value});
                 break;
             case OP_OCONST_NIL:
                 exec_oconst_nil(instruction);
-                break;
-            case OP_SCONST:
-                context->stack->push(instruction.value);
                 break;
             case OP_INVOKE:
                 exec_invoke(instruction);
@@ -122,7 +119,7 @@ JrFunctionFrame::Pointer JrInterpreter::prepareStackFrame(JrFunction::Pointer fu
     frame->startAddress = address ;
     for(auto var : func->localVars) {
         frame->addressOfVariables.push_back(address);
-        address += 8;
+        address += sizeof(JrValueHold);
     }
     frame->endAddress = address;
     return frame;
@@ -151,7 +148,6 @@ void JrInterpreter::exec_oload(const Instruction &instruction) {
 
 void JrInterpreter::exec_invoke(const Instruction &instruction) {
     auto func = Global::functions[instruction.value];
-    std::wcout << func->name << std::endl;
     if((func->kind & jrFuncNative) == jrFuncNative) {
         (*func->nativeCode)(context, func);
     } else if((func->kind & jrFuncVM) == jrFuncVM) {
@@ -163,50 +159,50 @@ void JrInterpreter::exec_invoke(const Instruction &instruction) {
 void JrInterpreter::exec_iadd(const Instruction &instruction) {
     auto value1 = context->stack->pop();
     auto value2 = context->stack->pop();
-    context->stack->push(value1 + value2);
+    context->stack->push({.kind = typeInt, .intValue = value1.intValue + value2.intValue});
 }
 
 void JrInterpreter::exec_imul(const Instruction &instruction) {
     auto value1 = context->stack->pop();
     auto value2 = context->stack->pop();
-    context->stack->push(value1 * value2);
+    context->stack->push({.kind = typeInt, .intValue = value1.intValue * value2.intValue});
 }
 
 void JrInterpreter::exec_isub(const Instruction &instruction) {
     auto value1 = context->stack->pop();
     auto value2 = context->stack->pop();
-    context->stack->push(value2 - value1 );
+    context->stack->push({.kind = typeInt, .intValue = value2.intValue - value1.intValue});
 }
 
 void JrInterpreter::exec_idiv(const Instruction &instrunction) {
     auto value1 = context->stack->pop();
     auto value2 = context->stack->pop();
-    context->stack->push(value2 / value1);
+    context->stack->push({.kind = typeInt, .intValue = value2.intValue / value1.intValue});
 }
 
 void JrInterpreter::exec_irem(const Instruction &instrunction) {
     auto value1 = context->stack->pop();
     auto value2 = context->stack->pop();
     
-    context->stack->push(value2 % value1);
+    context->stack->push({.kind = typeInt, .intValue = value2.intValue % value1.intValue});
 }
 
 void JrInterpreter::exec_ineg(const Instruction& instruction) {
-    auto value = context->stack->pop();
+    auto value = context->stack->pop().intValue;
     value = -value;
-    context->stack->push(value);
+    context->stack->push({.kind = typeInt, .intValue = value});
 }
 
 void JrInterpreter::exec_iand(const Instruction &instruction) {
     auto rightValue = context->stack->pop();
     auto leftValue = context->stack->pop();
     
-    context->stack->push(leftValue > 0 && rightValue > 0);
+    context->stack->push({ .kind = typeInt, .intValue = leftValue.intValue > 0 && rightValue.intValue > 0});
 }
 
 void JrInterpreter::exec_ifle(const Instruction &instrunction) {
     auto value1 = context->stack->pop();
-    if(value1 <= 0) {
+    if(value1.intValue < 1) {
         pointer += instrunction.value;
     }
 }
@@ -227,7 +223,7 @@ void JrInterpreter::exec_return(const Instruction &instruction) {
 
 void JrInterpreter::exec_oconst_nil(const Instruction &instruction) {
     assert(false);
-    context->stack->push(0);
+    context->stack->push({.kind = typeObject, .objRefValue = 0});
 }
 
 void JrInterpreter::exec_new(const Instruction &instruction) {
@@ -239,7 +235,7 @@ void JrInterpreter::exec_new(const Instruction &instruction) {
     assert(returnType->kind == typeObject);
     auto objectType = (JrObjectType*)returnType;
     auto objectRef = context->gc->alloc(objectType);
-    context->stack->push(objectRef);
+    context->stack->push({.kind = typeObject, .objRefValue = objectRef});
     
     JrInterpreter interpreter(context);
     interpreter.run(function, objectRef);
@@ -251,7 +247,7 @@ void JrInterpreter::exec_putfield(const Instruction &instruction) {
     auto objectRef = context->stack->pop();
     auto valueRef = context->stack->pop();
     
-    auto object = context->gc->get(objectRef);
+    auto object = context->gc->get(objectRef.objRefValue);
     assert(object != nullptr);
     object->setField(valueRef, addressOfField);
 }
@@ -261,7 +257,7 @@ void JrInterpreter::exec_getfield(const Instruction &instruction) {
     auto addressOfField = instruction.value;
     
     auto objectRef = context->stack->pop();
-    auto object = context->gc->get(objectRef);
+    auto object = context->gc->get(objectRef.objRefValue);
     auto fieldObjCRef = object->getFieldAsObjectRef(addressOfField);
     context->stack->push(fieldObjCRef);
 }
@@ -269,8 +265,8 @@ void JrInterpreter::exec_getfield(const Instruction &instruction) {
 void JrInterpreter::exec_onewarray(const Instruction &instruction) {
     auto objectCount = context->stack->pop();
     
-    std::vector<JrInt> objects;
-    for(auto i = 0 ; i < objectCount ; i ++ ) {
+    std::vector<JrValueHold> objects;
+    for(auto i = 0 ; i < objectCount.intValue ; i ++ ) {
         objects.push_back(context->stack->pop());
     }
     
@@ -280,19 +276,19 @@ void JrInterpreter::exec_onewarray(const Instruction &instruction) {
     for(auto iterator = objects.rbegin(); iterator != objects.rend(); iterator ++) {
         arrayObject->slots->push_back(*iterator);
     }
-    context->stack->push(objectRef);
+    context->stack->push({.kind = typeObject, .objRefValue = objectRef});
 }
 
 void JrInterpreter::exec_icmp_g(const Instruction &instrunction) {
     auto rightValue = context->stack->pop();
     auto leftValue = context->stack->pop();
     
-    context->stack->push(leftValue > rightValue);
+    context->stack->push({.kind = typeBoolean, .intValue = leftValue.intValue > rightValue.intValue});
 }
 
 void JrInterpreter::exec_icmp_l(const Instruction &instruction) {
     auto rightValue = context->stack->pop();
     auto leftValue = context->stack->pop();
     
-    context->stack->push(leftValue < rightValue);
+    context->stack->push({.kind = typeBoolean, .intValue = leftValue.intValue < rightValue.intValue});
 }

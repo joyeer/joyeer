@@ -7,7 +7,7 @@
 struct JrObjectIntArray: JrObject {
     static JrObjectType* Type;
     
-    std::vector<JrInt>* slots;
+    std::vector<JrValueHold>* slots;
     
     JrObjectIntArray();
     ~JrObjectIntArray();

@@ -9,6 +9,8 @@ typedef uint8_t     JrByte;
 typedef JrInt*      JrPtr;
 typedef JrInt       JrObjectRef;
 
+struct JrValueHold;
+
 enum JrTypeKind: JrByte {
     typeVoid = 0x01,
     typeInt,
@@ -32,8 +34,8 @@ struct JrObject {
     
     JrObjectHead head;
     
-    void setField(JrInt objectRef, JrInt addressOfField);
-    JrInt getFieldAsObjectRef(JrInt addressOfField);
+    void setField(JrValueHold value, JrInt addressOfField);
+    JrValueHold getFieldAsObjectRef(JrInt addressOfField);
 };
 
 struct JrPrimaryObject {

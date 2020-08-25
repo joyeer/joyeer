@@ -27,7 +27,7 @@ JrObjectType* JrObjectIntArray::Type = new JrObjectIntArrayType();
 
 
 JrObjectIntArray::JrObjectIntArray():
-slots(new std::vector<JrInt>()) {
+slots(new std::vector<JrValueHold>()) {
 }
 
 JrObjectIntArray::~JrObjectIntArray() {
@@ -41,10 +41,10 @@ JrFunction::Pointer JrObjectIntArray_Set::Func;
 
 void JrObjectIntArray_Size::operator()(JrRuntimeContext::Pointer context, JrFunction::Pointer func) {
     auto objectRef = context->stack->pop();
-    auto object = context->gc->get(objectRef);
+    auto object = context->gc->get(objectRef.objRefValue);
     auto arrayObject = static_cast<JrObjectIntArray*>(object);
     
-    context->stack->push(arrayObject->slots->size());
+    context->stack->push({.kind = typeInt, .intValue = static_cast<JrInt>(arrayObject->slots->size())});
 }
 
 void JrObjectIntArray_Append::operator()(JrRuntimeContext::Pointer context, JrFunction::Pointer func) {
@@ -55,10 +55,10 @@ void JrObjectIntArray_Get::operator()(JrRuntimeContext::Pointer context, JrFunct
     auto objectRef = context->stack->pop();
     auto arrayIndex = context->stack->pop();
     
-    auto object = context->gc->get(objectRef);
+    auto object = context->gc->get(objectRef.objRefValue);
     auto arrayObject = static_cast<JrObjectIntArray*>(object);
     
-    auto value = (*arrayObject->slots)[arrayIndex];
+    auto value = (*arrayObject->slots)[arrayIndex.intValue];
     context->stack->push(value);
 }
 
@@ -68,9 +68,9 @@ void JrObjectIntArray_Set::operator()(JrRuntimeContext::Pointer context, JrFunct
     
     auto value = context->stack->pop();
     
-    auto object = context->gc->get(objectRef);
+    auto object = context->gc->get(objectRef.objRefValue);
     auto arrayObject = static_cast<JrObjectIntArray*>(object);
-    (*arrayObject->slots)[arrayIndex] = value;
+    (*arrayObject->slots)[arrayIndex.intValue] = value;
     
 }
 

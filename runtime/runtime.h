@@ -114,13 +114,13 @@ struct JrRuntimeStack {
     
     JrFunctionFrame::Pointer topFrame();
     
-    void push(JrInt value);
-    JrInt pop();
+    void push(JrValueHold value);
+    JrValueHold pop();
     
     // store the variable value at address at stack
-    void storeValueForVariable(JrInt addressOfVariable, JrInt value);
+    void storeValueForVariable(JrInt addressOfVariable, JrValueHold value);
     // get the int value of the variable
-    JrInt intValueOfVariable(JrInt addressOfVariable);
+    JrValueHold intValueOfVariable(JrInt addressOfVariable);
 };
 
 struct JrGC;

@@ -3,12 +3,12 @@
 const JrObject* JrObject::nil = new JrObject();
 
 #define JrObject_Field(adddressOfField) \
-    *(JrInt*)((JrByte*)this + sizeof(JrObjectHead) + addressOfField * sizeof(JrInt))
+    *(JrValueHold*)((JrByte*)this + sizeof(JrObjectHead) + addressOfField * sizeof(JrValueHold))
 
-void JrObject::setField(JrInt objectRef, JrInt addressOfField) {
-    JrObject_Field(addressOfField) = objectRef;
+void JrObject::setField(JrValueHold value, JrInt addressOfField) {
+    JrObject_Field(addressOfField) = value;
 }
 
-JrInt JrObject::getFieldAsObjectRef(JrInt addressOfField) {
+JrValueHold JrObject::getFieldAsObjectRef(JrInt addressOfField) {
     return JrObject_Field(addressOfField);
 }

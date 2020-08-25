@@ -27,7 +27,7 @@ JrFunction::~JrFunction() {
 int JrFunction::totalSizeOfParams() {
     int size = 0;
     for(auto param: paramTypes) {
-        size += sizeof(JrInt);
+        size += sizeof(JrValueHold);
     }
     return size;
 }
