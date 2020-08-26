@@ -1,6 +1,7 @@
 #include "buildin.h"
 #include "runtime/sys/array.h"
 #include "runtime/sys/print.h"
+#include "runtime/sys/string.h"
 #include "runtime/sys/module.h"
 
 std::vector<JrType*> Global::types = {};
@@ -25,9 +26,11 @@ void Global::initGlobalTables() {
     JrFuncPrint::init();
     JrFuncObjectPrint::init();
     
-    
     // Init the array
     JrObjectIntArray::init();
+    
+    // initialize the string object
+    JrObjectString::init();
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////

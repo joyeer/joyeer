@@ -1,6 +1,7 @@
 #include "typecheck.h"
 #include "runtime/buildin.h"
 #include "runtime/sys/array.h"
+#include "runtime/sys/string.h"
 #include "diagnostic.h"
 #include <cassert>
 
@@ -598,6 +599,8 @@ JrType* TypeChecker::typeOf(LiteralExpr::Pointer node) {
             return JrPrimaryType::Int;
         case nilLiteral:
             return JrPrimaryType::Nil;
+        case stringLiteral:
+            return JrObjectString::Type;
         default:
             assert(false);
     }

@@ -12,11 +12,11 @@ typedef JrInt       JrObjectRef;
 struct JrValueHold;
 
 enum JrTypeKind: JrByte {
-    typeVoid = 0x01,
-    typeInt,
-    typeFloat,
-    typeDouble,
-    typeLong,
+    typeVoid            = 0x01,
+    typeInt             = 0x02,
+    typeFloat       = 0x03,
+    typeDouble = 0x04,
+    typeLong    = 0x05,
     typeBoolean,
     typeString,
     typeAny,

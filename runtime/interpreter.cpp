@@ -2,6 +2,7 @@
 #include "buildin.h"
 #include "gc.h"
 #include "runtime/sys/array.h"
+#include "runtime/sys/string.h"
 #include <cassert>
 #include <iostream>
 
@@ -105,6 +106,9 @@ void JrInterpreter::run(JrFunction::Pointer function, int objectRef) {
                 break;
             case OP_IAND:
                 exec_iand(instruction);
+                break;
+            case OP_SCONST:
+                exec_sconst(instruction);
                 break;
             default:
                 assert(false);
@@ -311,4 +315,12 @@ void JrInterpreter::exec_icmp_le(const Instruction &instruction) {
     auto leftValue = context->stack->pop();
     
     context->stack->push({.kind = typeBoolean, .intValue = leftValue.intValue <= rightValue.intValue});
+}
+
+void JrInterpreter::exec_sconst(const Instruction &instruction) {
+    auto string = Global::strings[instruction.value];
+    auto stringObjRef = context->gc->alloc(JrObjectString::Type);
+    auto stringObj = (JrObjectString*)context->gc->get(stringObjRef);
+    stringObj->content = string;
+    context->stack->push({.kind = typeString, .objRefValue =  stringObjRef });
 }

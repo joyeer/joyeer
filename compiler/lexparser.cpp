@@ -311,7 +311,7 @@ void LexParser::parseStringLiteral() {
         iterator ++;
     }
     
-    const std::wstring identifier(startAt, iterator);
+    const std::wstring identifier(startAt, iterator - 1);
     auto stringLiteral = std::make_shared<Token>(TokenKind::stringLiteral, identifier, lineNumber, iterator - startAt);
     Global::strings.push_back(identifier);
     stringLiteral->index = Global::strings.size() - 1;

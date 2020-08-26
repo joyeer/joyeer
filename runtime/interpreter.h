@@ -48,6 +48,8 @@ private:
     void exec_getfield(const Instruction& instruction);
     void exec_onewarray(const Instruction& instruction);
     
+    void exec_sconst(const Instruction& instruction);
+    
     JrRuntimeContext::Pointer context;
 };
 

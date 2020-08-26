@@ -2,6 +2,7 @@
 #include "runtime/gc.h"
 #include "runtime/buildin.h"
 #include "runtime/sys/array.h"
+#include "runtime/sys/string.h"
 #include <iostream>
 
 
@@ -9,7 +10,19 @@ JrFunction::Pointer JrFuncPrint::Func;
 
 void JrFuncPrint::operator()(JrRuntimeContext::Pointer context, JrFunction::Pointer func) {
     auto value = context->stack->pop();
-    std::cout << value.intValue << std::endl;
+    switch (value.kind) {
+        case typeString: {
+            auto stringObjRef = value.intValue;
+            auto stringObj = (JrObjectString*)context->gc->get(stringObjRef);
+            std::wcout << stringObj->content << std::endl;
+        }
+            break;
+        default: {
+            std::cout << value.intValue << std::endl;
+        }
+            break;
+    }
+    
 };
 
 void JrFuncPrint::init() {
