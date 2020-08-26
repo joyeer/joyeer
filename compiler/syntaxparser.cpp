@@ -14,7 +14,7 @@ SourceBlock::Pointer SyntaxParser::parse() {
         std::shared_ptr<Node> decl = tryParseStatement();
         if(decl == nullptr) {
             Diagnostics::reportError(L"[Error]");
-            return nullptr; // TODO: report an grammar error;
+            return nullptr; 
         }
 
         decls.push_back(decl);
@@ -593,6 +593,7 @@ Node::Pointer SyntaxParser::tryParseFuncCallExpr(Node::Pointer postfixExpr) {
     }
     
     if(tryEat(TokenKind::punctuation, Punctuations::CLOSE_ROUND_BRACKET) == nullptr) {
+        Diagnostics::reportError(L"[Error]");
         return nullptr; // TODO: report an grammar error
     }
     

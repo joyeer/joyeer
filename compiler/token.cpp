@@ -78,6 +78,8 @@ const std::wstring Operators::DIV = L"/";
 const std::wstring Operators::PERCENTAGE = L"%";
 const std::wstring Operators::GREATER = L">";
 const std::wstring Operators::LESS = L"<";
+const std::wstring Operators::LESS_EQ = L"<=";
+const std::wstring Operators::GERATER_EQ = L">=";
 
 std::unordered_map<std::wstring, OperatorPriority> initOperatorPriorities() {
     std::unordered_map<std::wstring, OperatorPriority> result {
@@ -92,7 +94,9 @@ std::unordered_map<std::wstring, OperatorPriority> initOperatorPriorities() {
         { Operators::DIV, OperatorPriority::high },
         { Operators::PERCENTAGE, OperatorPriority::high },
         { Operators::GREATER, OperatorPriority::high },
-        { Operators::LESS, OperatorPriority::high }
+        { Operators::GERATER_EQ, OperatorPriority::high },
+        { Operators::LESS, OperatorPriority::high },
+        { Operators::LESS_EQ, OperatorPriority::high }
     };
     return result;
 }

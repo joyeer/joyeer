@@ -91,8 +91,14 @@ void JrInterpreter::run(JrFunction::Pointer function, int objectRef) {
             case OP_ICMP_G:
                 exec_icmp_g(instruction);
                 break;
+            case OP_ICMP_GE:
+                exec_icmp_ge(instruction);
+                break;
             case OP_ICMP_L:
                 exec_icmp_l(instruction);
+                break;
+            case OP_ICMP_LE:
+                exec_icmp_le(instruction);
                 break;
             case OP_INEG:
                 exec_ineg(instruction);
@@ -286,9 +292,23 @@ void JrInterpreter::exec_icmp_g(const Instruction &instrunction) {
     context->stack->push({.kind = typeBoolean, .intValue = leftValue.intValue > rightValue.intValue});
 }
 
+void JrInterpreter::exec_icmp_ge(const Instruction &instrunction) {
+    auto rightValue = context->stack->pop();
+    auto leftValue = context->stack->pop();
+    
+    context->stack->push({.kind = typeBoolean, .intValue = leftValue.intValue >= rightValue.intValue});
+}
+
 void JrInterpreter::exec_icmp_l(const Instruction &instruction) {
     auto rightValue = context->stack->pop();
     auto leftValue = context->stack->pop();
     
     context->stack->push({.kind = typeBoolean, .intValue = leftValue.intValue < rightValue.intValue});
+}
+
+void JrInterpreter::exec_icmp_le(const Instruction &instruction) {
+    auto rightValue = context->stack->pop();
+    auto leftValue = context->stack->pop();
+    
+    context->stack->push({.kind = typeBoolean, .intValue = leftValue.intValue <= rightValue.intValue});
 }

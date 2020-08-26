@@ -94,9 +94,23 @@ void LexParser::parse() {
                 parseOperator(iterator - 1);
                 break;
             case '<':
+                if(iterator != endIterator) {
+                    if(*iterator == '=') {
+                        iterator ++;
+                        pushOperator(TokenKind::operators, Operators::LESS_EQ, iterator);
+                        continue;
+                    }
+                }
                 parseOperator(iterator - 1);
                 break;
             case '>':
+                if(iterator != endIterator) {
+                    if(*iterator == '=') {
+                        iterator ++;
+                        pushOperator(TokenKind::operators, Operators::GERATER_EQ, iterator);
+                        continue;
+                    }
+                }
                 parseOperator(iterator - 1);
                 break;
             case '&':
