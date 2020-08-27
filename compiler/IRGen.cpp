@@ -2,6 +2,7 @@
 #include "diagnostic.h"
 #include "runtime/buildin.h"
 #include "runtime/sys/array.h"
+#include "runtime/sys/string.h"
 #include <cassert>
 #include <unordered_map>
 
@@ -330,10 +331,45 @@ void IRGen::emit(AssignmentExpr::Pointer node) {
 void IRGen::emit(Expr::Pointer node) {
     assert(node->prefix == nullptr);
     assert(node->binaries.size() == 0);
-    
-    for(auto n: node->nodes) {
-        emit(n);
+    if(node->type == JrObjectString::Type) {
+        
+        
+        writer.write({
+            .opcode = OP_NEW,
+            .value = JrObjectStringBuilder::Type->addressOfType
+        });
+        
+        // Use the StringBuilder to append the string content
+        for(std::vector<Node::Pointer>::const_reverse_iterator iterator = node->nodes.rbegin(); iterator != node->nodes.rend(); iterator ++ ) {
+            auto n = *iterator;
+            if(n->kind == operatorExpr) {
+                auto operatorExpr = std::static_pointer_cast<OperatorExpr>(n);
+                assert(operatorExpr->token->rawValue == L"+");
+            } else {
+                writer.write({
+                    .opcode = OP_DUP
+                });
+                
+                emit(n);
+                
+                writer.write({
+                    .opcode = OP_INVOKE,
+                    .value = JrObjectStringBuilder_Append::Func->addressOfFunc
+                });
+            }
+        }
+        
+        writer.write({
+            .opcode = OP_INVOKE,
+            .value = JrObjectStringBuilder_toString::Func->addressOfFunc
+        });
+        
+    } else {
+        for(auto n: node->nodes) {
+            emit(n);
+        }
     }
+    
 }
 
 void IRGen::emit(OperatorExpr::Pointer node) {
@@ -354,6 +390,7 @@ void IRGen::emit(OperatorExpr::Pointer node) {
     };
     
     assert(imaps.find(node->token->rawValue) != imaps.end());
+    
     writer.write({
         .opcode = imaps[node->token->rawValue],
     });
@@ -484,7 +521,6 @@ void IRGen::emit(ConstructorDecl::Pointer node) {
     function->instructions = instructions;
     
     context->leave(function);
-    
 }
 
 void IRGen::emit(MemberAccessExpr::Pointer node) {

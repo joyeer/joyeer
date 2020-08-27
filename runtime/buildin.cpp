@@ -21,16 +21,15 @@ void Global::initGlobalTables() {
     
     // Init Module
     JrModule::init();
-    
     // Init print function
     JrFuncPrint::init();
     JrFuncObjectPrint::init();
-    
     // Init the array
     JrObjectIntArray::init();
-    
     // initialize the string object
     JrObjectString::init();
+    // initialize the string builder object
+    JrObjectStringBuilder::init();
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////

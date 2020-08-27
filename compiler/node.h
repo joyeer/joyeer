@@ -54,9 +54,9 @@ struct Node {
     
     SyntaxKind kind;
 
-    Symbol::Pointer symbol;
-    SymbolTable::Pointer symtable;
-    JrType* type;
+    Symbol::Pointer symbol = nullptr;
+    SymbolTable::Pointer symtable = nullptr;
+    JrType* type = nullptr;
     
     virtual std::wstring getName();
     // The type name of the Node
@@ -84,6 +84,8 @@ struct OperatorExpr: Node {
     
     Token::Pointer token;
     OperatorPriority priority;
+    JrType* leftType;
+    JrType* rightType;
     OperatorExpr(Token::Pointer token);
 };
 

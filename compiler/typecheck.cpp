@@ -402,8 +402,8 @@ void TypeChecker::verify(Expr::Pointer node) {
         for(auto n: node->nodes) {
             verify(n);
         }
+        node->type = typeOf(node);
     });
-    
 }
 
 
@@ -417,8 +417,6 @@ void TypeChecker::verify(AssignmentExpr::Pointer node) {
     verify(node->expr);
     
     auto leftType = typeOf(node->left);
-//    auto rightType = typeOf(node->expr);
-    
 }
 
 void TypeChecker::verify(ParenthesizedExpr::Pointer node) {
@@ -565,6 +563,10 @@ JrType* TypeChecker::typeOf(Expr::Pointer node) {
     assert(node->binaries.size() == 0);
     assert(node->prefix == nullptr);
     
+    if(node->type != nullptr) {
+        return node->type;
+    }
+    
     std::stack<JrType*> stack;
     for(auto n: node->nodes) {
         if(n->kind == operatorExpr) {
@@ -572,14 +574,11 @@ JrType* TypeChecker::typeOf(Expr::Pointer node) {
             stack.pop();
             auto rightType = stack.top();
             stack.pop();
-            
             if(leftType->kind == rightType->kind) {
                 stack.push(leftType);
             } else {
                 stack.push(leftType);
-//                Diagnostics::reportError(L"type should be same");
             }
-            //TODO double check
             
         } else {
             auto type = typeOf(n);

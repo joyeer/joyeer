@@ -1,2 +1,2 @@
-var message = ""
+var message = "hello" +  "world"
 print(message: message)

@@ -70,10 +70,13 @@ void JrInterpreter::run(JrFunction::Pointer function, int objectRef) {
                 break;
             case OP_IRETURN:
                 exec_ireturn(instruction);
-                goto exit_label;; // finish the method's loop
+                goto exit_label; // finish the method's loop
             case OP_RETURN:
                 exec_return(instruction);
-                goto exit_label;; // finish the method's loop
+                goto exit_label; // finish the method's loop
+            case OP_ORETURN:
+                exec_oreturn(instruction);
+                goto exit_label;
             case OP_OLOAD:
                 exec_oload(instruction);
                 break;
@@ -109,6 +112,9 @@ void JrInterpreter::run(JrFunction::Pointer function, int objectRef) {
                 break;
             case OP_SCONST:
                 exec_sconst(instruction);
+                break;
+            case OP_DUP:
+                exec_dup(instruction);
                 break;
             default:
                 assert(false);
@@ -231,6 +237,12 @@ void JrInterpreter::exec_return(const Instruction &instruction) {
     context->stack->endFuncCall(context->stack->topFrame());
 }
 
+void JrInterpreter::exec_oreturn(const Instruction &instruction) {
+    auto value = context->stack->pop();
+    context->stack->endFuncCall(context->stack->topFrame());
+    context->stack->push(value);
+}
+
 void JrInterpreter::exec_oconst_nil(const Instruction &instruction) {
     assert(false);
     context->stack->push({.kind = typeObject, .objRefValue = 0});
@@ -321,6 +333,11 @@ void JrInterpreter::exec_sconst(const Instruction &instruction) {
     auto string = Global::strings[instruction.value];
     auto stringObjRef = context->gc->alloc(JrObjectString::Type);
     auto stringObj = (JrObjectString*)context->gc->get(stringObjRef);
-    stringObj->content = string;
+    stringObj->content = new std::wstring(string);
     context->stack->push({.kind = typeString, .objRefValue =  stringObjRef });
+}
+
+void JrInterpreter::exec_dup(const Instruction &instruction) {
+    auto value = context->stack->top();
+    context->stack->push(value);
 }

@@ -14,14 +14,14 @@ struct JrValueHold;
 enum JrTypeKind: JrByte {
     typeVoid            = 0x01,
     typeInt             = 0x02,
-    typeFloat       = 0x03,
-    typeDouble = 0x04,
-    typeLong    = 0x05,
-    typeBoolean,
-    typeString,
-    typeAny,
-    typeNil,
-    typeObject
+    typeFloat           = 0x03,
+    typeDouble          = 0x04,
+    typeLong            = 0x05,
+    typeBoolean         = 0x06,
+    typeString          = 0x07,
+    typeAny             = 0x08,
+    typeNil             = 0x09,
+    typeObject          = 0x0A
 };
 
 struct JrObjectHead {

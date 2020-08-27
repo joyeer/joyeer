@@ -114,6 +114,8 @@ struct JrRuntimeStack {
     
     JrFunctionFrame::Pointer topFrame();
     
+    JrValueHold top();
+    
     void push(JrValueHold value);
     JrValueHold pop();
     

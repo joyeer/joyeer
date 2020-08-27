@@ -43,11 +43,12 @@ enum Opcode {
     
     OP_RETURN,
     OP_IRETURN,
+    OP_ORETURN,
     
     OP_ONEWARRAY,
     
     OP_INVOKE,
-    
+    OP_DUP,
     OP_GOTO,
     
     OP_DEBUG,

@@ -14,7 +14,7 @@ void JrFuncPrint::operator()(JrRuntimeContext::Pointer context, JrFunction::Poin
         case typeString: {
             auto stringObjRef = value.intValue;
             auto stringObj = (JrObjectString*)context->gc->get(stringObjRef);
-            std::wcout << stringObj->content << std::endl;
+            std::wcout << *(stringObj->content) << std::endl;
         }
             break;
         default: {

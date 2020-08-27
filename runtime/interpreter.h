@@ -41,6 +41,7 @@ private:
     void exec_goto(const Instruction& instruction);
     void exec_ireturn(const Instruction& instruction);
     void exec_return(const Instruction& instruction);
+    void exec_oreturn(const Instruction& instruction);
         
     void exec_oconst_nil(const Instruction& instruction);
     void exec_new(const Instruction& instruction);
@@ -49,6 +50,7 @@ private:
     void exec_onewarray(const Instruction& instruction);
     
     void exec_sconst(const Instruction& instruction);
+    void exec_dup(const Instruction& instruction);
     
     JrRuntimeContext::Pointer context;
 };

@@ -89,6 +89,10 @@ JrFunctionFrame::Pointer JrRuntimeStack::topFrame() {
     return frames.top();
 }
 
+JrValueHold JrRuntimeStack::top() {
+    return *(JrValueHold*)(data + pointer - sizeof(JrValueHold));
+}
+
 void JrRuntimeStack::push(JrValueHold value) {
     *(JrValueHold*)(data + pointer) = value;
     pointer += sizeof(JrValueHold);
