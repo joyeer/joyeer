@@ -1,6 +1,7 @@
 #include "typecheck.h"
 #include "runtime/buildin.h"
 #include "runtime/sys/array.h"
+#include "runtime/sys/map.h"
 #include "runtime/sys/string.h"
 #include "diagnostic.h"
 #include <cassert>
@@ -70,6 +71,9 @@ void TypeChecker::verify(Node::Pointer node) {
             break;
         case arrayLiteralExpr:
             verify(std::static_pointer_cast<ArrayLiteralExpr>(node));
+            break;
+        case dictLiteralExpr:
+            verify(std::static_pointer_cast<DictLiteralExpr>(node));
             break;
         case assignmentExpr:
             verify(std::static_pointer_cast<AssignmentExpr>(node));
@@ -475,6 +479,13 @@ void TypeChecker::verify(ArrayLiteralExpr::Pointer node) {
     }
 }
 
+void TypeChecker::verify(DictLiteralExpr::Pointer node) {
+    for(auto item: node->items) {
+        verify(std::get<0>(item));
+        verify(std::get<1>(item));
+    }
+}
+
 void TypeChecker::verify(MemberAccessExpr::Pointer node) {
     verify(node->parent);
     
@@ -531,6 +542,8 @@ JrType* TypeChecker::typeOf(Node::Pointer node) {
             return typeOf(std::static_pointer_cast<Type>(node));
         case arrayLiteralExpr:
             return typeOf(std::static_pointer_cast<ArrayLiteralExpr>(node));
+        case dictLiteralExpr:
+            return typeOf(std::static_pointer_cast<DictLiteralExpr>(node));
         case memberAccessExpr:
             return typeOf(std::static_pointer_cast<MemberAccessExpr>(node));
         case subscriptExpr:
@@ -630,6 +643,10 @@ JrType* TypeChecker::typeOf(Pattern::Pointer node) {
 JrType* TypeChecker::typeOf(Type::Pointer node) {
     assert(node->symbol->flag == typeSymbol);
     return Global::types[node->symbol->addressOfType];
+}
+
+JrType* TypeChecker::typeOf(DictLiteralExpr::Pointer node) {
+    return JrObjectMap::Type;
 }
 
 JrType* TypeChecker::typeOf(ArrayLiteralExpr::Pointer node) {

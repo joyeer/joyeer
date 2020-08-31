@@ -48,6 +48,10 @@ struct JrValueHold {
         JrInt           intValue;
         JrObjectRef     objRefValue;
     };
+    
+    bool operator== (const JrValueHold& value) const {
+        return value.kind == kind && value.intValue == intValue;
+    }
 };
  
 #endif

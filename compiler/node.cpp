@@ -186,6 +186,11 @@ Node(arrayLiteralExpr),
 items(items) {
 }
 
+DictLiteralExpr::DictLiteralExpr(std::vector<std::tuple<Node::Pointer, Node::Pointer>> items):
+Node(dictLiteralExpr),
+items(items) {
+}
+
 IdentifierExpr::IdentifierExpr(std::shared_ptr<Token> token):
 Node(SyntaxKind::identifierExpr),
 token(token) {

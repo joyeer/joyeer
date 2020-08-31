@@ -41,9 +41,11 @@ protected:
     Node::Pointer bind(ReturnStatement::Pointer decl);
     Node::Pointer bind(SelfExpr::Pointer decl);
     Node::Pointer bind(ArrayLiteralExpr::Pointer decl);
+    Node::Pointer bind(DictLiteralExpr::Pointer decl);
     Node::Pointer bind(MemberAccessExpr::Pointer decl);
     Node::Pointer bind(SubscriptExpr::Pointer decl);
     Node::Pointer bind(ArrayType::Pointer decl);
+    
     
 private:
     CompileContext::Pointer context;

@@ -24,6 +24,8 @@ set(SOURCES ${SOURCES}
     ${CMAKE_CURRENT_SOURCE_DIR}/sys/module.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/sys/string.h
     ${CMAKE_CURRENT_SOURCE_DIR}/sys/string.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/sys/map.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/sys/map.cpp
 )
 
 

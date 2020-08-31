@@ -34,6 +34,7 @@ private:
     void verify(ClassDecl::Pointer node);
     void verify(SelfExpr::Pointer node);
     void verify(ArrayLiteralExpr::Pointer node);
+    void verify(DictLiteralExpr::Pointer node);
     void verify(MemberAccessExpr::Pointer node);
     void verify(SubscriptExpr::Pointer node);
     void verify(ArrayType::Pointer node);
@@ -49,6 +50,7 @@ private:
     JrType* typeOf(Pattern::Pointer node);
     JrType* typeOf(Type::Pointer node);
     JrType* typeOf(ArrayLiteralExpr::Pointer node);
+    JrType* typeOf(DictLiteralExpr::Pointer node);
     JrType* typeOf(MemberAccessExpr::Pointer node);
     JrType* typeOf(SubscriptExpr::Pointer node);
     JrType* typeOf(ArrayType::Pointer node);

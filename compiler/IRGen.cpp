@@ -2,6 +2,7 @@
 #include "diagnostic.h"
 #include "runtime/buildin.h"
 #include "runtime/sys/array.h"
+#include "runtime/sys/map.h"
 #include "runtime/sys/string.h"
 #include <cassert>
 #include <unordered_map>
@@ -9,7 +10,6 @@
 
 IRGen::IRGen(CompileContext::Pointer context):
 context(context) {
-    
 }
 
 void IRGen::emit(Node::Pointer node) {
@@ -64,6 +64,9 @@ void IRGen::emit(Node::Pointer node) {
             break;
         case arrayLiteralExpr:
             emit(std::static_pointer_cast<ArrayLiteralExpr>(node));
+            break;
+        case dictLiteralExpr:
+            emit(std::static_pointer_cast<DictLiteralExpr>(node));
             break;
         case assignmentExpr:
             emit(std::static_pointer_cast<AssignmentExpr>(node));
@@ -333,7 +336,6 @@ void IRGen::emit(Expr::Pointer node) {
     assert(node->binaries.size() == 0);
     if(node->type == JrObjectString::Type) {
         
-        
         writer.write({
             .opcode = OP_NEW,
             .value = JrObjectStringBuilder::Type->addressOfType
@@ -497,6 +499,27 @@ void IRGen::emit(ArrayLiteralExpr::Pointer node) {
         .opcode = OP_ONEWARRAY,
         .value = JrType::Any->addressOfType
     });
+}
+
+void IRGen::emit(DictLiteralExpr::Pointer node) {
+    writer.write({
+        .opcode = OP_NEW,
+        .value = JrObjectMap::Constructor->addressOfFunc
+    });
+    
+    for(auto item: node->items) {
+        writer.write({
+           .opcode = OP_DUP
+        });
+        
+        emit(std::get<0>(item));
+        emit(std::get<1>(item));
+        
+        writer.write({
+            .opcode = OP_INVOKE,
+            .value = JrObjectMap_Insert::Func->addressOfFunc
+        });
+    }
 }
 
 void IRGen::emit(ClassDecl::Pointer node) {

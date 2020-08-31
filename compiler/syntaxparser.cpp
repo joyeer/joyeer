@@ -629,11 +629,13 @@ ArguCallExpr::Pointer SyntaxParser::tryParseArguCallExpr() {
     }
     
     if(tryEat(TokenKind::punctuation, Punctuations::COLON) == nullptr) {
+        Diagnostics::reportError(L"[Error]");
         return nullptr; //TODO: report an grammar error
     }
     
-    std::shared_ptr<Node> expr = tryParseExpr();
+    auto expr = tryParseExpr();
     if(expr == nullptr) {
+        Diagnostics::reportError(L"[Error]");
         return nullptr; // TODO: report a grammar error
     }
     
@@ -676,6 +678,7 @@ std::shared_ptr<Node> SyntaxParser::tryParseSelfExpr() {
     
     auto identifier = tryParseIdentifierExpr();
     if(identifier == nullptr) {
+        Diagnostics::reportError(L"[Error]");
         return nullptr; //TODO: Report n error
     }
     return std::shared_ptr<Node>(new SelfExpr(identifier));
@@ -687,43 +690,92 @@ Node::Pointer SyntaxParser::tryParseLiteralExpr() {
         return std::make_shared<LiteralExpr>(literal);
     }
     
-    auto arrayLiteral = tryParseArrayLiteralExpr();
+    auto arrayLiteral = tryParseArrayOrDictLiteralExpr();
     if(arrayLiteral != nullptr) {
         return arrayLiteral;
     }
     return nullptr;
 }
 
-Node::Pointer SyntaxParser::tryParseArrayLiteralExpr() {
+Node::Pointer SyntaxParser::tryParseArrayOrDictLiteralExpr() {
     if(tryEat(TokenKind::punctuation, Punctuations::OPEN_SQUARE_BRACKET) == nullptr) {
         return nullptr;
     }
     
-    std::vector<Node::Pointer> items;
+    std::vector<Node::Pointer> arrayItems;
+    std::vector<std::tuple<Node::Pointer, Node::Pointer>> dictItems;
     
-    auto item = tryParseExpr();
-    if(item !=  nullptr) {
-        items.push_back(item);
+    // parse the empty dictory literal case - [:]
+    if (tryEat(TokenKind::punctuation, Punctuations::COLON)) {
+        if(tryEat(TokenKind::punctuation, Punctuations::CLOSE_SQUARE_BRACKET) == nullptr) {
+            Diagnostics::reportError(L"[Error] Dict literal except expression here");
+        }
+        return std::make_shared<DictLiteralExpr>(dictItems);
+    }
+    
+    auto keyItem = tryParseExpr();
+    Node::Pointer valueItem = nullptr;
+    
+    bool isDict  = false;
+    if(tryEat(TokenKind::punctuation, Punctuations::COLON)) {
+        valueItem = tryParseExpr();
+        if(valueItem == nullptr) {
+            Diagnostics::reportError(L"[Error] Dict literal except expression here");
+            return;
+        }
+        isDict = true;
+    }
+    
+    if(keyItem !=  nullptr) {
+        
+        if(isDict) {
+            dictItems.push_back(std::make_tuple(keyItem, valueItem));
+        } else {
+            arrayItems.push_back(keyItem);
+        }
+        
         while (true) {
             if(tryEat(TokenKind::punctuation, Punctuations::COMMA) == nullptr) {
                 break;
             }
             
-            auto expr = tryParseExpr();
-            if(expr == nullptr) {
+            keyItem = tryParseExpr();
+            if(keyItem == nullptr) {
                 Diagnostics::reportError(L"[Error] Array literal except expression here");
                 break;
             }
             
-            items.push_back(expr);
+            if(isDict) {
+                if(tryEat(TokenKind::punctuation, Punctuations::COLON) == nullptr) {
+                    Diagnostics::reportError(L"[Error] Dict literal except expression here");
+                    break;
+                }
+                valueItem = tryParseExpr();
+                if(valueItem == nullptr) {
+                    Diagnostics::reportError(L"[Error] Dict literal except expression here");
+                    break;
+                }
+            }
+            
+            if(isDict) {
+                dictItems.push_back(std::make_tuple(keyItem, valueItem));
+            } else {
+                arrayItems.push_back(keyItem);
+            }
         }
     }
     
+
     if(tryEat(TokenKind::punctuation, Punctuations::CLOSE_SQUARE_BRACKET) == nullptr) {
         Diagnostics::reportError(L"[Error] Array literal except expression here");
     }
     
-    return std::make_shared<ArrayLiteralExpr>(items);
+    if(isDict) {
+        return std::make_shared<DictLiteralExpr>(dictItems);
+    } else {
+        return std::make_shared<ArrayLiteralExpr>(arrayItems);
+    }
+    
 }
 
 Node::Pointer SyntaxParser::tryParseParenthesizedExpr() {

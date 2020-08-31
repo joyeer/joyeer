@@ -59,6 +59,8 @@ Node::Pointer Binder::bind(std::shared_ptr<Node> node) {
             return bind(std::static_pointer_cast<LiteralExpr>(node));
         case arrayLiteralExpr:
             return bind(std::static_pointer_cast<ArrayLiteralExpr>(node));
+        case dictLiteralExpr:
+            return bind(std::static_pointer_cast<DictLiteralExpr>(node));
         case assignmentExpr:
             return bind(std::static_pointer_cast<AssignmentExpr>(node));
         case binaryExpr:
@@ -625,6 +627,18 @@ Node::Pointer Binder::bind(ArrayLiteralExpr::Pointer decl) {
     std::vector<Node::Pointer> result;
     for(auto item: decl->items) {
         result.push_back(bind(item));
+    }
+    decl->items = result;
+    return decl;
+}
+
+Node::Pointer Binder::bind(DictLiteralExpr::Pointer decl) {
+    std::vector<std::tuple<Node::Pointer, Node::Pointer>> result;
+    for(auto item: decl->items) {
+        auto keyItem = bind(std::get<0>(item));
+        auto valueItem = bind(std::get<1>(item));
+        
+        result.push_back(std::make_tuple(keyItem , valueItem));
     }
     decl->items = result;
     return decl;

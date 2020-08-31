@@ -37,6 +37,7 @@ protected:
     void emit(ClassDecl::Pointer node);
     void emit(ConstructorDecl::Pointer node);
     void emit(ArrayLiteralExpr::Pointer node);
+    void emit(DictLiteralExpr::Pointer node);
     void emit(SubscriptExpr::Pointer node);
     
 private:

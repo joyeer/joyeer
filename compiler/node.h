@@ -276,6 +276,14 @@ struct ArrayLiteralExpr: Node {
     ArrayLiteralExpr(std::vector<Node::Pointer> items);
 };
 
+struct DictLiteralExpr: Node {
+    typedef std::shared_ptr<DictLiteralExpr> Pointer;
+    
+    std::vector<std::tuple<Node::Pointer, Node::Pointer>> items;
+    
+    DictLiteralExpr(std::vector<std::tuple<Node::Pointer, Node::Pointer>> items);
+};
+
 struct ParenthesizedExpr: Node {
     typedef std::shared_ptr<ParenthesizedExpr> Pointer;
     

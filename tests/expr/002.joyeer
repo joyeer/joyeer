@@ -1,2 +1,1 @@
-var message = "hello" +  "world"
-print(message: message)
+var dict = [12: 12, 13: 12]

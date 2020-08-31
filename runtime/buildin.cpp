@@ -2,6 +2,7 @@
 #include "runtime/sys/array.h"
 #include "runtime/sys/print.h"
 #include "runtime/sys/string.h"
+#include "runtime/sys/map.h"
 #include "runtime/sys/module.h"
 
 std::vector<JrType*> Global::types = {};
@@ -30,6 +31,8 @@ void Global::initGlobalTables() {
     JrObjectString::init();
     // initialize the string builder object
     JrObjectStringBuilder::init();
+    // initialize the map object
+    JrObjectMap::init();
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
