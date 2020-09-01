@@ -63,10 +63,10 @@ void JrObjectIntArray_Get::operator()(JrRuntimeContext::Pointer context, JrFunct
 }
 
 void JrObjectIntArray_Set::operator()(JrRuntimeContext::Pointer context, JrFunction::Pointer func) {
-    auto objectRef = context->stack->pop();
-    auto arrayIndex = context->stack->pop();
-    
     auto value = context->stack->pop();
+    auto arrayIndex = context->stack->pop();
+    auto objectRef = context->stack->pop();
+    
     
     auto object = context->gc->get(objectRef.objRefValue);
     auto arrayObject = static_cast<JrObjectIntArray*>(object);

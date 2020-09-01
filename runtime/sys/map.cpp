@@ -28,6 +28,7 @@ struct JrObjectMapType: public JrObjectType {
 JrObjectType* JrObjectMap::Type = new JrObjectMapType();
 JrFunction::Pointer JrObjectMap::Constructor;
 JrFunction::Pointer JrObjectMap_Insert::Func;
+JrFunction::Pointer JrObjectMap_Get::Func;
 
 JrObjectMap::JrObjectMap() {
 }
@@ -62,8 +63,17 @@ void JrObjectMap::init() {
         .nativeCode = new JrObjectMap_Insert(),
     });
     
+    JrObjectMap_Get::Func = JrFunction::Pointer(new JrFunction{
+        .name = L"Map@get(key:)",
+        .kind = jrFuncNative,
+        .paramTypes = { JrObjectMap::Type, JrType::Any },
+        .returnType = JrType::Any,
+        .nativeCode = new JrObjectMap_Get(),
+    });
+    
     Global::registerFunction(JrObjectMap::Constructor, JrObjectMap::Type);
     Global::registerFunction(JrObjectMap_Insert::Func, JrObjectMap::Type);
+    Global::registerFunction(JrObjectMap_Get::Func, JrObjectMap::Type);
 
 }
 
@@ -74,8 +84,22 @@ void JrObjectMap_Insert::operator()(JrRuntimeContext::Pointer context, JrFunctio
     
     auto mapObject = (JrObjectMap*)context->gc->get(objectRef.objRefValue);
     
+    auto keyIterator = mapObject->maps.find(keyItemHold);
+    if(keyIterator != mapObject->maps.end()) {
+        mapObject->maps.erase(keyIterator);
+    }
+    
     mapObject->maps.insert({
         keyItemHold,
         valueItemHold
     });
+}
+
+void JrObjectMap_Get::operator()(JrRuntimeContext::Pointer context, JrFunction::Pointer func) {
+    auto objectRefHold = context->stack->pop();
+    auto valuteItemHold = context->stack->pop();
+    auto mapObject = (JrObjectMap*)context->gc->get(objectRefHold.objRefValue);
+    auto resultHold = mapObject->maps[valuteItemHold];
+    
+    context->stack->push(resultHold);
 }

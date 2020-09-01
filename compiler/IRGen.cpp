@@ -270,9 +270,10 @@ void IRGen::emit(IdentifierExpr::Pointer node) {
 }
 
 void IRGen::emit(AssignmentExpr::Pointer node) {
-    emit(node->expr);
+    
     
     if(node->left->kind == identifierExpr) {
+        emit(node->expr);
         auto identifierExpr = std::static_pointer_cast<IdentifierExpr>(node->left);
         if(identifierExpr->symbol->flag == fieldSymbol) {
             // If the identifier is a field
@@ -293,6 +294,7 @@ void IRGen::emit(AssignmentExpr::Pointer node) {
         }
         
     } else if( node->left->kind == selfExpr ) {
+        emit(node->expr);
         auto selfExpr = std::static_pointer_cast<SelfExpr>(node->left);
         
         auto function = context->curFunction();
@@ -308,6 +310,7 @@ void IRGen::emit(AssignmentExpr::Pointer node) {
             .value = addressOfField
         });
     } else if( node->left->kind == memberAccessExpr) {
+        emit(node->expr);
         auto memberAccessExpr = std::static_pointer_cast<MemberAccessExpr>(node->left);
         auto identifierExpr = std::static_pointer_cast<IdentifierExpr>(memberAccessExpr->parent);
         writer.write({
@@ -317,14 +320,23 @@ void IRGen::emit(AssignmentExpr::Pointer node) {
     } else if(node->left->kind == subscriptExpr) {
         
         auto subscriptExpr = std::static_pointer_cast<SubscriptExpr>(node->left);
-        emit(subscriptExpr->indexExpr);
         emit(subscriptExpr->identifier);
-        
-        writer.write({
-            .opcode = OP_INVOKE,
-            .value = JrObjectIntArray_Set::Func->addressOfFunc
-        });
-
+        emit(subscriptExpr->indexExpr);
+        emit(node->expr);
+        // check identifier's symbol's type
+        if(subscriptExpr->identifier->symbol->addressOfType == JrObjectIntArray::Type->addressOfType) {
+            writer.write({
+                .opcode = OP_INVOKE,
+                .value = JrObjectIntArray_Set::Func->addressOfFunc
+            });
+        } else if(subscriptExpr->identifier->symbol->addressOfType == JrObjectMap::Type->addressOfType) {
+            writer.write({
+                .opcode = OP_INVOKE,
+                .value = JrObjectMap_Insert::Func->addressOfFunc
+            });
+        } else {
+            assert(false);
+        }
     } else {
         assert(false);
     }
@@ -559,9 +571,19 @@ void IRGen::emit(SubscriptExpr::Pointer node) {
     // handle the index expr of array access
     emit(node->indexExpr);
     emit(node->identifier);
-    writer.write({
-        .opcode = OP_INVOKE,
-        .value = JrObjectIntArray_Get::Func->addressOfFunc
-    });
-
+    assert(node->identifier->symbol != nullptr);
+    
+    if (node->identifier->symbol->addressOfType == JrObjectMap::Type->addressOfType) {
+        writer.write({
+            .opcode = OP_INVOKE,
+            .value = JrObjectMap_Get::Func->addressOfFunc
+        });
+    } else if(node->identifier->symbol->addressOfType == JrObjectIntArray::Type->addressOfType) {
+        writer.write({
+            .opcode = OP_INVOKE,
+            .value = JrObjectIntArray_Get::Func->addressOfFunc
+        });
+    } else {
+        assert(false);
+    }
 }

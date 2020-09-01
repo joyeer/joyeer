@@ -28,4 +28,10 @@ struct JrObjectMap_Insert : public JrNativeFunc {
     virtual void operator()(JrRuntimeContext::Pointer context, JrFunction::Pointer func);
 };
 
+
+struct JrObjectMap_Get: public JrNativeFunc {
+    static JrFunction::Pointer Func;
+    virtual void operator()(JrRuntimeContext::Pointer context, JrFunction::Pointer func);
+};
+
 #endif

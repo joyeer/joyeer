@@ -1,1 +1,4 @@
-var dict = [12: 12, 13: 12]
+var dict = [12: "1234", 13: 12]
+print(message: dict[12])
+dict[12] = "4555"
+print(message: dict[12])

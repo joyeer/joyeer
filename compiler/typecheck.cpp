@@ -510,12 +510,10 @@ void TypeChecker::verify(MemberAccessExpr::Pointer node) {
 void TypeChecker::verify(SubscriptExpr::Pointer node) {
     verify(node->identifier);
     verify(node->indexExpr);
-    
 }
 
 void TypeChecker::verify(ArrayType::Pointer node) {
     verify(node->type);
-    
 }
 
 void TypeChecker::verify(PrefixExpr::Pointer node) {
