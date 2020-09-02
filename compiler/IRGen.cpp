@@ -399,6 +399,8 @@ void IRGen::emit(OperatorExpr::Pointer node) {
             { Operators::GERATER_EQ, OP_ICMP_GE },
             { Operators::LESS, OP_ICMP_L },
             { Operators::LESS_EQ, OP_ICMP_LE },
+            { Operators::NOT_EQUALS, OP_ICMP_NE },
+            { Operators::EQUAL_EQUAL, OP_ICMP_EQ },
             { Operators::AND_AND, OP_IAND },
         }
     };

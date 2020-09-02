@@ -24,7 +24,11 @@ struct JrObjectIntArrayType : public JrObjectType {
 };
 
 JrObjectType* JrObjectArray::Type = new JrObjectIntArrayType();
-
+JrFunction::Pointer JrObjectArray::Constructor;
+JrFunction::Pointer JrObjectArray_Size::Func;
+JrFunction::Pointer JrObjectArray_Append::Func;
+JrFunction::Pointer JrObjectArray_Get::Func;
+JrFunction::Pointer JrObjectArray_Set::Func;
 
 JrObjectArray::JrObjectArray():
 slots(new std::vector<JrValueHold>()) {
@@ -33,11 +37,6 @@ slots(new std::vector<JrValueHold>()) {
 JrObjectArray::~JrObjectArray() {
     delete slots;
 }
-
-JrFunction::Pointer JrObjectArray_Size::Func;
-JrFunction::Pointer JrObjectArray_Append::Func;
-JrFunction::Pointer JrObjectArray_Get::Func;
-JrFunction::Pointer JrObjectArray_Set::Func;
 
 void JrObjectArray_Size::operator()(JrRuntimeContext::Pointer context, JrFunction::Pointer func) {
     auto objectRef = context->stack->pop();
@@ -75,7 +74,24 @@ void JrObjectArray_Set::operator()(JrRuntimeContext::Pointer context, JrFunction
 }
 
 void JrObjectArray::init() {
-    JrObjectArray_Size::Func = JrFunction::Pointer(new JrFunction{
+    
+    JrObjectArray::Constructor = JrFunction::Pointer(new JrFunction {
+        .name = L"Array@Array()",
+        .kind = jrFuncConstructor,
+        .paramTypes = { JrObjectArray::Type },
+        .localVars = { JrVar {
+            .name = L"self",
+            .type = JrObjectArray::Type,
+            .addressOfVariable = 0
+        }},
+        .returnType = JrObjectArray::Type,
+        .instructions = {
+                         { .opcode = OP_OLOAD, .value = 0 },
+                         { .opcode = OP_ORETURN, .value = 0 }
+        }
+    });
+    
+    JrObjectArray_Size::Func = JrFunction::Pointer(new JrFunction {
         .name = L"Array@size()",
         .kind = jrFuncNative,
         .paramTypes = { JrObjectArray::Type },
@@ -108,6 +124,7 @@ void JrObjectArray::init() {
     });
     
     Global::registerObjectType(JrObjectArray::Type);
+    Global::registerFunction(JrObjectArray::Constructor, JrObjectArray::Type);
     Global::registerFunction(JrObjectArray_Append::Func, JrObjectArray::Type);
     Global::registerFunction(JrObjectArray_Size::Func, JrObjectArray::Type);
     Global::registerFunction(JrObjectArray_Get::Func, JrObjectArray::Type);

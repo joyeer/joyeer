@@ -27,6 +27,8 @@ enum Opcode {
     OP_ICMP_GE,
     OP_ICMP_L,
     OP_ICMP_LE,
+    OP_ICMP_NE,
+    OP_ICMP_EQ,
     OP_IADD,
     OP_ISUB,
     OP_IMUL,

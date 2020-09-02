@@ -30,6 +30,8 @@ const std::unordered_map<Opcode, std::wstring> JrInstructionDebugPrinter::maps =
     { OP_ICMP_GE, L"cmp.large.equals.int" },
     { OP_ICMP_L, L"cmp.less.int" },
     { OP_ICMP_LE, L"cmp.less.equals.int" },
+    { OP_ICMP_NE, L"cmp.not.equals.int"},
+    { OP_ICMP_EQ, L"cmp.equals.int" },
     { OP_IADD, L"add.int" },
     { OP_ISUB, L"sub.int" },
     { OP_IMUL, L"mul.int" },

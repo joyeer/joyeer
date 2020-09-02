@@ -1,1 +1,2 @@
-var array = [Int]()
+var i = 10
+print(message: i == -10)

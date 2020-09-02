@@ -154,7 +154,7 @@ std::shared_ptr<Node> SyntaxParser::tryParseConstDecl() {
     }
     
     Node::Pointer initializer = nullptr;
-    if(tryEat(TokenKind::operators, Operators::EQULAS) != nullptr) {
+    if(tryEat(TokenKind::operators, Operators::EQUALS) != nullptr) {
         initializer = tryParseExpr();
         if(initializer == nullptr) {
             Diagnostics::reportError(L"[Error] declaration must have initializer");
@@ -174,7 +174,7 @@ std::shared_ptr<Node> SyntaxParser::tryParseVarDecl() {
        return nullptr; //TODO: report an syntax Error
     }
     Node::Pointer initializer = nullptr;
-    if(tryEat(TokenKind::operators, Operators::EQULAS) != nullptr) {
+    if(tryEat(TokenKind::operators, Operators::EQUALS) != nullptr) {
         initializer = tryParseExpr();
         if(initializer == nullptr) {
             Diagnostics::reportError(L"[Error] declaration must have initializer");
@@ -456,7 +456,7 @@ Node::Pointer SyntaxParser::tryParseExpr() {
 }
 
 std::shared_ptr<Node> SyntaxParser::tryParseBinaryExpr() {
-    std::shared_ptr<Token> assignmentOperator = tryEat(TokenKind::operators, Operators::EQULAS);
+    std::shared_ptr<Token> assignmentOperator = tryEat(TokenKind::operators, Operators::EQUALS);
     if(assignmentOperator != nullptr) {
         std::shared_ptr<Node> prefixExpr = tryParseExpr();
         if(prefixExpr == nullptr) {

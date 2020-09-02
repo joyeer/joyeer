@@ -82,7 +82,8 @@ enum OperatorPriority {
 };
 
 struct Operators {
-    static const std::wstring EQULAS;               // =
+    static const std::wstring EQUALS;               // =
+    static const std::wstring NOT_EQUALS;           // !=
     static const std::wstring EQUAL_EQUAL;          // ==
     static const std::wstring AND_AND;              // &&
     static const std::wstring QUESTION;             // ?
