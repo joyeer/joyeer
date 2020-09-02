@@ -234,13 +234,26 @@ void TypeChecker::verify(FuncCallExpr::Pointer node) {
         verify(node->identifier);
     }
     
+    Symbol::Pointer symbol = nullptr;
+    
+    if(node->identifier->kind == dictLiteralExpr) {
+        verify(node->identifier);
+        auto dictLiteral = std::static_pointer_cast<DictLiteralExpr>(node->identifier);
+        if( dictLiteral->items.size() == 1) {
+            auto item = dictLiteral->items[0];
+            auto key = std::get<0>(item);
+            auto value = std::get<1>(item);
+            if(key->symbol->flag == typeSymbol && key->symbol->flag == typeSymbol) {
+                auto dictType = std::make_shared<DictType>(key, value);
+                node->identifier = dictType;
+            }
+        }
+    }
+    
     auto name = node->getTypeName();
-    auto symbol = context->lookup(name);
+    symbol = context->lookup(name);
     
     if(symbol == nullptr) {
-        if(node->identifier->kind == identifierExpr) {
-            
-        }
         Diagnostics::reportError(L"[Error]Cannot find the function");
     }
     

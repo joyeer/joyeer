@@ -31,5 +31,5 @@ func sortArray(array:[Int], num:Int): [Int] {
 }
 
 var result = sortArray(array: [6, 1, 2, 4, 5], num: 2)
-print(object: result)
+print(message: result)
 

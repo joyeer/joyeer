@@ -105,6 +105,17 @@ struct ArrayType: Node {
     ArrayType(Node::Pointer type);
 };
 
+struct DictType: Node {
+    typedef std::shared_ptr<DictType> Pointer;
+    
+    Node::Pointer keyType;
+    Node::Pointer valueType;
+    
+    DictType(Node::Pointer keyType, Node::Pointer valueType);
+    
+    virtual std::wstring getTypeName();
+};
+
 struct Pattern: public Node {
     typedef std::shared_ptr<Pattern> Pointer;
     

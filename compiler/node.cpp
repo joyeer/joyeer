@@ -238,6 +238,16 @@ Node(SyntaxKind::arrayType),
 type(type) {
 }
 
+DictType::DictType(Node::Pointer keyType, Node::Pointer valueType):
+Node(SyntaxKind::dictType),
+keyType(keyType),
+valueType(valueType) {
+}
+
+std::wstring DictType::getTypeName() {
+    return L"Map@Map";
+}
+
 SourceBlock::SourceBlock(std::vector<std::shared_ptr<Node>> statements):
 Node(SyntaxKind::sourceBlock),
 statements(statements) {

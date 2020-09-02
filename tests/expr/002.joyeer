@@ -1,4 +1,4 @@
-var dict = [12: "1234", 13: 12]
-print(message: dict[12])
-dict[12] = "4555"
+var dict = [Int:Int]()
+dict[12] = "123123"
+
 print(message: dict[12])

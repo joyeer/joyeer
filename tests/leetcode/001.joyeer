@@ -1,0 +1,6 @@
+func twoSum(nums:[Int], target: Int): [Int] {
+    var dict = [Int:Int]()
+    for num in nums {
+        dict[num] = num
+    }
+}
