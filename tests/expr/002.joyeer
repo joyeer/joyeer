@@ -1,4 +1,1 @@
-var dict = [Int:Int]()
-dict[12] = "123123"
-
-print(message: dict[12])
+var array = [Int]()

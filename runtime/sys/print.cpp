@@ -46,7 +46,7 @@ void JrFuncObjectPrint::operator()(JrRuntimeContext::Pointer context, JrFunction
     auto objectRef = context->stack->pop();
     
     auto object = context->gc->get(objectRef.objRefValue);
-    auto arrayObject = static_cast<JrObjectIntArray*>(object);
+    auto arrayObject = static_cast<JrObjectArray*>(object);
     
     std::wcout << L"[";
     for(int i = 0; i < arrayObject->slots->size(); i ++) {

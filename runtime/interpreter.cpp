@@ -292,9 +292,9 @@ void JrInterpreter::exec_onewarray(const Instruction &instruction) {
         objects.push_back(context->stack->pop());
     }
     
-    auto objectRef = context->gc->alloc((JrObjectType*)JrObjectIntArray::Type);
+    auto objectRef = context->gc->alloc((JrObjectType*)JrObjectArray::Type);
     
-    auto arrayObject = (JrObjectIntArray*)context->gc->get(objectRef);
+    auto arrayObject = (JrObjectArray*)context->gc->get(objectRef);
     for(auto iterator = objects.rbegin(); iterator != objects.rend(); iterator ++) {
         arrayObject->slots->push_back(*iterator);
     }

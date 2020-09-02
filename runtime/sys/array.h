@@ -4,39 +4,36 @@
 #include "runtime/function.h"
 #include "runtime/runtime.h"
 
-struct JrObjectIntArray: JrObject {
+struct JrObjectArray: JrObject {
     static JrObjectType* Type;
+    static JrFunction::Pointer Constructor;
     
     std::vector<JrValueHold>* slots;
     
-    JrObjectIntArray();
-    ~JrObjectIntArray();
+    JrObjectArray();
+    ~JrObjectArray();
     
     static void init();
 };
 
-struct JrObjectIntArray_Size : public JrNativeFunc {
+struct JrObjectArray_Size : public JrNativeFunc {
     static JrFunction::Pointer Func;
     virtual void operator()(JrRuntimeContext::Pointer context, JrFunction::Pointer func);
 };
 
-struct JrObjectIntArray_Append: public JrNativeFunc {
+struct JrObjectArray_Append: public JrNativeFunc {
     static JrFunction::Pointer Func;
     virtual void operator()(JrRuntimeContext::Pointer context, JrFunction::Pointer func);
 };
 
-struct JrObjectIntArray_Get: public JrNativeFunc {
+struct JrObjectArray_Get: public JrNativeFunc {
     static JrFunction::Pointer Func;
     virtual void operator()(JrRuntimeContext::Pointer context, JrFunction::Pointer func);
 };
 
-struct JrObjectIntArray_Set: public JrNativeFunc {
+struct JrObjectArray_Set: public JrNativeFunc {
     static JrFunction::Pointer Func;
     virtual void operator()(JrRuntimeContext::Pointer context, JrFunction::Pointer func);
-};
-
-struct JrObjectObjectArray: JrObject {
-    
 };
 
 #endif

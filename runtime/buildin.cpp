@@ -26,7 +26,7 @@ void Global::initGlobalTables() {
     JrFuncPrint::init();
     JrFuncObjectPrint::init();
     // Init the array
-    JrObjectIntArray::init();
+    JrObjectArray::init();
     // initialize the string object
     JrObjectString::init();
     // initialize the string builder object

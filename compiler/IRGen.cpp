@@ -324,10 +324,10 @@ void IRGen::emit(AssignmentExpr::Pointer node) {
         emit(subscriptExpr->indexExpr);
         emit(node->expr);
         // check identifier's symbol's type
-        if(subscriptExpr->identifier->symbol->addressOfType == JrObjectIntArray::Type->addressOfType) {
+        if(subscriptExpr->identifier->symbol->addressOfType == JrObjectArray::Type->addressOfType) {
             writer.write({
                 .opcode = OP_INVOKE,
-                .value = JrObjectIntArray_Set::Func->addressOfFunc
+                .value = JrObjectArray_Set::Func->addressOfFunc
             });
         } else if(subscriptExpr->identifier->symbol->addressOfType == JrObjectMap::Type->addressOfType) {
             writer.write({
@@ -578,10 +578,10 @@ void IRGen::emit(SubscriptExpr::Pointer node) {
             .opcode = OP_INVOKE,
             .value = JrObjectMap_Get::Func->addressOfFunc
         });
-    } else if(node->identifier->symbol->addressOfType == JrObjectIntArray::Type->addressOfType) {
+    } else if(node->identifier->symbol->addressOfType == JrObjectArray::Type->addressOfType) {
         writer.write({
             .opcode = OP_INVOKE,
-            .value = JrObjectIntArray_Get::Func->addressOfFunc
+            .value = JrObjectArray_Get::Func->addressOfFunc
         });
     } else {
         assert(false);

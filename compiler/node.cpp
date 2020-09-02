@@ -238,6 +238,10 @@ Node(SyntaxKind::arrayType),
 type(type) {
 }
 
+std::wstring ArrayType::getTypeName() {
+    return L"Array@Array";
+}
+
 DictType::DictType(Node::Pointer keyType, Node::Pointer valueType):
 Node(SyntaxKind::dictType),
 keyType(keyType),

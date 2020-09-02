@@ -103,6 +103,8 @@ struct ArrayType: Node {
     Node::Pointer type;
     
     ArrayType(Node::Pointer type);
+    
+    virtual std::wstring getTypeName();
 };
 
 struct DictType: Node {

@@ -250,6 +250,18 @@ void TypeChecker::verify(FuncCallExpr::Pointer node) {
         }
     }
     
+    if(node->identifier->kind == arrayLiteralExpr) {
+        verify(node->identifier);
+        auto arrayLiteral = std::static_pointer_cast<ArrayLiteralExpr>(node->identifier);
+        if(arrayLiteral->items.size() == 1) {
+            auto type = arrayLiteral->items[0];
+            if(type->symbol->flag == typeSymbol) {
+                auto arrayType = std::make_shared<ArrayType>(type);
+                node->identifier = arrayType;
+            }
+        }
+    }
+    
     auto name = node->getTypeName();
     symbol = context->lookup(name);
     
@@ -674,7 +686,7 @@ JrType* TypeChecker::typeOf(ArrayLiteralExpr::Pointer node) {
     }
     
     if(previousType->kind == typeInt) {
-        return JrObjectIntArray::Type;
+        return JrObjectArray::Type;
     }
     assert(false);
     return previousType;
@@ -691,7 +703,7 @@ JrType* TypeChecker::typeOf(SubscriptExpr::Pointer node) {
 JrType* TypeChecker::typeOf(ArrayType::Pointer node) {
     auto type = typeOf(node->type);
     if(type == JrPrimaryType::Int) {
-        return JrObjectIntArray::Type;
+        return JrObjectArray::Type;
     }
     
     assert(false);
