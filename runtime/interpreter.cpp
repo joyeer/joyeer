@@ -30,7 +30,7 @@ void JrInterpreter::run(JrFunction::Pointer function, int objectRef) {
     JrInstructionDebugPrinter printer;
     while(pointer != end) {
         auto instruction = *pointer;
-        std::wcout << std::wstring(context->stack->frames.size() , L'-') << L"[stack:" << context->stack->pointer << L"] #" << pointer - function->instructions.begin() << L" " << printer.print(instruction) << std::endl;
+        std::wcout << std::wstring(context->stack->frames.size() , L'-') << L"[stack:" << context->stack->pointer / sizeof(JrValueHold) << L"] #" << pointer - function->instructions.begin() << L" " << printer.print(instruction) << std::endl;
         switch(instruction.opcode) {
             case OP_ICONST:
                 context->stack->push({ .kind = typeInt, .intValue = instruction.value});
@@ -250,7 +250,7 @@ void JrInterpreter::exec_oreturn(const Instruction &instruction) {
 }
 
 void JrInterpreter::exec_oconst_nil(const Instruction &instruction) {
-    context->stack->push({.kind = typeObject, .objRefValue = JrObjectType::Nil->addressOfType});
+    context->stack->push({.kind = typeNil, .objRefValue = 0});
 }
 
 void JrInterpreter::exec_new(const Instruction &instruction) {

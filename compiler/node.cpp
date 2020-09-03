@@ -586,7 +586,7 @@ void NodeDebugPrinter::print(Node::Pointer node) {
             break;
         case memberAccessExpr: {
             auto n = std::static_pointer_cast<MemberAccessExpr>(node);
-            output << L"+memberExpr" ;
+            output << L"+memberAccessExpr" ;
             incTab();
             print(n->symtable);
             print(n->symbol);

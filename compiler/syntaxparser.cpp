@@ -238,6 +238,7 @@ std::shared_ptr<Node> SyntaxParser::tryParseCodeBlock() {
     }
     
     if (tryEat(TokenKind::punctuation, Punctuations::CLOSE_CURLY_BRACKET) == nullptr) {
+        Diagnostics::reportError(L"Error");
         return nullptr; 
     }
 
@@ -464,10 +465,9 @@ std::shared_ptr<Node> SyntaxParser::tryParseBinaryExpr() {
     if(assignmentOperator != nullptr) {
         std::shared_ptr<Node> prefixExpr = tryParseExpr();
         if(prefixExpr == nullptr) {
-            // TODO: Error
+            Diagnostics::reportError(L"Error");
             return nullptr;
         }
-
         return std::make_shared<AssignmentExpr>(prefixExpr);
     }
     
@@ -475,14 +475,12 @@ std::shared_ptr<Node> SyntaxParser::tryParseBinaryExpr() {
     if(binaryOperator != nullptr) {
         std::shared_ptr<Node> prefixExpr = tryParsePrefixExpr();
         if(prefixExpr == nullptr) {
-            // TODO: Error
+            Diagnostics::reportError(L"Error");
             return nullptr;
         }
         return std::make_shared<BinaryExpr>(binaryOperator, prefixExpr);
     }
-
     return nullptr;
-    
 }
 
 std::shared_ptr<Node> SyntaxParser::tryParsePrefixExpr() {

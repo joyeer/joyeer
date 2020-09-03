@@ -54,8 +54,9 @@ void JrObjectType::registerField(JrFieldType::Pointer field) {
 JrInt JrObjectType::size() {
     size_t headSize = sizeof(JrObjectHead);
     size_t size = headSize;
+    
     for(auto field: virtualFields) {
-        size += field->type->size();
+        size += sizeof(JrValueHold);
     }
     
     return size;

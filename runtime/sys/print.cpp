@@ -18,7 +18,7 @@ void JrFuncPrint::operator()(JrRuntimeContext::Pointer context, JrFunction::Poin
         }
             break;
         case typeObject: {
-            
+            std::cout << value.intValue << std::endl;
         }
             break;
         default: {
