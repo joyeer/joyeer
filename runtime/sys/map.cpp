@@ -99,7 +99,13 @@ void JrObjectMap_Get::operator()(JrRuntimeContext::Pointer context, JrFunction::
     auto objectRefHold = context->stack->pop();
     auto valuteItemHold = context->stack->pop();
     auto mapObject = (JrObjectMap*)context->gc->get(objectRefHold.objRefValue);
-    auto resultHold = mapObject->maps[valuteItemHold];
-    
-    context->stack->push(resultHold);
+    auto keyIterator = mapObject->maps.find(valuteItemHold);
+    if(keyIterator == mapObject->maps.end()) {
+        context->stack->push(JrValueHold {
+            .kind = typeObject,
+            .objRefValue = JrType::Nil->addressOfType
+        });
+    } else {
+        context->stack->push(keyIterator->second);
+    }
 }

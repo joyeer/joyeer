@@ -96,6 +96,7 @@ std::shared_ptr<Node> SyntaxParser::tryParseConstructorDecl() {
 
     std::shared_ptr<Node> codeBlock = tryParseCodeBlock();
     if(codeBlock == nullptr) {
+        Diagnostics::reportError(L"Error");
         return nullptr; // TODO: Error
     }
 
@@ -119,10 +120,12 @@ std::shared_ptr<Node> SyntaxParser::tryParseParameterClause() {
         
         if( i > 0) {
             if(identifier == nullptr && comma != nullptr) {
+                Diagnostics::reportError(L"Error");
                 return nullptr; //TODO: report an grammar error
             }
             
             if(identifier != nullptr && comma == nullptr ) {
+                Diagnostics::reportError(L"Error");
                 return nullptr; //TODO: report an grammar error
             }
         }
@@ -137,6 +140,7 @@ std::shared_ptr<Node> SyntaxParser::tryParseParameterClause() {
     }
     
     if(tryEat(TokenKind::punctuation, Punctuations::CLOSE_ROUND_BRACKET) == nullptr) {
+        Diagnostics::reportError(L"Error");
         return nullptr; // TODO: report a error
     }
     
@@ -721,7 +725,7 @@ Node::Pointer SyntaxParser::tryParseArrayOrDictLiteralExpr() {
         valueItem = tryParseExpr();
         if(valueItem == nullptr) {
             Diagnostics::reportError(L"[Error] Dict literal except expression here");
-            return;
+            return nullptr;
         }
         isDict = true;
     }

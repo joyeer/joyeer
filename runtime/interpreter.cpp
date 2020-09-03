@@ -250,8 +250,7 @@ void JrInterpreter::exec_oreturn(const Instruction &instruction) {
 }
 
 void JrInterpreter::exec_oconst_nil(const Instruction &instruction) {
-    assert(false);
-    context->stack->push({.kind = typeObject, .objRefValue = 0});
+    context->stack->push({.kind = typeObject, .objRefValue = JrObjectType::Nil->addressOfType});
 }
 
 void JrInterpreter::exec_new(const Instruction &instruction) {
