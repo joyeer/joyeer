@@ -55,6 +55,8 @@ Node::Pointer Binder::bind(std::shared_ptr<Node> node) {
             return bind(std::static_pointer_cast<FuncCallExpr>(node));
         case memberAccessExpr:
             return bind(std::static_pointer_cast<MemberAccessExpr>(node));
+        case SyntaxKind::memberFuncCallExpr:
+            return bind(std::static_pointer_cast<MemberFuncCallExpr>(node));
         case literalExpr:
             return bind(std::static_pointer_cast<LiteralExpr>(node));
         case arrayLiteralExpr:
@@ -334,6 +336,7 @@ Node::Pointer Binder::bind(LetDecl::Pointer decl) {
     auto table = context->curSymTable();
     if(table->find(name) != nullptr) {
         Diagnostics::reportError(L"[Error] duplicate variable name");
+        return nullptr;
     }
     
     auto symbol = std::shared_ptr<Symbol>(new Symbol{
@@ -352,9 +355,15 @@ Node::Pointer Binder::bind(LetDecl::Pointer decl) {
     return decl;
 }
 
-
-
 Node::Pointer Binder::bind(FuncCallExpr::Pointer decl) {
+    
+    if(decl->identifier->kind == memberAccessExpr) {
+        // Transfer to MemberF
+        auto memberAccessExpr = std::static_pointer_cast<MemberAccessExpr>(decl->identifier);
+        auto memberFuncCallExpr = std::make_shared<MemberFuncCallExpr>(memberAccessExpr->parent, memberAccessExpr->member, decl->arguments);
+        return bind(memberFuncCallExpr);
+    }
+    
     // go down to bind argument
     std::vector<ArguCallExpr::Pointer> argus;
     for(auto& paramter: decl->arguments) {
@@ -362,6 +371,17 @@ Node::Pointer Binder::bind(FuncCallExpr::Pointer decl) {
     }
     decl->arguments = argus;
     
+    return decl;
+}
+
+Node::Pointer Binder::bind(MemberFuncCallExpr::Pointer decl) {
+    decl->parent = bind(decl->parent);
+    
+    std::vector<ArguCallExpr::Pointer> argus;
+    for(auto &parameter: decl->arguments) {
+        argus.push_back(std::static_pointer_cast<ArguCallExpr>(bind(parameter)));
+    }
+    decl->arguments = argus;
     return decl;
 }
 

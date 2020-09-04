@@ -26,6 +26,9 @@ void IRGen::emit(Node::Pointer node) {
         case funcDecl:
             emit(std::static_pointer_cast<FuncDecl>(node));
             break;
+        case memberFuncCallExpr:
+            emit(std::static_pointer_cast<MemberFuncCallExpr>(node));
+            break;
         case constructorDecl:
             emit(std::static_pointer_cast<ConstructorDecl>(node));
             break;
@@ -135,6 +138,24 @@ void IRGen::emit(FuncCallExpr::Pointer funcCallExpr) {
             
         }
     });
+}
+
+void IRGen::emit(MemberFuncCallExpr::Pointer memberFuncCallExpr) {
+    context->visit(visitFuncCall, [this, memberFuncCallExpr](){
+        for(auto argument : memberFuncCallExpr->arguments) {
+            emit(argument);
+        }
+        
+        emit(memberFuncCallExpr->parent);
+        
+        auto function = Global::functions[memberFuncCallExpr->symbol->addressOfFunc];
+        assert(function != nullptr);
+        writer.write({
+            .opcode = OP_INVOKE,
+            .value = (int32_t)function->addressOfFunc
+        });
+    });
+
 }
 
 
@@ -562,10 +583,11 @@ void IRGen::emit(ConstructorDecl::Pointer node) {
 
 void IRGen::emit(MemberAccessExpr::Pointer node) {
     emit(node->parent);
-    if(context->curStage() != visitFuncCall) {
-        emit(node->member);
-    }
     
+    writer.write({
+        .opcode = OP_GETFIELD,
+        .value = node->member->symbol->addressOfField
+    });
 }
 
 void IRGen::emit(SubscriptExpr::Pointer node) {

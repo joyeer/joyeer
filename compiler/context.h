@@ -19,6 +19,7 @@ enum CompileStage {
     visitFuncParamDecl,
     
     visitFuncCall,
+    visitMemberFuncCall,
     visitMemberAccess,
     visitAssignExpr,
     visitExpr,

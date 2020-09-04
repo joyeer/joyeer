@@ -23,6 +23,7 @@ protected:
     Node::Pointer bind(ConstructorDecl::Pointer decl);
     Node::Pointer bind(Type::Pointer decl);
     Node::Pointer bind(FuncCallExpr::Pointer decl);
+    Node::Pointer bind(MemberFuncCallExpr::Pointer decl);
     Node::Pointer bind(ArguCallExpr::Pointer decl);
     Node::Pointer bind(LiteralExpr::Pointer decl);
     Node::Pointer bind(PrefixExpr::Pointer decl);

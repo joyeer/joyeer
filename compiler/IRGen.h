@@ -17,6 +17,7 @@ public:
 protected:
     void emit(Node::Pointer node);
     void emit(FuncCallExpr::Pointer node);
+    void emit(MemberFuncCallExpr::Pointer node);
     void emit(ArguCallExpr::Pointer node);
     void emit(LiteralExpr::Pointer node);
     void emit(LetDecl::Pointer node);

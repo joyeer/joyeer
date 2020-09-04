@@ -66,6 +66,9 @@ void TypeChecker::verify(Node::Pointer node) {
         case memberAccessExpr:
             verify(std::static_pointer_cast<MemberAccessExpr>(node));
             break;
+        case memberFuncCallExpr:
+            verify(std::static_pointer_cast<MemberFuncCallExpr>(node));
+            break;
         case literalExpr:
             verify(std::static_pointer_cast<LiteralExpr>(node));
             break;
@@ -230,10 +233,6 @@ void TypeChecker::verify(ConstructorDecl::Pointer node) {
 
 void TypeChecker::verify(FuncCallExpr::Pointer node) {
     
-    if(node->identifier->kind == memberAccessExpr) {
-        verify(node->identifier);
-    }
-    
     Symbol::Pointer symbol = nullptr;
     
     if(node->identifier->kind == dictLiteralExpr) {
@@ -274,6 +273,31 @@ void TypeChecker::verify(FuncCallExpr::Pointer node) {
         verify(argument);
     }
 }
+
+
+
+void TypeChecker::verify(MemberFuncCallExpr::Pointer node) {
+    verify(node->parent);
+    
+    auto type = Global::types[node->parent->symbol->addressOfType];
+    assert(type != nullptr);
+    node->parent->type = type;
+    auto symtable = context->symtableOfType(type);
+    node->parent->symtable = symtable;
+    
+    auto name = node->getTypeName();
+    auto symbol = context->lookup(name);
+    
+    if(symbol == nullptr) {
+        Diagnostics::reportError(L"[Error]Cannot find the function");
+    }
+    
+    node->symbol = symbol;
+    for(auto argument: node->arguments) {
+        verify(argument);
+    }
+}
+
 
 void TypeChecker::verify(VarDecl::Pointer node) {
     context->visit(visitVarDecl, [this, node]() {
@@ -382,7 +406,8 @@ void TypeChecker::verify(IdentifierExpr::Pointer node) {
     switch (context->curStage()) {
         case visitSourceBlock:
         case visitExpr:
-        case visitCodeBlock: {
+        case visitCodeBlock:
+        case visitMemberAccess: {
             auto symbol = context->lookup(name);
             if(symbol == nullptr) {
                 Diagnostics::reportError(L"[Error] Cannot find variable");
@@ -444,8 +469,6 @@ void TypeChecker::verify(AssignmentExpr::Pointer node) {
     
     verify(node->left);
     verify(node->expr);
-    
-    auto leftType = typeOf(node->left);
 }
 
 void TypeChecker::verify(ParenthesizedExpr::Pointer node) {
@@ -529,7 +552,6 @@ void TypeChecker::verify(MemberAccessExpr::Pointer node) {
             context->leave(symtable);
         }
     });
-    
 }
 
 void TypeChecker::verify(SubscriptExpr::Pointer node) {
@@ -569,6 +591,8 @@ JrType* TypeChecker::typeOf(Node::Pointer node) {
             return typeOf(std::static_pointer_cast<DictLiteralExpr>(node));
         case memberAccessExpr:
             return typeOf(std::static_pointer_cast<MemberAccessExpr>(node));
+        case memberFuncCallExpr:
+            return typeOf(std::static_pointer_cast<MemberFuncCallExpr>(node));
         case subscriptExpr:
             return typeOf(std::static_pointer_cast<SubscriptExpr>(node));
         case arrayType:
@@ -644,6 +668,13 @@ JrType* TypeChecker::typeOf(LiteralExpr::Pointer node) {
 JrType* TypeChecker::typeOf(FuncCallExpr::Pointer node) {
     auto funcName = node->getTypeName();
     auto symbol = context->lookup(funcName);
+    auto function = Global::functions[node->symbol->addressOfFunc];
+    return function->returnType;
+}
+
+JrType* TypeChecker::typeOf(MemberFuncCallExpr::Pointer node) {
+    auto funcName = node->getTypeName();
+    auto symmbol = context->lookup(funcName);
     auto function = Global::functions[node->symbol->addressOfFunc];
     return function->returnType;
 }
@@ -788,6 +819,7 @@ JrType* TypeChecker::returnTypeOf(Node::Pointer node) {
         case arrayLiteralExpr:
         case varDecl:
         case memberAccessExpr:
+        case memberFuncCallExpr:
             return nullptr;
         default:
             assert(false);

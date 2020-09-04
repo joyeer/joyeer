@@ -39,6 +39,7 @@ enum SyntaxKind {
     parenthesizedExpr,
     arguCallExpr,
     funcCallExpr,
+    memberFuncCallExpr,
     memberAccessExpr,
     subscriptExpr,
   
@@ -257,8 +258,20 @@ struct FuncCallExpr: Node {
     Node::Pointer identifier;
     std::vector<ArguCallExpr::Pointer> arguments;
     
-    
     FuncCallExpr(Node::Pointer expr, std::vector<ArguCallExpr::Pointer> arguments);
+    
+    virtual std::wstring getTypeName();
+};
+
+struct MemberFuncCallExpr: Node {
+    typedef std::shared_ptr<MemberFuncCallExpr> Pointer;
+    
+    Node::Pointer parent;
+    Node::Pointer member;
+    
+    std::vector<ArguCallExpr::Pointer> arguments;
+    
+    MemberFuncCallExpr(Node::Pointer parent, Node::Pointer member, std::vector<ArguCallExpr::Pointer> arguments);
     
     virtual std::wstring getTypeName();
 };

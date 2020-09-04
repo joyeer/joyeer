@@ -163,6 +163,24 @@ std::wstring FuncCallExpr::getTypeName() {
     return ss.str();
 }
 
+MemberFuncCallExpr::MemberFuncCallExpr(Node::Pointer parent, Node::Pointer member, std::vector<ArguCallExpr::Pointer> arguments):
+Node(SyntaxKind::memberFuncCallExpr),
+parent(parent),
+member(member),
+arguments(arguments) {
+}
+
+std::wstring MemberFuncCallExpr::getTypeName() {
+    std::wstringstream ss;
+    
+    ss << parent->getTypeName() << L"@" << member->getName() << L"(";
+    for(auto& argument: arguments) {
+        ss << argument->label->token->rawValue << L":";
+    }
+    ss << L")";
+    return ss.str();
+}
+
 MemberAccessExpr::MemberAccessExpr(std::shared_ptr<Node> parent, std::shared_ptr<Node> member):
 Node(SyntaxKind::memberAccessExpr),
 parent(parent),
@@ -578,9 +596,11 @@ void NodeDebugPrinter::print(Node::Pointer node) {
             print(n->symtable);
             print(n->symbol);
             print(n->identifier);
+            incTab();
             for(auto argu: n->arguments) {
                 print(argu);
             }
+            decTab();
             decTab();
         }
             break;
@@ -592,6 +612,22 @@ void NodeDebugPrinter::print(Node::Pointer node) {
             print(n->symbol);
             print(n->parent);
             print(n->member);
+            decTab();
+        }
+            break;
+        case memberFuncCallExpr: {
+            auto n = std::static_pointer_cast<MemberFuncCallExpr>(node);
+            output << L"+memberFuncCallExpr";
+            incTab();
+            print(n->symtable);
+            print(n->symbol);
+            print(n->parent);
+            print(n->member);
+            incTab();
+            for(auto argu: n->arguments) {
+                print(argu);
+            }
+            decTab();
             decTab();
         }
             break;
@@ -680,6 +716,7 @@ void NodeDebugPrinter::print(Node::Pointer node) {
             decTab();
         }
             break;
+            
         default:
             assert(false);
     }

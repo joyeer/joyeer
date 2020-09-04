@@ -38,7 +38,7 @@ int main(int argc, char** argv) {
     auto compileContext = std::make_shared<CompileContext>();
     
     Binder binder(compileContext);
-    binder.bind(sourceBlock);
+    sourceBlock = binder.bind(sourceBlock);
     
     NodeDebugPrinter binderDebugger(L"asm.binder.txt");
     binderDebugger.print(sourceBlock);
