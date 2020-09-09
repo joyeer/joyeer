@@ -18,11 +18,15 @@ void JrFuncPrint::operator()(JrRuntimeContext::Pointer context, JrFunction::Poin
         }
             break;
         case typeObject: {
-            std::cout << value.intValue << std::endl;
+            std::wcout << L"[object] #" << value.intValue << std::endl;
+        }
+            break;
+        case typeNil: {
+            std::wcout << L"[nil] #" << value.intValue << std::endl;
         }
             break;
         default: {
-            std::cout << value.intValue << std::endl;
+            std::wcout << value.intValue << std::endl;
         }
             break;
     }

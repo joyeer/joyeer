@@ -10,6 +10,7 @@ typedef JrInt*      JrPtr;
 typedef JrInt       JrObjectRef;
 
 struct JrValueHold;
+struct JrObjectType;
 
 enum JrTypeKind: JrByte {
     typeVoid            = 0x01,
@@ -30,7 +31,7 @@ struct JrObjectHead {
 };
 
 struct JrObject {
-    static const JrObject* nil;
+    static const JrObject* Nil;
     
     JrObjectHead head;
     
@@ -38,8 +39,14 @@ struct JrObject {
     JrValueHold getFieldAsObjectRef(JrInt addressOfField);
 };
 
-struct JrPrimaryObject {
-    JrObjectHead head;
+struct JrObjectManaged: public JrObject {
+    static JrObjectType* Type;
+    static const JrObjectManaged* Nil;
+    
+    JrObjectManaged();
+    ~JrObjectManaged();
+    
+    std::vector<JrValueHold> fields;
 };
 
 struct JrValueHold {

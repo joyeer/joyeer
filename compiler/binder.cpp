@@ -13,7 +13,7 @@ Binder::Binder(CompileContext::Pointer context):
 context(context) {
 }
 
-Node::Pointer Binder::bind(std::shared_ptr<Node> node) {
+Node::Pointer Binder::bind(Node::Pointer node) {
     switch (node->kind) {
         case SyntaxKind::sourceBlock:
             return bind(std::static_pointer_cast<SourceBlock>(node));

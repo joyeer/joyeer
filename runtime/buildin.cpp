@@ -15,10 +15,11 @@ static std::unordered_map<std::wstring, JrFunction::Pointer>  funtionsMap;
 void Global::initGlobalTables() {
 
     // Register primary types
-    registerObjectType((JrType*)JrType::Any);
-    registerObjectType((JrType*)JrPrimaryType::Int);
-    registerObjectType((JrType*)JrPrimaryType::Float);
-    registerObjectType((JrType*)JrPrimaryType::Boolean);
+    registerObjectType(JrType::Any);
+    registerObjectType(JrType::Nil);
+    registerObjectType(JrPrimaryType::Int);
+    registerObjectType(JrPrimaryType::Float);
+    registerObjectType(JrPrimaryType::Boolean);
     
     // Init Module
     JrModule::init();

@@ -53,11 +53,7 @@ void JrObjectType::registerField(JrFieldType::Pointer field) {
 
 JrInt JrObjectType::size() {
     size_t headSize = sizeof(JrObjectHead);
-    size_t size = headSize;
-    
-    for(auto field: virtualFields) {
-        size += sizeof(JrValueHold);
-    }
+    size_t size = headSize + virtualFields.size() * sizeof(JrValueHold);
     
     return size;
 }
@@ -116,7 +112,7 @@ JrValueHold JrRuntimeStack::intValueOfVariable(JrInt addressOfVariable) {
 JrRuntimeContext::JrRuntimeContext() {
     stack = std::make_shared<JrRuntimeStack>();
     gc = new JrGC();
-    gc->objTable->registerObject((JrObject*)JrObject::nil);
+    gc->objTable->registerObject((JrObject*)JrObject::Nil);
 }
 
 JrRuntimeContext::~JrRuntimeContext() {

@@ -319,7 +319,7 @@ void TypeChecker::verify(VarDecl::Pointer node) {
         auto rightType = typeOf(node->initializer);
         auto leftType = typeOf(node->pattern);
         // the node doesn't use
-        if(node->pattern->type == nullptr) {
+        if(node->pattern->type == nullptr && rightType != JrType::Nil) {
             node->symbol->addressOfType = rightType->addressOfType;
         }
         auto function = context->curFunction();
@@ -805,7 +805,7 @@ JrType* TypeChecker::returnTypeOf(Node::Pointer node) {
             if(returnStatement->expr == nullptr) {
                 return JrType::Void;
             } else {
-                return returnTypeOf(returnStatement->expr);
+                return typeOf(returnStatement->expr);
             }
         }
         case ifStatement:
@@ -820,6 +820,7 @@ JrType* TypeChecker::returnTypeOf(Node::Pointer node) {
         case varDecl:
         case memberAccessExpr:
         case memberFuncCallExpr:
+        case funcDecl:
             return nullptr;
         default:
             assert(false);

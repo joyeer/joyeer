@@ -230,8 +230,7 @@ void IRGen::emit(VarDecl::Pointer node) {
         default:
             assert(false);
     }
-    
-    
+
 }
 
 void IRGen::emit(PrefixExpr::Pointer node) {
@@ -265,6 +264,10 @@ void IRGen::emit(IdentifierExpr::Pointer node) {
             writer.write({
                 .opcode = OP_OLOAD,
                 .value = symbol->addressOfVariable
+            });
+        } else if(type->kind == typeNil) {
+            writer.write({
+                .opcode = OP_OCONST_NIL,
             });
         } else {
             assert(false);
@@ -574,7 +577,13 @@ void IRGen::emit(ConstructorDecl::Pointer node) {
     IRGen generator(context);
     generator.emit(node->codeBlock);
     auto instructions = generator.writer.instructions;
-    
+    if (instructions.back().opcode == OP_RETURN) {
+        instructions.pop_back();
+        instructions.push_back(Instruction{
+            .opcode = OP_ORETURN,
+            .value = function->addressOfOwnerType
+        });
+    }
     assert(function != nullptr && function->instructions.size() == 0);
     function->instructions = instructions;
     

@@ -1,2 +1,15 @@
-var i = 10
-print(message: i == -10)
+class ListNode {
+    var next: ListNode
+    var value: Int
+
+    init(next:ListNode, value: Int) {
+        self.next = next
+        self.value = value
+    }
+}
+
+var listA = ListNode(next: nil, value: 9)
+var listB = ListNode(next: nil, value: 3)
+
+print(message: listA.value) 
+print(message: listB.value) 
