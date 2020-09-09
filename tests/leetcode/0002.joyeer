@@ -33,15 +33,12 @@ func addTwoNumber(listA: ListNode, listB: ListNode): ListNode {
         } else {
             carry = 0
         }
-        print(message: "result")
         result = ListNode(next: result, value: addResult)
         if root == nil {
             root = result
         }
         currentA = currentA.next
         currentB = currentB.next
-        print(message: currentA)
-        print(message: currentB)
     }
 
     while currentA != nil {
@@ -77,12 +74,16 @@ func addTwoNumber(listA: ListNode, listB: ListNode): ListNode {
         currentB = currentB.next
     }
 
+
+    if carry == 1 {
+        result = ListNode(next: result, value: 1)
+    }
+
     return result
 }
 
 var result = addTwoNumber(listA: listA, listB: listB)
 while result != nil {
     print(message: result.value)
-    print(message: result.next)
     result = result.next
 }

@@ -4,6 +4,8 @@
 #include <vector>
 
 typedef int64_t     JrInt;
+typedef int32_t     JrInt32;
+
 typedef uint8_t     JrByte;
 
 typedef JrInt*      JrPtr;
@@ -26,27 +28,26 @@ enum JrTypeKind: JrByte {
 };
 
 struct JrObjectHead {
-    JrInt  refCount;
-    JrInt  size;
+    JrInt32  refCount;
+    JrInt32  size;
 };
 
 struct JrObject {
     static const JrObject* Nil;
     
     JrObjectHead head;
-    
-    void setField(JrValueHold value, JrInt addressOfField);
-    JrValueHold getFieldAsObjectRef(JrInt addressOfField);
 };
 
 struct JrObjectManaged: public JrObject {
-    static JrObjectType* Type;
-    static const JrObjectManaged* Nil;
     
-    JrObjectManaged();
+    JrObjectManaged(JrObjectType* type);
     ~JrObjectManaged();
     
+    JrObjectType* type;
     std::vector<JrValueHold> fields;
+    
+    void setField(JrInt addressOfField, const JrValueHold &value);
+    JrValueHold getField(JrInt addressOfField);
 };
 
 struct JrValueHold {

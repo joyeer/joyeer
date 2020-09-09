@@ -6,7 +6,8 @@ JrObject* JrObjectAlloc::alloc(JrObjectType* type) {
     if(type->initializer != nullptr) {
         return type->initializer(object);
     } else {
-        return (JrObject*)type;
+        auto managedObject = new(object) JrObjectManaged(type);
+        return (JrObject*)managedObject;
     }
 }
 

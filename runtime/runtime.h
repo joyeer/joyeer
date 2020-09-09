@@ -62,6 +62,7 @@ struct JrObjectType: public JrType {
     void registerField(JrFieldType::Pointer field);
     
     virtual JrInt size();
+    
     JrObjectType(const std::wstring& name,
                  JrObjectInitializer initializer = nullptr,
                  JrObjectFinalizer finalizer = nullptr);

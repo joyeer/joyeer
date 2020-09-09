@@ -56,7 +56,6 @@ public:
         int addressOfVariable = -1;
         // the address of the field in Object
         int addressOfField;
-        int addresOfAnyAssociatedType;
     };
 };
 

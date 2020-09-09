@@ -274,9 +274,9 @@ void JrInterpreter::exec_putfield(const Instruction &instruction) {
     auto objectRef = context->stack->pop();
     auto valueRef = context->stack->pop();
     
-    auto object = context->gc->get(objectRef.objRefValue);
+    auto object = (JrObjectManaged*)context->gc->get(objectRef.objRefValue);
     assert(object != nullptr);
-    object->setField(valueRef, addressOfField);
+    object->setField(addressOfField, valueRef);
 }
 
 void JrInterpreter::exec_getfield(const Instruction &instruction) {
@@ -284,8 +284,8 @@ void JrInterpreter::exec_getfield(const Instruction &instruction) {
     auto addressOfField = instruction.value;
     
     auto objectRef = context->stack->pop();
-    auto object = context->gc->get(objectRef.objRefValue);
-    auto fieldObjCRef = object->getFieldAsObjectRef(addressOfField);
+    auto object = (JrObjectManaged*)context->gc->get(objectRef.objRefValue);
+    auto fieldObjCRef = object->getField(addressOfField);
     context->stack->push(fieldObjCRef);
 }
 
