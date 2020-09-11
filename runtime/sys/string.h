@@ -30,11 +30,11 @@ struct JrObjectStringBuilder: JrObject {
 
 struct JrObjectStringBuilder_Append: public JrNativeFunc {
     static JrFunction* Func;
-    virtual void operator()(JrRuntimeContext::Pointer context, JrFunction* func);
+    virtual void operator()(JrRuntimeContext* context, JrFunction* func);
 };
 
 struct JrObjectStringBuilder_toString: public JrNativeFunc {
     static JrFunction* Func;
-    virtual void operator()(JrRuntimeContext::Pointer context, JrFunction* func);
+    virtual void operator()(JrRuntimeContext* context, JrFunction* func);
 };
 #endif

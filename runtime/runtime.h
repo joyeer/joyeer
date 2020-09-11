@@ -100,7 +100,6 @@ struct JrFunctionFrame {
 
 // Runtime stack for VM
 struct JrRuntimeStack {
-    typedef std::shared_ptr<JrRuntimeStack> Pointer;
     const static JrInt Size = 1024 * 1024 * 4;
     
     JrRuntimeStack();
@@ -129,12 +128,11 @@ struct JrRuntimeStack {
 struct JrGC;
 // The runtime context for VM
 struct JrRuntimeContext {
-    typedef std::shared_ptr<JrRuntimeContext> Pointer;
     
     JrRuntimeContext();
     ~JrRuntimeContext();
     
-    JrRuntimeStack::Pointer stack;
+    JrRuntimeStack* stack;
     JrGC* gc;
 };
 

@@ -6,7 +6,7 @@
 #include <cassert>
 #include <iostream>
 
-JrInterpreter::JrInterpreter(JrRuntimeContext::Pointer context):
+JrInterpreter::JrInterpreter(JrRuntimeContext* context):
 context(context) {
 }
 

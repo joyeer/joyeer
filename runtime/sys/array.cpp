@@ -38,7 +38,7 @@ JrObjectArray::~JrObjectArray() {
     delete slots;
 }
 
-void JrObjectArray_Size::operator()(JrRuntimeContext::Pointer context, JrFunction* func) {
+void JrObjectArray_Size::operator()(JrRuntimeContext* context, JrFunction* func) {
     auto objectRef = context->stack->pop();
     auto object = context->gc->get(objectRef.objRefValue);
     auto arrayObject = static_cast<JrObjectArray*>(object);
@@ -46,11 +46,11 @@ void JrObjectArray_Size::operator()(JrRuntimeContext::Pointer context, JrFunctio
     context->stack->push({.kind = typeInt, .intValue = static_cast<JrInt>(arrayObject->slots->size())});
 }
 
-void JrObjectArray_Append::operator()(JrRuntimeContext::Pointer context, JrFunction* func) {
+void JrObjectArray_Append::operator()(JrRuntimeContext* context, JrFunction* func) {
     
 }
 
-void JrObjectArray_Get::operator()(JrRuntimeContext::Pointer context, JrFunction* func) {
+void JrObjectArray_Get::operator()(JrRuntimeContext* context, JrFunction* func) {
     auto objectRef = context->stack->pop();
     auto arrayIndex = context->stack->pop();
     
@@ -61,7 +61,7 @@ void JrObjectArray_Get::operator()(JrRuntimeContext::Pointer context, JrFunction
     context->stack->push(value);
 }
 
-void JrObjectArray_Set::operator()(JrRuntimeContext::Pointer context, JrFunction* func) {
+void JrObjectArray_Set::operator()(JrRuntimeContext* context, JrFunction* func) {
     auto value = context->stack->pop();
     auto arrayIndex = context->stack->pop();
     auto objectRef = context->stack->pop();

@@ -18,22 +18,22 @@ struct JrObjectArray: JrObject {
 
 struct JrObjectArray_Size : public JrNativeFunc {
     static JrFunction* Func;
-    virtual void operator()(JrRuntimeContext::Pointer context, JrFunction* func);
+    virtual void operator()(JrRuntimeContext* context, JrFunction* func);
 };
 
 struct JrObjectArray_Append: public JrNativeFunc {
     static JrFunction* Func;
-    virtual void operator()(JrRuntimeContext::Pointer context, JrFunction* func);
+    virtual void operator()(JrRuntimeContext* context, JrFunction* func);
 };
 
 struct JrObjectArray_Get: public JrNativeFunc {
     static JrFunction* Func;
-    virtual void operator()(JrRuntimeContext::Pointer context, JrFunction* func);
+    virtual void operator()(JrRuntimeContext* context, JrFunction* func);
 };
 
 struct JrObjectArray_Set: public JrNativeFunc {
     static JrFunction* Func;
-    virtual void operator()(JrRuntimeContext::Pointer context, JrFunction* func);
+    virtual void operator()(JrRuntimeContext* context, JrFunction* func);
 };
 
 #endif

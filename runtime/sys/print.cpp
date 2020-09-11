@@ -8,7 +8,7 @@
 
 JrFunction* JrFuncPrint::Func;
 
-void JrFuncPrint::operator()(JrRuntimeContext::Pointer context, JrFunction* func) {
+void JrFuncPrint::operator()(JrRuntimeContext* context, JrFunction* func) {
     auto value = context->stack->pop();
     switch (value.kind) {
         case typeString: {
@@ -46,7 +46,7 @@ void JrFuncPrint::init() {
 
 JrFunction* JrFuncObjectPrint::Func;
 
-void JrFuncObjectPrint::operator()(JrRuntimeContext::Pointer context, JrFunction* func) {
+void JrFuncObjectPrint::operator()(JrRuntimeContext* context, JrFunction* func) {
     auto objectRef = context->stack->pop();
     
     auto object = context->gc->get(objectRef.objRefValue);

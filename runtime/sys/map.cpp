@@ -77,7 +77,7 @@ void JrObjectMap::init() {
 
 }
 
-void JrObjectMap_Insert::operator()(JrRuntimeContext::Pointer context, JrFunction* func) {
+void JrObjectMap_Insert::operator()(JrRuntimeContext* context, JrFunction* func) {
     auto valueItemHold = context->stack->pop();
     auto keyItemHold = context->stack->pop();
     auto objectRef = context->stack->pop();
@@ -95,7 +95,7 @@ void JrObjectMap_Insert::operator()(JrRuntimeContext::Pointer context, JrFunctio
     });
 }
 
-void JrObjectMap_Get::operator()(JrRuntimeContext::Pointer context, JrFunction* func) {
+void JrObjectMap_Get::operator()(JrRuntimeContext* context, JrFunction* func) {
     auto objectRefHold = context->stack->pop();
     auto valuteItemHold = context->stack->pop();
     auto mapObject = (JrObjectMap*)context->gc->get(objectRefHold.objRefValue);

@@ -110,7 +110,7 @@ void JrObjectStringBuilder::init() {
     Global::registerFunction(JrObjectStringBuilder_toString::Func, JrObjectStringBuilder::Type);
 }
 
-void JrObjectStringBuilder_Append::operator()(JrRuntimeContext::Pointer context, JrFunction* func) {
+void JrObjectStringBuilder_Append::operator()(JrRuntimeContext* context, JrFunction* func) {
     auto stringObjRef = context->stack->pop();
     auto stringObject = (JrObjectString*)context->gc->get(stringObjRef.objRefValue);
     
@@ -120,7 +120,7 @@ void JrObjectStringBuilder_Append::operator()(JrRuntimeContext::Pointer context,
     sstream << *(stringObject->content);
 }
 
-void JrObjectStringBuilder_toString::operator()(JrRuntimeContext::Pointer context, JrFunction* func) {
+void JrObjectStringBuilder_toString::operator()(JrRuntimeContext* context, JrFunction* func) {
     auto stringBuildObjRef = context->stack->pop();
     auto stringBuilder = (JrObjectStringBuilder*)context->gc->get(stringBuildObjRef.objRefValue);
     

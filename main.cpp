@@ -59,7 +59,7 @@ int main(int argc, char** argv) {
     funcPrinter.print();
     funcPrinter.close();
     
-    auto context = std::make_shared<JrRuntimeContext>();
+    auto context = new JrRuntimeContext();
     JrInterpreter interpreter(context);
     interpreter.run(module);
     

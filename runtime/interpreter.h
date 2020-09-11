@@ -7,7 +7,7 @@
 
 struct JrInterpreter {
 public:
-    JrInterpreter(JrRuntimeContext::Pointer context);
+    JrInterpreter(JrRuntimeContext* context);
     
     void run(JrModuleType* module);
     void run(JrFunction* function, int objectRef);
@@ -54,7 +54,7 @@ private:
     void exec_sconst(const Instruction& instruction);
     void exec_dup(const Instruction& instruction);
     
-    JrRuntimeContext::Pointer context;
+    JrRuntimeContext* context;
 };
 
 #endif

@@ -25,13 +25,13 @@ struct JrObjectMap : public JrObject {
 
 struct JrObjectMap_Insert : public JrNativeFunc {
     static JrFunction* Func;
-    virtual void operator()(JrRuntimeContext::Pointer context, JrFunction* func);
+    virtual void operator()(JrRuntimeContext* context, JrFunction* func);
 };
 
 
 struct JrObjectMap_Get: public JrNativeFunc {
     static JrFunction* Func;
-    virtual void operator()(JrRuntimeContext::Pointer context, JrFunction* func);
+    virtual void operator()(JrRuntimeContext* context, JrFunction* func);
 };
 
 #endif

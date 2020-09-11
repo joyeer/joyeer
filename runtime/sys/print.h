@@ -6,7 +6,7 @@
 struct JrFuncPrint : public JrNativeFunc {
     static JrFunction* Func;
     
-    virtual void operator()(JrRuntimeContext::Pointer context, JrFunction* func);
+    virtual void operator()(JrRuntimeContext* context, JrFunction* func);
     
     static void init();
 };
@@ -14,7 +14,7 @@ struct JrFuncPrint : public JrNativeFunc {
 struct JrFuncObjectPrint: public JrNativeFunc {
     static JrFunction* Func;
     
-    virtual void operator()(JrRuntimeContext::Pointer context, JrFunction* func);
+    virtual void operator()(JrRuntimeContext* context, JrFunction* func);
     
     static void init();
 };

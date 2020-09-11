@@ -107,12 +107,13 @@ JrValueHold JrRuntimeStack::intValueOfVariable(JrInt addressOfVariable) {
 }
 
 JrRuntimeContext::JrRuntimeContext() {
-    stack = std::make_shared<JrRuntimeStack>();
+    stack = new JrRuntimeStack();
     gc = new JrGC();
     gc->objTable->registerObject((JrObject*)JrObject::Nil);
 }
 
 JrRuntimeContext::~JrRuntimeContext() {
     delete gc;
+    delete stack;
 }
 

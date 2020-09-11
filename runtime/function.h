@@ -57,7 +57,7 @@ public:
 struct JrNativeFunc {
     typedef std::shared_ptr<JrNativeFunc> Pointer;
     
-    virtual void operator() (JrRuntimeContext::Pointer context, JrFunction* func);
+    virtual void operator() (JrRuntimeContext* context, JrFunction* func);
 };
 
 
