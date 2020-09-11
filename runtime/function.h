@@ -24,7 +24,6 @@ enum JrFunctionKind  {
 };
 
 struct JrFunction {
-    typedef std::shared_ptr<JrFunction> Pointer;
     
 public:
     ~JrFunction();
@@ -58,7 +57,7 @@ public:
 struct JrNativeFunc {
     typedef std::shared_ptr<JrNativeFunc> Pointer;
     
-    virtual void operator() (JrRuntimeContext::Pointer context, JrFunction::Pointer func);
+    virtual void operator() (JrRuntimeContext::Pointer context, JrFunction* func);
 };
 
 

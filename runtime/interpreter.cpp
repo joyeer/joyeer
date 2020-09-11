@@ -18,7 +18,7 @@ void JrInterpreter::run(JrModuleType* module) {
     run(mainFunc, objectRef);
 }
 
-void JrInterpreter::run(JrFunction::Pointer function, int objectRef) {
+void JrInterpreter::run(JrFunction* function, int objectRef) {
     
     auto frame = prepareStackFrame(function);
     context->stack->startFuncCall(frame);
@@ -132,7 +132,7 @@ exit_label:
     std::wcout << std::wstring(context->stack->frames.size(), L'-') << L"$[function][leave] " << function->name << std::endl;
 }
 
-JrFunctionFrame::Pointer JrInterpreter::prepareStackFrame(JrFunction::Pointer func) {
+JrFunctionFrame::Pointer JrInterpreter::prepareStackFrame(JrFunction* func) {
     auto frame = std::make_shared<JrFunctionFrame>();
     frame->addressOfFunc = func->addressOfFunc;
     

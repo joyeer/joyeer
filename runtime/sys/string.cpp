@@ -58,9 +58,9 @@ struct JrObjectStringBuilderType: public JrObjectType {
 };
 
 JrObjectType* JrObjectStringBuilder::Type = new JrObjectStringBuilderType();
-JrFunction::Pointer JrObjectStringBuilder::Constructor;
-JrFunction::Pointer JrObjectStringBuilder_Append::Func;
-JrFunction::Pointer JrObjectStringBuilder_toString::Func;
+JrFunction* JrObjectStringBuilder::Constructor;
+JrFunction* JrObjectStringBuilder_Append::Func;
+JrFunction* JrObjectStringBuilder_toString::Func;
 
 JrObjectStringBuilder::JrObjectStringBuilder()
 :stringstream(new std::wstringstream()) {
@@ -73,7 +73,7 @@ JrObjectStringBuilder::~JrObjectStringBuilder() {
 void JrObjectStringBuilder::init() {
     Global::registerObjectType(JrObjectStringBuilder::Type);
     
-    JrObjectStringBuilder::Constructor = JrFunction::Pointer(new JrFunction {
+    JrObjectStringBuilder::Constructor = new JrFunction {
         .name = L"StringBuilder@StringBuilder()",
         .kind = jrFuncConstructor,
         .paramTypes = { JrObjectStringBuilder::Type },
@@ -87,30 +87,30 @@ void JrObjectStringBuilder::init() {
                          { .opcode = OP_OLOAD, .value = 0 },
                          { .opcode = OP_ORETURN, .value = 0 }
         }
-    });
+    };
     
-    JrObjectStringBuilder_Append::Func = JrFunction::Pointer(new JrFunction {
+    JrObjectStringBuilder_Append::Func = new JrFunction {
         .name = L"StringBuilder@append(content:)",
         .kind = jrFuncNative,
         .paramTypes = { JrObjectStringBuilder::Type, JrObjectString::Type },
         .returnType = JrPrimaryType::Void,
         .nativeCode = new JrObjectStringBuilder_Append()
-    });
+    };
     
-    JrObjectStringBuilder_toString::Func = JrFunction::Pointer(new JrFunction {
+    JrObjectStringBuilder_toString::Func = new JrFunction {
         .name = L"StringBuilder@toString()",
         .kind = jrFuncNative,
         .paramTypes = { JrObjectStringBuilder::Type },
         .returnType = JrPrimaryType::Void,
         .nativeCode = new JrObjectStringBuilder_toString()
-    });
+    };
     
     Global::registerFunction(JrObjectStringBuilder::Constructor, JrObjectStringBuilder::Type);
     Global::registerFunction(JrObjectStringBuilder_Append::Func, JrObjectStringBuilder::Type);
     Global::registerFunction(JrObjectStringBuilder_toString::Func, JrObjectStringBuilder::Type);
 }
 
-void JrObjectStringBuilder_Append::operator()(JrRuntimeContext::Pointer context, JrFunction::Pointer func) {
+void JrObjectStringBuilder_Append::operator()(JrRuntimeContext::Pointer context, JrFunction* func) {
     auto stringObjRef = context->stack->pop();
     auto stringObject = (JrObjectString*)context->gc->get(stringObjRef.objRefValue);
     
@@ -120,7 +120,7 @@ void JrObjectStringBuilder_Append::operator()(JrRuntimeContext::Pointer context,
     sstream << *(stringObject->content);
 }
 
-void JrObjectStringBuilder_toString::operator()(JrRuntimeContext::Pointer context, JrFunction::Pointer func) {
+void JrObjectStringBuilder_toString::operator()(JrRuntimeContext::Pointer context, JrFunction* func) {
     auto stringBuildObjRef = context->stack->pop();
     auto stringBuilder = (JrObjectStringBuilder*)context->gc->get(stringBuildObjRef.objRefValue);
     

@@ -44,9 +44,9 @@ public:
     void entry(SymbolTable::Pointer table);
     void leave(SymbolTable::Pointer table);
     
-    JrFunction::Pointer curFunction();
-    void entry(JrFunction::Pointer function);
-    void leave(JrFunction::Pointer function);
+    JrFunction* curFunction();
+    void entry(JrFunction* function);
+    void leave(JrFunction* function);
     
     JrType* curType();
     void entry(JrType* type);
@@ -74,7 +74,7 @@ protected:
     std::vector<CompileStage> stages;
     
     // parsing function stacks
-    std::vector<JrFunction::Pointer> functions;
+    std::vector<JrFunction*> functions;
     
     // parsing class/struct/enum stacks
     std::vector<JrType*> types;

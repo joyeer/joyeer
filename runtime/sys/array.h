@@ -6,7 +6,7 @@
 
 struct JrObjectArray: JrObject {
     static JrObjectType* Type;
-    static JrFunction::Pointer Constructor;
+    static JrFunction* Constructor;
     
     std::vector<JrValueHold>* slots;
     
@@ -17,23 +17,23 @@ struct JrObjectArray: JrObject {
 };
 
 struct JrObjectArray_Size : public JrNativeFunc {
-    static JrFunction::Pointer Func;
-    virtual void operator()(JrRuntimeContext::Pointer context, JrFunction::Pointer func);
+    static JrFunction* Func;
+    virtual void operator()(JrRuntimeContext::Pointer context, JrFunction* func);
 };
 
 struct JrObjectArray_Append: public JrNativeFunc {
-    static JrFunction::Pointer Func;
-    virtual void operator()(JrRuntimeContext::Pointer context, JrFunction::Pointer func);
+    static JrFunction* Func;
+    virtual void operator()(JrRuntimeContext::Pointer context, JrFunction* func);
 };
 
 struct JrObjectArray_Get: public JrNativeFunc {
-    static JrFunction::Pointer Func;
-    virtual void operator()(JrRuntimeContext::Pointer context, JrFunction::Pointer func);
+    static JrFunction* Func;
+    virtual void operator()(JrRuntimeContext::Pointer context, JrFunction* func);
 };
 
 struct JrObjectArray_Set: public JrNativeFunc {
-    static JrFunction::Pointer Func;
-    virtual void operator()(JrRuntimeContext::Pointer context, JrFunction::Pointer func);
+    static JrFunction* Func;
+    virtual void operator()(JrRuntimeContext::Pointer context, JrFunction* func);
 };
 
 #endif

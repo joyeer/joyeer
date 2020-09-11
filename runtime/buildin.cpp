@@ -7,10 +7,10 @@
 
 std::vector<JrType*> Global::types = {};
 std::vector<std::wstring> Global::strings = {};
-std::vector<JrFunction::Pointer> Global::functions = {};
+std::vector<JrFunction*> Global::functions = {};
 
 // init the types tables
-static std::unordered_map<std::wstring, JrFunction::Pointer>  funtionsMap;
+static std::unordered_map<std::wstring, JrFunction*>  funtionsMap;
 
 void Global::initGlobalTables() {
 
@@ -39,7 +39,7 @@ void Global::initGlobalTables() {
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
 /// functions
-void Global::registerFunction(JrFunction::Pointer func, JrType* ownerType) {
+void Global::registerFunction(JrFunction* func, JrType* ownerType) {
     func->addressOfFunc = functions.size();
     if(ownerType != nullptr) {
         func->addressOfOwnerType = ownerType->addressOfType;

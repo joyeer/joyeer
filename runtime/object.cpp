@@ -3,7 +3,6 @@
 
 const JrObject* JrObject::Nil = new JrObject();
 
-
 JrObjectManaged::JrObjectManaged(JrObjectType* type):
 type(type),
 fields(type->virtualFields.size() + type->staticFields.size()) {

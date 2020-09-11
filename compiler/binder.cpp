@@ -88,9 +88,10 @@ SourceBlock::Pointer Binder::bind(SourceBlock::Pointer sourceBlock) {
     Global::registerObjectType(module);
     
     // Module constructor function
-    auto function = std::make_shared<JrFunction>();
-    function->name = L"Module@__MAIN__@" + sourceBlock->filename;
-    function->kind = jrFuncConstructor;
+    auto function = new JrFunction {
+        .name = L"Module@__MAIN__@" + sourceBlock->filename,
+        .kind = jrFuncConstructor,
+    };
     function->paramTypes.push_back(module);
     Global::registerFunction(function, module);
     
@@ -121,9 +122,10 @@ SourceBlock::Pointer Binder::bind(SourceBlock::Pointer sourceBlock) {
 Node::Pointer Binder::bind(FuncDecl::Pointer decl) {
     auto type = context->curType();
     auto symtable = context->curSymTable();
-    auto function = std::make_shared<JrFunction>();
-    function->name = decl->getTypeName();
-    function->kind = jrFuncVM;
+    auto function = new JrFunction {
+        .name = decl->getTypeName(),
+        .kind = jrFuncVM
+    };
     
     Global::registerFunction(function, type);
     
@@ -179,7 +181,7 @@ Node::Pointer Binder::bind(FuncDecl::Pointer decl) {
 
 Node::Pointer Binder::bind(ConstructorDecl::Pointer decl) {
     auto symtable = context->curSymTable();
-    auto function = std::make_shared<JrFunction>();
+    auto function = new JrFunction();
     auto type = context->curType();
     function->name = decl->getName(type);
     function->kind = jrFuncConstructor;
@@ -260,7 +262,7 @@ Node::Pointer Binder::bind(ClassDecl::Pointer decl) {
     
     if(hasCustomizedConstructor == false) {
         // if has no customize constructors , we will bind an default constructor
-        auto defaultConstructor = std::make_shared<JrFunction>();
+        auto defaultConstructor = new JrFunction();
         defaultConstructor->name = name + L"()";
         defaultConstructor->kind = jrFuncVM;
         defaultConstructor->returnType = objectType;

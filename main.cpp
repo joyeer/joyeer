@@ -2,7 +2,6 @@
 #include <vector>
 #include <filesystem>
 
-#include "runtime/runtime.h"
 #include "compiler/lexparser.h"
 #include "compiler/syntaxparser.h"
 #include "compiler/binder.h"
@@ -11,7 +10,6 @@
 #include "compiler/diagnostic.h"
 #include "runtime/interpreter.h"
 #include "runtime/buildin.h"
-#include "compiler/context.h"
 
 int main(int argc, char** argv) {
     
@@ -25,7 +23,6 @@ int main(int argc, char** argv) {
     std::wstring filepath(argv[1], argv[1] + strlen(argv[1]));
     LexParser parser(filepath);
     parser.parse();
-
     
     SyntaxParser syntaxParser(parser.tokens);
     SourceBlock::Pointer sourceBlock = syntaxParser.parse();

@@ -12,7 +12,7 @@ struct JrValueHoldHasher {
 
 struct JrObjectMap : public JrObject {
     static JrObjectType* Type;
-    static JrFunction::Pointer Constructor;
+    static JrFunction* Constructor;
     
     JrObjectMap();
     ~JrObjectMap();
@@ -24,14 +24,14 @@ struct JrObjectMap : public JrObject {
 
 
 struct JrObjectMap_Insert : public JrNativeFunc {
-    static JrFunction::Pointer Func;
-    virtual void operator()(JrRuntimeContext::Pointer context, JrFunction::Pointer func);
+    static JrFunction* Func;
+    virtual void operator()(JrRuntimeContext::Pointer context, JrFunction* func);
 };
 
 
 struct JrObjectMap_Get: public JrNativeFunc {
-    static JrFunction::Pointer Func;
-    virtual void operator()(JrRuntimeContext::Pointer context, JrFunction::Pointer func);
+    static JrFunction* Func;
+    virtual void operator()(JrRuntimeContext::Pointer context, JrFunction* func);
 };
 
 #endif

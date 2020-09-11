@@ -4,6 +4,7 @@
 #include "runtime/function.h"
 #include "runtime/runtime.h"
 #include <sstream>
+
 struct JrObjectString: JrObject {
     static JrObjectType* Type;
     
@@ -17,7 +18,7 @@ struct JrObjectString: JrObject {
 
 struct JrObjectStringBuilder: JrObject {
     static JrObjectType* Type;
-    static JrFunction::Pointer Constructor;
+    static JrFunction* Constructor;
     
     JrObjectStringBuilder();
     ~JrObjectStringBuilder();
@@ -28,12 +29,12 @@ struct JrObjectStringBuilder: JrObject {
 };
 
 struct JrObjectStringBuilder_Append: public JrNativeFunc {
-    static JrFunction::Pointer Func;
-    virtual void operator()(JrRuntimeContext::Pointer context, JrFunction::Pointer func);
+    static JrFunction* Func;
+    virtual void operator()(JrRuntimeContext::Pointer context, JrFunction* func);
 };
 
 struct JrObjectStringBuilder_toString: public JrNativeFunc {
-    static JrFunction::Pointer Func;
-    virtual void operator()(JrRuntimeContext::Pointer context, JrFunction::Pointer func);
+    static JrFunction* Func;
+    virtual void operator()(JrRuntimeContext::Pointer context, JrFunction* func);
 };
 #endif

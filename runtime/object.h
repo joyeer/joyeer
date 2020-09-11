@@ -27,15 +27,11 @@ enum JrTypeKind: JrByte {
     typeObject          = 0x0A
 };
 
-struct JrObjectHead {
-    JrInt32  refCount;
-    JrInt32  size;
-};
-
 struct JrObject {
     static const JrObject* Nil;
     
-    JrObjectHead head;
+    JrInt32  refCount = -1;
+    JrInt32  size = -1;
 };
 
 struct JrObjectManaged: public JrObject {

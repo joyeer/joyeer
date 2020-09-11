@@ -188,12 +188,12 @@ std::shared_ptr<Node> SyntaxParser::tryParseVarDecl() {
     return std::shared_ptr<Node>(new VarDecl(pattern, initializer));
 }
 
-std::shared_ptr<Node> SyntaxParser::tryParseClassDecl() {
+Node::Pointer SyntaxParser::tryParseClassDecl() {
     if (tryEat(TokenKind::keyword, Keywords::CLASS) == nullptr) {
         return nullptr;
     }
 
-    std::shared_ptr<Token> className = tryEat(TokenKind::identifier);
+    auto className = tryEat(TokenKind::identifier);
     if (className == nullptr ) {
         Diagnostics::reportError(L"[Error]");
         return nullptr;
@@ -221,7 +221,7 @@ std::shared_ptr<Node> SyntaxParser::tryParseClassDecl() {
     return std::make_shared<ClassDecl>(className, members);
 }
 
-std::shared_ptr<Node> SyntaxParser::tryParseCodeBlock() {
+Node::Pointer SyntaxParser::tryParseCodeBlock() {
     // Code block
     if (tryEat(TokenKind::punctuation, Punctuations::OPEN_CURLY_BRACKET) == nullptr) {
         return nullptr; 

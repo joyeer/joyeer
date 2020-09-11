@@ -10,14 +10,14 @@ public:
     JrInterpreter(JrRuntimeContext::Pointer context);
     
     void run(JrModuleType* module);
-    void run(JrFunction::Pointer function, int objectRef);
+    void run(JrFunction* function, int objectRef);
     
 private:
     std::vector<Instruction>::const_iterator pointer;
     std::vector<Instruction>::const_iterator end;
     
     // prepare the stack frame
-    JrFunctionFrame::Pointer prepareStackFrame(JrFunction::Pointer func);
+    JrFunctionFrame::Pointer prepareStackFrame(JrFunction* func);
     
     void exec_invoke(const Instruction& instruction);
     void exec_istore(const Instruction& instruction);

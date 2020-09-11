@@ -6,9 +6,9 @@
 #include <iostream>
 
 
-JrFunction::Pointer JrFuncPrint::Func;
+JrFunction* JrFuncPrint::Func;
 
-void JrFuncPrint::operator()(JrRuntimeContext::Pointer context, JrFunction::Pointer func) {
+void JrFuncPrint::operator()(JrRuntimeContext::Pointer context, JrFunction* func) {
     auto value = context->stack->pop();
     switch (value.kind) {
         case typeString: {
@@ -34,19 +34,19 @@ void JrFuncPrint::operator()(JrRuntimeContext::Pointer context, JrFunction::Poin
 };
 
 void JrFuncPrint::init() {
-    JrFuncPrint::Func = std::shared_ptr<JrFunction>(new JrFunction {
+    JrFuncPrint::Func = new JrFunction {
         .name = L"print(message:)",
         .kind = jrFuncNative,
         .paramTypes = { (JrType*)JrType::Any },
         .nativeCode = new JrFuncPrint()
-    });
+    };
 
     Global::registerFunction(JrFuncPrint::Func, nullptr);
 }
 
-JrFunction::Pointer JrFuncObjectPrint::Func;
+JrFunction* JrFuncObjectPrint::Func;
 
-void JrFuncObjectPrint::operator()(JrRuntimeContext::Pointer context, JrFunction::Pointer func) {
+void JrFuncObjectPrint::operator()(JrRuntimeContext::Pointer context, JrFunction* func) {
     auto objectRef = context->stack->pop();
     
     auto object = context->gc->get(objectRef.objRefValue);
@@ -64,12 +64,12 @@ void JrFuncObjectPrint::operator()(JrRuntimeContext::Pointer context, JrFunction
 }
 
 void JrFuncObjectPrint::init() {
-    JrFuncObjectPrint::Func = std::shared_ptr<JrFunction>(new JrFunction {
+    JrFuncObjectPrint::Func = new JrFunction {
         .name = L"print(object:)",
         .kind = jrFuncNative,
         .paramTypes = { (JrType*)JrType::Any },
         .nativeCode = new JrFuncObjectPrint()
-    });
+    };
     
     Global::registerFunction(JrFuncObjectPrint::Func, nullptr);
 }

@@ -4,17 +4,17 @@
 #include "runtime/function.h"
 
 struct JrFuncPrint : public JrNativeFunc {
-    static JrFunction::Pointer Func;
+    static JrFunction* Func;
     
-    virtual void operator()(JrRuntimeContext::Pointer context, JrFunction::Pointer func);
+    virtual void operator()(JrRuntimeContext::Pointer context, JrFunction* func);
     
     static void init();
 };
 
 struct JrFuncObjectPrint: public JrNativeFunc {
-    static JrFunction::Pointer Func;
+    static JrFunction* Func;
     
-    virtual void operator()(JrRuntimeContext::Pointer context, JrFunction::Pointer func);
+    virtual void operator()(JrRuntimeContext::Pointer context, JrFunction* func);
     
     static void init();
 };

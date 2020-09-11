@@ -69,16 +69,16 @@ void CompileContext::leave(JrType* type) {
     types.pop_back();
 }
 
-JrFunction::Pointer CompileContext::curFunction() {
+JrFunction* CompileContext::curFunction() {
     assert(functions.size() > 0 );
     return functions.back();
 }
 
-void CompileContext::entry(JrFunction::Pointer function) {
+void CompileContext::entry(JrFunction* function) {
     functions.push_back(function);
 }
 
-void CompileContext::leave(JrFunction::Pointer function) {
+void CompileContext::leave(JrFunction* function) {
     assert(functions.back() == function);
     functions.pop_back();
 }
