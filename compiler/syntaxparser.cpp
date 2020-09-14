@@ -84,17 +84,17 @@ Node::Pointer SyntaxParser::tryParseFunctionDecl() {
     return std::make_shared<FuncDecl>(identifier, parameterClause, returnType, codeBlock);
 }
 
-std::shared_ptr<Node> SyntaxParser::tryParseConstructorDecl() {
+Node::Pointer SyntaxParser::tryParseConstructorDecl() {
     if(tryEat(TokenKind::keyword, Keywords::INIT) == nullptr) {
         return nullptr;
     }
     
-    std::shared_ptr<Node> parameterClause = tryParseParameterClause();
+    auto parameterClause = tryParseParameterClause();
     if(parameterClause == nullptr) {
         return nullptr;
     }
 
-    std::shared_ptr<Node> codeBlock = tryParseCodeBlock();
+    auto codeBlock = tryParseCodeBlock();
     if(codeBlock == nullptr) {
         Diagnostics::reportError(L"Error");
         return nullptr; // TODO: Error
@@ -103,7 +103,7 @@ std::shared_ptr<Node> SyntaxParser::tryParseConstructorDecl() {
     return std::shared_ptr<Node>(new ConstructorDecl(parameterClause, codeBlock));
 }
 
-std::shared_ptr<Node> SyntaxParser::tryParseParameterClause() {
+Node::Pointer SyntaxParser::tryParseParameterClause() {
     if (tryEat(TokenKind::punctuation, Punctuations::OPEN_ROUND_BRACKET) == nullptr) {
         return nullptr;
     }
@@ -147,12 +147,12 @@ std::shared_ptr<Node> SyntaxParser::tryParseParameterClause() {
     return std::shared_ptr<Node>(new ParameterClause(parameters));
 }
 
-std::shared_ptr<Node> SyntaxParser::tryParseConstDecl() {
+Node::Pointer SyntaxParser::tryParseConstDecl() {
     if (tryEat(TokenKind::keyword, Keywords::LET) == nullptr) {
         return nullptr; // Not a `let` declaration
     }
 
-    Pattern::Pointer pattern = tryParsePattern();
+    auto pattern = tryParsePattern();
     if (pattern == nullptr) {
         return nullptr; //TODO: report an syntax Error
     }
@@ -168,13 +168,14 @@ std::shared_ptr<Node> SyntaxParser::tryParseConstDecl() {
     return std::shared_ptr<Node>(new LetDecl(pattern, initializer));
 }
 
-std::shared_ptr<Node> SyntaxParser::tryParseVarDecl() {
+Node::Pointer SyntaxParser::tryParseVarDecl() {
     if(tryEat(TokenKind::keyword, Keywords::VAR) == nullptr) {
         return nullptr; // Not a 'var' declaration
     }
 
     Pattern::Pointer pattern = tryParsePattern();
     if (pattern == nullptr) {
+        Diagnostics::reportError(L"[Error]");
        return nullptr; //TODO: report an syntax Error
     }
     Node::Pointer initializer = nullptr;
@@ -669,7 +670,7 @@ Node::Pointer SyntaxParser::tryParsePrimaryExpr() {
     return nullptr;
 }
 
-std::shared_ptr<Node> SyntaxParser::tryParseSelfExpr() {
+Node::Pointer SyntaxParser::tryParseSelfExpr() {
     if(tryEat(TokenKind::keyword, Keywords::SELF) == nullptr) {
         return nullptr;
     }
@@ -896,6 +897,6 @@ void SyntaxParser::previous() {
     iterator --;
 }
 
-std::shared_ptr<Token> SyntaxParser::curToken() const {
+Token::Pointer SyntaxParser::curToken() const {
     return *iterator;
 }
