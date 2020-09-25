@@ -1,0 +1,6 @@
+fileimport './object'
+
+
+class String: Object {
+
+}

@@ -1,0 +1,6 @@
+func lengthOfLongestSubstring(s: String): Int {
+    var startIndex = 0
+    var endIndex = s.size()
+
+    
+}
