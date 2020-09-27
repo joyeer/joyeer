@@ -26,7 +26,7 @@ private:
     void parsePunctuation(std::wstring::const_iterator startIterator);
 
 public:
-  std::vector<std::shared_ptr<Token>> tokens;
+  std::vector<Token::Pointer> tokens;
 
 private:
   std::wstring content;

@@ -26,6 +26,7 @@ const std::wstring Keywords::IN = L"in";
 const std::wstring Keywords::INIT = L"init";
 const std::wstring Keywords::SELF = L"self";
 const std::wstring Keywords::RETURN = L"return";
+const std::wstring Keywords::FILEIMPORT = L"fileimport";
 
 const std::unordered_set<std::wstring> Keywords::map = initKeywordMap();
 
@@ -45,6 +46,7 @@ std::unordered_set<std::wstring> initKeywordMap() {
     map.insert(Keywords::INIT);
     map.insert(Keywords::SELF);
     map.insert(Keywords::RETURN);
+    map.insert(Keywords::FILEIMPORT);
 
     return map;
 }

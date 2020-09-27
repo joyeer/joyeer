@@ -58,6 +58,7 @@ struct Keywords {
     static const std::wstring INIT;
     static const std::wstring SELF;
     static const std::wstring RETURN;
+    static const std::wstring FILEIMPORT;
     
     static const std::unordered_set<std::wstring> map;
 };

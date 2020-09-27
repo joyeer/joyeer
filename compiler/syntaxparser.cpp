@@ -28,27 +28,27 @@ SourceBlock::Pointer SyntaxParser::parse() {
 ////////////////////////////////////////////////////////////////////////////
 
 Node::Pointer SyntaxParser::tryParseDecl() {
-    std::shared_ptr<Node> constantDecl = tryParseConstDecl();
+    auto constantDecl = tryParseConstDecl();
     if(constantDecl != nullptr) {
         return constantDecl;
     }
 
-    std::shared_ptr<Node> varDecl = tryParseVarDecl();
+    auto varDecl = tryParseVarDecl();
     if(varDecl != nullptr) {
         return varDecl;
     }
 
-    std::shared_ptr<Node> classDecl = tryParseClassDecl();
+    auto classDecl = tryParseClassDecl();
     if(classDecl != nullptr) {
         return classDecl;
     }
 
-    std::shared_ptr<Node> funcDecl = tryParseFunctionDecl();
+    auto funcDecl = tryParseFunctionDecl();
     if(funcDecl != nullptr) {
         return funcDecl;
     }
     
-    std::shared_ptr<Node> initializer = tryParseConstructorDecl();
+    auto initializer = tryParseConstructorDecl();
     if(initializer != nullptr) {
         return initializer;
     }

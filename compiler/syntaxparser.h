@@ -30,6 +30,9 @@ private:
     
     // Parse the parameter clause
     Node::Pointer tryParseParameterClause();
+    
+    // Parse the fileimport delcaration;
+    Node::Pointer tryParseFileImportDecl();
 
     ////////////////////////////////////////////////////////////////////////////
     // Statements
