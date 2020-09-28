@@ -11,8 +11,8 @@ CompileContext::CompileContext() {
     initializeGlobalScope();
 }
 
-SymbolTable::Pointer CompileContext::initializeSymTable() {
-    SymbolTable::Pointer symtable = std::make_shared<SymbolTable>();
+SymbolTable::Ptr CompileContext::initializeSymTable() {
+    SymbolTable::Ptr symtable = std::make_shared<SymbolTable>();
     symbols.push_back(symtable);
     return symtable;
 }
@@ -21,7 +21,7 @@ void CompileContext::finalizeSymTable() {
     symbols.pop_back();
 }
 
-SymbolTable::Pointer CompileContext::curSymTable() {
+SymbolTable::Ptr CompileContext::curSymTable() {
     assert(symbols.size() > 0 );
     return symbols.back();
 }
@@ -42,12 +42,12 @@ void CompileContext::leave(CompileStage stage) {
     stages.pop_back();
 }
 
-void CompileContext::entry(SymbolTable::Pointer table) {
+void CompileContext::entry(SymbolTable::Ptr table) {
     assert(table != nullptr);
     symbols.push_back(table);
 }
 
-void CompileContext::leave(SymbolTable::Pointer table) {
+void CompileContext::leave(SymbolTable::Ptr table) {
     assert(table != nullptr);
     assert(symbols.back() == table);
     symbols.pop_back();
@@ -88,7 +88,7 @@ CompileStage CompileContext::curStage() const {
     return stages.back();
 }
 
-Symbol::Pointer CompileContext::lookup(const std::wstring &name) {
+Symbol::Ptr CompileContext::lookup(const std::wstring &name) {
     for (auto iterator = symbols.rbegin(); iterator != symbols.rend(); iterator ++) {
         auto symtable = *iterator;
         auto symbol = symtable->find(name);
@@ -100,14 +100,14 @@ Symbol::Pointer CompileContext::lookup(const std::wstring &name) {
     return nullptr;
 }
 
-void CompileContext::associate(JrType* type, SymbolTable::Pointer table) {
+void CompileContext::associate(JrType* type, SymbolTable::Ptr table) {
     mapOfTypeAndSymbolTable.insert({
         type->addressOfType,
         table
     });
 }
 
-SymbolTable::Pointer CompileContext::symtableOfType(JrType* type) {
+SymbolTable::Ptr CompileContext::symtableOfType(JrType* type) {
     return mapOfTypeAndSymbolTable[type->addressOfType];
 }
 

@@ -17,7 +17,7 @@ private:
     std::vector<Instruction>::const_iterator end;
     
     // prepare the stack frame
-    JrFunctionFrame::Pointer prepareStackFrame(JrFunction* func);
+    JrFunctionFrame::Ptr prepareStackFrame(JrFunction* func);
     
     void exec_invoke(const Instruction& instruction);
     void exec_istore(const Instruction& instruction);

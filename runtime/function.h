@@ -7,16 +7,6 @@
 struct JrRuntimeContext;
 struct JrNativeFunc;
 
-struct JrCode {
-    typedef std::shared_ptr<JrCode> Pointer;
-    
-    uint32_t size;
-    uint8_t* code;
-    
-    JrCode(uint32_t size);
-    virtual ~JrCode();
-};
-
 enum JrFunctionKind  {
     jrFuncNative                    = 1,
     jrFuncVM                        = 1 << 1,
@@ -44,7 +34,6 @@ public:
     std::vector<Instruction> instructions;
     
     union {
-        JrCode* code;
         JrNativeFunc* nativeCode;
     };
     
@@ -55,8 +44,6 @@ public:
 };
 
 struct JrNativeFunc {
-    typedef std::shared_ptr<JrNativeFunc> Pointer;
-    
     virtual void operator() (JrRuntimeContext* context, JrFunction* func);
 };
 

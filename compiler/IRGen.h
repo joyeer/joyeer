@@ -10,40 +10,40 @@ class JrCodeWriter;
 
 class IRGen {
 public:
-    IRGen(CompileContext::Pointer context);
+    IRGen(CompileContext::Ptr context);
     
-    JrModuleType* emit(SourceBlock::Pointer block);
+    JrModuleType* emit(SourceBlock::Ptr block);
     
 protected:
-    void emit(Node::Pointer node);
-    void emit(FuncCallExpr::Pointer node);
-    void emit(MemberFuncCallExpr::Pointer node);
-    void emit(ArguCallExpr::Pointer node);
-    void emit(LiteralExpr::Pointer node);
-    void emit(LetDecl::Pointer node);
-    void emit(VarDecl::Pointer node);
-    void emit(PrefixExpr::Pointer node);
-    void emit(IdentifierExpr::Pointer node);
-    void emit(AssignmentExpr::Pointer node);
-    void emit(Expr::Pointer node);
-    void emit(OperatorExpr::Pointer node);
-    void emit(ParenthesizedExpr::Pointer node);
-    void emit(IfStatement::Pointer node);
-    void emit(WhileStatement::Pointer node);
-    void emit(CodeBlock::Pointer node);
-    void emit(FuncDecl::Pointer node);
-    void emit(ReturnStatement::Pointer node);
-    void emit(MemberAccessExpr::Pointer node);
+    void emit(Node::Ptr node);
+    void emit(FuncCallExpr::Ptr node);
+    void emit(MemberFuncCallExpr::Ptr node);
+    void emit(ArguCallExpr::Ptr node);
+    void emit(LiteralExpr::Ptr node);
+    void emit(LetDecl::Ptr node);
+    void emit(VarDecl::Ptr node);
+    void emit(PrefixExpr::Ptr node);
+    void emit(IdentifierExpr::Ptr node);
+    void emit(AssignmentExpr::Ptr node);
+    void emit(Expr::Ptr node);
+    void emit(OperatorExpr::Ptr node);
+    void emit(ParenthesizedExpr::Ptr node);
+    void emit(IfStatement::Ptr node);
+    void emit(WhileStatement::Ptr node);
+    void emit(CodeBlock::Ptr node);
+    void emit(FuncDecl::Ptr node);
+    void emit(ReturnStatement::Ptr node);
+    void emit(MemberAccessExpr::Ptr node);
     
-    void emit(ClassDecl::Pointer node);
-    void emit(ConstructorDecl::Pointer node);
-    void emit(ArrayLiteralExpr::Pointer node);
-    void emit(DictLiteralExpr::Pointer node);
-    void emit(SubscriptExpr::Pointer node);
+    void emit(ClassDecl::Ptr node);
+    void emit(ConstructorDecl::Ptr node);
+    void emit(ArrayLiteralExpr::Ptr node);
+    void emit(DictLiteralExpr::Ptr node);
+    void emit(SubscriptExpr::Ptr node);
     
 private:
     JrCodeWriter writer;
-    CompileContext::Pointer context;
+    CompileContext::Ptr context;
 };
 
 #endif

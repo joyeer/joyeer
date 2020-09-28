@@ -132,7 +132,7 @@ exit_label:
     std::wcout << std::wstring(context->stack->frames.size(), L'-') << L"$[function][leave] " << function->name << std::endl;
 }
 
-JrFunctionFrame::Pointer JrInterpreter::prepareStackFrame(JrFunction* func) {
+JrFunctionFrame::Ptr JrInterpreter::prepareStackFrame(JrFunction* func) {
     auto frame = std::make_shared<JrFunctionFrame>();
     frame->addressOfFunc = func->addressOfFunc;
     

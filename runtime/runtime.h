@@ -32,7 +32,7 @@ struct JrType {
 };
 
 struct JrFieldType {
-    typedef std::shared_ptr<JrFieldType> Pointer;
+    typedef std::shared_ptr<JrFieldType> Ptr;
     
     std::wstring name;
     JrType* type;
@@ -56,10 +56,10 @@ struct JrObjectType: public JrType {
     std::vector<JrInt> virtualFunctions;
     std::vector<JrInt> staticFunctions;
     
-    std::vector<JrFieldType::Pointer> virtualFields;
-    std::vector<JrFieldType::Pointer> staticFields;
+    std::vector<JrFieldType::Ptr> virtualFields;
+    std::vector<JrFieldType::Ptr> staticFields;
     
-    void registerField(JrFieldType::Pointer field);
+    void registerField(JrFieldType::Ptr field);
     
     virtual JrInt size();
     
@@ -74,7 +74,7 @@ struct JrModuleType: public JrObjectType {
 };
 
 struct JrVar {
-    typedef std::shared_ptr<JrVar> Pointer;
+    
     JrType* type;
     std::wstring name;
     
@@ -84,7 +84,7 @@ struct JrVar {
 
 struct JrFunctionFrame {
     
-    typedef std::shared_ptr<JrFunctionFrame> Pointer;
+    typedef std::shared_ptr<JrFunctionFrame> Ptr;
     
     // the index of the function in function tables
     JrInt addressOfFunc;
@@ -104,15 +104,15 @@ struct JrRuntimeStack {
     
     JrRuntimeStack();
     
-    std::stack<JrFunctionFrame::Pointer> frames;
+    std::stack<JrFunctionFrame::Ptr> frames;
     JrInt pointer;
     JrByte data[JrRuntimeStack::Size];
     
     // push the FunctionFrame into stack
-    void startFuncCall(JrFunctionFrame::Pointer frame);
-    void endFuncCall(JrFunctionFrame::Pointer frame);
+    void startFuncCall(JrFunctionFrame::Ptr frame);
+    void endFuncCall(JrFunctionFrame::Ptr frame);
     
-    JrFunctionFrame::Pointer topFrame();
+    JrFunctionFrame::Ptr topFrame();
     
     JrValueHold top();
     

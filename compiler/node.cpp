@@ -17,25 +17,25 @@ std::wstring Node::getTypeName() {
     return L"";
 }
 
-OperatorExpr::OperatorExpr(Token::Pointer token):
+OperatorExpr::OperatorExpr(Token::Ptr token):
 Node(SyntaxKind::operatorExpr),
 token(token) {
     
 }
 
-LetDecl::LetDecl(Pattern::Pointer pattern, std::shared_ptr<Node> initializer):
+LetDecl::LetDecl(Pattern::Ptr pattern, std::shared_ptr<Node> initializer):
 Node(SyntaxKind::letDecl),
 pattern(pattern),
 initializer(initializer) {
 }
 
-VarDecl::VarDecl(Pattern::Pointer pattern, std::shared_ptr<Node> initializer):
+VarDecl::VarDecl(Pattern::Ptr pattern, std::shared_ptr<Node> initializer):
 Node(SyntaxKind::varDecl),
 pattern(pattern),
 initializer(initializer) {
 }
 
-ClassDecl::ClassDecl(Token::Pointer name, std::vector<Node::Pointer> members):
+ClassDecl::ClassDecl(Token::Ptr name, std::vector<Node::Ptr> members):
 Node(SyntaxKind::classDecl),
 name(name),
 members(members) {
@@ -50,7 +50,7 @@ Node(SyntaxKind::parameterClause),
 parameters(parameters) {
 }
 
-FuncDecl::FuncDecl(Node::Pointer identifier, Node::Pointer parameterClause, Node::Pointer returnType, Node::Pointer codeBlock):
+FuncDecl::FuncDecl(Node::Ptr identifier, Node::Ptr parameterClause, Node::Ptr returnType, Node::Ptr codeBlock):
 Node(SyntaxKind::funcDecl),
 identifier(identifier),
 parameterClause(parameterClause),
@@ -73,7 +73,7 @@ std::wstring FuncDecl::getTypeName() {
 }
 
 
-Pattern::Pattern(IdentifierExpr::Pointer identifier, Node::Pointer type):
+Pattern::Pattern(IdentifierExpr::Ptr identifier, Node::Ptr type):
 Node(SyntaxKind::pattern),
 identifier(identifier),
 type(type) {
@@ -101,13 +101,13 @@ const std::wstring ConstructorDecl::getName(JrType* type) {
     return ss.str();
 }
 
-Expr::Expr(Node::Pointer prefix, std::vector<Node::Pointer> binaries):
+Expr::Expr(Node::Ptr prefix, std::vector<Node::Ptr> binaries):
 Node(SyntaxKind::expr),
 prefix(prefix),
 binaries(binaries) {
 }
 
-Expr::Expr(std::vector<Node::Pointer> nodes):
+Expr::Expr(std::vector<Node::Ptr> nodes):
 Node(SyntaxKind::expr),
 prefix(nullptr),
 binaries(),
@@ -115,37 +115,37 @@ nodes(nodes){
     
 }
 
-PostfixExpr::PostfixExpr(Node::Pointer expr, OperatorExpr::Pointer op):
+PostfixExpr::PostfixExpr(Node::Ptr expr, OperatorExpr::Ptr op):
 Node(SyntaxKind::postfixExpr),
 expr(expr),
 op(op) {
 }
 
-PrefixExpr::PrefixExpr(OperatorExpr::Pointer op, Node::Pointer expr):
+PrefixExpr::PrefixExpr(OperatorExpr::Ptr op, Node::Ptr expr):
 Node(SyntaxKind::prefixExpr),
 op(op),
 expr(expr) {
     
 }
 
-BinaryExpr::BinaryExpr(OperatorExpr::Pointer op, Node::Pointer expr):
+BinaryExpr::BinaryExpr(OperatorExpr::Ptr op, Node::Ptr expr):
 Node(SyntaxKind::binaryExpr),
 op(op),
 expr(expr) {
 }
 
-AssignmentExpr::AssignmentExpr(Node::Pointer expr):
+AssignmentExpr::AssignmentExpr(Node::Ptr expr):
 Node(SyntaxKind::assignmentExpr),
 expr(expr) {
 }
 
-ArguCallExpr::ArguCallExpr(IdentifierExpr::Pointer identifier, Node::Pointer expr):
+ArguCallExpr::ArguCallExpr(IdentifierExpr::Ptr identifier, Node::Ptr expr):
 Node(SyntaxKind::arguCallExpr),
 label(identifier),
 expr(expr) {
 }
 
-FuncCallExpr::FuncCallExpr(Node::Pointer expr, std::vector<ArguCallExpr::Pointer> arguments):
+FuncCallExpr::FuncCallExpr(Node::Ptr expr, std::vector<ArguCallExpr::Ptr> arguments):
 Node(SyntaxKind::funcCallExpr),
 identifier(expr),
 arguments(arguments) {
@@ -163,7 +163,7 @@ std::wstring FuncCallExpr::getTypeName() {
     return ss.str();
 }
 
-MemberFuncCallExpr::MemberFuncCallExpr(Node::Pointer parent, Node::Pointer member, std::vector<ArguCallExpr::Pointer> arguments):
+MemberFuncCallExpr::MemberFuncCallExpr(Node::Ptr parent, Node::Ptr member, std::vector<ArguCallExpr::Ptr> arguments):
 Node(SyntaxKind::memberFuncCallExpr),
 parent(parent),
 member(member),
@@ -199,12 +199,12 @@ literal(literal) {
     
 }
 
-ArrayLiteralExpr::ArrayLiteralExpr(std::vector<Node::Pointer> items):
+ArrayLiteralExpr::ArrayLiteralExpr(std::vector<Node::Ptr> items):
 Node(arrayLiteralExpr),
 items(items) {
 }
 
-DictLiteralExpr::DictLiteralExpr(std::vector<std::tuple<Node::Pointer, Node::Pointer>> items):
+DictLiteralExpr::DictLiteralExpr(std::vector<std::tuple<Node::Ptr, Node::Ptr>> items):
 Node(dictLiteralExpr),
 items(items) {
 }
@@ -235,23 +235,23 @@ Node(SyntaxKind::parenthesizedExpr),
 expr(expr) {
 }
 
-SelfExpr::SelfExpr(IdentifierExpr::Pointer identifier):
+SelfExpr::SelfExpr(IdentifierExpr::Ptr identifier):
 Node(SyntaxKind::selfExpr),
 identifier(identifier) {
 }
 
-SubscriptExpr::SubscriptExpr(Node::Pointer identifier, Node::Pointer indexExpr):
+SubscriptExpr::SubscriptExpr(Node::Ptr identifier, Node::Ptr indexExpr):
 Node(subscriptExpr),
 identifier(identifier),
 indexExpr(indexExpr) {
 }
 
-Type::Type(Node::Pointer identifier):
+Type::Type(Node::Ptr identifier):
 Node(SyntaxKind::type),
 identifier(identifier) {
 }
 
-ArrayType::ArrayType(Node::Pointer type):
+ArrayType::ArrayType(Node::Ptr type):
 Node(SyntaxKind::arrayType),
 type(type) {
 }
@@ -260,7 +260,7 @@ std::wstring ArrayType::getTypeName() {
     return L"Array@Array";
 }
 
-DictType::DictType(Node::Pointer keyType, Node::Pointer valueType):
+DictType::DictType(Node::Ptr keyType, Node::Ptr valueType):
 Node(SyntaxKind::dictType),
 keyType(keyType),
 valueType(valueType) {
@@ -286,27 +286,27 @@ Node(SyntaxKind::codeBlock),
 statements(statements) {
 }
 
-ForInStatement::ForInStatement(Node::Pointer pattern, Node::Pointer inExpr, Node::Pointer codeBlock):
+ForInStatement::ForInStatement(Node::Ptr pattern, Node::Ptr inExpr, Node::Ptr codeBlock):
 Node(SyntaxKind::forInStatement),
 pattern(pattern),
 inExpr(inExpr),
 codeBlock(codeBlock) {
 }
 
-WhileStatement::WhileStatement(Node::Pointer expr, Node::Pointer codeBlock):
+WhileStatement::WhileStatement(Node::Ptr expr, Node::Ptr codeBlock):
 Node(SyntaxKind::whileStatement),
 expr(expr),
 codeBlock(codeBlock) {
 }
 
-IfStatement::IfStatement(Node::Pointer condition, Node::Pointer ifCodeBlock, std::shared_ptr<Node> elseCodeBlock):
+IfStatement::IfStatement(Node::Ptr condition, Node::Ptr ifCodeBlock, std::shared_ptr<Node> elseCodeBlock):
 Node(SyntaxKind::ifStatement),
 condition(condition),
 ifCodeBlock(ifCodeBlock),
 elseCodeBlock(elseCodeBlock) {
 }
 
-ReturnStatement::ReturnStatement(Node::Pointer expr):
+ReturnStatement::ReturnStatement(Node::Ptr expr):
 Node(SyntaxKind::returnStatement),
 expr(expr) {
 }
@@ -317,7 +317,7 @@ NodeDebugPrinter::NodeDebugPrinter(const std::wstring filename) {
     output.open(filename);
 }
 
-void NodeDebugPrinter::print(SymbolTable::Pointer symtable) {
+void NodeDebugPrinter::print(SymbolTable::Ptr symtable) {
     if(symtable == nullptr) {
         return;
     }
@@ -334,7 +334,7 @@ void NodeDebugPrinter::print(SymbolTable::Pointer symtable) {
     output << L"}";
 }
 
-void NodeDebugPrinter::print(Symbol::Pointer symbol) {
+void NodeDebugPrinter::print(Symbol::Ptr symbol) {
     if(symbol == nullptr) {
         return;
     }
@@ -343,7 +343,7 @@ void NodeDebugPrinter::print(Symbol::Pointer symbol) {
     output << L"@symbol-> name:\""<< symbol->name <<L"\", flag:\"" << debugStringOfSymbolFlag(symbol->flag) << L"\", mutable:" << symbol->isMutable;
 }
 
-void NodeDebugPrinter::print(std::vector<Node::Pointer> nodes) {
+void NodeDebugPrinter::print(std::vector<Node::Ptr> nodes) {
     output << std::endl;
     printTab();
     
@@ -361,7 +361,7 @@ void NodeDebugPrinter::print(std::vector<Node::Pointer> nodes) {
     
 }
 
-void NodeDebugPrinter::print(Node::Pointer node) {
+void NodeDebugPrinter::print(Node::Ptr node) {
     if(node == nullptr) {
         return;
     }
@@ -479,7 +479,7 @@ void NodeDebugPrinter::print(Node::Pointer node) {
             incTab();
             print(n->symtable);
             print(n->symbol);
-            std::vector<Node::Pointer> parameters;
+            std::vector<Node::Ptr> parameters;
             for(auto p: n->parameters) {
                 parameters.push_back(p);
             }

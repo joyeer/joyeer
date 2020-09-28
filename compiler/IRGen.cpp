@@ -8,11 +8,11 @@
 #include <unordered_map>
 
 
-IRGen::IRGen(CompileContext::Pointer context):
+IRGen::IRGen(CompileContext::Ptr context):
 context(context) {
 }
 
-void IRGen::emit(Node::Pointer node) {
+void IRGen::emit(Node::Ptr node) {
     switch (node->kind) {
         case sourceBlock:
             emit(std::static_pointer_cast<SourceBlock>(node));
@@ -91,7 +91,7 @@ void IRGen::emit(Node::Pointer node) {
     }
 }
 
-JrModuleType* IRGen::emit(SourceBlock::Pointer block) {
+JrModuleType* IRGen::emit(SourceBlock::Ptr block) {
     
     assert(block->symbol->flag == moduleSymbol);
     auto module = (JrModuleType*)Global::types[block->symbol->addressOfType];
@@ -112,7 +112,7 @@ JrModuleType* IRGen::emit(SourceBlock::Pointer block) {
     return module;
 }
 
-void IRGen::emit(FuncCallExpr::Pointer funcCallExpr) {
+void IRGen::emit(FuncCallExpr::Ptr funcCallExpr) {
     context->visit(visitFuncCall, [this, funcCallExpr](){
         
         for(auto argument : funcCallExpr->arguments) {
@@ -140,7 +140,7 @@ void IRGen::emit(FuncCallExpr::Pointer funcCallExpr) {
     });
 }
 
-void IRGen::emit(MemberFuncCallExpr::Pointer memberFuncCallExpr) {
+void IRGen::emit(MemberFuncCallExpr::Ptr memberFuncCallExpr) {
     context->visit(visitFuncCall, [this, memberFuncCallExpr](){
         for(auto argument : memberFuncCallExpr->arguments) {
             emit(argument);
@@ -159,11 +159,11 @@ void IRGen::emit(MemberFuncCallExpr::Pointer memberFuncCallExpr) {
 }
 
 
-void IRGen::emit(ArguCallExpr::Pointer node) {
+void IRGen::emit(ArguCallExpr::Ptr node) {
     emit(node->expr);
 }
 
-void IRGen::emit(LiteralExpr::Pointer node) {
+void IRGen::emit(LiteralExpr::Ptr node) {
     switch(node->literal->kind) {
         case decimalLiteral:
             writer.write({
@@ -194,7 +194,7 @@ void IRGen::emit(LiteralExpr::Pointer node) {
     }
 }
 
-void IRGen::emit(LetDecl::Pointer node) {
+void IRGen::emit(LetDecl::Ptr node) {
     emit(node->initializer);
     
     // TODO: detect the variable's type
@@ -205,7 +205,7 @@ void IRGen::emit(LetDecl::Pointer node) {
     
 }
 
-void IRGen::emit(VarDecl::Pointer node) {
+void IRGen::emit(VarDecl::Ptr node) {
     emit(node->initializer);
     
     auto function = context->curFunction();
@@ -233,7 +233,7 @@ void IRGen::emit(VarDecl::Pointer node) {
 
 }
 
-void IRGen::emit(PrefixExpr::Pointer node) {
+void IRGen::emit(PrefixExpr::Ptr node) {
     assert(node->expr != nullptr);
     emit(node->expr);
     if(node->op->token->rawValue == Operators::MINUS) {
@@ -245,7 +245,7 @@ void IRGen::emit(PrefixExpr::Pointer node) {
     }
 }
 
-void IRGen::emit(IdentifierExpr::Pointer node) {
+void IRGen::emit(IdentifierExpr::Ptr node) {
     auto symbol = node->symbol;
     if(symbol == nullptr) {
         Diagnostics::reportError(L"[Error][GenCode]");
@@ -293,7 +293,7 @@ void IRGen::emit(IdentifierExpr::Pointer node) {
     // Step2: try to find the symbol in symbols
 }
 
-void IRGen::emit(AssignmentExpr::Pointer node) {
+void IRGen::emit(AssignmentExpr::Ptr node) {
     
     
     if(node->left->kind == identifierExpr) {
@@ -367,7 +367,7 @@ void IRGen::emit(AssignmentExpr::Pointer node) {
     
 }
 
-void IRGen::emit(Expr::Pointer node) {
+void IRGen::emit(Expr::Ptr node) {
     assert(node->prefix == nullptr);
     assert(node->binaries.size() == 0);
     if(node->type == JrObjectString::Type) {
@@ -378,7 +378,7 @@ void IRGen::emit(Expr::Pointer node) {
         });
         
         // Use the StringBuilder to append the string content
-        for(std::vector<Node::Pointer>::const_reverse_iterator iterator = node->nodes.rbegin(); iterator != node->nodes.rend(); iterator ++ ) {
+        for(std::vector<Node::Ptr>::const_reverse_iterator iterator = node->nodes.rbegin(); iterator != node->nodes.rend(); iterator ++ ) {
             auto n = *iterator;
             if(n->kind == operatorExpr) {
                 auto operatorExpr = std::static_pointer_cast<OperatorExpr>(n);
@@ -410,7 +410,7 @@ void IRGen::emit(Expr::Pointer node) {
     
 }
 
-void IRGen::emit(OperatorExpr::Pointer node) {
+void IRGen::emit(OperatorExpr::Ptr node) {
     
     static std::unordered_map<std::wstring, Opcode> imaps {
         {
@@ -436,11 +436,11 @@ void IRGen::emit(OperatorExpr::Pointer node) {
     });
 }
 
-void IRGen::emit(ParenthesizedExpr::Pointer node) {
+void IRGen::emit(ParenthesizedExpr::Ptr node) {
     emit(node->expr);
 }
 
-void IRGen::emit(IfStatement::Pointer node) {
+void IRGen::emit(IfStatement::Ptr node) {
     IRGen gen(context);
     gen.emit(node->ifCodeBlock);
     auto instructions = gen.writer.instructions;
@@ -468,7 +468,7 @@ void IRGen::emit(IfStatement::Pointer node) {
     
 }
 
-void IRGen::emit(WhileStatement::Pointer node) {
+void IRGen::emit(WhileStatement::Ptr node) {
     IRGen gen(context);
     gen.emit(node->codeBlock);
     
@@ -489,7 +489,7 @@ void IRGen::emit(WhileStatement::Pointer node) {
     
 }
 
-void IRGen::emit(CodeBlock::Pointer node) {
+void IRGen::emit(CodeBlock::Ptr node) {
     context->visit(visitCodeBlock, [this, node]() {
         for(auto statement: node->statements) {
             emit(statement);
@@ -497,7 +497,7 @@ void IRGen::emit(CodeBlock::Pointer node) {
     });
 }
 
-void IRGen::emit(FuncDecl::Pointer node) {
+void IRGen::emit(FuncDecl::Ptr node) {
     assert(node->symbol->flag == funcSymbol);
     auto function = Global::functions[node->symbol->addressOfFunc];
     
@@ -511,7 +511,7 @@ void IRGen::emit(FuncDecl::Pointer node) {
     context->leave(function);
 }
 
-void IRGen::emit(ReturnStatement::Pointer node) {
+void IRGen::emit(ReturnStatement::Ptr node) {
     Opcode op = OP_RETURN;
     if(node->expr != nullptr) {
         emit(node->expr);
@@ -523,7 +523,7 @@ void IRGen::emit(ReturnStatement::Pointer node) {
     });
 }
 
-void IRGen::emit(ArrayLiteralExpr::Pointer node) {
+void IRGen::emit(ArrayLiteralExpr::Ptr node) {
     for(auto item: node->items) {
         emit(item);
     }
@@ -539,7 +539,7 @@ void IRGen::emit(ArrayLiteralExpr::Pointer node) {
     });
 }
 
-void IRGen::emit(DictLiteralExpr::Pointer node) {
+void IRGen::emit(DictLiteralExpr::Ptr node) {
     writer.write({
         .opcode = OP_NEW,
         .value = JrObjectMap::Constructor->addressOfFunc
@@ -560,7 +560,7 @@ void IRGen::emit(DictLiteralExpr::Pointer node) {
     }
 }
 
-void IRGen::emit(ClassDecl::Pointer node) {
+void IRGen::emit(ClassDecl::Ptr node) {
     for(auto member: node->members) {
         if(member->kind == funcDecl || member->kind == constructorDecl) {
             emit(member);
@@ -568,7 +568,7 @@ void IRGen::emit(ClassDecl::Pointer node) {
     }
 }
 
-void IRGen::emit(ConstructorDecl::Pointer node) {
+void IRGen::emit(ConstructorDecl::Ptr node) {
     
     assert(node->symbol->flag == constructorSymbol);
     auto function = Global::functions[node->symbol->addressOfFunc];
@@ -590,7 +590,7 @@ void IRGen::emit(ConstructorDecl::Pointer node) {
     context->leave(function);
 }
 
-void IRGen::emit(MemberAccessExpr::Pointer node) {
+void IRGen::emit(MemberAccessExpr::Ptr node) {
     emit(node->parent);
     
     writer.write({
@@ -599,7 +599,7 @@ void IRGen::emit(MemberAccessExpr::Pointer node) {
     });
 }
 
-void IRGen::emit(SubscriptExpr::Pointer node) {
+void IRGen::emit(SubscriptExpr::Ptr node) {
     
     // handle the index expr of array access
     emit(node->indexExpr);

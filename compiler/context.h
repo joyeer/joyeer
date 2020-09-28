@@ -27,22 +27,22 @@ enum CompileStage {
 
 class CompileContext {
 public:
-    typedef std::shared_ptr<CompileContext> Pointer;
+    typedef std::shared_ptr<CompileContext> Ptr;
     
     CompileContext();
     
-    SymbolTable::Pointer initializeSymTable();
+    SymbolTable::Ptr initializeSymTable();
     void finalizeSymTable();
     
     void visit(CompileStage stage, std::function<void(void)> visit);
     CompileStage curStage() const;
     
     // look up name's mapped symbol
-    Symbol::Pointer lookup(const std::wstring& name);
+    Symbol::Ptr lookup(const std::wstring& name);
     
-    SymbolTable::Pointer curSymTable() ;
-    void entry(SymbolTable::Pointer table);
-    void leave(SymbolTable::Pointer table);
+    SymbolTable::Ptr curSymTable() ;
+    void entry(SymbolTable::Ptr table);
+    void leave(SymbolTable::Ptr table);
     
     JrFunction* curFunction();
     void entry(JrFunction* function);
@@ -53,9 +53,9 @@ public:
     void leave(JrType* type);
     
     // Associate Type with symbol table
-    void associate(JrType*, SymbolTable::Pointer table);
+    void associate(JrType*, SymbolTable::Ptr table);
     // return assoicated symbol table with type
-    SymbolTable::Pointer symtableOfType(JrType*);
+    SymbolTable::Ptr symtableOfType(JrType*);
     
 protected:
     // initializ global scope, e.g. buildin functions/object etc
@@ -68,7 +68,7 @@ protected:
     void leave(CompileStage stage);
     
 protected:
-    std::vector<SymbolTable::Pointer> symbols;
+    std::vector<SymbolTable::Ptr> symbols;
     
     // Copmpiling stage
     std::vector<CompileStage> stages;
@@ -79,7 +79,7 @@ protected:
     // parsing class/struct/enum stacks
     std::vector<JrType*> types;
     
-    std::unordered_map<JrInt, SymbolTable::Pointer> mapOfTypeAndSymbolTable;
+    std::unordered_map<JrInt, SymbolTable::Ptr> mapOfTypeAndSymbolTable;
 };
 
 #endif

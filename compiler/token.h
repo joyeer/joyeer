@@ -22,7 +22,7 @@ enum TokenKind {
 
 struct Token {
 public:
-    typedef std::shared_ptr<Token> Pointer;
+    typedef std::shared_ptr<Token> Ptr;
     
 public:
     TokenKind kind;

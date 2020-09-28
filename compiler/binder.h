@@ -10,46 +10,46 @@
 // Reduce the expression's depth level
 class Binder {
 public:
-    Binder(CompileContext::Pointer context);
+    Binder(CompileContext::Ptr context);
     
-    SourceBlock::Pointer bind(SourceBlock::Pointer sourceBlock);
+    SourceBlock::Ptr bind(SourceBlock::Ptr sourceBlock);
     
 protected:
     // recursive bind down node
-    Node::Pointer bind(Node::Pointer node);
-    Node::Pointer bind(ClassDecl::Pointer classDecl);
-    Node::Pointer bind(LetDecl::Pointer decl);
-    Node::Pointer bind(VarDecl::Pointer varDecl);
-    Node::Pointer bind(ConstructorDecl::Pointer decl);
-    Node::Pointer bind(Type::Pointer decl);
-    Node::Pointer bind(FuncCallExpr::Pointer decl);
-    Node::Pointer bind(MemberFuncCallExpr::Pointer decl);
-    Node::Pointer bind(ArguCallExpr::Pointer decl);
-    Node::Pointer bind(LiteralExpr::Pointer decl);
-    Node::Pointer bind(PrefixExpr::Pointer decl);
-    Node::Pointer bind(IdentifierExpr::Pointer decl);
-    Node::Pointer bind(Expr::Pointer decl);
-    Node::Pointer bind(AssignmentExpr::Pointer decl);
-    Node::Pointer bind(BinaryExpr::Pointer decl);
-    Node::Pointer bind(OperatorExpr::Pointer decl);
-    Node::Pointer bind(ParenthesizedExpr::Pointer decl);
-    Node::Pointer bind(IfStatement::Pointer decl);
-    Node::Pointer bind(WhileStatement::Pointer decl);
-    Node::Pointer bind(CodeBlock::Pointer decl);
-    Node::Pointer bind(FuncDecl::Pointer decl);
-    Node::Pointer bind(ParameterClause::Pointer decl);
-    Node::Pointer bind(Pattern::Pointer decl);
-    Node::Pointer bind(ReturnStatement::Pointer decl);
-    Node::Pointer bind(SelfExpr::Pointer decl);
-    Node::Pointer bind(ArrayLiteralExpr::Pointer decl);
-    Node::Pointer bind(DictLiteralExpr::Pointer decl);
-    Node::Pointer bind(MemberAccessExpr::Pointer decl);
-    Node::Pointer bind(SubscriptExpr::Pointer decl);
-    Node::Pointer bind(ArrayType::Pointer decl);
+    Node::Ptr bind(Node::Ptr node);
+    Node::Ptr bind(ClassDecl::Ptr classDecl);
+    Node::Ptr bind(LetDecl::Ptr decl);
+    Node::Ptr bind(VarDecl::Ptr varDecl);
+    Node::Ptr bind(ConstructorDecl::Ptr decl);
+    Node::Ptr bind(Type::Ptr decl);
+    Node::Ptr bind(FuncCallExpr::Ptr decl);
+    Node::Ptr bind(MemberFuncCallExpr::Ptr decl);
+    Node::Ptr bind(ArguCallExpr::Ptr decl);
+    Node::Ptr bind(LiteralExpr::Ptr decl);
+    Node::Ptr bind(PrefixExpr::Ptr decl);
+    Node::Ptr bind(IdentifierExpr::Ptr decl);
+    Node::Ptr bind(Expr::Ptr decl);
+    Node::Ptr bind(AssignmentExpr::Ptr decl);
+    Node::Ptr bind(BinaryExpr::Ptr decl);
+    Node::Ptr bind(OperatorExpr::Ptr decl);
+    Node::Ptr bind(ParenthesizedExpr::Ptr decl);
+    Node::Ptr bind(IfStatement::Ptr decl);
+    Node::Ptr bind(WhileStatement::Ptr decl);
+    Node::Ptr bind(CodeBlock::Ptr decl);
+    Node::Ptr bind(FuncDecl::Ptr decl);
+    Node::Ptr bind(ParameterClause::Ptr decl);
+    Node::Ptr bind(Pattern::Ptr decl);
+    Node::Ptr bind(ReturnStatement::Ptr decl);
+    Node::Ptr bind(SelfExpr::Ptr decl);
+    Node::Ptr bind(ArrayLiteralExpr::Ptr decl);
+    Node::Ptr bind(DictLiteralExpr::Ptr decl);
+    Node::Ptr bind(MemberAccessExpr::Ptr decl);
+    Node::Ptr bind(SubscriptExpr::Ptr decl);
+    Node::Ptr bind(ArrayType::Ptr decl);
     
     
 private:
-    CompileContext::Pointer context;
+    CompileContext::Ptr context;
 };
 
 #endif

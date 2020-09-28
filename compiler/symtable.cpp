@@ -26,7 +26,7 @@ SymbolTable::SymbolTable() :
 symbols() {
 }
 
-bool SymbolTable::insert(Symbol::Pointer symbol) {
+bool SymbolTable::insert(Symbol::Ptr symbol) {
     if(symbols.find(symbol->name) != symbols.end()) {
         return false;
     }
@@ -39,7 +39,7 @@ bool SymbolTable::insert(Symbol::Pointer symbol) {
     return true;
 }
 
-Symbol::Pointer SymbolTable::find(const std::wstring& name) const {
+Symbol::Ptr SymbolTable::find(const std::wstring& name) const {
     auto result = symbols.find(name);
     if( result != symbols.end()) {
         return result->second;

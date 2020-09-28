@@ -7,88 +7,88 @@ class SyntaxParser
 {
 public:
     SyntaxParser(const std::vector<std::shared_ptr<Token>> &tokens);
-    SourceBlock::Pointer parse();
+    SourceBlock::Ptr parse();
 
 private:
 
     ////////////////////////////////////////////////////////////////////////////
     // Declarations
     ////////////////////////////////////////////////////////////////////////////
-    Node::Pointer tryParseDecl();
+    Node::Ptr tryParseDecl();
 
-    Node::Pointer tryParseClassDecl();
+    Node::Ptr tryParseClassDecl();
 
-    Node::Pointer tryParseFunctionDecl();
+    Node::Ptr tryParseFunctionDecl();
     
-    Node::Pointer tryParseConstructorDecl();
+    Node::Ptr tryParseConstructorDecl();
 
     // Parse the constant declaration, e.g. let constValue = "10"
-    Node::Pointer tryParseConstDecl();
+    Node::Ptr tryParseConstDecl();
 
     // Parse the variable declaration, e.g. var varValue = "10"
-    Node::Pointer tryParseVarDecl();
+    Node::Ptr tryParseVarDecl();
     
     // Parse the parameter clause
-    Node::Pointer tryParseParameterClause();
+    Node::Ptr tryParseParameterClause();
     
     // Parse the fileimport delcaration;
-    Node::Pointer tryParseFileImportDecl();
+    Node::Ptr tryParseFileImportDecl();
 
     ////////////////////////////////////////////////////////////////////////////
     // Statements
     ////////////////////////////////////////////////////////////////////////////
 
-    Node::Pointer tryParseCodeBlock();
-    Node::Pointer tryParseStatement();
-    Node::Pointer tryParseLoopStatement();
-    Node::Pointer tryparseWhileStatement();
-    Node::Pointer tryParseBranchStatement();
-    Node::Pointer tryParseIfStatement();
-    Node::Pointer tryParseReturnStatement();
+    Node::Ptr tryParseCodeBlock();
+    Node::Ptr tryParseStatement();
+    Node::Ptr tryParseLoopStatement();
+    Node::Ptr tryparseWhileStatement();
+    Node::Ptr tryParseBranchStatement();
+    Node::Ptr tryParseIfStatement();
+    Node::Ptr tryParseReturnStatement();
 
     ////////////////////////////////////////////////////////////////////////////
     // Type
     ////////////////////////////////////////////////////////////////////////////
-    Pattern::Pointer tryParsePattern();
+    Pattern::Ptr tryParsePattern();
     
-    Node::Pointer tryParseTypeAnnotation();
-    Node::Pointer tryParseTypeIdentifier();
-    Node::Pointer tryParseTypeArray();
+    Node::Ptr tryParseTypeAnnotation();
+    Node::Ptr tryParseTypeIdentifier();
+    Node::Ptr tryParseTypeArray();
     
-    Node::Pointer tryParseType();
+    Node::Ptr tryParseType();
 
     ////////////////////////////////////////////////////////////////////////////
     // Expressions02079
     ////////////////////////////////////////////////////////////////////////////
 
-    Node::Pointer tryParseExpr();
+    Node::Ptr tryParseExpr();
 
     // prefix-expression -> prefix-operator /opt/ postfix-expression
-    Node::Pointer tryParsePrefixExpr();
+    Node::Ptr tryParsePrefixExpr();
 
     // postfix-expression -> primary-expression
     // postfix-expression -> postfix-expression postfix-operator
     // postfix-expression -> function-call-expression
     // postfix-expression -> subscript-expression
-    Node::Pointer tryParsePostfixExpr(Node::Pointer postfixExpr = nullptr);
+    Node::Ptr tryParsePostfixExpr(Node::Ptr postfixExpr = nullptr);
     // accept an PostfixExpr and try parse postfix-operator , and return the PostfixExpr;
-    Node::Pointer tryParsePostfixExprWithPostfixOperator(Node::Pointer postfixExpr);
+    Node::Ptr tryParsePostfixExprWithPostfixOperator(Node::Ptr postfixExpr);
     // try parse subscript expr
-    Node::Pointer tryParseSubscriptExpr(Node::Pointer postfixExpr);
+    Node::Ptr tryParseSubscriptExpr(Node::Ptr postfixExpr);
     
-    ArguCallExpr::Pointer tryParseArguCallExpr();
+    ArguCallExpr::Ptr tryParseArguCallExpr();
     
-    Node::Pointer tryParseFuncCallExpr(Node::Pointer pos·0tfixExpr);
-    Node::Pointer tryParseMemberAccessExpr(Node::Pointer postfixExpr);
+    Node::Ptr tryParseFuncCallExpr(Node::Ptr pos·0tfixExpr);
+    Node::Ptr tryParseMemberAccessExpr(Node::Ptr postfixExpr);
 
-    Node::Pointer tryParseBinaryExpr();
+    Node::Ptr tryParseBinaryExpr();
 
     // primary-expression -> identifier
     // primary-expression -> literal-expression
     // primary-expression -> parenthesized-expression
-    Node::Pointer tryParsePrimaryExpr();
+    Node::Ptr tryParsePrimaryExpr();
 
-    Node::Pointer tryParseSelfExpr();
+    Node::Ptr tryParseSelfExpr();
     
     // literal-expression -> literal
     // literal-expression -> array-literal | dictionary-literal
@@ -97,37 +97,37 @@ private:
     // dictionary-literal -> [ dictionary-literal-items ]  | [ : ]
     // dictionary-literal-items -> dictionary-literal-item, /opt/ | dictionary-literal-item, dictionary-literal-items
     // dictionary-literal-item -> expression: expression
-    Node::Pointer tryParseLiteralExpr();
-    Node::Pointer tryParseArrayOrDictLiteralExpr();
-    Node::Pointer tryParseDictItemPairExpr();
+    Node::Ptr tryParseLiteralExpr();
+    Node::Ptr tryParseArrayOrDictLiteralExpr();
+    Node::Ptr tryParseDictItemPairExpr();
 
     // parenthesized-expression -> `(` expression `)`
-    Node::Pointer tryParseParenthesizedExpr();
+    Node::Ptr tryParseParenthesizedExpr();
     
-    OperatorExpr::Pointer tryParseOperatorExpr();
-    OperatorExpr::Pointer tryParsePostfixOperatorExpr();
+    OperatorExpr::Ptr tryParseOperatorExpr();
+    OperatorExpr::Ptr tryParsePostfixOperatorExpr();
     
     // literal -> numeric-literal | string-literal | boolean-literal | nil-literal
-    Token::Pointer tryParseLiteral();
+    Token::Ptr tryParseLiteral();
     //
-    IdentifierExpr::Pointer tryParseIdentifierExpr();
+    IdentifierExpr::Ptr tryParseIdentifierExpr();
 
 
     ////////////////////////////////////////////////////////////////////////////
     // Helper functions
     ////////////////////////////////////////////////////////////////////////////
-    Token::Pointer tryEat(TokenKind kind, const std::wstring &value);
+    Token::Ptr tryEat(TokenKind kind, const std::wstring &value);
 
-    Token::Pointer tryEat(TokenKind kind);
+    Token::Ptr tryEat(TokenKind kind);
 
     void previous();
 
-    Token::Pointer curToken() const;
+    Token::Ptr curToken() const;
 
 private:
-    const std::vector<Token::Pointer> &tokens;
-    std::vector<Token::Pointer>::const_iterator iterator;
-    std::vector<Token::Pointer>::const_iterator endIterator;
+    const std::vector<Token::Ptr> &tokens;
+    std::vector<Token::Ptr>::const_iterator iterator;
+    std::vector<Token::Ptr>::const_iterator endIterator;
 };
 
 #endif

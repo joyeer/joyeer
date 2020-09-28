@@ -46,7 +46,7 @@ JrType(typeObject, name) {
     this->finalizer = finalizer;
 }
 
-void JrObjectType::registerField(JrFieldType::Pointer field) {
+void JrObjectType::registerField(JrFieldType::Ptr field) {
     field->addressOfField = virtualFields.size();
     virtualFields.push_back(field);
 }
@@ -67,18 +67,18 @@ JrRuntimeStack::JrRuntimeStack() {
     pointer = 0;
 }
 
-void JrRuntimeStack::startFuncCall(JrFunctionFrame::Pointer frame) {
+void JrRuntimeStack::startFuncCall(JrFunctionFrame::Ptr frame) {
     pointer = frame->endAddress;
     frames.push(frame);
 }
 
-void JrRuntimeStack::endFuncCall(JrFunctionFrame::Pointer frame) {
+void JrRuntimeStack::endFuncCall(JrFunctionFrame::Ptr frame) {
     pointer = frame->endAddress;
     assert(frames.top() == frame);
     frames.pop();
 }
 
-JrFunctionFrame::Pointer JrRuntimeStack::topFrame() {
+JrFunctionFrame::Ptr JrRuntimeStack::topFrame() {
     assert(frames.size() > 0);
     return frames.top();
 }

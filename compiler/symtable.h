@@ -35,7 +35,7 @@ enum AccessFlag: int8_t {
 };
 
 struct Symbol {
-    typedef std::shared_ptr<Symbol> Pointer;
+    typedef std::shared_ptr<Symbol> Ptr;
 public:
     bool isMutable: 1 = true;
     bool isTypeFixed: 1 = true;
@@ -62,23 +62,21 @@ public:
 
 class SymbolTable {
 public:
-    typedef std::shared_ptr<SymbolTable> Pointer;
-    typedef std::weak_ptr<SymbolTable> WeakPointer;
+    typedef std::shared_ptr<SymbolTable> Ptr;
     
 public:
     SymbolTable();
     
     // insert an new Symbol
-    bool insert(Symbol::Pointer symbol);
+    bool insert(Symbol::Ptr symbol);
     
     // find symbol by a given name
-    Symbol::Pointer find(const std::wstring& name) const;
+    Symbol::Ptr find(const std::wstring& name) const;
     
     // Parent's
-    SymbolTable::WeakPointer parent;
-    std::vector<SymbolTable::Pointer> children;
+    std::vector<SymbolTable::Ptr> children;
     
-    std::unordered_map<std::wstring, Symbol::Pointer> symbols;
+    std::unordered_map<std::wstring, Symbol::Ptr> symbols;
 };
 
 

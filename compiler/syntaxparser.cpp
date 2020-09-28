@@ -8,7 +8,7 @@ SyntaxParser::SyntaxParser(const std::vector<std::shared_ptr<Token>> &tokens) : 
     endIterator = tokens.end();
 }
 
-SourceBlock::Pointer SyntaxParser::parse() {
+SourceBlock::Ptr SyntaxParser::parse() {
     std::vector<std::shared_ptr<Node>> decls;
     while(iterator != endIterator) {
         std::shared_ptr<Node> decl = tryParseStatement();
@@ -27,7 +27,7 @@ SourceBlock::Pointer SyntaxParser::parse() {
 // Declarations
 ////////////////////////////////////////////////////////////////////////////
 
-Node::Pointer SyntaxParser::tryParseDecl() {
+Node::Ptr SyntaxParser::tryParseDecl() {
     auto constantDecl = tryParseConstDecl();
     if(constantDecl != nullptr) {
         return constantDecl;
@@ -56,7 +56,7 @@ Node::Pointer SyntaxParser::tryParseDecl() {
     return nullptr;
 }
 
-Node::Pointer SyntaxParser::tryParseFunctionDecl() {
+Node::Ptr SyntaxParser::tryParseFunctionDecl() {
     if(tryEat(TokenKind::keyword, Keywords::FUNC) == nullptr) {
         return nullptr;
     }
@@ -84,7 +84,7 @@ Node::Pointer SyntaxParser::tryParseFunctionDecl() {
     return std::make_shared<FuncDecl>(identifier, parameterClause, returnType, codeBlock);
 }
 
-Node::Pointer SyntaxParser::tryParseConstructorDecl() {
+Node::Ptr SyntaxParser::tryParseConstructorDecl() {
     if(tryEat(TokenKind::keyword, Keywords::INIT) == nullptr) {
         return nullptr;
     }
@@ -103,12 +103,12 @@ Node::Pointer SyntaxParser::tryParseConstructorDecl() {
     return std::shared_ptr<Node>(new ConstructorDecl(parameterClause, codeBlock));
 }
 
-Node::Pointer SyntaxParser::tryParseParameterClause() {
+Node::Ptr SyntaxParser::tryParseParameterClause() {
     if (tryEat(TokenKind::punctuation, Punctuations::OPEN_ROUND_BRACKET) == nullptr) {
         return nullptr;
     }
     // parse the parameters declaration in function
-    std::vector<Pattern::Pointer> parameters;
+    std::vector<Pattern::Ptr> parameters;
     int i = 0 ;
     while(true) {
         std::shared_ptr<Token> comma = nullptr;
@@ -147,7 +147,7 @@ Node::Pointer SyntaxParser::tryParseParameterClause() {
     return std::shared_ptr<Node>(new ParameterClause(parameters));
 }
 
-Node::Pointer SyntaxParser::tryParseConstDecl() {
+Node::Ptr SyntaxParser::tryParseConstDecl() {
     if (tryEat(TokenKind::keyword, Keywords::LET) == nullptr) {
         return nullptr; // Not a `let` declaration
     }
@@ -157,7 +157,7 @@ Node::Pointer SyntaxParser::tryParseConstDecl() {
         return nullptr; //TODO: report an syntax Error
     }
     
-    Node::Pointer initializer = nullptr;
+    Node::Ptr initializer = nullptr;
     if(tryEat(TokenKind::operators, Operators::EQUALS) != nullptr) {
         initializer = tryParseExpr();
         if(initializer == nullptr) {
@@ -168,17 +168,17 @@ Node::Pointer SyntaxParser::tryParseConstDecl() {
     return std::shared_ptr<Node>(new LetDecl(pattern, initializer));
 }
 
-Node::Pointer SyntaxParser::tryParseVarDecl() {
+Node::Ptr SyntaxParser::tryParseVarDecl() {
     if(tryEat(TokenKind::keyword, Keywords::VAR) == nullptr) {
         return nullptr; // Not a 'var' declaration
     }
 
-    Pattern::Pointer pattern = tryParsePattern();
+    Pattern::Ptr pattern = tryParsePattern();
     if (pattern == nullptr) {
         Diagnostics::reportError(L"[Error]");
        return nullptr; //TODO: report an syntax Error
     }
-    Node::Pointer initializer = nullptr;
+    Node::Ptr initializer = nullptr;
     if(tryEat(TokenKind::operators, Operators::EQUALS) != nullptr) {
         initializer = tryParseExpr();
         if(initializer == nullptr) {
@@ -189,7 +189,7 @@ Node::Pointer SyntaxParser::tryParseVarDecl() {
     return std::shared_ptr<Node>(new VarDecl(pattern, initializer));
 }
 
-Node::Pointer SyntaxParser::tryParseClassDecl() {
+Node::Ptr SyntaxParser::tryParseClassDecl() {
     if (tryEat(TokenKind::keyword, Keywords::CLASS) == nullptr) {
         return nullptr;
     }
@@ -222,7 +222,7 @@ Node::Pointer SyntaxParser::tryParseClassDecl() {
     return std::make_shared<ClassDecl>(className, members);
 }
 
-Node::Pointer SyntaxParser::tryParseCodeBlock() {
+Node::Ptr SyntaxParser::tryParseCodeBlock() {
     // Code block
     if (tryEat(TokenKind::punctuation, Punctuations::OPEN_CURLY_BRACKET) == nullptr) {
         return nullptr; 
@@ -246,7 +246,7 @@ Node::Pointer SyntaxParser::tryParseCodeBlock() {
     return std::shared_ptr<Node>(new CodeBlock(statements));
 }
 
-Node::Pointer SyntaxParser::tryParseStatement() {
+Node::Ptr SyntaxParser::tryParseStatement() {
     auto expr = tryParseExpr();
     if(expr != nullptr) {
         return expr;
@@ -280,7 +280,7 @@ Node::Pointer SyntaxParser::tryParseStatement() {
     return nullptr;
 }
 
-Node::Pointer SyntaxParser::tryParseLoopStatement() {
+Node::Ptr SyntaxParser::tryParseLoopStatement() {
     if(tryEat(TokenKind::keyword, Keywords::FOR) == nullptr) {
         return nullptr;
     }
@@ -306,7 +306,7 @@ Node::Pointer SyntaxParser::tryParseLoopStatement() {
     return std::shared_ptr<Node>(std::make_shared<ForInStatement>(pattern, expr, codeBlock));
 }
 
-Node::Pointer SyntaxParser::tryparseWhileStatement() {
+Node::Ptr SyntaxParser::tryparseWhileStatement() {
     if(tryEat(TokenKind::keyword, Keywords::WHILE) == nullptr) {
         return nullptr;
     }
@@ -326,11 +326,11 @@ Node::Pointer SyntaxParser::tryparseWhileStatement() {
     return std::make_shared<WhileStatement>(expr, block);
 }
 
-Node::Pointer SyntaxParser::tryParseBranchStatement() {
+Node::Ptr SyntaxParser::tryParseBranchStatement() {
     return tryParseIfStatement();
 }
 
-Node::Pointer SyntaxParser::tryParseIfStatement() {
+Node::Ptr SyntaxParser::tryParseIfStatement() {
     if(tryEat(TokenKind::keyword, Keywords::IF) == nullptr) {
         return nullptr;
     }
@@ -362,7 +362,7 @@ Node::Pointer SyntaxParser::tryParseIfStatement() {
     }
 }
 
-Node::Pointer SyntaxParser::tryParseReturnStatement() {
+Node::Ptr SyntaxParser::tryParseReturnStatement() {
     if(tryEat(TokenKind::keyword, Keywords::RETURN) == nullptr) {
         return nullptr;
     }
@@ -371,7 +371,7 @@ Node::Pointer SyntaxParser::tryParseReturnStatement() {
     return std::static_pointer_cast<Node>(std::make_shared<ReturnStatement>(expr));
 }
 
-Pattern::Pointer SyntaxParser::tryParsePattern() {
+Pattern::Ptr SyntaxParser::tryParsePattern() {
     
     auto identifier = tryParseIdentifierExpr();
     if (identifier == nullptr) {
@@ -382,7 +382,7 @@ Pattern::Pointer SyntaxParser::tryParsePattern() {
     return std::make_shared<Pattern>(identifier, type);
 }
 
-Node::Pointer SyntaxParser::tryParseTypeAnnotation() {
+Node::Ptr SyntaxParser::tryParseTypeAnnotation() {
     if(tryEat(TokenKind::punctuation, Punctuations::COLON) == nullptr) {
         return nullptr;
     }
@@ -396,8 +396,8 @@ Node::Pointer SyntaxParser::tryParseTypeAnnotation() {
 }
 
 
-Node::Pointer SyntaxParser::tryParseType() {
-    Node::Pointer type = nullptr;
+Node::Ptr SyntaxParser::tryParseType() {
+    Node::Ptr type = nullptr;
     type = tryParseTypeIdentifier();
     if(type != nullptr) {
         return type;
@@ -411,7 +411,7 @@ Node::Pointer SyntaxParser::tryParseType() {
     return nullptr;
 }
 
-Node::Pointer SyntaxParser::tryParseTypeIdentifier() {
+Node::Ptr SyntaxParser::tryParseTypeIdentifier() {
     auto type = tryParseIdentifierExpr();
     if(type == nullptr) {
         return nullptr;
@@ -419,7 +419,7 @@ Node::Pointer SyntaxParser::tryParseTypeIdentifier() {
     return std::make_shared<Type>(type);
 }
 
-Node::Pointer SyntaxParser::tryParseTypeArray() {
+Node::Ptr SyntaxParser::tryParseTypeArray() {
     if(tryEat(TokenKind::punctuation, Punctuations::OPEN_SQUARE_BRACKET) == nullptr) {
         return nullptr;
     }
@@ -437,13 +437,13 @@ Node::Pointer SyntaxParser::tryParseTypeArray() {
 }
 
 // expression -> prefix-expression binary-expressions /opt/
-Node::Pointer SyntaxParser::tryParseExpr() {
+Node::Ptr SyntaxParser::tryParseExpr() {
     std::shared_ptr<Node> expr = tryParsePrefixExpr();
     if(expr == nullptr) {
         return nullptr;
     }
     
-    std::vector<Node::Pointer> binaries;
+    std::vector<Node::Ptr> binaries;
     
     while(true) {
         std::shared_ptr<Node> binExpr = tryParseBinaryExpr();
@@ -503,8 +503,8 @@ std::shared_ptr<Node> SyntaxParser::tryParsePrefixExpr() {
     }
 }
 
-Node::Pointer SyntaxParser::tryParsePostfixExpr(Node::Pointer postfixExpr) {
-    Node::Pointer result = postfixExpr;
+Node::Ptr SyntaxParser::tryParsePostfixExpr(Node::Ptr postfixExpr) {
+    Node::Ptr result = postfixExpr;
     
     if(postfixExpr == nullptr) {
         auto primaryExpr = tryParsePrimaryExpr();
@@ -540,7 +540,7 @@ Node::Pointer SyntaxParser::tryParsePostfixExpr(Node::Pointer postfixExpr) {
     return result;
 }
 
-Node::Pointer SyntaxParser::tryParsePostfixExprWithPostfixOperator(Node::Pointer postfixExpr) {
+Node::Ptr SyntaxParser::tryParsePostfixExprWithPostfixOperator(Node::Ptr postfixExpr) {
     assert(postfixExpr != nullptr);
     auto postfixOperator = tryParsePostfixOperatorExpr();
     if(postfixOperator == nullptr) {
@@ -550,7 +550,7 @@ Node::Pointer SyntaxParser::tryParsePostfixExprWithPostfixOperator(Node::Pointer
     }
 }
 
-Node::Pointer SyntaxParser::tryParseMemberAccessExpr(Node::Pointer postfixExpr) {
+Node::Ptr SyntaxParser::tryParseMemberAccessExpr(Node::Ptr postfixExpr) {
     assert(postfixExpr != nullptr);
     
     if(tryEat(TokenKind::punctuation, Punctuations::DOT) == nullptr) {
@@ -566,7 +566,7 @@ Node::Pointer SyntaxParser::tryParseMemberAccessExpr(Node::Pointer postfixExpr) 
     return std::make_shared<MemberAccessExpr>(postfixExpr, identifierExpr);
 }
 
-Node::Pointer SyntaxParser::tryParseFuncCallExpr(Node::Pointer postfixExpr) {
+Node::Ptr SyntaxParser::tryParseFuncCallExpr(Node::Ptr postfixExpr) {
     std::vector<std::shared_ptr<Token>>::const_iterator mark = iterator;
     
     auto identifier = postfixExpr;
@@ -576,7 +576,7 @@ Node::Pointer SyntaxParser::tryParseFuncCallExpr(Node::Pointer postfixExpr) {
         return nullptr;
     }
     
-    std::vector<ArguCallExpr::Pointer> arguments;
+    std::vector<ArguCallExpr::Ptr> arguments;
     auto arguCall = tryParseArguCallExpr();
     if(arguCall != nullptr) {
         arguments.push_back(arguCall);
@@ -603,7 +603,7 @@ Node::Pointer SyntaxParser::tryParseFuncCallExpr(Node::Pointer postfixExpr) {
     return std::make_shared<FuncCallExpr>(identifier, arguments);
 }
 
-Node::Pointer SyntaxParser::tryParseSubscriptExpr(Node::Pointer postfixExpr) {
+Node::Ptr SyntaxParser::tryParseSubscriptExpr(Node::Ptr postfixExpr) {
     assert(postfixExpr != nullptr);
 
     
@@ -625,7 +625,7 @@ Node::Pointer SyntaxParser::tryParseSubscriptExpr(Node::Pointer postfixExpr) {
     
 }
 
-ArguCallExpr::Pointer SyntaxParser::tryParseArguCallExpr() {
+ArguCallExpr::Ptr SyntaxParser::tryParseArguCallExpr() {
     auto identifier = tryParseIdentifierExpr();
     if(identifier == nullptr) {
         return nullptr;
@@ -646,7 +646,7 @@ ArguCallExpr::Pointer SyntaxParser::tryParseArguCallExpr() {
 }
 
 
-Node::Pointer SyntaxParser::tryParsePrimaryExpr() {
+Node::Ptr SyntaxParser::tryParsePrimaryExpr() {
     auto identifier = tryParseIdentifierExpr();
     if (identifier != nullptr) {
         return identifier;
@@ -670,7 +670,7 @@ Node::Pointer SyntaxParser::tryParsePrimaryExpr() {
     return nullptr;
 }
 
-Node::Pointer SyntaxParser::tryParseSelfExpr() {
+Node::Ptr SyntaxParser::tryParseSelfExpr() {
     if(tryEat(TokenKind::keyword, Keywords::SELF) == nullptr) {
         return nullptr;
     }
@@ -687,7 +687,7 @@ Node::Pointer SyntaxParser::tryParseSelfExpr() {
     return std::shared_ptr<Node>(new SelfExpr(identifier));
 }
 
-Node::Pointer SyntaxParser::tryParseLiteralExpr() {
+Node::Ptr SyntaxParser::tryParseLiteralExpr() {
     auto literal = tryParseLiteral();
     if (literal != nullptr) {
         return std::make_shared<LiteralExpr>(literal);
@@ -700,13 +700,13 @@ Node::Pointer SyntaxParser::tryParseLiteralExpr() {
     return nullptr;
 }
 
-Node::Pointer SyntaxParser::tryParseArrayOrDictLiteralExpr() {
+Node::Ptr SyntaxParser::tryParseArrayOrDictLiteralExpr() {
     if(tryEat(TokenKind::punctuation, Punctuations::OPEN_SQUARE_BRACKET) == nullptr) {
         return nullptr;
     }
     
-    std::vector<Node::Pointer> arrayItems;
-    std::vector<std::tuple<Node::Pointer, Node::Pointer>> dictItems;
+    std::vector<Node::Ptr> arrayItems;
+    std::vector<std::tuple<Node::Ptr, Node::Ptr>> dictItems;
     
     // parse the empty dictory literal case - [:]
     if (tryEat(TokenKind::punctuation, Punctuations::COLON)) {
@@ -717,7 +717,7 @@ Node::Pointer SyntaxParser::tryParseArrayOrDictLiteralExpr() {
     }
     
     auto keyItem = tryParseExpr();
-    Node::Pointer valueItem = nullptr;
+    Node::Ptr valueItem = nullptr;
     
     bool isDict  = false;
     if(tryEat(TokenKind::punctuation, Punctuations::COLON)) {
@@ -781,7 +781,7 @@ Node::Pointer SyntaxParser::tryParseArrayOrDictLiteralExpr() {
     
 }
 
-Node::Pointer SyntaxParser::tryParseParenthesizedExpr() {
+Node::Ptr SyntaxParser::tryParseParenthesizedExpr() {
     if(tryEat(TokenKind::punctuation, Punctuations::OPEN_ROUND_BRACKET) == nullptr) {
         return nullptr;
     }
@@ -800,7 +800,7 @@ Node::Pointer SyntaxParser::tryParseParenthesizedExpr() {
     return std::make_shared<ParenthesizedExpr>(expr);
 }
 
-OperatorExpr::Pointer SyntaxParser::tryParseOperatorExpr() {
+OperatorExpr::Ptr SyntaxParser::tryParseOperatorExpr() {
     auto token = tryEat(TokenKind::operators);
     if(token == nullptr) {
         return nullptr;
@@ -808,7 +808,7 @@ OperatorExpr::Pointer SyntaxParser::tryParseOperatorExpr() {
     return std::make_shared<OperatorExpr>(token);
 }
 
-OperatorExpr::Pointer SyntaxParser::tryParsePostfixOperatorExpr() {
+OperatorExpr::Ptr SyntaxParser::tryParsePostfixOperatorExpr() {
     auto token = tryEat(TokenKind::operators, Operators::QUESTION);
     if(token != nullptr) {
         return std::make_shared<OperatorExpr>(token);
@@ -822,7 +822,7 @@ OperatorExpr::Pointer SyntaxParser::tryParsePostfixOperatorExpr() {
     return nullptr;
 }
 
-IdentifierExpr::Pointer SyntaxParser::tryParseIdentifierExpr() {
+IdentifierExpr::Ptr SyntaxParser::tryParseIdentifierExpr() {
     auto identifier = tryEat(TokenKind::identifier);
     if(identifier == nullptr) {
         return nullptr;
@@ -867,7 +867,7 @@ std::shared_ptr<Token> SyntaxParser::tryParseLiteral()
     return nullptr;
 }
 
-Token::Pointer SyntaxParser::tryEat(TokenKind kind) {
+Token::Ptr SyntaxParser::tryEat(TokenKind kind) {
     if (iterator != endIterator) {
         auto pToken = curToken();
         if (pToken->kind == kind) {
@@ -879,7 +879,7 @@ Token::Pointer SyntaxParser::tryEat(TokenKind kind) {
     return nullptr;
 }
 
-Token::Pointer SyntaxParser::tryEat(TokenKind kind, const std::wstring &value) {
+Token::Ptr SyntaxParser::tryEat(TokenKind kind, const std::wstring &value) {
     auto pToken = tryEat(kind);
     if(pToken == nullptr) {
         return nullptr;
@@ -897,6 +897,6 @@ void SyntaxParser::previous() {
     iterator --;
 }
 
-Token::Pointer SyntaxParser::curToken() const {
+Token::Ptr SyntaxParser::curToken() const {
     return *iterator;
 }

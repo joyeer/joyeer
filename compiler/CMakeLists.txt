@@ -20,6 +20,10 @@ set(SOURCES ${SOURCES}
     ${CMAKE_CURRENT_SOURCE_DIR}/typecheck.h
     ${CMAKE_CURRENT_SOURCE_DIR}/context.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/context.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/program.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/program.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/compileopts.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/compileopts.cpp
 )
 
 set(SOURCES ${SOURCES} PARENT_SCOPE)

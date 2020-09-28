@@ -9,11 +9,11 @@
 // Binder
 /////////////////////////////////////////////////////////////////
 
-Binder::Binder(CompileContext::Pointer context):
+Binder::Binder(CompileContext::Ptr context):
 context(context) {
 }
 
-Node::Pointer Binder::bind(Node::Pointer node) {
+Node::Ptr Binder::bind(Node::Ptr node) {
     switch (node->kind) {
         case SyntaxKind::sourceBlock:
             return bind(std::static_pointer_cast<SourceBlock>(node));
@@ -81,7 +81,7 @@ Node::Pointer Binder::bind(Node::Pointer node) {
 }
 
 
-SourceBlock::Pointer Binder::bind(SourceBlock::Pointer sourceBlock) {
+SourceBlock::Ptr Binder::bind(SourceBlock::Ptr sourceBlock) {
     
     // Module class self
     auto module = new JrModuleType(L"Module@__FILE__@" + sourceBlock->filename);
@@ -95,7 +95,7 @@ SourceBlock::Pointer Binder::bind(SourceBlock::Pointer sourceBlock) {
     function->paramTypes.push_back(module);
     Global::registerFunction(function, module);
     
-    auto symbol = Symbol::Pointer(new Symbol {
+    auto symbol = Symbol::Ptr(new Symbol {
         .name = module->name,
         .flag = moduleSymbol,
         .addressOfType = module->addressOfType
@@ -107,7 +107,7 @@ SourceBlock::Pointer Binder::bind(SourceBlock::Pointer sourceBlock) {
     
     context->entry(module);
     context->visit(visitSourceBlock, [sourceBlock, this]() {
-        auto nodes = std::vector<Node::Pointer>();
+        auto nodes = std::vector<Node::Ptr>();
         for(auto& statement : sourceBlock->statements) {
             nodes.push_back(bind(statement));
         }
@@ -119,7 +119,7 @@ SourceBlock::Pointer Binder::bind(SourceBlock::Pointer sourceBlock) {
     return sourceBlock;
 }
 
-Node::Pointer Binder::bind(FuncDecl::Pointer decl) {
+Node::Ptr Binder::bind(FuncDecl::Ptr decl) {
     auto type = context->curType();
     auto symtable = context->curSymTable();
     auto function = new JrFunction {
@@ -179,7 +179,7 @@ Node::Pointer Binder::bind(FuncDecl::Pointer decl) {
     return decl;
 }
 
-Node::Pointer Binder::bind(ConstructorDecl::Pointer decl) {
+Node::Ptr Binder::bind(ConstructorDecl::Ptr decl) {
     auto symtable = context->curSymTable();
     auto function = new JrFunction();
     auto type = context->curType();
@@ -221,7 +221,7 @@ Node::Pointer Binder::bind(ConstructorDecl::Pointer decl) {
 
 }
 
-Node::Pointer Binder::bind(ClassDecl::Pointer decl) {
+Node::Ptr Binder::bind(ClassDecl::Ptr decl) {
     
     auto symtable = context->curSymTable();
     auto name = decl->getName();
@@ -230,7 +230,7 @@ Node::Pointer Binder::bind(ClassDecl::Pointer decl) {
         Diagnostics::reportError(L"[Error] duplicate class name");
     }
     
-    auto symbol = Symbol::Pointer(new Symbol {
+    auto symbol = Symbol::Ptr(new Symbol {
         .flag = typeSymbol,
         .name = name
     });
@@ -247,7 +247,7 @@ Node::Pointer Binder::bind(ClassDecl::Pointer decl) {
     context->entry(objectType);
     bool hasCustomizedConstructor = false;
     context->visit(visitClassDecl, [this, decl, symtable, &hasCustomizedConstructor]() {
-        std::vector<Node::Pointer> result;
+        std::vector<Node::Ptr> result;
         for(auto member: decl->members) {
             result.push_back(bind(member));
             if(member->kind == constructorDecl) {
@@ -273,7 +273,7 @@ Node::Pointer Binder::bind(ClassDecl::Pointer decl) {
         });
         Global::registerFunction(defaultConstructor, objectType);
         
-        auto symbol = Symbol::Pointer(new Symbol{
+        auto symbol = Symbol::Ptr(new Symbol{
             .name = defaultConstructor->name,
             .flag = constructorSymbol,
             .addressOfFunc = defaultConstructor->addressOfFunc
@@ -290,7 +290,7 @@ Node::Pointer Binder::bind(ClassDecl::Pointer decl) {
     return decl;
 }
 
-Node::Pointer Binder::bind(VarDecl::Pointer decl) {
+Node::Ptr Binder::bind(VarDecl::Ptr decl) {
     
     auto pattern = decl->pattern;
     auto symtable = context->curSymTable();
@@ -320,7 +320,7 @@ Node::Pointer Binder::bind(VarDecl::Pointer decl) {
     if(stage == visitClassDecl || stage == visitSourceBlock) {
         // If var decl is a field, let's register it in type's field list
         auto ownerType = (JrObjectType*)context->curType();
-        auto field = JrFieldType::Pointer(new JrFieldType {
+        auto field = JrFieldType::Ptr(new JrFieldType {
             .name = name
         });
         ownerType->registerField(field);
@@ -330,7 +330,7 @@ Node::Pointer Binder::bind(VarDecl::Pointer decl) {
     return decl;
 }
 
-Node::Pointer Binder::bind(LetDecl::Pointer decl) {
+Node::Ptr Binder::bind(LetDecl::Ptr decl) {
     assert(false);
     auto pattern = decl->pattern;
     auto name = pattern->getIdentifierName();
@@ -357,7 +357,7 @@ Node::Pointer Binder::bind(LetDecl::Pointer decl) {
     return decl;
 }
 
-Node::Pointer Binder::bind(FuncCallExpr::Pointer decl) {
+Node::Ptr Binder::bind(FuncCallExpr::Ptr decl) {
     
     if(decl->identifier->kind == memberAccessExpr) {
         // Transfer to MemberF
@@ -367,7 +367,7 @@ Node::Pointer Binder::bind(FuncCallExpr::Pointer decl) {
     }
     
     // go down to bind argument
-    std::vector<ArguCallExpr::Pointer> argus;
+    std::vector<ArguCallExpr::Ptr> argus;
     for(auto& paramter: decl->arguments) {
         argus.push_back(std::static_pointer_cast<ArguCallExpr>(bind(paramter)));
     }
@@ -376,10 +376,10 @@ Node::Pointer Binder::bind(FuncCallExpr::Pointer decl) {
     return decl;
 }
 
-Node::Pointer Binder::bind(MemberFuncCallExpr::Pointer decl) {
+Node::Ptr Binder::bind(MemberFuncCallExpr::Ptr decl) {
     decl->parent = bind(decl->parent);
     
-    std::vector<ArguCallExpr::Pointer> argus;
+    std::vector<ArguCallExpr::Ptr> argus;
     for(auto &parameter: decl->arguments) {
         argus.push_back(std::static_pointer_cast<ArguCallExpr>(bind(parameter)));
     }
@@ -387,22 +387,22 @@ Node::Pointer Binder::bind(MemberFuncCallExpr::Pointer decl) {
     return decl;
 }
 
-Node::Pointer Binder::bind(ArguCallExpr::Pointer decl) {
+Node::Ptr Binder::bind(ArguCallExpr::Ptr decl) {
     decl->expr = bind(decl->expr);
     
     return decl;
 }
 
-Node::Pointer Binder::bind(LiteralExpr::Pointer decl) {
+Node::Ptr Binder::bind(LiteralExpr::Ptr decl) {
     return decl;
 }
 
-Node::Pointer Binder::bind(PrefixExpr::Pointer decl) {
+Node::Ptr Binder::bind(PrefixExpr::Ptr decl) {
     decl->expr = bind(decl->expr);
     return decl;
 }
 
-Node::Pointer Binder::bind(IdentifierExpr::Pointer decl) {
+Node::Ptr Binder::bind(IdentifierExpr::Ptr decl) {
     auto name = decl->getName();
     auto table = context->curSymTable();
     switch (context->curStage()) {
@@ -426,7 +426,7 @@ Node::Pointer Binder::bind(IdentifierExpr::Pointer decl) {
     }
 }
 
-Node::Pointer Binder::bind(Expr::Pointer decl) {
+Node::Ptr Binder::bind(Expr::Ptr decl) {
     
     // If binary is assignment
     if(decl->binaries.size() == 1 && decl->binaries[0]->kind == assignmentExpr) {
@@ -468,7 +468,7 @@ Node::Pointer Binder::bind(Expr::Pointer decl) {
         decl->prefix = bind(decl->prefix);
     }
     
-    std::vector<Node::Pointer> binaries;
+    std::vector<Node::Ptr> binaries;
     for(auto n: decl->binaries) {
         binaries.push_back(bind(n));
     }
@@ -476,7 +476,7 @@ Node::Pointer Binder::bind(Expr::Pointer decl) {
     
     
     // Flat the expr subnodes
-    std::vector<Node::Pointer> nodes;
+    std::vector<Node::Ptr> nodes;
     nodes.push_back(decl->prefix);
     
     for(auto node: decl->binaries) {
@@ -490,8 +490,8 @@ Node::Pointer Binder::bind(Expr::Pointer decl) {
         nodes.push_back(bn->expr);
     }
     
-    std::deque<Node::Pointer> temps;
-    std::deque<OperatorExpr::Pointer> operators;
+    std::deque<Node::Ptr> temps;
+    std::deque<OperatorExpr::Ptr> operators;
     
     
     for(auto iterator = nodes.begin(); iterator != nodes.end(); iterator ++ ) {
@@ -520,12 +520,12 @@ Node::Pointer Binder::bind(Expr::Pointer decl) {
         }
         auto r = *iterator;
         
-        auto expr = std::make_shared<Expr>(std::vector<Node::Pointer> {l, r, opNode});
+        auto expr = std::make_shared<Expr>(std::vector<Node::Ptr> {l, r, opNode});
         temps.push_back(expr);
     }
     
     // assembly all
-    std::vector<Node::Pointer> result;
+    std::vector<Node::Ptr> result;
     while(temps.size() > 0 || operators.size() > 0 ) {
         if(temps.size() > operators.size() ) {
             auto t = temps.front();
@@ -551,21 +551,21 @@ Node::Pointer Binder::bind(Expr::Pointer decl) {
     return decl;
 }
 
-Node::Pointer Binder::bind(AssignmentExpr::Pointer decl) {
+Node::Ptr Binder::bind(AssignmentExpr::Ptr decl) {
     decl->expr = bind(decl->expr);
     return decl;
 }
 
-Node::Pointer Binder::bind(BinaryExpr::Pointer decl) {
+Node::Ptr Binder::bind(BinaryExpr::Ptr decl) {
     decl->expr = bind(decl->expr);
     return decl;
 }
 
-Node::Pointer Binder::bind(OperatorExpr::Pointer decl) {
+Node::Ptr Binder::bind(OperatorExpr::Ptr decl) {
     return decl;
 }
 
-Node::Pointer Binder::bind(ParenthesizedExpr::Pointer decl) {
+Node::Ptr Binder::bind(ParenthesizedExpr::Ptr decl) {
     if(decl->expr->kind == parenthesizedExpr) {
         auto n = std::static_pointer_cast<ParenthesizedExpr>(decl->expr);
         return bind(n);
@@ -575,7 +575,7 @@ Node::Pointer Binder::bind(ParenthesizedExpr::Pointer decl) {
     return decl;
 }
 
-Node::Pointer Binder::bind(IfStatement::Pointer decl) {
+Node::Ptr Binder::bind(IfStatement::Ptr decl) {
     decl->condition = bind(decl->condition);
     decl->ifCodeBlock = bind(decl->ifCodeBlock);
     if(decl->elseCodeBlock != nullptr) {
@@ -584,13 +584,13 @@ Node::Pointer Binder::bind(IfStatement::Pointer decl) {
     return decl;
 }
 
-Node::Pointer Binder::bind(WhileStatement::Pointer decl) {
+Node::Ptr Binder::bind(WhileStatement::Ptr decl) {
     decl->expr = bind(decl->expr);
     decl->codeBlock = bind(decl->codeBlock);
     return decl;
 }
 
-Node::Pointer Binder::bind(CodeBlock::Pointer decl) {
+Node::Ptr Binder::bind(CodeBlock::Ptr decl) {
     
     context->initializeSymTable();
     auto table = context->curSymTable();
@@ -598,7 +598,7 @@ Node::Pointer Binder::bind(CodeBlock::Pointer decl) {
     
     // start to process code block
     context->visit(visitCodeBlock, [decl, this]() {
-        std::vector<Node::Pointer> statements;
+        std::vector<Node::Ptr> statements;
         for(auto s: decl->statements) {
             statements.push_back(bind(s));
         }
@@ -611,8 +611,8 @@ Node::Pointer Binder::bind(CodeBlock::Pointer decl) {
 }
 
 
-Node::Pointer Binder::bind(ParameterClause::Pointer decl) {
-    std::vector<Pattern::Pointer> parameters;
+Node::Ptr Binder::bind(ParameterClause::Ptr decl) {
+    std::vector<Pattern::Ptr> parameters;
     for(auto parameter: decl->parameters) {
         parameters.push_back(std::static_pointer_cast<Pattern>(bind(parameter)));
     }
@@ -621,32 +621,32 @@ Node::Pointer Binder::bind(ParameterClause::Pointer decl) {
     return decl;
 }
 
-Node::Pointer Binder::bind(Pattern::Pointer decl) {
+Node::Ptr Binder::bind(Pattern::Ptr decl) {
     decl->identifier = std::static_pointer_cast<IdentifierExpr>(bind(decl->identifier));
     decl->type = std::static_pointer_cast<Type>(bind(decl->type));
     return decl;
 }
 
-Node::Pointer Binder::bind(Type::Pointer decl) {
+Node::Ptr Binder::bind(Type::Ptr decl) {
     return decl;
 }
 
-Node::Pointer Binder::bind(ReturnStatement::Pointer decl) {
+Node::Ptr Binder::bind(ReturnStatement::Ptr decl) {
     if(decl->expr != nullptr) {
         decl->expr = bind(decl->expr);
     }
     return decl;
 }
 
-Node::Pointer Binder::bind(SelfExpr::Pointer decl) {
+Node::Ptr Binder::bind(SelfExpr::Ptr decl) {
     assert(decl->identifier != nullptr);
     
     decl->identifier = std::static_pointer_cast<IdentifierExpr>(bind(decl->identifier));
     return decl;
 }
 
-Node::Pointer Binder::bind(ArrayLiteralExpr::Pointer decl) {
-    std::vector<Node::Pointer> result;
+Node::Ptr Binder::bind(ArrayLiteralExpr::Ptr decl) {
+    std::vector<Node::Ptr> result;
     for(auto item: decl->items) {
         result.push_back(bind(item));
     }
@@ -654,8 +654,8 @@ Node::Pointer Binder::bind(ArrayLiteralExpr::Pointer decl) {
     return decl;
 }
 
-Node::Pointer Binder::bind(DictLiteralExpr::Pointer decl) {
-    std::vector<std::tuple<Node::Pointer, Node::Pointer>> result;
+Node::Ptr Binder::bind(DictLiteralExpr::Ptr decl) {
+    std::vector<std::tuple<Node::Ptr, Node::Ptr>> result;
     for(auto item: decl->items) {
         auto keyItem = bind(std::get<0>(item));
         auto valueItem = bind(std::get<1>(item));
@@ -666,20 +666,20 @@ Node::Pointer Binder::bind(DictLiteralExpr::Pointer decl) {
     return decl;
 }
 
-Node::Pointer Binder::bind(MemberAccessExpr::Pointer decl) {
+Node::Ptr Binder::bind(MemberAccessExpr::Ptr decl) {
     decl->parent = bind(decl->parent);
     decl->member = bind(decl->member);
     return decl;
 }
 
-Node::Pointer Binder::bind(SubscriptExpr::Pointer decl) {
+Node::Ptr Binder::bind(SubscriptExpr::Ptr decl) {
     decl->identifier = bind(decl->identifier);
     decl->indexExpr = bind(decl->indexExpr);
     
     return decl;
 }
 
-Node::Pointer Binder::bind(ArrayType::Pointer decl) {
+Node::Ptr Binder::bind(ArrayType::Ptr decl) {
     decl->type = bind(decl->type);
     return decl;
 }

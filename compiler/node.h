@@ -51,12 +51,12 @@ enum SyntaxKind {
 };
 
 struct Node {
-    typedef std::shared_ptr<Node> Pointer;
+    typedef std::shared_ptr<Node> Ptr;
     
     SyntaxKind kind;
 
-    Symbol::Pointer symbol = nullptr;
-    SymbolTable::Pointer symtable = nullptr;
+    Symbol::Ptr symbol = nullptr;
+    SymbolTable::Ptr symtable = nullptr;
     JrType* type = nullptr;
     
     virtual std::wstring getName();
@@ -69,11 +69,11 @@ protected:
 };
 
 struct IdentifierExpr: public Node {
-    typedef std::shared_ptr<IdentifierExpr> Pointer;
+    typedef std::shared_ptr<IdentifierExpr> Ptr;
     
-    Token::Pointer token;
+    Token::Ptr token;
     
-    IdentifierExpr(Token::Pointer token);
+    IdentifierExpr(Token::Ptr token);
     
     // Return identifier's name
     virtual std::wstring getName();
@@ -81,315 +81,315 @@ struct IdentifierExpr: public Node {
 };
 
 struct OperatorExpr: Node {
-    typedef std::shared_ptr<OperatorExpr> Pointer;
+    typedef std::shared_ptr<OperatorExpr> Ptr;
     
-    Token::Pointer token;
+    Token::Ptr token;
     OperatorPriority priority;
     JrType* leftType;
     JrType* rightType;
-    OperatorExpr(Token::Pointer token);
+    OperatorExpr(Token::Ptr token);
 };
 
 struct Type: Node {
-    typedef std::shared_ptr<Type> Pointer;
+    typedef std::shared_ptr<Type> Ptr;
     
-    Node::Pointer identifier; // identifierExpr
+    Node::Ptr identifier; // identifierExpr
     
-    Type(Node::Pointer identifier);
+    Type(Node::Ptr identifier);
 };
 
 struct ArrayType: Node {
-    typedef std::shared_ptr<ArrayType> Pointer;
+    typedef std::shared_ptr<ArrayType> Ptr;
     
-    Node::Pointer type;
+    Node::Ptr type;
     
-    ArrayType(Node::Pointer type);
+    ArrayType(Node::Ptr type);
     
     virtual std::wstring getTypeName();
 };
 
 struct DictType: Node {
-    typedef std::shared_ptr<DictType> Pointer;
+    typedef std::shared_ptr<DictType> Ptr;
     
-    Node::Pointer keyType;
-    Node::Pointer valueType;
+    Node::Ptr keyType;
+    Node::Ptr valueType;
     
-    DictType(Node::Pointer keyType, Node::Pointer valueType);
+    DictType(Node::Ptr keyType, Node::Ptr valueType);
     
     virtual std::wstring getTypeName();
 };
 
 struct Pattern: public Node {
-    typedef std::shared_ptr<Pattern> Pointer;
+    typedef std::shared_ptr<Pattern> Ptr;
     
-    IdentifierExpr::Pointer identifier; // the name of pattern
-    Node::Pointer type; // the type of pattern, optinal nullptr
+    IdentifierExpr::Ptr identifier; // the name of pattern
+    Node::Ptr type; // the type of pattern, optinal nullptr
     
-    Pattern(IdentifierExpr::Pointer identifier, Node::Pointer type);
+    Pattern(IdentifierExpr::Ptr identifier, Node::Ptr type);
     
     const std::wstring& getIdentifierName();
 
 };
 
 struct LetDecl: Node {
-    typedef std::shared_ptr<LetDecl> Pointer;
+    typedef std::shared_ptr<LetDecl> Ptr;
     
-    Pattern::Pointer pattern;
-    Node::Pointer initializer;
+    Pattern::Ptr pattern;
+    Node::Ptr initializer;
     
-    LetDecl(Pattern::Pointer pattern, std::shared_ptr<Node> initializer);
+    LetDecl(Pattern::Ptr pattern, std::shared_ptr<Node> initializer);
 };
 
 struct VarDecl: public Node {
-    typedef std::shared_ptr<VarDecl> Pointer;
+    typedef std::shared_ptr<VarDecl> Ptr;
     
-    Pattern::Pointer pattern;
-    Node::Pointer initializer;
+    Pattern::Ptr pattern;
+    Node::Ptr initializer;
     
-    VarDecl(Pattern::Pointer pattern, std::shared_ptr<Node> initializer);
+    VarDecl(Pattern::Ptr pattern, std::shared_ptr<Node> initializer);
 };
 
 struct ClassDecl: Node {
-    typedef std::shared_ptr<ClassDecl> Pointer;
+    typedef std::shared_ptr<ClassDecl> Ptr;
     
-    Token::Pointer name;
-    std::vector<Node::Pointer> members;
+    Token::Ptr name;
+    std::vector<Node::Ptr> members;
     
-    ClassDecl(Token::Pointer name, std::vector<Node::Pointer> members);
+    ClassDecl(Token::Ptr name, std::vector<Node::Ptr> members);
     
     std::wstring getName();
 };
 
 struct ParameterClause: Node {
-    typedef std::shared_ptr<ParameterClause> Pointer;
+    typedef std::shared_ptr<ParameterClause> Ptr;
     
-    std::vector<Pattern::Pointer> parameters;
+    std::vector<Pattern::Ptr> parameters;
     
-    ParameterClause(std::vector<Pattern::Pointer> parameters);
+    ParameterClause(std::vector<Pattern::Ptr> parameters);
 };
 
 struct FuncDecl: Node {
-    typedef std::shared_ptr<FuncDecl> Pointer;
+    typedef std::shared_ptr<FuncDecl> Ptr;
     
-    Node::Pointer identifier;               //IdentifierExpr
-    Node::Pointer parameterClause;
-    Node::Pointer codeBlock;
-    Node::Pointer returnType;
+    Node::Ptr identifier;               //IdentifierExpr
+    Node::Ptr parameterClause;
+    Node::Ptr codeBlock;
+    Node::Ptr returnType;
 
-    FuncDecl(Node::Pointer identifier, Node::Pointer parameterClause, Node::Pointer returnType, Node::Pointer codeBlock);
+    FuncDecl(Node::Ptr identifier, Node::Ptr parameterClause, Node::Ptr returnType, Node::Ptr codeBlock);
     
     virtual std::wstring getTypeName();
 };
 
 struct ConstructorDecl: Node {
-    typedef std::shared_ptr<ConstructorDecl> Pointer;
+    typedef std::shared_ptr<ConstructorDecl> Ptr;
     
-    Node::Pointer parameterClause;
-    Node::Pointer codeBlock;
+    Node::Ptr parameterClause;
+    Node::Ptr codeBlock;
     
-    ConstructorDecl(Node::Pointer parameterClause, Node::Pointer codeBlock);
+    ConstructorDecl(Node::Ptr parameterClause, Node::Ptr codeBlock);
     
     // return constructor's symbol name e.g. init(...)
     const std::wstring getName(JrType* ownerType);
 };
 
 struct Expr : Node {
-    typedef std::shared_ptr<Expr> Pointer;
+    typedef std::shared_ptr<Expr> Ptr;
     
-    Node::Pointer prefix;
-    std::vector<Node::Pointer> binaries;
+    Node::Ptr prefix;
+    std::vector<Node::Ptr> binaries;
     
     // After binder, the 'binaries' and prefix will be merged into nodes 
-    std::vector<Node::Pointer> nodes;
+    std::vector<Node::Ptr> nodes;
     
-    Expr(Node::Pointer prefix, std::vector<Node::Pointer> binary);
-    Expr(std::vector<Node::Pointer> nodes);
+    Expr(Node::Ptr prefix, std::vector<Node::Ptr> binary);
+    Expr(std::vector<Node::Ptr> nodes);
 };
 
 struct PostfixExpr: Node {
-    typedef std::shared_ptr<PostfixExpr> Pointer;
+    typedef std::shared_ptr<PostfixExpr> Ptr;
     
-    Node::Pointer  expr;
-    OperatorExpr::Pointer op;
+    Node::Ptr  expr;
+    OperatorExpr::Ptr op;
 
-    PostfixExpr(Node::Pointer expr, OperatorExpr::Pointer op);
+    PostfixExpr(Node::Ptr expr, OperatorExpr::Ptr op);
 };
 
 struct PrefixExpr: Node {
-    typedef std::shared_ptr<PrefixExpr> Pointer;
+    typedef std::shared_ptr<PrefixExpr> Ptr;
     
-    OperatorExpr::Pointer op;
-    Node::Pointer expr; // postfix-expression
+    OperatorExpr::Ptr op;
+    Node::Ptr expr; // postfix-expression
     
-    PrefixExpr(OperatorExpr::Pointer op, Node::Pointer expr);
+    PrefixExpr(OperatorExpr::Ptr op, Node::Ptr expr);
 };
 
 struct BinaryExpr: Node {
-    typedef std::shared_ptr<BinaryExpr> Pointer;
+    typedef std::shared_ptr<BinaryExpr> Ptr;
     
-    OperatorExpr::Pointer op;
+    OperatorExpr::Ptr op;
     std::shared_ptr<Node> expr;
     
-    BinaryExpr(OperatorExpr::Pointer op, std::shared_ptr<Node> expr);
+    BinaryExpr(OperatorExpr::Ptr op, Node::Ptr expr);
 };
 
 struct AssignmentExpr: Node {
-    typedef std::shared_ptr<AssignmentExpr> Pointer;
+    typedef std::shared_ptr<AssignmentExpr> Ptr;
     
-    Node::Pointer expr;
+    Node::Ptr expr;
     
     // After binded, the identifier will be binded 
-    Node::Pointer left;
-    AssignmentExpr(std::shared_ptr<Node> expr);
+    Node::Ptr left;
+    AssignmentExpr(Node::Ptr expr);
 };
 
 struct ArguCallExpr: Node {
-    typedef std::shared_ptr<ArguCallExpr> Pointer;
+    typedef std::shared_ptr<ArguCallExpr> Ptr;
     
-    IdentifierExpr::Pointer label;
-    Node::Pointer expr;
+    IdentifierExpr::Ptr label;
+    Node::Ptr expr;
     
-    ArguCallExpr(IdentifierExpr::Pointer label, Node::Pointer expr);
+    ArguCallExpr(IdentifierExpr::Ptr label, Node::Ptr expr);
 };
 
 struct FuncCallExpr: Node {
-    typedef std::shared_ptr<FuncCallExpr> Pointer;
+    typedef std::shared_ptr<FuncCallExpr> Ptr;
     
-    Node::Pointer identifier;
-    std::vector<ArguCallExpr::Pointer> arguments;
+    Node::Ptr identifier;
+    std::vector<ArguCallExpr::Ptr> arguments;
     
-    FuncCallExpr(Node::Pointer expr, std::vector<ArguCallExpr::Pointer> arguments);
+    FuncCallExpr(Node::Ptr expr, std::vector<ArguCallExpr::Ptr> arguments);
     
     virtual std::wstring getTypeName();
 };
 
 struct MemberFuncCallExpr: Node {
-    typedef std::shared_ptr<MemberFuncCallExpr> Pointer;
+    typedef std::shared_ptr<MemberFuncCallExpr> Ptr;
     
-    Node::Pointer parent;
-    Node::Pointer member;
+    Node::Ptr parent;
+    Node::Ptr member;
     
-    std::vector<ArguCallExpr::Pointer> arguments;
+    std::vector<ArguCallExpr::Ptr> arguments;
     
-    MemberFuncCallExpr(Node::Pointer parent, Node::Pointer member, std::vector<ArguCallExpr::Pointer> arguments);
+    MemberFuncCallExpr(Node::Ptr parent, Node::Ptr member, std::vector<ArguCallExpr::Ptr> arguments);
     
     virtual std::wstring getTypeName();
 };
 
 struct MemberAccessExpr: Node {
-    typedef std::shared_ptr<MemberAccessExpr> Pointer;
+    typedef std::shared_ptr<MemberAccessExpr> Ptr;
     
-    Node::Pointer parent;
-    Node::Pointer member;
+    Node::Ptr parent;
+    Node::Ptr member;
     
-    MemberAccessExpr(Node::Pointer parent, Node::Pointer member);
+    MemberAccessExpr(Node::Ptr parent, Node::Ptr member);
     
     virtual std::wstring getTypeName();
 };
 
 struct LiteralExpr : Node {
-    typedef std::shared_ptr<LiteralExpr> Pointer;
+    typedef std::shared_ptr<LiteralExpr> Ptr;
     
-    Token::Pointer literal;
-    LiteralExpr(Token::Pointer literal);
+    Token::Ptr literal;
+    LiteralExpr(Token::Ptr literal);
 };
 
 struct ArrayLiteralExpr: Node {
-    typedef std::shared_ptr<ArrayLiteralExpr> Pointer;
+    typedef std::shared_ptr<ArrayLiteralExpr> Ptr;
     
-    std::vector<Node::Pointer> items;
+    std::vector<Node::Ptr> items;
     
-    ArrayLiteralExpr(std::vector<Node::Pointer> items);
+    ArrayLiteralExpr(std::vector<Node::Ptr> items);
 };
 
 struct DictLiteralExpr: Node {
-    typedef std::shared_ptr<DictLiteralExpr> Pointer;
+    typedef std::shared_ptr<DictLiteralExpr> Ptr;
     
-    std::vector<std::tuple<Node::Pointer, Node::Pointer>> items;
+    std::vector<std::tuple<Node::Ptr, Node::Ptr>> items;
     
-    DictLiteralExpr(std::vector<std::tuple<Node::Pointer, Node::Pointer>> items);
+    DictLiteralExpr(std::vector<std::tuple<Node::Ptr, Node::Ptr>> items);
 };
 
 struct ParenthesizedExpr: Node {
-    typedef std::shared_ptr<ParenthesizedExpr> Pointer;
+    typedef std::shared_ptr<ParenthesizedExpr> Ptr;
     
     std::shared_ptr<Node> expr;
     ParenthesizedExpr(std::shared_ptr<Node> expr);
 };
 
 struct SelfExpr: Node {
-    typedef std::shared_ptr<SelfExpr> Pointer;
+    typedef std::shared_ptr<SelfExpr> Ptr;
     
-    IdentifierExpr::Pointer identifier;
+    IdentifierExpr::Ptr identifier;
     
-    SelfExpr(IdentifierExpr::Pointer identifier);
+    SelfExpr(IdentifierExpr::Ptr identifier);
 };
 
 struct SubscriptExpr: Node {
-    typedef std::shared_ptr<SubscriptExpr> Pointer;
+    typedef std::shared_ptr<SubscriptExpr> Ptr;
     
-    Node::Pointer identifier;
-    Node::Pointer indexExpr;
+    Node::Ptr identifier;
+    Node::Ptr indexExpr;
     
-    SubscriptExpr(Node::Pointer identifier, Node::Pointer indexExpr);
+    SubscriptExpr(Node::Ptr identifier, Node::Ptr indexExpr);
 };
 
 struct SourceBlock: Node {
-    typedef std::shared_ptr<SourceBlock> Pointer;
+    typedef std::shared_ptr<SourceBlock> Ptr;
     
-    std::vector<Node::Pointer> statements;
+    std::vector<Node::Ptr> statements;
     
     std::wstring filename;
 
-    SourceBlock(std::vector<Node::Pointer> statements);
+    SourceBlock(std::vector<Node::Ptr> statements);
     
     virtual std::wstring getName();
 };
 
 struct CodeBlock: Node {
-    typedef std::shared_ptr<CodeBlock> Pointer;
+    typedef std::shared_ptr<CodeBlock> Ptr;
     
-    std::vector<Node::Pointer> statements;
+    std::vector<Node::Ptr> statements;
 
-    CodeBlock(std::vector<Node::Pointer> statements);
+    CodeBlock(std::vector<Node::Ptr> statements);
 
 };
 
 struct ForInStatement: Node {
-    typedef std::shared_ptr<ForInStatement> Pointer;
+    typedef std::shared_ptr<ForInStatement> Ptr;
     
-    Node::Pointer pattern;
-    Node::Pointer inExpr;
-    Node::Pointer codeBlock;
+    Node::Ptr pattern;
+    Node::Ptr inExpr;
+    Node::Ptr codeBlock;
 
-    ForInStatement(Node::Pointer pattern, Node::Pointer inExpr, Node::Pointer codeBlock);
+    ForInStatement(Node::Ptr pattern, Node::Ptr inExpr, Node::Ptr codeBlock);
 };
 
 struct WhileStatement: Node {
-    typedef std::shared_ptr<WhileStatement> Pointer;
+    typedef std::shared_ptr<WhileStatement> Ptr;
     
-    Node::Pointer expr;
-    Node::Pointer codeBlock;
+    Node::Ptr expr;
+    Node::Ptr codeBlock;
     
-    WhileStatement(Node::Pointer expr, Node::Pointer codeBlock);
+    WhileStatement(Node::Ptr expr, Node::Ptr codeBlock);
 };
 
 struct IfStatement: Node {
-    typedef std::shared_ptr<IfStatement> Pointer;
+    typedef std::shared_ptr<IfStatement> Ptr;
     
-    Node::Pointer condition;
-    Node::Pointer ifCodeBlock;
-    Node::Pointer elseCodeBlock;
+    Node::Ptr condition;
+    Node::Ptr ifCodeBlock;
+    Node::Ptr elseCodeBlock;
 
-    IfStatement(Node::Pointer condition, Node::Pointer ifCodeBlock, Node::Pointer elseCodeBlock);
+    IfStatement(Node::Ptr condition, Node::Ptr ifCodeBlock, Node::Ptr elseCodeBlock);
 };
 
 struct ReturnStatement: Node {
-    typedef std::shared_ptr<ReturnStatement> Pointer;
+    typedef std::shared_ptr<ReturnStatement> Ptr;
     
-    Node::Pointer expr;
+    Node::Ptr expr;
     
-    ReturnStatement(Node::Pointer expr);
+    ReturnStatement(Node::Ptr expr);
 };
 
 
@@ -397,13 +397,13 @@ struct ReturnStatement: Node {
 struct NodeDebugPrinter {
     NodeDebugPrinter(const std::wstring filename);
     
-    void print(Node::Pointer node);
+    void print(Node::Ptr node);
     void close();
     
 protected:
-    void print(std::vector<Node::Pointer> nodes);
-    void print(SymbolTable::Pointer symtable);
-    void print(Symbol::Pointer symbol);
+    void print(std::vector<Node::Ptr> nodes);
+    void print(SymbolTable::Ptr symtable);
+    void print(Symbol::Ptr symbol);
     void printTab();
     void incTab();
     void decTab();

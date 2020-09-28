@@ -85,7 +85,7 @@ void TypeTablePrinter::print() {
     }
 }
 
-void TypeTablePrinter::print(JrFieldType::Pointer field) {
+void TypeTablePrinter::print(JrFieldType::Ptr field) {
     output << L"    @field: #" << field->addressOfField << L" " << field->name << L", " << field->type->name <<std::endl;
 }
 
