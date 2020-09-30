@@ -22,8 +22,3 @@ source_group("runtime\\sys" REGULAR_EXPRESSION "runtime/sys/.*\\.(cpp|h)")
 target_compile_features(joyeer PRIVATE cxx_std_20)
 set_property(TARGET joyeer PROPERTY CXX_STANDARD 20)
 
-set_target_properties(joyeer PROPERTIES
-  XCODE_GENERATE_SCHEME TRUE
-  XCODE_SCHEME_WORKING_DIRECTORY "${SRCROOT}"
-)
-

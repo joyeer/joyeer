@@ -104,13 +104,13 @@ void TypeChecker::verify(Node::Ptr node) {
 void TypeChecker::verify(SourceBlock::Ptr node) {
     
     assert(node->symbol->flag == moduleSymbol);
-    auto module = (JrModuleType*)(Global::types[node->symbol->addressOfType]);
+    auto moduleType = (JrModuleType*)(Global::types[node->symbol->addressOfType]);
     // 
-    assert(module->constructors.size() == 1);
-    auto constructor = Global::functions[module->constructors.back()];
+    assert(moduleType->constructors.size() == 1);
+    auto constructor = Global::functions[moduleType->constructors.back()];
     assert(constructor != nullptr);
     context->entry(node->symtable);
-    context->entry(module);
+    context->entry(moduleType);
     context->entry(constructor);
     context->visit(visitSourceBlock, [this, node](){
         for(auto statement: node->statements) {
@@ -121,13 +121,13 @@ void TypeChecker::verify(SourceBlock::Ptr node) {
     // For Module's default consturctor
     constructor->localVars.push_back(JrVar {
         .name = L"self",
-        .type = module,
+        .type = moduleType,
         .addressOfVariable = static_cast<int>(constructor->localVars.size())
     });
 
     verifyReturnStatement(node);
     context->leave(constructor);
-    context->leave(module);
+    context->leave(moduleType);
     context->leave(node->symtable);
 }
 

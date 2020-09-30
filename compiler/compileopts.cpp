@@ -1,6 +1,7 @@
 #include "compileopts.h"
 #include <codecvt>
 #include <iostream>
+#include "compiler/diagnostic.h"
 
 CompileOpts::CompileOpts(int argc, char** argv) {
     std::vector<std::string> arguments;
@@ -22,6 +23,17 @@ void CompileOpts::parse(std::vector<std::string>& arguments) {
         } else {
             inputfile = std::filesystem::path(*iterator);
         }
+    }
+    
+    // current working directory
+    workingDirectory = std::filesystem::current_path();
+    
+    if(inputfile.is_absolute()) {
+        inputfile = workingDirectory / inputfile;
+    }
+    
+    if(std::filesystem::exists(inputfile) == false) {
+        Diagnostics::reportError(failure, Diagnostics::errorNoSuchFileOrDirectory);
     }
     
     if(!inputfile.empty()) {

@@ -24,6 +24,8 @@ set(SOURCES ${SOURCES}
     ${CMAKE_CURRENT_SOURCE_DIR}/program.h
     ${CMAKE_CURRENT_SOURCE_DIR}/compileopts.h
     ${CMAKE_CURRENT_SOURCE_DIR}/compileopts.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/sourcefile.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/sourcefile.cpp
 )
 
 set(SOURCES ${SOURCES} PARENT_SCOPE)

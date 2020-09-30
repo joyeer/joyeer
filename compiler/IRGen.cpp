@@ -94,11 +94,11 @@ void IRGen::emit(Node::Ptr node) {
 JrModuleType* IRGen::emit(SourceBlock::Ptr block) {
     
     assert(block->symbol->flag == moduleSymbol);
-    auto module = (JrModuleType*)Global::types[block->symbol->addressOfType];
-    assert(module->constructors.size() == 1);
-    auto func = Global::functions[module->constructors.back()];
+    auto moduleType = (JrModuleType*)Global::types[block->symbol->addressOfType];
+    assert(moduleType->constructors.size() == 1);
+    auto func = Global::functions[moduleType->constructors.back()];
     
-    context->entry(module);
+    context->entry(moduleType);
     context->entry(func);
     context->visit(visitSourceBlock, [this, block]() {
         for(auto& statement: block->statements) {
@@ -106,10 +106,10 @@ JrModuleType* IRGen::emit(SourceBlock::Ptr block) {
         }
     });
     context->leave(func);
-    context->leave(module);
+    context->leave(moduleType);
     
     func->instructions = writer.instructions;
-    return module;
+    return moduleType;
 }
 
 void IRGen::emit(FuncCallExpr::Ptr funcCallExpr) {
@@ -155,9 +155,7 @@ void IRGen::emit(MemberFuncCallExpr::Ptr memberFuncCallExpr) {
             .value = (int32_t)function->addressOfFunc
         });
     });
-
 }
-
 
 void IRGen::emit(ArguCallExpr::Ptr node) {
     emit(node->expr);

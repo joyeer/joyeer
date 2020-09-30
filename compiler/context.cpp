@@ -6,7 +6,8 @@
 #include "runtime/buildin.h"
 
 
-CompileContext::CompileContext() {
+CompileContext::CompileContext(CompileOpts::Ptr options):
+options(options) {
     initializeSymTable();
     initializeGlobalScope();
 }

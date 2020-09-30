@@ -7,6 +7,18 @@
 #include <memory>
 
 class CompileOpts {
+    
+public:
+    // the executable of joyeer's location
+    std::filesystem::path vmLocation;
+    // main entry point of source code location
+    std::filesystem::path inputfile;
+    // working directory
+    std::filesystem::path workingDirectory;
+    
+    bool vmDebug = false;
+    bool accepted = false;
+    
 public:
     typedef std::shared_ptr<CompileOpts> Ptr;
     
@@ -15,13 +27,6 @@ public:
     // print compiler usage
     void printUsage();
     
-    // the executable of joyeer's location
-    std::filesystem::path vmLocation;
-    // main entry point of source code location
-    std::filesystem::path inputfile;
-    
-    bool vmDebug = false;
-    bool accepted = false;
     
 private:
     void parse(std::vector<std::string>& arguments);

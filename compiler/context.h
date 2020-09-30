@@ -1,6 +1,7 @@
 #ifndef __joyeer_compiler_context_h__
 #define __joyeer_compiler_context_h__
 
+#include "compiler/compileopts.h"
 #include "symtable.h"
 #include "runtime/function.h"
 #include <string>
@@ -29,7 +30,7 @@ class CompileContext {
 public:
     typedef std::shared_ptr<CompileContext> Ptr;
     
-    CompileContext();
+    CompileContext(CompileOpts::Ptr options);
     
     SymbolTable::Ptr initializeSymTable();
     void finalizeSymTable();
@@ -80,6 +81,8 @@ protected:
     std::vector<JrType*> types;
     
     std::unordered_map<JrInt, SymbolTable::Ptr> mapOfTypeAndSymbolTable;
+    
+    CompileOpts::Ptr options;
 };
 
 #endif

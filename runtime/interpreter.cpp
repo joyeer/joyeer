@@ -10,10 +10,10 @@ JrInterpreter::JrInterpreter(JrRuntimeContext* context):
 context(context) {
 }
 
-void JrInterpreter::run(JrModuleType* module) {
-    auto objectRef = context->gc->alloc(module);
-    assert(module->constructors.size() == 1);
-    auto mainFunc = Global::functions[module->constructors.back()];
+void JrInterpreter::run(JrModuleType* moduleType) {
+    auto objectRef = context->gc->alloc(moduleType);
+    assert(moduleType->constructors.size() == 1);
+    auto mainFunc = Global::functions[moduleType->constructors.back()];
     context->stack->push({.kind = typeObject, .objRefValue = objectRef});
     run(mainFunc, objectRef);
 }

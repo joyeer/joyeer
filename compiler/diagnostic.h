@@ -3,8 +3,21 @@
 
 #include <string>
 
+enum ErrorLevel {
+    // compiler progress will be continue
+    report,
+    // compiler will stop work
+    failure
+};
+
 struct Diagnostics {
+    
+    // not such file or directory
+    static const std::wstring errorNoSuchFileOrDirectory;
+    
     static void reportError(const std::wstring& error);
+    static void reportError(ErrorLevel level, const std::wstring& error, ...);
+    
 };
 
 #endif
