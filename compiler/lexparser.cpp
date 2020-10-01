@@ -1,18 +1,11 @@
 #include "lexparser.h"
-#include <sstream>
-#include <fstream>
 #include <codecvt>
 #include <string>
-#include <iostream>
 #include "diagnostic.h"
 #include "runtime/buildin.h"
 
-LexParser::LexParser(const std::wstring& filepath):
-lineNumber(0) {
-    open(filepath);
-}
-
-void LexParser::parse() {
+void LexParser::parse(const std::wstring& content) {
+    this->content = content;
     iterator = content.begin();
     endIterator = content.end();
 
@@ -323,12 +316,4 @@ void LexParser::parseStringLiteral() {
     Global::strings.push_back(identifier);
     stringLiteral->index = Global::strings.size() - 1;
     tokens.push_back(stringLiteral);
-}
-
-void LexParser::open(const std::wstring& filename) {
-  std::wifstream wif(filename);
-
-  std::wstringstream wss;
-  wss << wif.rdbuf();
-  this->content = wss.str();
 }

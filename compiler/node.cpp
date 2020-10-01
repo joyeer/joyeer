@@ -281,6 +281,11 @@ std::wstring SourceBlock::getName() {
     return p.replace_extension().wstring();
 }
 
+FileImportDecl::FileImportDecl(Token::Ptr stringLiteral):
+Node(SyntaxKind::fileimportDecl),
+stringLiteral(stringLiteral) {
+}
+
 CodeBlock::CodeBlock(std::vector<std::shared_ptr<Node>> statements):
 Node(SyntaxKind::codeBlock),
 statements(statements) {

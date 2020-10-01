@@ -4,6 +4,7 @@
 #include <filesystem>
 #include <string>
 #include "runtime/object.h"
+#include "compiler/node.h"
 
 
 // SourceFile contains all information of source file in disk
@@ -13,9 +14,10 @@ struct SourceFile {
     
     JrInt addressOfModuleObj  = -1;
     bool initialized = false;
-    std::filesystem::path location;
     
+    std::filesystem::path location;
     std::wstring content;
+    
 };
 
 #endif

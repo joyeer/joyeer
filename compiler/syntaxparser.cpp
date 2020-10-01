@@ -52,6 +52,11 @@ Node::Ptr SyntaxParser::tryParseDecl() {
     if(initializer != nullptr) {
         return initializer;
     }
+    
+    auto fileimport = tryParseFileImportDecl();
+    if(fileimport != nullptr) {
+        return fileimport;
+    }
 
     return nullptr;
 }
@@ -97,10 +102,23 @@ Node::Ptr SyntaxParser::tryParseConstructorDecl() {
     auto codeBlock = tryParseCodeBlock();
     if(codeBlock == nullptr) {
         Diagnostics::reportError(L"Error");
-        return nullptr; // TODO: Error
+        return nullptr;
     }
-
+    
     return std::shared_ptr<Node>(new ConstructorDecl(parameterClause, codeBlock));
+}
+
+Node::Ptr SyntaxParser::tryParseFileImportDecl() {
+    if(tryEat(TokenKind::keyword, Keywords::FILEIMPORT) == nullptr) {
+        return nullptr;
+    }
+    
+    auto literal = tryParseLiteral();
+    if(literal == nullptr || literal->kind != stringLiteral) {
+        Diagnostics::reportError(L"Error");
+    }
+    
+    return std::make_shared<FileImportDecl>(literal);
 }
 
 Node::Ptr SyntaxParser::tryParseParameterClause() {

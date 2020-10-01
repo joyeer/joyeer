@@ -75,6 +75,8 @@ Node::Ptr Binder::bind(Node::Ptr node) {
             return bind(std::static_pointer_cast<SubscriptExpr>(node));
         case arrayType:
             return bind(std::static_pointer_cast<ArrayType>(node));
+        case fileimportDecl:
+            return bind(std::static_pointer_cast<FileImportDecl>(node));
         default:
             assert(false);
     }
@@ -659,7 +661,6 @@ Node::Ptr Binder::bind(DictLiteralExpr::Ptr decl) {
     for(auto item: decl->items) {
         auto keyItem = bind(std::get<0>(item));
         auto valueItem = bind(std::get<1>(item));
-        
         result.push_back(std::make_tuple(keyItem , valueItem));
     }
     decl->items = result;
@@ -681,5 +682,12 @@ Node::Ptr Binder::bind(SubscriptExpr::Ptr decl) {
 
 Node::Ptr Binder::bind(ArrayType::Ptr decl) {
     decl->type = bind(decl->type);
+    return decl;
+}
+
+Node::Ptr Binder::bind(FileImportDecl::Ptr decl) {
+    if(context->curStage() != visitSourceBlock) {
+        
+    }
     return decl;
 }

@@ -7,15 +7,10 @@
 #include "token.h"
 
 class LexParser {
-
 public:
-  LexParser(const std::wstring& filepath);
-  
-  void parse();
-
-private:
-    void open(const std::wstring& filepath);
+  void parse(const std::wstring& content);
     
+private:
     void parseStringIdentifier();
     void parseStringLiteral();
     void parseOctalLiteral(std::wstring::const_iterator startAt);
@@ -33,7 +28,7 @@ private:
   std::wstring::const_iterator iterator;
   std::wstring::const_iterator endIterator;
 
-  size_t lineNumber;
+  size_t lineNumber = 0;
   std::wstring::const_iterator lineStartAtPosition;
 };
 

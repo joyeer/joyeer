@@ -46,8 +46,7 @@ protected:
     Node::Ptr bind(MemberAccessExpr::Ptr decl);
     Node::Ptr bind(SubscriptExpr::Ptr decl);
     Node::Ptr bind(ArrayType::Ptr decl);
-    
-    
+    Node::Ptr bind(FileImportDecl::Ptr decl);
 private:
     CompileContext::Ptr context;
 };

@@ -15,6 +15,7 @@ enum SyntaxKind {
     pattern,
     
     importDecl,
+    fileimportDecl,
     letDecl,
     varDecl,
     funcDecl,
@@ -342,8 +343,17 @@ struct SourceBlock: Node {
     std::wstring filename;
 
     SourceBlock(std::vector<Node::Ptr> statements);
-    
+
+    std::vector<std::wstring> getFileImports();
     virtual std::wstring getName();
+};
+
+struct FileImportDecl: Node {
+    typedef std::shared_ptr<FileImportDecl> Ptr;
+    
+    Token::Ptr stringLiteral;
+    
+    FileImportDecl(Token::Ptr stringLiteral);
 };
 
 struct CodeBlock: Node {
