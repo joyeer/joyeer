@@ -16,8 +16,9 @@ private:
     
     // Compile an SourceFile
     void compile(SourceFile* sourcefile);
+    SourceFile* findSourceFile(const std::wstring& path, const std::wstring relativeFolder = L"");
     
-    SourceFile* findSourceFile(const std::wstring& path);
+    void debugPrint(Node::Ptr node, const std::wstring& debugFilePath);
     
     CompileOpts::Ptr options;
     std::unordered_map<std::wstring, SourceFile*> sourcefiles;

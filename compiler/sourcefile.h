@@ -5,7 +5,7 @@
 #include <string>
 #include "runtime/object.h"
 #include "compiler/node.h"
-
+#include "runtime/sys/module.h"
 
 // SourceFile contains all information of source file in disk
 struct SourceFile {
@@ -18,6 +18,8 @@ struct SourceFile {
     std::filesystem::path location;
     std::wstring content;
     
+    SourceBlock::Ptr sourceblock;
+    JrModule* module;
 };
 
 #endif

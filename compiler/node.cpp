@@ -736,7 +736,11 @@ void NodeDebugPrinter::print(Node::Ptr node) {
             decTab();
         }
             break;
-            
+        case fileimportDecl: {
+            auto n = std::static_pointer_cast<FileImportDecl>(node);
+            output << L"+fileimport(\"" << n->stringLiteral->rawValue << "\")";
+        }
+            break;
         default:
             assert(false);
     }

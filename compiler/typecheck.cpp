@@ -570,7 +570,7 @@ void TypeChecker::verify(PrefixExpr::Ptr node) {
     verify(node->expr);
 }
 
-void TypeChecker::verify(FileImportDecl::Ptr node) {    
+void TypeChecker::verify(FileImportDecl::Ptr node) {
 }
 
 JrType* TypeChecker::typeOf(Node::Ptr node) {
@@ -827,6 +827,7 @@ JrType* TypeChecker::returnTypeOf(Node::Ptr node) {
         case memberAccessExpr:
         case memberFuncCallExpr:
         case funcDecl:
+        case fileimportDecl:
             return nullptr;
         default:
             assert(false);
