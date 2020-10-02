@@ -11,13 +11,15 @@ class Program {
 public:
     Program(CompileOpts::Ptr options);
     void run(std::wstring inputfile);
+    
 private:
     
+    // Compile an SourceFile
     void compile(SourceFile* sourcefile);
     
     SourceFile* findSourceFile(const std::wstring& path);
-    CompileContext::Ptr context;
     
+    CompileOpts::Ptr options;
     std::unordered_map<std::wstring, SourceFile*> sourcefiles;
 };
 #endif

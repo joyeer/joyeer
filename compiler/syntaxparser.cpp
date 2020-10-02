@@ -159,7 +159,7 @@ Node::Ptr SyntaxParser::tryParseParameterClause() {
     
     if(tryEat(TokenKind::punctuation, Punctuations::CLOSE_ROUND_BRACKET) == nullptr) {
         Diagnostics::reportError(L"Error");
-        return nullptr; // TODO: report a error
+        return nullptr;
     }
     
     return std::shared_ptr<Node>(new ParameterClause(parameters));
@@ -172,7 +172,8 @@ Node::Ptr SyntaxParser::tryParseConstDecl() {
 
     auto pattern = tryParsePattern();
     if (pattern == nullptr) {
-        return nullptr; //TODO: report an syntax Error
+        Diagnostics::reportError(L"Error");
+        return nullptr; 
     }
     
     Node::Ptr initializer = nullptr;

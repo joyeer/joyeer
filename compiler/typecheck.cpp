@@ -96,6 +96,9 @@ void TypeChecker::verify(Node::Ptr node) {
         case operatorExpr:
             // ignore it
             break;
+        case fileimportDecl:
+            verify(std::static_pointer_cast<FileImportDecl>(node));
+            break;
         default:
             assert(false);
     }
@@ -565,6 +568,9 @@ void TypeChecker::verify(ArrayType::Ptr node) {
 
 void TypeChecker::verify(PrefixExpr::Ptr node) {
     verify(node->expr);
+}
+
+void TypeChecker::verify(FileImportDecl::Ptr node) {    
 }
 
 JrType* TypeChecker::typeOf(Node::Ptr node) {

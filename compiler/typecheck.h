@@ -40,6 +40,7 @@ private:
     void verify(SubscriptExpr::Ptr node);
     void verify(ArrayType::Ptr node);
     void verify(PrefixExpr::Ptr node);
+    void verify(FileImportDecl::Ptr node);
     
     JrType* typeOf(Node::Ptr node);
     JrType* typeOf(IdentifierExpr::Ptr node);

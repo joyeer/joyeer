@@ -281,9 +281,24 @@ std::wstring SourceBlock::getName() {
     return p.replace_extension().wstring();
 }
 
+std::vector<FileImportDecl::Ptr> SourceBlock::getFileImports() {
+    std::vector<FileImportDecl::Ptr> result;
+    for(std::vector<Node::Ptr>::const_iterator iterator = statements.begin(); iterator != statements.end(); iterator ++ ) {
+        auto node = *iterator;
+        if(node->kind == fileimportDecl) {
+            result.push_back(std::static_pointer_cast<FileImportDecl>(node));
+        }
+    }
+    return result;
+}
+
 FileImportDecl::FileImportDecl(Token::Ptr stringLiteral):
 Node(SyntaxKind::fileimportDecl),
 stringLiteral(stringLiteral) {
+}
+
+const std::wstring FileImportDecl::getImportedFilename() {
+    return stringLiteral->rawValue;
 }
 
 CodeBlock::CodeBlock(std::vector<std::shared_ptr<Node>> statements):

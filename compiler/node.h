@@ -335,6 +335,16 @@ struct SubscriptExpr: Node {
     SubscriptExpr(Node::Ptr identifier, Node::Ptr indexExpr);
 };
 
+struct FileImportDecl: Node {
+    typedef std::shared_ptr<FileImportDecl> Ptr;
+    
+    Token::Ptr stringLiteral;
+    
+    FileImportDecl(Token::Ptr stringLiteral);
+    
+    const std::wstring getImportedFilename();
+};
+
 struct SourceBlock: Node {
     typedef std::shared_ptr<SourceBlock> Ptr;
     
@@ -344,16 +354,9 @@ struct SourceBlock: Node {
 
     SourceBlock(std::vector<Node::Ptr> statements);
 
-    std::vector<std::wstring> getFileImports();
+    std::vector<FileImportDecl::Ptr> getFileImports();
+    
     virtual std::wstring getName();
-};
-
-struct FileImportDecl: Node {
-    typedef std::shared_ptr<FileImportDecl> Ptr;
-    
-    Token::Ptr stringLiteral;
-    
-    FileImportDecl(Token::Ptr stringLiteral);
 };
 
 struct CodeBlock: Node {

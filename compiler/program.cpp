@@ -2,6 +2,7 @@
 #include "compiler/lexparser.h"
 #include "compiler/diagnostic.h"
 #include "compiler/binder.h"
+#include "compiler/typecheck.h"
 #include "syntaxparser.h"
 #include "IRGen.h"
 
@@ -11,8 +12,7 @@
     }
 
 Program::Program(CompileOpts::Ptr opts):
-context(std::make_shared<CompileContext>(opts)) {
-    
+options(opts) {    
 }
 
 void Program::run(std::wstring inputfile) {
@@ -34,6 +34,8 @@ SourceFile* Program::findSourceFile(const std::wstring &path) {
 
 void Program::compile(SourceFile *sourcefile) {
     
+    auto context= std::make_shared<CompileContext>(options);
+    
     // lex structure analyze
     LexParser lexParser;
     lexParser.parse(sourcefile->content);
@@ -50,6 +52,19 @@ void Program::compile(SourceFile *sourcefile) {
     Binder binder(context);
     binder.bind(block);
     
+    //
+    auto fileimports = block->getFileImports();
+    
+    for(std::vector<FileImportDecl::Ptr>::const_iterator iterator = fileimports.begin(); iterator != fileimports.end(); iterator ++ ) {
+        auto importedFile = *iterator;
+        auto importedFilename = importedFile->getImportedFilename();
+        auto importfile = findSourceFile(importedFilename);
+    }
+    
     CHECK_ERROR_CONTINUE
     
+    TypeChecker typeChecker(context);
+    typeChecker.verify(std::static_pointer_cast<Node>(block));
+    
+    CHECK_ERROR_CONTINUE
 }
