@@ -71,6 +71,9 @@ protected:
 protected:
     std::vector<SymbolTable::Ptr> symbols;
     
+    // The symtable for imported module
+    std::vector<SymbolTable::Ptr> importedSymbols;
+    
     // Copmpiling stage
     std::vector<CompileStage> stages;
     

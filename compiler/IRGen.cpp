@@ -86,15 +86,18 @@ void IRGen::emit(Node::Ptr node) {
         case whileStatement:
             emit(std::static_pointer_cast<WhileStatement>(node));
             break;
+        case fileimportDecl:
+            emit(std::static_pointer_cast<FileImportDecl>(node));
+            break;
         default:
             assert(false);
     }
 }
 
-JrModuleType* IRGen::emit(SourceBlock::Ptr block) {
+JrModuleClass* IRGen::emit(SourceBlock::Ptr block) {
     
     assert(block->symbol->flag == moduleSymbol);
-    auto moduleType = (JrModuleType*)Global::types[block->symbol->addressOfType];
+    auto moduleType = (JrModuleClass*)Global::types[block->symbol->addressOfType];
     assert(moduleType->constructors.size() == 1);
     auto func = Global::functions[moduleType->constructors.back()];
     
@@ -178,7 +181,7 @@ void IRGen::emit(LiteralExpr::Ptr node) {
         case booleanLiteral:
             writer.write({
                 .opcode = OP_ICONST,
-                .value = node->literal->rawValue == L"true" ? 1 : 0
+                .value = node->literal->rawValue == Literals::TRUE ? 1 : 0
             });
             break;
         case nilLiteral:
@@ -617,4 +620,8 @@ void IRGen::emit(SubscriptExpr::Ptr node) {
     } else {
         assert(false);
     }
+}
+
+void IRGen::emit(FileImportDecl::Ptr node) {
+    
 }

@@ -19,6 +19,7 @@ private:
     SourceFile* findSourceFile(const std::wstring& path, const std::wstring relativeFolder = L"");
     
     void debugPrint(Node::Ptr node, const std::wstring& debugFilePath);
+    void debugPrint(const std::wstring& debugFilePath);
     
     CompileOpts::Ptr options;
     std::unordered_map<std::wstring, SourceFile*> sourcefiles;

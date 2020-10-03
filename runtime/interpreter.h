@@ -9,7 +9,7 @@ struct JrInterpreter {
 public:
     JrInterpreter(JrRuntimeContext* context);
     
-    void run(JrModuleType* moduleType);
+    void run(JrModuleClass* moduleType);
     void run(JrFunction* function, int objectRef);
     
 private:

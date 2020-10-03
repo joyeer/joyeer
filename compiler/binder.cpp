@@ -86,7 +86,7 @@ Node::Ptr Binder::bind(Node::Ptr node) {
 SourceBlock::Ptr Binder::bind(SourceBlock::Ptr sourceBlock) {
     
     // Module class self
-    auto moduleType = new JrModuleType(L"Module@__FILE__@" + sourceBlock->filename);
+    auto moduleType = new JrModuleClass(L"Module@__FILE__@" + sourceBlock->filename);
     Global::registerObjectType(moduleType);
     
     // Module constructor function

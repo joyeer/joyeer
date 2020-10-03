@@ -12,7 +12,7 @@ class IRGen {
 public:
     IRGen(CompileContext::Ptr context);
     
-    JrModuleType* emit(SourceBlock::Ptr block);
+    JrModuleClass* emit(SourceBlock::Ptr block);
     
 protected:
     void emit(Node::Ptr node);
@@ -40,6 +40,7 @@ protected:
     void emit(ArrayLiteralExpr::Ptr node);
     void emit(DictLiteralExpr::Ptr node);
     void emit(SubscriptExpr::Ptr node);
+    void emit(FileImportDecl::Ptr node);
     
 private:
     JrCodeWriter writer;

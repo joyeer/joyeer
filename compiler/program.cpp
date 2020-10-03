@@ -3,8 +3,10 @@
 #include "compiler/diagnostic.h"
 #include "compiler/binder.h"
 #include "compiler/typecheck.h"
-#include "syntaxparser.h"
-#include "IRGen.h"
+#include "compiler/syntaxparser.h"
+#include "compiler/IRGen.h"
+#include "runtime/interpreter.h"
+#include "runtime/buildin.h"
 #include <iostream>
 
 #define CHECK_ERROR_CONTINUE \
@@ -18,8 +20,11 @@ options(opts) {
 
 void Program::run(std::wstring inputfile) {
     auto sourcelife = findSourceFile(inputfile);
-    
     compile(sourcelife);
+    
+    JrRuntimeContext context;
+    JrInterpreter interpreter(&context);
+    interpreter.run(sourcelife->moduleType);
 }
 
 SourceFile* Program::findSourceFile(const std::wstring &path, const std::wstring relativeFolder) {
@@ -79,11 +84,17 @@ void Program::compile(SourceFile *sourcefile) {
         CHECK_ERROR_CONTINUE
     }
     
+    // verify the types
     TypeChecker typeChecker(context);
     typeChecker.verify(std::static_pointer_cast<Node>(block));
     debugPrint(block, sourcefile->location.wstring() + L".typechecker.debug.txt");
     CHECK_ERROR_CONTINUE
 
+    // generate IR code
+    IRGen irGen(context);
+    sourcefile->moduleType = irGen.emit(block);
+    CHECK_ERROR_CONTINUE
+    
 }
 
 void Program::debugPrint(Node::Ptr node, const std::wstring &debugFilePath) {
@@ -91,5 +102,17 @@ void Program::debugPrint(Node::Ptr node, const std::wstring &debugFilePath) {
         NodeDebugPrinter syntaxDebugger(debugFilePath);
         syntaxDebugger.print(node);
         syntaxDebugger.close();
+    }
+}
+
+void Program::debugPrint(const std::wstring &debugFilePath) {
+    if(options->vmDebug) {
+        TypeTablePrinter typePrinter(L"debug.table.types.txt");
+        typePrinter.print();
+        typePrinter.close();
+        
+        FunctionTablePrinter funcPrinter(L"debug.table.functions.txt");
+        funcPrinter.print();
+        funcPrinter.close();
     }
 }

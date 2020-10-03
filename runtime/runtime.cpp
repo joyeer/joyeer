@@ -59,7 +59,7 @@ JrInt JrObjectType::size() {
 // JrModuleType
 ////////////////////////////////////////////////////////////////
 
-JrModuleType::JrModuleType(const std::wstring& name):
+JrModuleClass::JrModuleClass(const std::wstring& name):
 JrObjectType(name) {
 }
 

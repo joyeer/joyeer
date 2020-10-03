@@ -69,8 +69,8 @@ struct JrObjectType: public JrType {
 };
 
 // Speical type for module class
-struct JrModuleType: public JrObjectType {
-    JrModuleType(const std::wstring& name);
+struct JrModuleClass: public JrObjectType {
+    JrModuleClass(const std::wstring& name);
 };
 
 struct JrVar {

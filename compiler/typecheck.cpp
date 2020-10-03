@@ -107,7 +107,7 @@ void TypeChecker::verify(Node::Ptr node) {
 void TypeChecker::verify(SourceBlock::Ptr node) {
     
     assert(node->symbol->flag == moduleSymbol);
-    auto moduleType = (JrModuleType*)(Global::types[node->symbol->addressOfType]);
+    auto moduleType = (JrModuleClass*)(Global::types[node->symbol->addressOfType]);
     // 
     assert(moduleType->constructors.size() == 1);
     auto constructor = Global::functions[moduleType->constructors.back()];

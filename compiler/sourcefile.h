@@ -19,7 +19,7 @@ struct SourceFile {
     std::wstring content;
     
     SourceBlock::Ptr sourceblock;
-    JrModule* module;
+    JrModuleClass* moduleType;
 };
 
 #endif

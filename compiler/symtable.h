@@ -73,9 +73,6 @@ public:
     // find symbol by a given name
     Symbol::Ptr find(const std::wstring& name) const;
     
-    // Parent's
-    std::vector<SymbolTable::Ptr> children;
-    
     std::unordered_map<std::wstring, Symbol::Ptr> symbols;
 };
 

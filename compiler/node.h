@@ -339,10 +339,12 @@ struct FileImportDecl: Node {
     typedef std::shared_ptr<FileImportDecl> Ptr;
     
     Token::Ptr stringLiteral;
+    JrModuleClass* moduleClass;
     
     FileImportDecl(Token::Ptr stringLiteral);
     
     const std::wstring getImportedFilename();
+    
 };
 
 struct SourceBlock: Node {

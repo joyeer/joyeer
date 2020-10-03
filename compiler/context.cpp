@@ -98,6 +98,7 @@ Symbol::Ptr CompileContext::lookup(const std::wstring &name) {
         }
     }
     
+    for( auto iterator = importedSymbols)
     return nullptr;
 }
 
