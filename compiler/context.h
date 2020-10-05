@@ -57,16 +57,15 @@ public:
     void associate(JrType*, SymbolTable::Ptr table);
     // return assoicated symbol table with type
     SymbolTable::Ptr symtableOfType(JrType*);
+   
+    // when import a module, we will import the symbol table
+    void importSymbolTableOfModule(SymbolTable::Ptr table);
     
+    // The module's exported symbols
+    SymbolTable::Ptr exportedSymbols = nullptr;
 protected:
     // initializ global scope, e.g. buildin functions/object etc
     void initializeGlobalScope();
-    
-    // entry into an stage of compile pipeline
-    void entry(CompileStage stage);
-    
-    // leave from an compile pipeline stage
-    void leave(CompileStage stage);
     
 protected:
     std::vector<SymbolTable::Ptr> symbols;
@@ -74,7 +73,7 @@ protected:
     // The symtable for imported module
     std::vector<SymbolTable::Ptr> importedSymbols;
     
-    // Copmpiling stage
+    // stage of compiling status, the last element of stages present the current stage
     std::vector<CompileStage> stages;
     
     // parsing function stacks

@@ -24,7 +24,7 @@ void Program::run(std::wstring inputfile) {
     
     JrRuntimeContext context;
     JrInterpreter interpreter(&context);
-    interpreter.run(sourcelife->moduleType);
+    interpreter.run(sourcelife->moduleClass);
 }
 
 SourceFile* Program::findSourceFile(const std::wstring &path, const std::wstring relativeFolder) {
@@ -81,7 +81,12 @@ void Program::compile(SourceFile *sourcefile) {
             Diagnostics::reportError(L"Error");
         }
         compile(importfile);
+    
         CHECK_ERROR_CONTINUE
+        
+        // insert the symbol table int context
+        assert(importfile->exportedSymbolTable != nullptr);
+        context->importSymbolTableOfModule(importfile->exportedSymbolTable);
     }
     
     // verify the types
@@ -92,7 +97,9 @@ void Program::compile(SourceFile *sourcefile) {
 
     // generate IR code
     IRGen irGen(context);
-    sourcefile->moduleType = irGen.emit(block);
+    sourcefile->moduleClass = irGen.emit(block);
+    assert(context->exportedSymbols != nullptr);
+    sourcefile->exportedSymbolTable = context->exportedSymbols;
     CHECK_ERROR_CONTINUE
     
 }

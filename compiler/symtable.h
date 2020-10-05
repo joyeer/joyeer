@@ -76,6 +76,4 @@ public:
     std::unordered_map<std::wstring, Symbol::Ptr> symbols;
 };
 
-
-
 #endif

@@ -86,28 +86,30 @@ Node::Ptr Binder::bind(Node::Ptr node) {
 SourceBlock::Ptr Binder::bind(SourceBlock::Ptr sourceBlock) {
     
     // Module class self
-    auto moduleType = new JrModuleClass(L"Module@__FILE__@" + sourceBlock->filename);
-    Global::registerObjectType(moduleType);
+    auto moduleClass = new JrModuleClass(L"Module@__FILE__@" + sourceBlock->filename);
+    Global::registerObjectType(moduleClass);
     
     // Module constructor function
     auto function = new JrFunction {
         .name = L"Module@__MAIN__@" + sourceBlock->filename,
         .kind = jrFuncConstructor,
     };
-    function->paramTypes.push_back(moduleType);
-    Global::registerFunction(function, moduleType);
+    function->paramTypes.push_back(moduleClass);
+    Global::registerFunction(function, moduleClass);
     
     auto symbol = Symbol::Ptr(new Symbol {
-        .name = moduleType->name,
+        .name = moduleClass->name,
         .flag = moduleSymbol,
-        .addressOfType = moduleType->addressOfType
+        .addressOfType = moduleClass->addressOfType
     });
-    moduleType->constructors.push_back(function->addressOfFunc);
+    moduleClass->constructors.push_back(function->addressOfFunc);
     
     sourceBlock->symbol = symbol;
     sourceBlock->symtable = context->initializeSymTable();
+    // The module class's symbols table is exporting
+    context->exportedSymbols = sourceBlock->symtable;
     
-    context->entry(moduleType);
+    context->entry(moduleClass);
     context->visit(visitSourceBlock, [sourceBlock, this]() {
         auto nodes = std::vector<Node::Ptr>();
         for(auto& statement : sourceBlock->statements) {
@@ -115,8 +117,9 @@ SourceBlock::Ptr Binder::bind(SourceBlock::Ptr sourceBlock) {
         }
         sourceBlock->statements = nodes;
     });
-    context->leave(moduleType);
+    context->leave(moduleClass);
     context->finalizeSymTable();
+    
     
     return sourceBlock;
 }

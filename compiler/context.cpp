@@ -28,17 +28,8 @@ SymbolTable::Ptr CompileContext::curSymTable() {
 }
 
 void CompileContext::visit(CompileStage stage, std::function<void ()> visit) {
-    entry(stage);
-    visit();
-    leave(stage);
-}
-
-void CompileContext::entry(CompileStage stage) {
     stages.push_back(stage);
-}
-
-void CompileContext::leave(CompileStage stage) {
-    assert(stages.size() > 0);
+    visit();
     assert(stages.back() == stage);
     stages.pop_back();
 }
@@ -98,7 +89,14 @@ Symbol::Ptr CompileContext::lookup(const std::wstring &name) {
         }
     }
     
-    for( auto iterator = importedSymbols)
+    for(auto iterator = importedSymbols.rbegin(); iterator != importedSymbols.rend(); iterator ++ ) {
+        auto symtable = *iterator;
+        auto symbol = symtable->find(name);
+        if(symbol != nullptr) {
+            return symbol;
+        }
+    }
+    
     return nullptr;
 }
 
@@ -111,6 +109,10 @@ void CompileContext::associate(JrType* type, SymbolTable::Ptr table) {
 
 SymbolTable::Ptr CompileContext::symtableOfType(JrType* type) {
     return mapOfTypeAndSymbolTable[type->addressOfType];
+}
+
+void CompileContext::importSymbolTableOfModule(SymbolTable::Ptr table) {
+    importedSymbols.push_back(table);
 }
 
 void CompileContext::initializeGlobalScope() {

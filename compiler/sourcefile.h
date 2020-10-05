@@ -19,7 +19,9 @@ struct SourceFile {
     std::wstring content;
     
     SourceBlock::Ptr sourceblock;
-    JrModuleClass* moduleType;
+    JrModuleClass* moduleClass;
+    
+    SymbolTable::Ptr exportedSymbolTable = nullptr;
 };
 
 #endif
