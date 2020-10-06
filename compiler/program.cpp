@@ -66,7 +66,7 @@ void Program::compile(SourceFile *sourcefile) {
     
     // Detect for type creating
     Binder binder(context);
-    binder.bind(block);
+    binder.visit(block);
     debugPrint(block, block->filename + L".binder.debug.txt");
     CHECK_ERROR_CONTINUE
     
