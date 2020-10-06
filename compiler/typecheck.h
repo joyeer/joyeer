@@ -5,43 +5,45 @@
 #include "context.h"
 #include "runtime/runtime.h"
 
-class TypeChecker {
+class TypeChecker : public NodeVisitor {
 public:
     TypeChecker(CompileContext::Ptr context);
     
-    void verify(Node::Ptr node);
+    virtual Node::Ptr visit(Node::Ptr node);
     
-private:
-    void verify(SourceBlock::Ptr node);
-    void verify(FuncDecl::Ptr node);
-    void verify(ConstructorDecl::Ptr node);
-    void verify(FuncCallExpr::Ptr node);
-    void verify(VarDecl::Ptr node);
-    void verify(ParameterClause::Ptr node);
-    void verify(Pattern::Ptr node);
-    void verify(IdentifierExpr::Ptr node);
-    void verify(Type::Ptr node);
-    void verify(CodeBlock::Ptr node);
-    void verify(ReturnStatement::Ptr node);
-    void verify(Expr::Ptr node);
-    void verify(LetDecl::Ptr node);
-    void verify(LiteralExpr::Ptr node);
-    void verify(AssignmentExpr::Ptr node);
-    void verify(ParenthesizedExpr::Ptr node);
-    void verify(IfStatement::Ptr node);
-    void verify(WhileStatement::Ptr node);
-    void verify(ArguCallExpr::Ptr node);
-    void verify(ClassDecl::Ptr node);
-    void verify(SelfExpr::Ptr node);
-    void verify(ArrayLiteralExpr::Ptr node);
-    void verify(DictLiteralExpr::Ptr node);
-    void verify(MemberAccessExpr::Ptr node);
-    void verify(MemberFuncCallExpr::Ptr node);
-    void verify(SubscriptExpr::Ptr node);
-    void verify(ArrayType::Ptr node);
-    void verify(PrefixExpr::Ptr node);
-    void verify(FileImportDecl::Ptr node);
-    
+protected:
+    virtual Node::Ptr visit(SourceBlock::Ptr decl);
+    virtual Node::Ptr visit(ClassDecl::Ptr classDecl);
+    virtual Node::Ptr visit(LetDecl::Ptr decl);
+    virtual Node::Ptr visit(VarDecl::Ptr varDecl);
+    virtual Node::Ptr visit(ConstructorDecl::Ptr decl);
+    virtual Node::Ptr visit(Type::Ptr decl);
+    virtual Node::Ptr visit(FuncCallExpr::Ptr decl);
+    virtual Node::Ptr visit(MemberFuncCallExpr::Ptr decl);
+    virtual Node::Ptr visit(ArguCallExpr::Ptr decl);
+    virtual Node::Ptr visit(LiteralExpr::Ptr decl);
+    virtual Node::Ptr visit(PrefixExpr::Ptr decl);
+    virtual Node::Ptr visit(IdentifierExpr::Ptr decl);
+    virtual Node::Ptr visit(Expr::Ptr decl);
+    virtual Node::Ptr visit(AssignmentExpr::Ptr decl);
+    virtual Node::Ptr visit(BinaryExpr::Ptr decl);
+    virtual Node::Ptr visit(OperatorExpr::Ptr decl);
+    virtual Node::Ptr visit(ParenthesizedExpr::Ptr decl);
+    virtual Node::Ptr visit(IfStatement::Ptr decl);
+    virtual Node::Ptr visit(WhileStatement::Ptr decl);
+    virtual Node::Ptr visit(CodeBlock::Ptr decl);
+    virtual Node::Ptr visit(FuncDecl::Ptr decl);
+    virtual Node::Ptr visit(ParameterClause::Ptr decl);
+    virtual Node::Ptr visit(Pattern::Ptr decl);
+    virtual Node::Ptr visit(ReturnStatement::Ptr decl);
+    virtual Node::Ptr visit(SelfExpr::Ptr decl);
+    virtual Node::Ptr visit(ArrayLiteralExpr::Ptr decl);
+    virtual Node::Ptr visit(DictLiteralExpr::Ptr decl);
+    virtual Node::Ptr visit(MemberAccessExpr::Ptr decl);
+    virtual Node::Ptr visit(SubscriptExpr::Ptr decl);
+    virtual Node::Ptr visit(ArrayType::Ptr decl);
+    virtual Node::Ptr visit(FileImportDecl::Ptr decl);
+
     JrType* typeOf(Node::Ptr node);
     JrType* typeOf(IdentifierExpr::Ptr node);
     JrType* typeOf(Expr::Ptr node);

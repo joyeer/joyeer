@@ -408,10 +408,9 @@ struct ReturnStatement: Node {
 };
 
 struct NodeVisitor {
-    
-    
 protected:
     Node::Ptr visit(Node::Ptr node);
+    virtual Node::Ptr visit(SourceBlock::Ptr decl) = 0;
     virtual Node::Ptr visit(ClassDecl::Ptr classDecl) = 0;
     virtual Node::Ptr visit(LetDecl::Ptr decl) = 0;
     virtual Node::Ptr visit(VarDecl::Ptr varDecl) = 0;

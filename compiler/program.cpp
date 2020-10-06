@@ -92,7 +92,7 @@ void Program::compile(SourceFile *sourcefile) {
     
     // verify the types
     TypeChecker typeChecker(context);
-    typeChecker.verify(std::static_pointer_cast<Node>(block));
+    typeChecker.visit(std::static_pointer_cast<Node>(block));
     debugPrint(block, sourcefile->location.wstring() + L".typechecker.debug.txt");
     CHECK_ERROR_CONTINUE
 
