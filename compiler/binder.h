@@ -5,6 +5,9 @@
 #include "node.h"
 #include "context.h"
 
+struct BinderDelegate {
+    bool tryImport(const std::wstring module);
+};
 
 // Bind all types and symbols during analyzing AST tree
 // Reduce the expression's depth level

@@ -409,11 +409,14 @@ Node::Ptr Binder::bind(PrefixExpr::Ptr decl) {
 
 Node::Ptr Binder::bind(IdentifierExpr::Ptr decl) {
     auto name = decl->getName();
-    auto table = context->curSymTable();
+    
     switch (context->curStage()) {
         case visitFuncParamDecl: {
+            // verify the func delcaration's parameter duplicate name
+            auto table = context->curSymTable();
             if(table->find(name) != nullptr) {
                 Diagnostics::reportError(L"[Error] duplicate variable declaration in fucntion");
+                return nullptr;
             }
             
             auto symbol = std::shared_ptr<Symbol>(new Symbol {
@@ -690,7 +693,9 @@ Node::Ptr Binder::bind(ArrayType::Ptr decl) {
 
 Node::Ptr Binder::bind(FileImportDecl::Ptr decl) {
     if(context->curStage() != visitSourceBlock) {
-        
+        Diagnostics::reportError(Diagnostics::errorFileImportShouldAtTopOfSourceFile);
+        return nullptr;
     }
+    
     return decl;
 }

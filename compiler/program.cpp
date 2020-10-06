@@ -60,13 +60,14 @@ void Program::compile(SourceFile *sourcefile) {
     // syntax analyze
     SyntaxParser syntaxParser(lexParser.tokens);
     auto block = syntaxParser.parse();
-    debugPrint(block, sourcefile->location.wstring() + L".parser.debug.txt");
+    block->filename = sourcefile->location.wstring();
+    debugPrint(block, block->filename + L".parser.debug.txt");
     CHECK_ERROR_CONTINUE
     
     // Detect for type creating
     Binder binder(context);
     binder.bind(block);
-    debugPrint(block, sourcefile->location.wstring() + L".binder.debug.txt");
+    debugPrint(block, block->filename + L".binder.debug.txt");
     CHECK_ERROR_CONTINUE
     
     // resolve all importfile statement in source file, and try to compile them

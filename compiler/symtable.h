@@ -39,6 +39,8 @@ struct Symbol {
 public:
     bool isMutable: 1 = true;
     bool isTypeFixed: 1 = true;
+    bool isImported: 1 = false;
+    
     SymbolFlag flag;
     SymbolScope scope;
     

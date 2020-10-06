@@ -22,6 +22,8 @@ struct Diagnostics {
     
     // not such file or directory
     static const std::wstring errorNoSuchFileOrDirectory;
+    // `fileimport` should be presented at the begin of source file
+    static const std::wstring errorFileImportShouldAtTopOfSourceFile;
     
     static ErrorLevel errorLevel;
     
