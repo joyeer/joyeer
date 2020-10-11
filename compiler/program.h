@@ -16,6 +16,8 @@ private:
     
     // Compile an SourceFile
     void compile(SourceFile* sourcefile);
+    // try to import module, and return the exported symboltable;
+    SourceFile* tryImport(CompileContext::Ptr context, const std::wstring& moduleName);
     SourceFile* findSourceFile(const std::wstring& path, const std::wstring relativeFolder = L"");
     
     void debugPrint(Node::Ptr node, const std::wstring& debugFilePath);

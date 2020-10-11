@@ -2,6 +2,7 @@
 #include "diagnostic.h"
 #include "runtime/buildin.h"
 #include "runtime/sys/module.h"
+#include "compiler/sourcefile.h"
 #include <cassert>
 
 
@@ -43,6 +44,11 @@ Node::Ptr Binder::visit(SourceBlock::Ptr sourceBlock) {
     sourceBlock->symtable = context->initializeSymTable();
     // The module class's symbols table is exporting
     context->exportedSymbols = sourceBlock->symtable;
+    
+    // Mark the exported flag in symbols
+    for(const auto &entry: context->exportedSymbols->symbols) {
+        entry.second->isExported = true;
+    }
     
     context->entry(moduleClass);
     context->visit(visitSourceBlock, [sourceBlock, this]() {
@@ -631,6 +637,19 @@ Node::Ptr Binder::visit(FileImportDecl::Ptr decl) {
         Diagnostics::reportError(Diagnostics::errorFileImportShouldAtTopOfSourceFile);
         return nullptr;
     }
+    
+    auto moduleName = decl->stringLiteral->rawValue;
+    auto importedSourceFile = importDelegate(context, moduleName);
+    
+    context->importSymbolTableOfModule(importedSourceFile->exportedSymbolTable);
+    
+    auto ownerType = (JrObjectType*)context->curType();
+    auto field = JrFieldType::Ptr(new JrFieldType {
+        .name = moduleName,
+        .type = importedSourceFile->moduleClass
+    });
+    
+    ownerType->registerField(field);
     
     return decl;
 }

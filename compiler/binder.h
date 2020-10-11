@@ -5,18 +5,18 @@
 #include "node.h"
 #include "context.h"
 
-struct BinderDelegate {
-    bool tryImport(const std::wstring module);
-};
+
+struct SourceFile;
 
 // Bind all types and symbols during analyzing AST tree
 // Reduce the expression's depth level
 class Binder: public NodeVisitor {
 public:
+    std::function<SourceFile*(CompileContext::Ptr, const std::wstring&)> importDelegate;
+    
     Binder(CompileContext::Ptr context);
     
     virtual Node::Ptr visit(SourceBlock::Ptr sourceBlock);
-    
 protected:
     // recursive bind down node
     virtual Node::Ptr visit(Node::Ptr node);

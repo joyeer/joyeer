@@ -527,7 +527,7 @@ Node::Ptr TypeChecker::visit(PrefixExpr::Ptr node) {
 }
 
 Node::Ptr TypeChecker::visit(FileImportDecl::Ptr node) {
-    assert(false);
+    return node;
 }
 
 Node::Ptr TypeChecker::visit(BinaryExpr::Ptr decl) {

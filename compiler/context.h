@@ -2,12 +2,10 @@
 #define __joyeer_compiler_context_h__
 
 #include "compiler/compileopts.h"
-#include "symtable.h"
+#include "compiler/symtable.h"
 #include "runtime/function.h"
-#include <string>
-#include <memory>
-#include <vector>
-#include <unordered_map>
+
+struct SourceFile;
 
 enum CompileStage {
     visitSourceBlock,
@@ -63,6 +61,9 @@ public:
     
     // The module's exported symbols
     SymbolTable::Ptr exportedSymbols = nullptr;
+    
+    // The compiler's source file
+    SourceFile* sourceFile = nullptr;
 protected:
     // initializ global scope, e.g. buildin functions/object etc
     void initializeGlobalScope();

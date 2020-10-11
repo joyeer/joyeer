@@ -51,6 +51,7 @@ SourceFile* Program::findSourceFile(const std::wstring &path, const std::wstring
 void Program::compile(SourceFile *sourcefile) {
     
     auto context= std::make_shared<CompileContext>(options);
+    context->sourceFile = sourcefile;
     
     // lex structure analyze
     LexParser lexParser;
@@ -66,6 +67,8 @@ void Program::compile(SourceFile *sourcefile) {
     
     // Detect for type creating
     Binder binder(context);
+    binder.importDelegate = std::bind(&Program::tryImport, this, std::placeholders::_1, std::placeholders::_2);
+    
     binder.visit(block);
     debugPrint(block, block->filename + L".binder.debug.txt");
     CHECK_ERROR_CONTINUE
@@ -103,6 +106,20 @@ void Program::compile(SourceFile *sourcefile) {
     sourcefile->exportedSymbolTable = context->exportedSymbols;
     CHECK_ERROR_CONTINUE
     
+}
+
+SourceFile* Program::tryImport(CompileContext::Ptr context, const std::wstring &moduleName) {
+    auto sourcefile = context->sourceFile;
+    auto relativedFolder = sourcefile->location.parent_path().wstring();
+    auto importfile = findSourceFile(moduleName, relativedFolder);
+    if(importfile == nullptr) {
+        Diagnostics::reportError(L"Error: Module cannot be found");
+        return;
+    }
+    compile(importfile);
+    
+    CHECK_ERROR_CONTINUE
+    return importfile;
 }
 
 void Program::debugPrint(Node::Ptr node, const std::wstring &debugFilePath) {
