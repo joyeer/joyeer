@@ -301,6 +301,18 @@ const std::wstring FileImportDecl::getImportedFilename() {
     return stringLiteral->rawValue;
 }
 
+ModuleMemberAccessExpr::ModuleMemberAccessExpr(FileImportDecl::Ptr module, Node::Ptr member):
+Node(SyntaxKind::moduleMemberAccessExpr),
+module(module),
+member(member) {
+}
+
+ModuleFuncCallExpr::ModuleFuncCallExpr(FileImportDecl::Ptr module, Node::Ptr member):
+Node(SyntaxKind::moduleFuncCallExpr),
+module(module),
+member(member) {
+}
+
 CodeBlock::CodeBlock(std::vector<std::shared_ptr<Node>> statements):
 Node(SyntaxKind::codeBlock),
 statements(statements) {
@@ -397,6 +409,10 @@ Node::Ptr NodeVisitor::visit(Node::Ptr node) {
             return visit(std::static_pointer_cast<ArrayType>(node));
         case fileimportDecl:
             return visit(std::static_pointer_cast<FileImportDecl>(node));
+        case moduleMemberAccessExpr:
+            return visit(std::static_pointer_cast<ModuleMemberAccessExpr>(node));
+        case moduleFuncCallExpr:
+            return visit(std::static_pointer_cast<ModuleFuncCallExpr>(node));
         default:
             assert(false);
     }

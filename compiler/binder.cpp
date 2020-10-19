@@ -39,16 +39,8 @@ Node::Ptr Binder::visit(SourceBlock::Ptr sourceBlock) {
         .addressOfType = moduleClass->addressOfType
     });
     moduleClass->constructors.push_back(function->addressOfFunc);
-    
     sourceBlock->symbol = symbol;
     sourceBlock->symtable = context->initializeSymTable();
-    // The module class's symbols table is exporting
-    context->exportedSymbols = sourceBlock->symtable;
-    
-    // Mark the exported flag in symbols
-    for(const auto &entry: context->exportedSymbols->symbols) {
-        entry.second->isExported = true;
-    }
     
     context->entry(moduleClass);
     context->visit(visitSourceBlock, [sourceBlock, this]() {
@@ -61,7 +53,14 @@ Node::Ptr Binder::visit(SourceBlock::Ptr sourceBlock) {
     context->leave(moduleClass);
     context->finalizeSymTable();
     
+    // The module class's symbols table is exporting
+    context->exportedSymbols = sourceBlock->symtable;
     
+    // Mark the exported flag in symbols
+    for(const auto &entry: context->exportedSymbols->symbols) {
+        entry.second->isExported = true;
+    }
+
     return sourceBlock;
 }
 
@@ -134,6 +133,7 @@ Node::Ptr Binder::visit(ConstructorDecl::Ptr decl) {
     function->returnType = type;
     if(symtable->find(function->name) != nullptr) {
         Diagnostics::reportError(L"[Error] Dupliate constructor name");
+        return nullptr;
     }
     
     // register this functin in global function tables
@@ -370,7 +370,13 @@ Node::Ptr Binder::visit(IdentifierExpr::Ptr decl) {
             return decl;
         }
         default: {
-            return decl;
+            auto symbol = context->lookup(name) ;
+            if(symbol != nullptr && symbol->isExported) {
+                return decl;
+            } else {
+                return decl;
+            }
+            
         }
     }
 }

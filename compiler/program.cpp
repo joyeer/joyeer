@@ -73,26 +73,6 @@ void Program::compile(SourceFile *sourcefile) {
     debugPrint(block, block->filename + L".binder.debug.txt");
     CHECK_ERROR_CONTINUE
     
-    // resolve all importfile statement in source file, and try to compile them
-    auto fileimports = block->getFileImports();
-    auto relativedFolder = sourcefile->location.parent_path().wstring();
-    for(std::vector<FileImportDecl::Ptr>::const_iterator iterator = fileimports.begin(); iterator != fileimports.end(); iterator ++ ) {
-        auto importedFile = *iterator;
-        auto importedFilename = importedFile->getImportedFilename();
-        auto importfile = findSourceFile(importedFilename, relativedFolder);
-        
-        if(importfile == nullptr) {
-            Diagnostics::reportError(L"Error");
-        }
-        compile(importfile);
-    
-        CHECK_ERROR_CONTINUE
-        
-        // insert the symbol table int context
-        assert(importfile->exportedSymbolTable != nullptr);
-        context->importSymbolTableOfModule(importfile->exportedSymbolTable);
-    }
-    
     // verify the types
     TypeChecker typeChecker(context);
     typeChecker.visit(std::static_pointer_cast<Node>(block));

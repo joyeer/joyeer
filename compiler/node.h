@@ -42,6 +42,8 @@ enum SyntaxKind {
     funcCallExpr,
     memberFuncCallExpr,
     memberAccessExpr,
+    moduleMemberAccessExpr,     // access module's member variable
+    moduleFuncCallExpr,         // access module's exported function
     subscriptExpr,
   
     literalExpr,
@@ -345,6 +347,24 @@ struct FileImportDecl: Node {
     
     const std::wstring getImportedFilename();
     
+};
+
+struct ModuleMemberAccessExpr: public Node {
+    typedef std::shared_ptr<ModuleMemberAccessExpr> Ptr;
+    
+    FileImportDecl::Ptr module;
+    Node::Ptr member;
+    
+    ModuleMemberAccessExpr(FileImportDecl::Ptr module, Node::Ptr member);
+};
+
+struct ModuleFuncCallExpr: public Node {
+    typedef std::shared_ptr<ModuleFuncCallExpr> Ptr;
+    
+    FileImportDecl::Ptr module;
+    Node::Ptr member;
+    
+    ModuleFuncCallExpr(FileImportDecl::Ptr module, Node::Ptr member);
 };
 
 struct SourceBlock: Node {
