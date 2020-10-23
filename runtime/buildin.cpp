@@ -6,6 +6,7 @@
 #include "runtime/sys/module.h"
 
 std::vector<JrType*> Global::types = {};
+std::vector<JrModuleClass*> Global::modules = {};
 std::vector<std::wstring> Global::strings = {};
 std::vector<JrFunction*> Global::functions = {};
 
@@ -54,6 +55,11 @@ void Global::registerFunction(JrFunction* func, JrType* ownerType) {
 void Global::registerObjectType(JrType* type) {
     type->addressOfType = types.size();
     types.push_back(type);
+}
+
+void Global::registerModuleType(JrModuleClass *moduleClass) {
+    moduleClass->addressOfMudule = modules.size();
+    modules.push_back(moduleClass);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////

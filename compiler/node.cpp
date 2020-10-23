@@ -301,15 +301,15 @@ const std::wstring FileImportDecl::getImportedFilename() {
     return stringLiteral->rawValue;
 }
 
-ModuleMemberAccessExpr::ModuleMemberAccessExpr(FileImportDecl::Ptr module, Node::Ptr member):
+ModuleMemberAccessExpr::ModuleMemberAccessExpr(JrModuleClass* moduleClass, Node::Ptr member):
 Node(SyntaxKind::moduleMemberAccessExpr),
-module(module),
+moduleClass(moduleClass),
 member(member) {
 }
 
-ModuleFuncCallExpr::ModuleFuncCallExpr(FileImportDecl::Ptr module, Node::Ptr member):
+ModuleFuncCallExpr::ModuleFuncCallExpr(JrModuleClass* moduleClass, Node::Ptr member):
 Node(SyntaxKind::moduleFuncCallExpr),
-module(module),
+moduleClass(moduleClass),
 member(member) {
 }
 
@@ -826,6 +826,31 @@ void NodeDebugPrinter::print(Node::Ptr node) {
         case fileimportDecl: {
             auto n = std::static_pointer_cast<FileImportDecl>(node);
             output << L"+fileimport(\"" << n->stringLiteral->rawValue << "\")";
+        }
+            break;
+        case moduleMemberAccessExpr: {
+            auto n = std::static_pointer_cast<ModuleMemberAccessExpr>(node);
+            output << L"+moduleMemberAccessExpr(\"" << n->moduleClass->name << "\")";
+            incTab();
+            print(n->member);
+            decTab();
+        }
+            break;
+        case moduleFuncCallExpr: {
+            auto n = std::static_pointer_cast<ModuleFuncCallExpr>(node);
+            output << L"+moduleFuncCallExpr";
+            incTab();
+            print(n->symtable);
+            print(n->symbol);
+//            print(n->parent);
+            print(n->member);
+            incTab();
+//            for(auto argu: n->arguments) {
+//                print(argu);
+//            }
+            decTab();
+            decTab();
+
         }
             break;
         default:

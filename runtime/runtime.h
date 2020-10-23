@@ -71,6 +71,8 @@ struct JrObjectType: public JrType {
 // Speical type for module class
 struct JrModuleClass: public JrObjectType {
     JrModuleClass(const std::wstring& name);
+    
+    JrInt addressOfMudule;
 };
 
 struct JrVar {

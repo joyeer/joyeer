@@ -352,19 +352,19 @@ struct FileImportDecl: Node {
 struct ModuleMemberAccessExpr: public Node {
     typedef std::shared_ptr<ModuleMemberAccessExpr> Ptr;
     
-    FileImportDecl::Ptr module;
+    JrModuleClass* moduleClass;
     Node::Ptr member;
     
-    ModuleMemberAccessExpr(FileImportDecl::Ptr module, Node::Ptr member);
+    ModuleMemberAccessExpr(JrModuleClass* moduleClass, Node::Ptr member);
 };
 
 struct ModuleFuncCallExpr: public Node {
     typedef std::shared_ptr<ModuleFuncCallExpr> Ptr;
     
-    FileImportDecl::Ptr module;
+    JrModuleClass* moduleClass;
     Node::Ptr member;
     
-    ModuleFuncCallExpr(FileImportDecl::Ptr module, Node::Ptr member);
+    ModuleFuncCallExpr(JrModuleClass* moduleClass, Node::Ptr member);
 };
 
 struct SourceBlock: Node {
@@ -438,6 +438,8 @@ protected:
     virtual Node::Ptr visit(Type::Ptr decl) = 0;
     virtual Node::Ptr visit(FuncCallExpr::Ptr decl) = 0;
     virtual Node::Ptr visit(MemberFuncCallExpr::Ptr decl) = 0;
+    virtual Node::Ptr visit(ModuleMemberAccessExpr::Ptr decl) = 0;
+    virtual Node::Ptr visit(ModuleFuncCallExpr::Ptr decl) = 0;
     virtual Node::Ptr visit(ArguCallExpr::Ptr decl) = 0;
     virtual Node::Ptr visit(LiteralExpr::Ptr decl) = 0;
     virtual Node::Ptr visit(PrefixExpr::Ptr decl) = 0;
@@ -461,6 +463,7 @@ protected:
     virtual Node::Ptr visit(SubscriptExpr::Ptr decl) = 0;
     virtual Node::Ptr visit(ArrayType::Ptr decl) = 0;
     virtual Node::Ptr visit(FileImportDecl::Ptr decl) = 0;
+    
 
 };
 

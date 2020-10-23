@@ -5,7 +5,7 @@
 #include "runtime/runtime.h"
 #include <sstream>
 
-struct JrObjectString: JrObject {
+struct JrObjectString: public JrObject {
     static JrObjectType* Type;
     
     std::wstring* content = nullptr;
@@ -16,7 +16,7 @@ struct JrObjectString: JrObject {
     static void init();
 };
 
-struct JrObjectStringBuilder: JrObject {
+struct JrObjectStringBuilder: public JrObject {
     static JrObjectType* Type;
     static JrFunction* Constructor;
     

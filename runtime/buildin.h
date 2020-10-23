@@ -16,6 +16,9 @@ struct Global {
     // global types
     static std::vector<JrType*> types;
     
+    // global moudles
+    static std::vector<JrModuleClass*> modules;
+    
     // global strings
     static std::vector<std::wstring> strings;
     
@@ -24,6 +27,8 @@ struct Global {
     
     /// register an new object type in global table
     static void registerObjectType(JrType* type);
+    
+    static void registerModuleType(JrModuleClass* moduleClass);
     
     /// initialize all global tables
     static void initGlobalTables();

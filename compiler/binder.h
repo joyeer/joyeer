@@ -27,6 +27,8 @@ protected:
     virtual Node::Ptr visit(Type::Ptr decl);
     virtual Node::Ptr visit(FuncCallExpr::Ptr decl);
     virtual Node::Ptr visit(MemberFuncCallExpr::Ptr decl);
+    virtual Node::Ptr visit(ModuleMemberAccessExpr::Ptr decl);
+    virtual Node::Ptr visit(ModuleFuncCallExpr::Ptr decl);
     virtual Node::Ptr visit(ArguCallExpr::Ptr decl);
     virtual Node::Ptr visit(LiteralExpr::Ptr decl);
     virtual Node::Ptr visit(PrefixExpr::Ptr decl);

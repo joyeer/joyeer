@@ -8,4 +8,8 @@ struct JrModule: JrObject {
     static void init();
 };
 
+struct JrModule_Import: public JrNativeFunc {
+    
+};
+
 #endif

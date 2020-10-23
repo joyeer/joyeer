@@ -24,6 +24,7 @@ Node::Ptr Binder::visit(SourceBlock::Ptr sourceBlock) {
     // Module class self
     auto moduleClass = new JrModuleClass(L"Module@__FILE__@" + sourceBlock->filename);
     Global::registerObjectType(moduleClass);
+    Global::registerModuleType(moduleClass);
     
     // Module constructor function
     auto function = new JrFunction {
@@ -59,6 +60,7 @@ Node::Ptr Binder::visit(SourceBlock::Ptr sourceBlock) {
     // Mark the exported flag in symbols
     for(const auto &entry: context->exportedSymbols->symbols) {
         entry.second->isExported = true;
+        entry.second->addressOfModule = moduleClass->addressOfMudule;
     }
 
     return sourceBlock;
@@ -372,7 +374,8 @@ Node::Ptr Binder::visit(IdentifierExpr::Ptr decl) {
         default: {
             auto symbol = context->lookup(name) ;
             if(symbol != nullptr && symbol->isExported) {
-                return decl;
+                auto moduleClass = Global::modules[symbol->addressOfModule];
+                return std::make_shared<ModuleMemberAccessExpr>(moduleClass, decl);
             } else {
                 return decl;
             }
@@ -626,6 +629,16 @@ Node::Ptr Binder::visit(MemberAccessExpr::Ptr decl) {
     return decl;
 }
 
+Node::Ptr Binder::visit(ModuleMemberAccessExpr::Ptr decl) {
+    assert(false); // ModuleMemberAccessExpr is genareted in Binder. In Binder, we will visit this node;
+    return nullptr;
+}
+
+Node::Ptr Binder::visit(ModuleFuncCallExpr::Ptr decl) {
+    assert(false); // ModuleMemberAccessExpr is genareted in Binder. In Binder, we will visit this node;
+    return nullptr;
+}
+
 Node::Ptr Binder::visit(SubscriptExpr::Ptr decl) {
     decl->identifier = visit(decl->identifier);
     decl->indexExpr = visit(decl->indexExpr);
@@ -648,14 +661,6 @@ Node::Ptr Binder::visit(FileImportDecl::Ptr decl) {
     auto importedSourceFile = importDelegate(context, moduleName);
     
     context->importSymbolTableOfModule(importedSourceFile->exportedSymbolTable);
-    
-    auto ownerType = (JrObjectType*)context->curType();
-    auto field = JrFieldType::Ptr(new JrFieldType {
-        .name = moduleName,
-        .type = importedSourceFile->moduleClass
-    });
-    
-    ownerType->registerField(field);
-    
+
     return decl;
 }

@@ -59,6 +59,9 @@ public:
         // the address of the field in Object
         int addressOfField;
     };
+ 
+    // symbols belong to which module, only avalidate in exported symbols
+    int addressOfModule = -1;
 };
 
 
