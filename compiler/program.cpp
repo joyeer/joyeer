@@ -14,6 +14,11 @@
         return; \
     }
 
+#define CHECK_ERROR_RETURN_NULL \
+    if(Diagnostics::errorLevel != none) { \
+        return nullptr; \
+    }
+
 Program::Program(CompileOpts::Ptr opts):
 options(opts) {
 }
@@ -94,11 +99,11 @@ SourceFile* Program::tryImport(CompileContext::Ptr context, const std::wstring &
     auto importfile = findSourceFile(moduleName, relativedFolder);
     if(importfile == nullptr) {
         Diagnostics::reportError(L"Error: Module cannot be found");
-        return;
+        return nullptr;
     }
     compile(importfile);
     
-    CHECK_ERROR_CONTINUE
+    CHECK_ERROR_RETURN_NULL
     return importfile;
 }
 

@@ -1,13 +1,14 @@
 cmake_minimum_required(VERSION 3.16)
 
-project (joyeer
-          VERSION 0.0.1)
+project (joyeer VERSION 0.0.1)
 
+# enable the testing
+enable_testing()
 
 set(SOURCES main.cpp)
-
 add_subdirectory(compiler)
 add_subdirectory(runtime)
+add_subdirectory(tests)
 
 add_executable(joyeer ${SOURCES})
 

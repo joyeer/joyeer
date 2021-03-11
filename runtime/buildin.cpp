@@ -9,6 +9,7 @@ std::vector<JrType*> Global::types = {};
 std::vector<JrModuleClass*> Global::modules = {};
 std::vector<std::wstring> Global::strings = {};
 std::vector<JrFunction*> Global::functions = {};
+std::vector<SymbolTable::Ptr> Global::symtables = {};
 
 // init the types tables
 static std::unordered_map<std::wstring, JrFunction*>  funtionsMap;

@@ -23,7 +23,7 @@ struct JrObjectMapType: public JrObjectType {
     JrInt size() {
         return sizeof(JrObjectMap);
     }
-};
+};                          
 
 JrObjectType* JrObjectMap::Type = new JrObjectMapType();
 JrFunction* JrObjectMap::Constructor;

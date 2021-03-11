@@ -15,20 +15,5 @@ int main(int argc, char** argv) {
     Program program(options);
     program.run(options->inputfile.wstring());
     
-//    IRGen irGen(compileContext);
-//    auto m = irGen.emit(sourceBlock);
-//    
-//    TypeTablePrinter typePrinter(L"debug.table.types.txt");
-//    typePrinter.print();
-//    typePrinter.close();
-//    
-//    FunctionTablePrinter funcPrinter(L"debug.table.functions.txt");
-//    funcPrinter.print();
-//    funcPrinter.close();
-//    
-//    auto context = new JrRuntimeContext();
-//    JrInterpreter interpreter(context);
-//    interpreter.run(m);
-    
     return 0;
 }

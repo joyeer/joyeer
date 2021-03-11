@@ -5,6 +5,7 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
+#include "compiler/symtable.h"
 #include "runtime.h"
 #include "function.h"
 
@@ -21,6 +22,9 @@ struct Global {
     
     // global strings
     static std::vector<std::wstring> strings;
+    
+    // global symbol table
+    static std::vector<SymbolTable::Ptr> symtables;
     
     /// register an new function in global function table
     static void registerFunction(JrFunction* func, JrType* ownerType);
