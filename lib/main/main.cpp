@@ -1,5 +1,5 @@
-#include "compiler/program.h"
-#include "runtime/buildin.h"
+#include "joyeer/compiler/program.h"
+#include "joyeer/runtime/buildin.h"
 
 int main(int argc, char** argv) {
     // command line arguments

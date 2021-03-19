@@ -2,24 +2,32 @@ cmake_minimum_required(VERSION 3.16)
 
 project (joyeer VERSION 0.0.1)
 
+set(CMAKE_DISABLE_IN_SOURCE_BUILD ON)
+
+# custom cmake module
+list(APPEND CMAKE_MODULE_PATH
+    "${CMAKE_CURRENT_SOURCE_DIR}/scripts/cmake")
+
 # enable the testing
 enable_testing()
+enable_language(CXX)
 
-set(SOURCES main.cpp)
-add_subdirectory(compiler)
-add_subdirectory(runtime)
+# Use C++20.
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS NO)
+
+get_filename_component(JOYEER_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR} REALPATH)
+set(JOYEER_INCLUDE_DIR, "${JOYEER_SOURCE_DIR}/include")
+set(JOYEER_LIB_DIR, "${JOYEER_SOURCE_DIR}/lib")
+
+include(addLibrary)
+
+# include headers
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+include_directories(
+    ${JOYEER_INCLUDE_DIR}
+)
+
+add_subdirectory(lib)
 add_subdirectory(tests)
-
-add_executable(joyeer ${SOURCES})
-
-include_directories(./)
-
-# IDE source group settings
-source_group("compiler" REGULAR_EXPRESSION "compiler/.*\\.(cpp|h)")
-source_group("runtime" REGULAR_EXPRESSION "runtime/.*\\.(cpp|h)")
-source_group("runtime\\sys" REGULAR_EXPRESSION "runtime/sys/.*\\.(cpp|h)")
-
-
-target_compile_features(joyeer PRIVATE cxx_std_20)
-set_property(TARGET joyeer PROPERTY CXX_STANDARD 20)
-
