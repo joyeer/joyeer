@@ -1,5 +1,5 @@
-#include "object.h"
-#include "runtime.h"
+#include "joyeer/runtime/object.h"
+#include "joyeer/runtime/runtime.h"
 
 const JrObject* JrObject::Nil = new JrObject();
 

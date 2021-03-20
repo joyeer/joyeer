@@ -3,9 +3,9 @@
 
 #include <filesystem>
 #include <string>
-#include "runtime/object.h"
-#include "compiler/node.h"
-#include "runtime/sys/module.h"
+#include "joyeer/runtime/object.h"
+#include "joyeer/compiler/node.h"
+#include "joyeer/runtime/sys/module.h"
 
 // SourceFile contains all information of source file in disk
 struct SourceFile {

@@ -1,5 +1,5 @@
-#include "syntaxparser.h"
-#include "diagnostic.h"
+#include "joyeer/compiler/syntaxparser.h"
+#include "joyeer/compiler/diagnostic.h"
 #include <cassert>
 
 SyntaxParser::SyntaxParser(const std::vector<std::shared_ptr<Token>> &tokens) : tokens(tokens)

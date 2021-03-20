@@ -1,4 +1,4 @@
-#include "gc.h"
+#include "joyeer/runtime/gc.h"
 
 JrObject* JrObjectAlloc::alloc(JrObjectType* type) {
     size_t size = type->size();

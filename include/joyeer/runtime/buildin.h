@@ -5,9 +5,9 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
-#include "compiler/symtable.h"
-#include "runtime.h"
-#include "function.h"
+#include "joyeer/compiler/symtable.h"
+#include "joyeer/runtime/runtime.h"
+#include "joyeer/runtime/function.h"
 
 struct Global {
     

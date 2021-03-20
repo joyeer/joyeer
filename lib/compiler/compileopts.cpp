@@ -1,7 +1,7 @@
-#include "compileopts.h"
+#include "joyeer/compiler/compileopts.h"
+#include "joyeer/compiler/diagnostic.h"
 #include <codecvt>
 #include <iostream>
-#include "compiler/diagnostic.h"
 
 CompileOpts::CompileOpts(int argc, char** argv) {
     std::vector<std::string> arguments;

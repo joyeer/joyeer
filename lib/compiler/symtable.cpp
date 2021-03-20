@@ -1,6 +1,6 @@
-#include "symtable.h"
-#include "diagnostic.h"
-#include "runtime/buildin.h"
+#include "joyeer/compiler/symtable.h"
+#include "joyeer/compiler/diagnostic.h"
+#include "joyeer/runtime/buildin.h"
 
 std::wstring debugStringOfSymbolFlag(SymbolFlag flag) {
     switch (flag) {

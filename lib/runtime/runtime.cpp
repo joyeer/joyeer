@@ -1,5 +1,5 @@
-#include "runtime.h"
-#include "gc.h"
+#include "joyeer/runtime/runtime.h"
+#include "joyeer/runtime/gc.h"
 #include <cassert>
 
 

@@ -1,8 +1,8 @@
 #ifndef __joyeer_runtime_sys_map_h__
 #define __joyeer_runtime_sys_map_h__
 
-#include "runtime/function.h"
-#include "runtime/runtime.h"
+#include "joyeer/runtime/function.h"
+#include "joyeer/runtime/runtime.h"
 #include <unordered_map>
 
 

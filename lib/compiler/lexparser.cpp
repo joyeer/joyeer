@@ -1,8 +1,9 @@
-#include "lexparser.h"
+#include "joyeer/compiler/lexparser.h"
+#include "joyeer/compiler/diagnostic.h"
+#include "joyeer/runtime/buildin.h"
 #include <codecvt>
 #include <string>
-#include "diagnostic.h"
-#include "runtime/buildin.h"
+
 
 void LexParser::parse(const std::wstring& content) {
     this->content = content;

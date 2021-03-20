@@ -1,8 +1,8 @@
-#include "interpreter.h"
-#include "buildin.h"
-#include "gc.h"
-#include "runtime/sys/array.h"
-#include "runtime/sys/string.h"
+#include "joyeer/runtime/interpreter.h"
+#include "joyeer/runtime/buildin.h"
+#include "joyeer/runtime/gc.h"
+#include "joyeer/runtime/sys/array.h"
+#include "joyeer/runtime/sys/string.h"
 #include <cassert>
 #include <iostream>
 

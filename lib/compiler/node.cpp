@@ -1,10 +1,11 @@
-#include "node.h"
+#include "joyeer/compiler/node.h"
+#include "joyeer/runtime/buildin.h"
 #include <iostream>
 #include <iomanip>
 #include <sstream>
 #include <filesystem>
 #include <cassert>
-#include "runtime/buildin.h"
+
 
 Node::Node(SyntaxKind k): kind(k) {
 }

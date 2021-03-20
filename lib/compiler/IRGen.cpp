@@ -1,9 +1,9 @@
-#include "IRGen.h"
-#include "diagnostic.h"
-#include "runtime/buildin.h"
-#include "runtime/sys/array.h"
-#include "runtime/sys/map.h"
-#include "runtime/sys/string.h"
+#include "joyeer/compiler/IRGen.h"
+#include "joyeer/compiler/diagnostic.h"
+#include "joyeer/runtime/buildin.h"
+#include "joyeer/runtime/sys/array.h"
+#include "joyeer/runtime/sys/map.h"
+#include "joyeer/runtime/sys/string.h"
 #include <cassert>
 #include <unordered_map>
 

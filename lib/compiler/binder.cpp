@@ -1,8 +1,8 @@
-#include "binder.h"
-#include "diagnostic.h"
-#include "runtime/buildin.h"
-#include "runtime/sys/module.h"
-#include "compiler/sourcefile.h"
+#include "joyeer/compiler/binder.h"
+#include "joyeer/compiler/diagnostic.h"
+#include "joyeer/runtime/buildin.h"
+#include "joyeer/runtime/sys/module.h"
+#include "joyeer/compiler/sourcefile.h"
 #include <cassert>
 
 

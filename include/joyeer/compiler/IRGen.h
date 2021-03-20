@@ -1,10 +1,10 @@
 #ifndef __joyeer_compiler_irgen_h__
 #define __joyeer_compiler_irgen_h__
 
-#include "node.h"
-#include "runtime/runtime.h"
-#include "runtime/instruction.h"
-#include "runtime/function.h"
+#include "joyeer/compiler/node.h"
+#include "joyeer/runtime/runtime.h"
+#include "joyeer/runtime/instruction.h"
+#include "joyeer/runtime/function.h"
 
 class JrCodeWriter;
 

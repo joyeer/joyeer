@@ -1,4 +1,4 @@
-#include "diagnostic.h"
+#include "joyeer/compiler/diagnostic.h"
 #include <iostream>
 
 const std::wstring Diagnostics::errorNoSuchFileOrDirectory = L"no such file or directory: ";

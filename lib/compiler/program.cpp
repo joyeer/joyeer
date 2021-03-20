@@ -1,12 +1,12 @@
-#include "program.h"
-#include "compiler/lexparser.h"
-#include "compiler/diagnostic.h"
-#include "compiler/binder.h"
-#include "compiler/typecheck.h"
-#include "compiler/syntaxparser.h"
-#include "compiler/IRGen.h"
-#include "runtime/interpreter.h"
-#include "runtime/buildin.h"
+#include "joyeer/compiler/program.h"
+#include "joyeer/compiler/lexparser.h"
+#include "joyeer/compiler/diagnostic.h"
+#include "joyeer/compiler/binder.h"
+#include "joyeer/compiler/typecheck.h"
+#include "joyeer/compiler/syntaxparser.h"
+#include "joyeer/compiler/IRGen.h"
+#include "joyeer/runtime/interpreter.h"
+#include "joyeer/runtime/buildin.h"
 #include <iostream>
 
 #define CHECK_ERROR_CONTINUE \

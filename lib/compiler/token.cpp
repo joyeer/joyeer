@@ -1,4 +1,4 @@
-#include "token.h"
+#include "joyeer/compiler/token.h"
 #include <unordered_map>
 
 Token::Token(TokenKind kind, const std::wstring& rawValue, size_t lineNumber, size_t columnAt):

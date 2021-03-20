@@ -1,7 +1,8 @@
-#include "string.h"
-#include "runtime/buildin.h"
-#include "runtime/gc.h"
-#include "runtime/instruction.h"
+#include "joyeer/runtime/buildin.h"
+#include "joyeer/runtime/sys/string.h"
+#include "joyeer/runtime/instruction.h"
+#include "joyeer/runtime/gc.h"
+
 
 auto JrObjectStringInitializer = [](JrPtr memory) -> JrObject* {
     return new(memory) JrObjectString;

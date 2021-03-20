@@ -1,7 +1,7 @@
 #ifndef __joyeer_runtime_sys_print_h__
 #define __joyeer_runtime_sys_print_h__
 
-#include "runtime/function.h"
+#include "joyeer/runtime/function.h"
 
 struct JrFuncPrint : public JrNativeFunc {
     static JrFunction* Func;

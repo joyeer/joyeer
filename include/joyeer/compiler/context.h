@@ -1,9 +1,9 @@
 #ifndef __joyeer_compiler_context_h__
 #define __joyeer_compiler_context_h__
 
-#include "compiler/compileopts.h"
-#include "compiler/symtable.h"
-#include "runtime/function.h"
+#include "joyeer/compiler/compileopts.h"
+#include "joyeer/compiler/symtable.h"
+#include "joyeer/runtime/function.h"
 
 struct SourceFile;
 

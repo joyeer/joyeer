@@ -1,9 +1,10 @@
-#include "context.h"
+#include "joyeer/compiler/context.h"
+#include "joyeer/runtime/buildin.h"
+#include "joyeer/compiler/symtable.h"
+#include "joyeer/compiler/diagnostic.h"
 #include <cassert>
 #include <memory>
-#include "symtable.h"
-#include "diagnostic.h"
-#include "runtime/buildin.h"
+
 
 
 CompileContext::CompileContext(CompileOpts::Ptr options):

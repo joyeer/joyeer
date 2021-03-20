@@ -1,9 +1,9 @@
-#include "buildin.h"
-#include "runtime/sys/array.h"
-#include "runtime/sys/print.h"
-#include "runtime/sys/string.h"
-#include "runtime/sys/map.h"
-#include "runtime/sys/module.h"
+#include "joyeer/runtime/buildin.h"
+#include "joyeer/runtime/sys/array.h"
+#include "joyeer/runtime/sys/print.h"
+#include "joyeer/runtime/sys/string.h"
+#include "joyeer/runtime/sys/map.h"
+#include "joyeer/runtime/sys/module.h"
 
 std::vector<JrType*> Global::types = {};
 std::vector<JrModuleClass*> Global::modules = {};

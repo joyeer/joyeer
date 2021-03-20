@@ -1,7 +1,7 @@
-#include "array.h"
-#include "runtime/gc.h"
-#include "runtime/object.h"
-#include "runtime/buildin.h"
+#include "joyeer/runtime/sys/array.h"
+#include "joyeer/runtime/gc.h"
+#include "joyeer/runtime/object.h"
+#include "joyeer/runtime/buildin.h"
 
 
 auto JrObjectIntArrayInitializer = [](JrPtr memory) -> JrObject* {

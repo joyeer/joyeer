@@ -1,9 +1,9 @@
 #ifndef __joyeer_compiler_program_h__
 #define __joyeer_compiler_program_h__
 
-#include "compiler/sourcefile.h"
-#include "compiler/compileopts.h"
-#include "compiler/context.h"
+#include "joyeer/compiler/sourcefile.h"
+#include "joyeer/compiler/compileopts.h"
+#include "joyeer/compiler/context.h"
 
 #include <unordered_map>
 
