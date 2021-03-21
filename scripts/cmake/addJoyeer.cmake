@@ -18,7 +18,7 @@ function(add_joyeer_library name)
     endif()
 
     add_library(${name} ${libkind} ${JRL_SOURCES})
-    
+
 endfunction(add_joyeer_library name)
 
 
@@ -37,5 +37,6 @@ function(add_joyeer_executable executable)
     set(JRT_SOURCES ${JRT_UNPARSED_ARGUMENTS})
 
     add_executable(${executable} ${JRT_SOURCES})
+    
     
 endfunction(add_joyeer_executable)
