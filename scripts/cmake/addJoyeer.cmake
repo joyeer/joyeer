@@ -17,6 +17,15 @@ function(add_joyeer_library name)
         set(libkind STATIC)
     endif()
 
+    if(XCODE) 
+        get_filename_component(dir ${CMAKE_CURRENT_SOURCE_DIR} NAME)
+        file(GLOB_RECURSE JRL_HEADERS
+        ${JOYEER_INCLUDE_DIR}/joyeer/${dir}/*.h)
+
+        set_source_files_properties(${JRL_HEADERS} PROPERTIES HEADER_FILE_ONLY true)
+
+        set(JRL_SOURCES ${JRL_SOURCES} ${JRL_HEADERS})
+    endif()
     add_library(${name} ${libkind} ${JRL_SOURCES})
 
 endfunction(add_joyeer_library name)
