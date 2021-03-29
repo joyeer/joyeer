@@ -1,4 +1,0 @@
-var value = 1
-print(message: value)
-var textMessage = "2"
-print(message: value)

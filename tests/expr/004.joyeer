@@ -1,3 +1,0 @@
-fileimport "003.joyeer"
-
-print(message: value)
