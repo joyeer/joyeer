@@ -6,7 +6,7 @@ class Request {
     int requestID;
 };
 
-// 
+// Parse source code to AST request
 class ParseRequest {
 
 };

@@ -1,9 +1,9 @@
 add_joyeer_executable(joyeer main.cpp)
 
-add_dependencies(joyeer jrRuntime)
-add_dependencies(joyeer jrCompiler)
+add_dependencies(joyeer joyeerRuntime)
+add_dependencies(joyeer joyeerCompiler)
 
 target_link_libraries(joyeer
-    jrRuntime
-    jrCompiler
+    joyeerRuntime
+    joyeerCompiler
 )

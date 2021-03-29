@@ -18,17 +18,19 @@ struct ErrorMessage {
     int columnAt;
 };
 
+#define DIAGNOSTICS_ERROR_MESSAGE(name, message) static constexpr const char* name = message;
+
 struct Diagnostics {
     
-    // not such file or directory
-    static const std::wstring errorNoSuchFileOrDirectory;
     // `fileimport` should be presented at the begin of source file
-    static const std::wstring errorFileImportShouldAtTopOfSourceFile;
+    DIAGNOSTICS_ERROR_MESSAGE(errorFileImportShouldAtTopOfSourceFile,           "`fileimport` should be presented at the begin of source file")
+    DIAGNOSTICS_ERROR_MESSAGE(errorNoSuchFileOrDirectory,                       "no such file or directory:")
+    DIAGNOSTICS_ERROR_MESSAGE(success,                                          "message")
     
     static ErrorLevel errorLevel;
     
-    static void reportError(const std::wstring& error);
-    static void reportError(ErrorLevel level, const std::wstring& error, ...);
+    static void reportError(const char* error);
+    static void reportError(ErrorLevel level, const char* error, ...);
     
 };
 

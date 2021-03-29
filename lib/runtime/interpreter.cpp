@@ -23,7 +23,9 @@ void JrInterpreter::run(JrFunction* function, int objectRef) {
     auto frame = prepareStackFrame(function);
     context->stack->startFuncCall(frame);
     
+    #ifndef DEBUG
     std::wcout << std::wstring(context->stack->frames.size() - 1, L'-') << L"$[function][entry] " << function->name << std::endl;
+    #endif
     
     pointer = function->instructions.begin();
     end = function->instructions.end();

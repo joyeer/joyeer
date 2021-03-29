@@ -49,7 +49,7 @@ void LexParser::parse(const std::wstring& content) {
                         break;
                         parseOctalLiteral(iterator);
                     case '8': case '9':
-                        Diagnostics::reportError(L"Octal number only contains 0,1,2,3,4,5,6,7");
+                        Diagnostics::reportError("Octal number only contains 0,1,2,3,4,5,6,7");
                         break;
                     default:
                         auto token = std::make_shared<Token>(TokenKind::decimalLiteral, L"0", lineNumber, iterator - lineStartAtPosition);
@@ -187,7 +187,7 @@ void LexParser::parseOctalLiteral(std::wstring::const_iterator startAt) {
             case '0': case '1': case '2': case '3': case '4': case '5': case '6': case '7':
                 break;
             case '8': case '9':
-                Diagnostics::reportError(L"Octal number only contains 0,1,2,3,4,5,6,7");
+                Diagnostics::reportError("Octal number only contains 0,1,2,3,4,5,6,7");
                 goto label;
             default:
                 goto label;
@@ -302,7 +302,7 @@ void LexParser::parseStringLiteral() {
         if(*iterator == '\\') {
             iterator ++;
             if(iterator == endIterator) {
-                Diagnostics::reportError(L"[Error] except character after \"");
+                Diagnostics::reportError("[Error] except character after \"");
                 return;
             }
         } else if (*iterator == '\"') {

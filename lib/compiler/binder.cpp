@@ -1,8 +1,8 @@
 #include "joyeer/compiler/binder.h"
 #include "joyeer/compiler/diagnostic.h"
+#include "joyeer/compiler/sourcefile.h"
 #include "joyeer/runtime/buildin.h"
 #include "joyeer/runtime/sys/module.h"
-#include "joyeer/compiler/sourcefile.h"
 #include <cassert>
 
 
@@ -77,7 +77,7 @@ Node::Ptr Binder::visit(FuncDecl::Ptr decl) {
     Global::registerFunction(function, type);
     
     if(symtable->find(function->name) != nullptr) {
-        Diagnostics::reportError(L"[Error] Dupliate function name");
+        Diagnostics::reportError("[Error] Dupliate function name");
     }
     
     auto symbol = std::shared_ptr<Symbol>(new Symbol {
@@ -134,7 +134,7 @@ Node::Ptr Binder::visit(ConstructorDecl::Ptr decl) {
     function->kind = jrFuncConstructor;
     function->returnType = type;
     if(symtable->find(function->name) != nullptr) {
-        Diagnostics::reportError(L"[Error] Dupliate constructor name");
+        Diagnostics::reportError("[Error] Dupliate constructor name");
         return nullptr;
     }
     
@@ -175,7 +175,7 @@ Node::Ptr Binder::visit(ClassDecl::Ptr decl) {
     auto name = decl->getName();
     
     if(symtable->find(name) != nullptr) {
-        Diagnostics::reportError(L"[Error] duplicate class name");
+        Diagnostics::reportError("[Error] duplicate class name");
     }
     
     auto symbol = Symbol::Ptr(new Symbol {
@@ -245,7 +245,7 @@ Node::Ptr Binder::visit(VarDecl::Ptr decl) {
     auto name = pattern->identifier->getName();
     
     if(symtable->find(name) != nullptr) {
-        Diagnostics::reportError(L"[Error] duplicate variable name");
+        Diagnostics::reportError("[Error] duplicate variable name");
     }
     
     // double check the domplciate
@@ -285,7 +285,7 @@ Node::Ptr Binder::visit(LetDecl::Ptr decl) {
     
     auto table = context->curSymTable();
     if(table->find(name) != nullptr) {
-        Diagnostics::reportError(L"[Error] duplicate variable name");
+        Diagnostics::reportError("[Error] duplicate variable name");
         return nullptr;
     }
     
@@ -358,7 +358,7 @@ Node::Ptr Binder::visit(IdentifierExpr::Ptr decl) {
             // verify the func delcaration's parameter duplicate name
             auto table = context->curSymTable();
             if(table->find(name) != nullptr) {
-                Diagnostics::reportError(L"[Error] duplicate variable declaration in fucntion");
+                Diagnostics::reportError("[Error] duplicate variable declaration in fucntion");
                 return nullptr;
             }
             
@@ -415,7 +415,7 @@ Node::Ptr Binder::visit(Expr::Ptr decl) {
             assignmentExpr->left = subscriptExpr;
             return assignmentExpr;
         }
-        Diagnostics::reportError(L"[Error] left of assignment expression must be a variable");
+        Diagnostics::reportError("[Error] left of assignment expression must be a variable");
         return decl;
         
     }
@@ -439,7 +439,7 @@ Node::Ptr Binder::visit(Expr::Ptr decl) {
     
     for(auto node: decl->binaries) {
         if(node->kind != binaryExpr) {
-            Diagnostics::reportError(L"[Error] Except an binary expression");
+            Diagnostics::reportError("[Error] Except an binary expression");
             return decl;
         }
         
@@ -467,14 +467,14 @@ Node::Ptr Binder::visit(Expr::Ptr decl) {
         
         // for high priority operator
         if(temps.size() == 0) {
-            Diagnostics::reportError(L"[Error] Except");
+            Diagnostics::reportError("[Error] Except");
         }
         
         auto l = temps.back();
         temps.pop_back();
         iterator ++;
         if(iterator == nodes.end()) {
-            Diagnostics::reportError(L"[Error] Except");
+            Diagnostics::reportError("[Error] Except");
         }
         auto r = *iterator;
         

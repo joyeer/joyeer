@@ -182,7 +182,7 @@ Node::Ptr TypeChecker::visit(FuncCallExpr::Ptr node) {
     symbol = context->lookup(name);
     
     if(symbol == nullptr) {
-        Diagnostics::reportError(L"[Error]Cannot find the function");
+        Diagnostics::reportError("[Error]Cannot find the function");
     }
     
     node->symbol = symbol;
@@ -208,7 +208,7 @@ Node::Ptr TypeChecker::visit(MemberFuncCallExpr::Ptr node) {
     auto symbol = context->lookup(name);
     
     if(symbol == nullptr) {
-        Diagnostics::reportError(L"[Error]Cannot find the function");
+        Diagnostics::reportError("[Error]Cannot find the function");
     }
     
     node->symbol = symbol;
@@ -339,7 +339,7 @@ Node::Ptr TypeChecker::visit(IdentifierExpr::Ptr node) {
         case visitMemberAccess: {
             auto symbol = context->lookup(name);
             if(symbol == nullptr) {
-                Diagnostics::reportError(L"[Error] Cannot find variable");
+                Diagnostics::reportError("[Error] Cannot find variable");
             }
             assert(symbol != nullptr);
             assert(node->symbol == nullptr);
@@ -360,7 +360,7 @@ Node::Ptr TypeChecker::visit(IdentifierExpr::Ptr node) {
 Node::Ptr TypeChecker::visit(Type::Ptr node) {
     auto symbol = context->lookup(node->identifier->getName());
     if(symbol == nullptr) {
-        Diagnostics::reportError(L"[Error]Cannot find type");
+        Diagnostics::reportError("[Error]Cannot find type");
     }
     node->symbol = symbol;
     

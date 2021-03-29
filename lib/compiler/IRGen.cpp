@@ -249,7 +249,7 @@ void IRGen::emit(PrefixExpr::Ptr node) {
 void IRGen::emit(IdentifierExpr::Ptr node) {
     auto symbol = node->symbol;
     if(symbol == nullptr) {
-        Diagnostics::reportError(L"[Error][GenCode]");
+        Diagnostics::reportError("[Error][GenCode]");
         return;
     }
     

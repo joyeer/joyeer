@@ -98,7 +98,7 @@ SourceFile* Program::tryImport(CompileContext::Ptr context, const std::wstring &
     auto relativedFolder = sourcefile->location.parent_path().wstring();
     auto importfile = findSourceFile(moduleName, relativedFolder);
     if(importfile == nullptr) {
-        Diagnostics::reportError(L"Error: Module cannot be found");
+        Diagnostics::reportError("Error: Module cannot be found");
         return nullptr;
     }
     compile(importfile);
