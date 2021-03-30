@@ -10,13 +10,13 @@
 // SourceFile contains all information of source file in disk
 struct SourceFile {
         
-    void open(const std::wstring& path);
+    void open(const std::string& path);
     
     JrInt addressOfModuleObj  = -1;
     bool initialized = false;
     
     std::filesystem::path location;
-    std::wstring content;
+    std::string content;
     
     SourceBlock::Ptr sourceblock;
     JrModuleClass* moduleClass;

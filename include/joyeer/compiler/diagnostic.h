@@ -13,7 +13,7 @@ enum ErrorLevel {
 
 struct ErrorMessage {
     ErrorLevel level;
-    std::wstring message;
+    std::string message;
     int lineAt;
     int columnAt;
 };

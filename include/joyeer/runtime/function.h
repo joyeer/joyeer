@@ -20,7 +20,7 @@ public:
     int totalSizeOfParams();
     
     JrFunctionKind kind;
-    std::wstring name;
+    std::string name;
     
     // all types for param, for object class, the last param is self
     std::vector<JrType*> paramTypes;

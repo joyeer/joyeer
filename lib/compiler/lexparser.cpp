@@ -5,7 +5,7 @@
 #include <string>
 
 
-void LexParser::parse(const std::wstring& content) {
+void LexParser::parse(const std::string& content) {
     this->content = content;
     iterator = content.begin();
     endIterator = content.end();
@@ -39,7 +39,7 @@ void LexParser::parse(const std::wstring& content) {
                 break;
             case '0':
                 if (iterator == endIterator) {
-                    auto token = std::make_shared<Token>(TokenKind::decimalLiteral, L"0", lineNumber, iterator - lineStartAtPosition);
+                    auto token = std::make_shared<Token>(TokenKind::decimalLiteral, "0", lineNumber, iterator - lineStartAtPosition);
                     token->intValue = 0;
                     tokens.push_back(token);
                     break;
@@ -52,7 +52,7 @@ void LexParser::parse(const std::wstring& content) {
                         Diagnostics::reportError("Octal number only contains 0,1,2,3,4,5,6,7");
                         break;
                     default:
-                        auto token = std::make_shared<Token>(TokenKind::decimalLiteral, L"0", lineNumber, iterator - lineStartAtPosition);
+                        auto token = std::make_shared<Token>(TokenKind::decimalLiteral, "0", lineNumber, iterator - lineStartAtPosition);
                         token->intValue = 0;
                         tokens.push_back(token);
                         break;
@@ -181,7 +181,7 @@ void LexParser::parse(const std::wstring& content) {
   }
 }
 
-void LexParser::parseOctalLiteral(std::wstring::const_iterator startAt) {
+void LexParser::parseOctalLiteral(std::string::const_iterator startAt) {
     while (iterator < endIterator) {
         switch (*iterator) {
             case '0': case '1': case '2': case '3': case '4': case '5': case '6': case '7':
@@ -195,12 +195,12 @@ void LexParser::parseOctalLiteral(std::wstring::const_iterator startAt) {
     }
     
 label:
-    std::wstring number(startAt, iterator);
+    std::string number(startAt, iterator);
     auto token = std::make_shared<Token>(TokenKind::decimalLiteral, number, lineNumber, startAt - lineStartAtPosition);
     tokens.push_back(token);
 }
 
-void LexParser::parseNumberLiteral(std::wstring::const_iterator startAt) {
+void LexParser::parseNumberLiteral(std::string::const_iterator startAt) {
 
   bool isFloatingLiteral = false;
   while (iterator != endIterator) {
@@ -219,7 +219,7 @@ void LexParser::parseNumberLiteral(std::wstring::const_iterator startAt) {
   bool hasFraction = false;
   if(*iterator == '.') {
     iterator ++ ;
-    std::wstring::const_iterator fractionStartIterator = iterator;          
+    std::string::const_iterator fractionStartIterator = iterator;          
     while(iterator != endIterator ) {
       switch (*iterator ++)
       {
@@ -237,36 +237,36 @@ void LexParser::parseNumberLiteral(std::wstring::const_iterator startAt) {
     } 
   }
 
-    std::wstring identifier(startAt, iterator);
+    std::string identifier(startAt, iterator);
     auto token = std::make_shared<Token>(TokenKind::decimalLiteral, identifier, lineNumber, iterator - startAt);
     token->intValue = std::stoi(identifier);
     tokens.push_back(token);
 }
 
-void LexParser::parseHexLiteral(std::wstring::const_iterator startAt) {
+void LexParser::parseHexLiteral(std::string::const_iterator startAt) {
 
 }
 
-void LexParser::parseOperator(std::wstring::const_iterator startIterator) {
-  std::wstring operators(startIterator, startIterator + 1);
+void LexParser::parseOperator(std::string::const_iterator startIterator) {
+  std::string operators(startIterator, startIterator + 1);
   tokens.push_back(
     std::shared_ptr<Token>(new Token(TokenKind::operators, operators, lineNumber, iterator - startIterator))
   );
 }
 
-void LexParser::pushOperator(TokenKind kind, std::wstring op, std::wstring::const_iterator startIterator) {
+void LexParser::pushOperator(TokenKind kind, std::string op, std::string::const_iterator startIterator) {
     tokens.push_back(std::shared_ptr<Token>(new Token(TokenKind::operators, op, lineNumber, iterator - startIterator)));
 }
 
-void LexParser::parsePunctuation(std::wstring::const_iterator startIterator) {
-  std::wstring punctuation(startIterator, startIterator + 1);
+void LexParser::parsePunctuation(std::string::const_iterator startIterator) {
+  std::string punctuation(startIterator, startIterator + 1);
   tokens.push_back(
     std::shared_ptr<Token>(new Token(TokenKind::punctuation, punctuation, lineNumber, iterator - startIterator))
   );
 }
 
 void LexParser::parseStringIdentifier() {
-  std::wstring::const_iterator startAt = iterator - 1;
+  std::string::const_iterator startAt = iterator - 1;
   while(iterator != endIterator) {
     switch (*iterator ++) {
     case 'a': case 'b': case 'c': case 'd': case 'e': case 'f': case 'g': case 'h': case 'i': case 'j': case 'k': case 'l': case 'm': case 'n': case 'o': case 'p': case 'q': case 'r': case 's': case 't': case 'u': case 'v': case 'w': case 'x': case 'y': case 'z':
@@ -281,7 +281,7 @@ void LexParser::parseStringIdentifier() {
   }
 
   exit_label:
-  std::wstring identifier(startAt, iterator);
+  std::string identifier(startAt, iterator);
   
     std::shared_ptr<Token> token;
     if(isKeyword(identifier)) {
@@ -312,7 +312,7 @@ void LexParser::parseStringLiteral() {
         iterator ++;
     }
     
-    const std::wstring identifier(startAt, iterator - 1);
+    const std::string identifier(startAt, iterator - 1);
     auto stringLiteral = std::make_shared<Token>(TokenKind::stringLiteral, identifier, lineNumber, iterator - startAt);
     Global::strings.push_back(identifier);
     stringLiteral->index = Global::strings.size() - 1;

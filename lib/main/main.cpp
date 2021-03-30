@@ -13,7 +13,7 @@ int main(int argc, char** argv) {
     Global::initGlobalTables();
     
     Program program(options);
-    program.run(options->inputfile.wstring());
+    program.run(options->inputfile.string());
     
     return 0;
 }

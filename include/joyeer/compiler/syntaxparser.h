@@ -116,7 +116,7 @@ private:
     ////////////////////////////////////////////////////////////////////////////
     // Helper functions
     ////////////////////////////////////////////////////////////////////////////
-    Token::Ptr tryEat(TokenKind kind, const std::wstring &value);
+    Token::Ptr tryEat(TokenKind kind, const std::string &value);
 
     Token::Ptr tryEat(TokenKind kind);
 

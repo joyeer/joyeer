@@ -24,7 +24,7 @@ void JrInterpreter::run(JrFunction* function, int objectRef) {
     context->stack->startFuncCall(frame);
     
 #ifdef INTERPRETER_DEBUG
-    std::wcout << std::wstring(context->stack->frames.size() - 1, L'-') << L"$[function][entry] " << function->name << std::endl;
+    std::cout << std::string(context->stack->frames.size() - 1, '-') << "$[function][entry] " << function->name << std::endl;
 #endif
     
     pointer = function->instructions.begin();
@@ -33,7 +33,7 @@ void JrInterpreter::run(JrFunction* function, int objectRef) {
     while(pointer != end) {
         auto instruction = *pointer;
 #ifdef INTERPRETER_DEBUG
-        std::wcout << std::wstring(context->stack->frames.size() , L'-') << L"[stack:" << context->stack->pointer / sizeof(JrValueHold) << L"] #" << pointer - function->instructions.begin() << L" " << printer.print(instruction) << std::endl;
+        std::cout << std::string(context->stack->frames.size() , L'-') << "[stack:" << context->stack->pointer / sizeof(JrValueHold) << "] #" << pointer - function->instructions.begin() << " " << printer.print(instruction) << std::endl;
 #endif
         switch(instruction.opcode) {
             case OP_ICONST:
@@ -134,7 +134,7 @@ void JrInterpreter::run(JrFunction* function, int objectRef) {
     
 exit_label:
 #ifdef INTERPRETER_DEBUG
-    std::wcout << std::wstring(context->stack->frames.size(), L'-') << L"$[function][leave] " << function->name << std::endl;
+    std::cout << std::string(context->stack->frames.size(), '-') << "$[function][leave] " << function->name << std::endl;
 #endif
     return;
 }
@@ -359,7 +359,7 @@ void JrInterpreter::exec_sconst(const Instruction &instruction) {
     auto string = Global::strings[instruction.value];
     auto stringObjRef = context->gc->alloc(JrObjectString::Type);
     auto stringObj = (JrObjectString*)context->gc->get(stringObjRef);
-    stringObj->content = new std::wstring(string);
+    stringObj->content = new std::string(string);
     context->stack->push({.kind = typeString, .objRefValue =  stringObjRef });
 }
 

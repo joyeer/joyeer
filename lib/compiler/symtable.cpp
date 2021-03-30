@@ -2,20 +2,20 @@
 #include "joyeer/compiler/diagnostic.h"
 #include "joyeer/runtime/buildin.h"
 
-std::wstring debugStringOfSymbolFlag(SymbolFlag flag) {
+std::string debugStringOfSymbolFlag(SymbolFlag flag) {
     switch (flag) {
         case varSymbol:
-            return L"varSymbol";
+            return "varSymbol";
         case funcSymbol:
-            return L"funcSymbol";
+            return "funcSymbol";
         case fieldSymbol:
-            return L"fieldSymbol";
+            return "fieldSymbol";
         case constructorSymbol:
-            return L"constructor";
+            return "constructor";
         case typeSymbol:
-            return L"type";
+            return "type";
         case moduleSymbol:
-            return L"module";
+            return "module";
     }
 }
 
@@ -39,7 +39,7 @@ bool SymbolTable::insert(Symbol::Ptr symbol) {
     return true;
 }
 
-Symbol::Ptr SymbolTable::find(const std::wstring& name) const {
+Symbol::Ptr SymbolTable::find(const std::string& name) const {
     auto result = symbols.find(name);
     if( result != symbols.end()) {
         return result->second;

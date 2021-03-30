@@ -62,9 +62,9 @@ struct Node {
     SymbolTable::Ptr symtable = nullptr;
     JrType* type = nullptr;
     
-    virtual std::wstring getName();
+    virtual std::string getName();
     // The type name of the Node
-    virtual std::wstring getTypeName();
+    virtual std::string getTypeName();
     
 protected:
     Node(SyntaxKind kind);
@@ -79,8 +79,8 @@ struct IdentifierExpr: public Node {
     IdentifierExpr(Token::Ptr token);
     
     // Return identifier's name
-    virtual std::wstring getName();
-    virtual std::wstring getTypeName();
+    virtual std::string getName();
+    virtual std::string getTypeName();
 };
 
 struct OperatorExpr: Node {
@@ -108,7 +108,7 @@ struct ArrayType: Node {
     
     ArrayType(Node::Ptr type);
     
-    virtual std::wstring getTypeName();
+    virtual std::string getTypeName();
 };
 
 struct DictType: Node {
@@ -119,7 +119,7 @@ struct DictType: Node {
     
     DictType(Node::Ptr keyType, Node::Ptr valueType);
     
-    virtual std::wstring getTypeName();
+    virtual std::string getTypeName();
 };
 
 struct Pattern: public Node {
@@ -130,7 +130,7 @@ struct Pattern: public Node {
     
     Pattern(IdentifierExpr::Ptr identifier, Node::Ptr type);
     
-    const std::wstring& getIdentifierName();
+    const std::string& getIdentifierName();
 
 };
 
@@ -160,7 +160,7 @@ struct ClassDecl: Node {
     
     ClassDecl(Token::Ptr name, std::vector<Node::Ptr> members);
     
-    std::wstring getName();
+    std::string getName();
 };
 
 struct ParameterClause: Node {
@@ -181,7 +181,7 @@ struct FuncDecl: Node {
 
     FuncDecl(Node::Ptr identifier, Node::Ptr parameterClause, Node::Ptr returnType, Node::Ptr codeBlock);
     
-    virtual std::wstring getTypeName();
+    virtual std::string getTypeName();
 };
 
 struct ConstructorDecl: Node {
@@ -193,7 +193,7 @@ struct ConstructorDecl: Node {
     ConstructorDecl(Node::Ptr parameterClause, Node::Ptr codeBlock);
     
     // return constructor's symbol name e.g. init(...)
-    const std::wstring getName(JrType* ownerType);
+    const std::string getName(JrType* ownerType);
 };
 
 struct Expr : Node {
@@ -263,7 +263,7 @@ struct FuncCallExpr: Node {
     
     FuncCallExpr(Node::Ptr expr, std::vector<ArguCallExpr::Ptr> arguments);
     
-    virtual std::wstring getTypeName();
+    virtual std::string getTypeName();
 };
 
 struct MemberFuncCallExpr: Node {
@@ -276,7 +276,7 @@ struct MemberFuncCallExpr: Node {
     
     MemberFuncCallExpr(Node::Ptr parent, Node::Ptr member, std::vector<ArguCallExpr::Ptr> arguments);
     
-    virtual std::wstring getTypeName();
+    virtual std::string getTypeName();
 };
 
 struct MemberAccessExpr: Node {
@@ -287,7 +287,7 @@ struct MemberAccessExpr: Node {
     
     MemberAccessExpr(Node::Ptr parent, Node::Ptr member);
     
-    virtual std::wstring getTypeName();
+    virtual std::string getTypeName();
 };
 
 struct LiteralExpr : Node {
@@ -345,7 +345,7 @@ struct FileImportDecl: Node {
     
     FileImportDecl(Token::Ptr stringLiteral);
     
-    const std::wstring getImportedFilename();
+    const std::string getImportedFilename();
     
 };
 
@@ -372,13 +372,13 @@ struct SourceBlock: Node {
     
     std::vector<Node::Ptr> statements;
     
-    std::wstring filename;
+    std::string filename;
 
     SourceBlock(std::vector<Node::Ptr> statements);
 
     std::vector<FileImportDecl::Ptr> getFileImports();
     
-    virtual std::wstring getName();
+    virtual std::string getName();
 };
 
 struct CodeBlock: Node {
@@ -469,7 +469,7 @@ protected:
 
 // ASM node printer
 struct NodeDebugPrinter {
-    NodeDebugPrinter(const std::wstring filename);
+    NodeDebugPrinter(const std::string filename);
     
     void print(Node::Ptr node);
     void close();
@@ -484,7 +484,7 @@ protected:
     
 private:
     int size = 0;
-    std::wofstream output;
+    std::ofstream output;
 };
 
 #endif

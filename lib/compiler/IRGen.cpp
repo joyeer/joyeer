@@ -383,7 +383,7 @@ void IRGen::emit(Expr::Ptr node) {
             auto n = *iterator;
             if(n->kind == operatorExpr) {
                 auto operatorExpr = std::static_pointer_cast<OperatorExpr>(n);
-                assert(operatorExpr->token->rawValue == L"+");
+                assert(operatorExpr->token->rawValue == "+");
             } else {
                 writer.write({
                     .opcode = OP_DUP
@@ -413,7 +413,7 @@ void IRGen::emit(Expr::Ptr node) {
 
 void IRGen::emit(OperatorExpr::Ptr node) {
     
-    static std::unordered_map<std::wstring, Opcode> imaps {
+    static std::unordered_map<std::string, Opcode> imaps {
         {
             { Operators::MINUS, OP_ISUB },
             { Operators::PLUS, OP_IADD },

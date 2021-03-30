@@ -81,7 +81,7 @@ CompileStage CompileContext::curStage() const {
     return stages.back();
 }
 
-Symbol::Ptr CompileContext::lookup(const std::wstring &name) {
+Symbol::Ptr CompileContext::lookup(const std::string &name) {
     for (auto iterator = symbols.rbegin(); iterator != symbols.rend(); iterator ++) {
         auto symtable = *iterator;
         auto symbol = symtable->find(name);

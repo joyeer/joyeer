@@ -10,12 +10,12 @@
 Node::Node(SyntaxKind k): kind(k) {
 }
 
-std::wstring Node::getName() {
-    return L"";
+std::string Node::getName() {
+    return "";
 }
 
-std::wstring Node::getTypeName() {
-    return L"";
+std::string Node::getTypeName() {
+    return "";
 }
 
 OperatorExpr::OperatorExpr(Token::Ptr token):
@@ -42,7 +42,7 @@ name(name),
 members(members) {
 }
 
-std::wstring ClassDecl::getName() {
+std::string ClassDecl::getName() {
     return name->rawValue;
 }
 
@@ -59,17 +59,17 @@ returnType(returnType),
 codeBlock(codeBlock) {
 }
 
-std::wstring FuncDecl::getTypeName() {
-    std::wstringstream ss;
+std::string FuncDecl::getTypeName() {
+    std::stringstream ss;
     if(identifier != nullptr && identifier->symbol != nullptr) {
         ss << identifier->getTypeName();
-        ss << L"@";
+        ss << "@";
     }
-    ss << std::static_pointer_cast<IdentifierExpr>(identifier)->token->rawValue << L"(";
+    ss << std::static_pointer_cast<IdentifierExpr>(identifier)->token->rawValue << "(";
     for(auto p: std::static_pointer_cast<ParameterClause>(parameterClause)->parameters) {
-        ss << p->identifier->token->rawValue << L":";
+        ss << p->identifier->token->rawValue << ":";
     }
-    ss << L")";
+    ss << ")";
     return ss.str();
 }
 
@@ -80,7 +80,7 @@ identifier(identifier),
 type(type) {
 }
 
-const std::wstring& Pattern::getIdentifierName() {
+const std::string& Pattern::getIdentifierName() {
     return identifier->token->rawValue;
 }
 
@@ -91,14 +91,14 @@ parameterClause(parameterClause),
 codeBlock(codeBlock) {
 }
 
-const std::wstring ConstructorDecl::getName(JrType* type) {
-    std::wstringstream ss;
-    ss << type->name << L"(";
+const std::string ConstructorDecl::getName(JrType* type) {
+    std::stringstream ss;
+    ss << type->name << "(";
     auto parameterClause = std::static_pointer_cast<ParameterClause>(this->parameterClause);
     for(auto parameter: parameterClause->parameters) {
-        ss << parameter->getIdentifierName() << L":";
+        ss << parameter->getIdentifierName() << ":";
     }
-    ss << L")";
+    ss << ")";
     return ss.str();
 }
 
@@ -152,15 +152,15 @@ identifier(expr),
 arguments(arguments) {
 }
 
-std::wstring FuncCallExpr::getTypeName() {
-    std::wstringstream ss;
+std::string FuncCallExpr::getTypeName() {
+    std::stringstream ss;
 
-    ss << identifier->getTypeName() << L"(";
+    ss << identifier->getTypeName() << "(";
     for(auto& argument: arguments) {
         ss << argument->label->token->rawValue;
-        ss << L":";
+        ss << ":";
     }
-    ss << L")";
+    ss << ")";
     return ss.str();
 }
 
@@ -171,14 +171,14 @@ member(member),
 arguments(arguments) {
 }
 
-std::wstring MemberFuncCallExpr::getTypeName() {
-    std::wstringstream ss;
+std::string MemberFuncCallExpr::getTypeName() {
+    std::stringstream ss;
     
-    ss << parent->getTypeName() << L"@" << member->getName() << L"(";
+    ss << parent->getTypeName() << "@" << member->getName() << "(";
     for(auto& argument: arguments) {
-        ss << argument->label->token->rawValue << L":";
+        ss << argument->label->token->rawValue << ":";
     }
-    ss << L")";
+    ss << ")";
     return ss.str();
 }
 
@@ -188,9 +188,9 @@ parent(parent),
 member(member) {
 }
 
-std::wstring MemberAccessExpr::getTypeName() {
-    std::wstringstream ss;
-    ss << parent->getTypeName() << L"@" << member->getName();
+std::string MemberAccessExpr::getTypeName() {
+    std::stringstream ss;
+    ss << parent->getTypeName() << "@" << member->getName();
     return ss.str();
 }
 
@@ -215,11 +215,11 @@ Node(SyntaxKind::identifierExpr),
 token(token) {
 }
 
-std::wstring IdentifierExpr::getName() {
+std::string IdentifierExpr::getName() {
     return token->rawValue;
 }
 
-std::wstring IdentifierExpr::getTypeName() {
+std::string IdentifierExpr::getTypeName() {
     if(symbol != nullptr && (symbol->flag == varSymbol || symbol->flag == fieldSymbol)) {
         auto type = Global::types[symbol->addressOfType];
         assert(type != nullptr);
@@ -257,8 +257,8 @@ Node(SyntaxKind::arrayType),
 type(type) {
 }
 
-std::wstring ArrayType::getTypeName() {
-    return L"Array@Array";
+std::string ArrayType::getTypeName() {
+    return "Array@Array";
 }
 
 DictType::DictType(Node::Ptr keyType, Node::Ptr valueType):
@@ -267,8 +267,8 @@ keyType(keyType),
 valueType(valueType) {
 }
 
-std::wstring DictType::getTypeName() {
-    return L"Map@Map";
+std::string DictType::getTypeName() {
+    return "Map@Map";
 }
 
 SourceBlock::SourceBlock(std::vector<std::shared_ptr<Node>> statements):
@@ -277,9 +277,9 @@ statements(statements) {
 
 }
 
-std::wstring SourceBlock::getName() {
+std::string SourceBlock::getName() {
     std::filesystem::path p = filename;
-    return p.replace_extension().wstring();
+    return p.replace_extension().string();
 }
 
 std::vector<FileImportDecl::Ptr> SourceBlock::getFileImports() {
@@ -298,7 +298,7 @@ Node(SyntaxKind::fileimportDecl),
 stringLiteral(stringLiteral) {
 }
 
-const std::wstring FileImportDecl::getImportedFilename() {
+const std::string FileImportDecl::getImportedFilename() {
     return stringLiteral->rawValue;
 }
 
@@ -421,7 +421,7 @@ Node::Ptr NodeVisitor::visit(Node::Ptr node) {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-NodeDebugPrinter::NodeDebugPrinter(const std::wstring filename) {
+NodeDebugPrinter::NodeDebugPrinter(const std::string filename) {
     output.open(filename);
 }
 
@@ -431,15 +431,15 @@ void NodeDebugPrinter::print(SymbolTable::Ptr symtable) {
     }
     output << std::endl;
     printTab();
-    output << L"#symtable {" << std::endl;
+    output << "#symtable {" << std::endl;
     incTab();
     for(auto symbol: symtable->symbols) {
         printTab();
-        output << symbol.second->name << L": " << symbol.second->addressOfFunc <<  L", " << symbol.second->addressOfVariable << std::endl;
+        output << symbol.second->name << ": " << symbol.second->addressOfFunc <<  ", " << symbol.second->addressOfVariable << std::endl;
     }
     decTab();
     printTab();
-    output << L"}";
+    output << "}";
 }
 
 void NodeDebugPrinter::print(Symbol::Ptr symbol) {
@@ -448,14 +448,14 @@ void NodeDebugPrinter::print(Symbol::Ptr symbol) {
     }
     output << std::endl;
     printTab();
-    output << L"@symbol-> name:\""<< symbol->name <<L"\", flag:\"" << debugStringOfSymbolFlag(symbol->flag) << L"\", mutable:" << symbol->isMutable;
+    output << "@symbol-> name:\""<< symbol->name << "\", flag:\"" << debugStringOfSymbolFlag(symbol->flag) << "\", mutable:" << symbol->isMutable;
 }
 
 void NodeDebugPrinter::print(std::vector<Node::Ptr> nodes) {
     output << std::endl;
     printTab();
     
-    output << L"[";
+    output << "[";
     incTab();
     
     for(auto n : nodes) {
@@ -465,7 +465,7 @@ void NodeDebugPrinter::print(std::vector<Node::Ptr> nodes) {
     output << std::endl;
     printTab();
     
-    output << L"]";
+    output << "]";
     
 }
 
@@ -482,7 +482,7 @@ void NodeDebugPrinter::print(Node::Ptr node) {
         case sourceBlock: {
             
             auto n = std::static_pointer_cast<SourceBlock>(node);
-            output << L"+sourceBLock(filename: \"" << n->filename << L"\")" ;
+            output << "+sourceBLock(filename: \"" << n->filename << "\")" ;
             incTab();
             print(n->symtable);
             print(n->symbol);
@@ -493,7 +493,7 @@ void NodeDebugPrinter::print(Node::Ptr node) {
         }
             break;
         case type: {
-            output << L"+type" ;
+            output << "+type" ;
             auto n = std::static_pointer_cast<Type>(node);
             incTab();
             print(n->symtable);
@@ -503,13 +503,13 @@ void NodeDebugPrinter::print(Node::Ptr node) {
         }
             break;
         case arrayType:
-            output << L"+arrayType" ;
+            output << "+arrayType" ;
             break;
         case dictType:
-            output << L"+dictType" ;
+            output << "+dictType" ;
             break;
         case pattern: {
-            output << L"+pattern" ;
+            output << "+pattern" ;
             auto n = std::static_pointer_cast<Pattern>(node);
             incTab();
             print(n->symtable);
@@ -522,10 +522,10 @@ void NodeDebugPrinter::print(Node::Ptr node) {
         }
             break;
         case importDecl:
-            output << L"+importDecl" ;
+            output << "+importDecl" ;
             break;
         case letDecl: {
-            output << L"+constantDecl" ;
+            output << "+constantDecl" ;
             auto n = std::static_pointer_cast<LetDecl>(node);
             incTab();
             print(n->symtable);
@@ -537,7 +537,7 @@ void NodeDebugPrinter::print(Node::Ptr node) {
             
             break;
         case varDecl: {
-            output << L"+varDecl" ;
+            output << "+varDecl" ;
             auto n = std::static_pointer_cast<VarDecl>(node);
             incTab();
             print(n->symtable);
@@ -548,7 +548,7 @@ void NodeDebugPrinter::print(Node::Ptr node) {
         }
             break;
         case funcDecl: {
-            output << L"+funcDecl" ;
+            output << "+funcDecl" ;
             auto n = std::static_pointer_cast<FuncDecl>(node);
             incTab();
             print(n->symtable);
@@ -561,7 +561,7 @@ void NodeDebugPrinter::print(Node::Ptr node) {
         }
             break;
         case constructorDecl: {
-            output << L"+constructorDecl" ;
+            output << "+constructorDecl" ;
             auto n = std::static_pointer_cast<ConstructorDecl>(node);
             incTab();
             print(n->symtable);
@@ -572,7 +572,7 @@ void NodeDebugPrinter::print(Node::Ptr node) {
         }
             break;
         case classDecl: {
-            output << L"+classDecl" ;
+            output << "+classDecl" ;
             auto members = std::static_pointer_cast<ClassDecl>(node);
             incTab();
             print(members->symtable);
@@ -582,7 +582,7 @@ void NodeDebugPrinter::print(Node::Ptr node) {
         }
             break;
         case parameterClause: {
-            output << L"+parameterClause" ;
+            output << "+parameterClause" ;
             auto n = std::static_pointer_cast<ParameterClause>(node);
             incTab();
             print(n->symtable);
@@ -597,7 +597,7 @@ void NodeDebugPrinter::print(Node::Ptr node) {
             break;
         case codeBlock: {
             auto n = std::static_pointer_cast<CodeBlock>(node);
-            output << L"+codeBlock" ;
+            output << "+codeBlock" ;
             incTab();
             print(n->symtable);
             print(n->symbol);
@@ -606,11 +606,11 @@ void NodeDebugPrinter::print(Node::Ptr node) {
         }
             break;
         case forInStatement:
-            output << L"+forInStatement" ;
+            output << "+forInStatement" ;
             break;
         case ifStatement: {
             auto n = std::static_pointer_cast<IfStatement>(node);
-            output << L"+ifStatement" ;
+            output << "+ifStatement" ;
             incTab();
             print(n->symtable);
             print(n->symbol);
@@ -621,7 +621,7 @@ void NodeDebugPrinter::print(Node::Ptr node) {
         }
             break;
         case expr: {
-            output << L"+expr" ;
+            output << "+expr" ;
             auto n = std::static_pointer_cast<Expr>(node);
             incTab();
             print(n->symtable);
@@ -639,10 +639,10 @@ void NodeDebugPrinter::print(Node::Ptr node) {
         }
             break;
         case selfExpr:
-            output << L"+selfExpr" ;
+            output << "+selfExpr" ;
             break;
         case postfixExpr: {
-            output << L"+postfixExpr" ;
+            output << "+postfixExpr" ;
             auto n = std::static_pointer_cast<PostfixExpr>(node);
             incTab();
             print(n->symtable);
@@ -653,7 +653,7 @@ void NodeDebugPrinter::print(Node::Ptr node) {
         }
             break;
         case prefixExpr: {
-            output << L"+prefixExpr" ;
+            output << "+prefixExpr" ;
             auto n = std::static_pointer_cast<PrefixExpr>(node);
             incTab();
             print(n->symtable);
@@ -669,7 +669,7 @@ void NodeDebugPrinter::print(Node::Ptr node) {
             break;
         case identifierExpr: {
             auto n = std::static_pointer_cast<IdentifierExpr>(node);
-            output << L"+identifierExpr(" << n->token->rawValue << ")"; ;
+            output << "+identifierExpr(" << n->token->rawValue << ")"; ;
             incTab();
             print(n->symtable);
             print(n->symbol);
@@ -678,7 +678,7 @@ void NodeDebugPrinter::print(Node::Ptr node) {
             break;
         case parenthesizedExpr: {
             auto n = std::static_pointer_cast<ParenthesizedExpr>(node);
-            output << L"+parenthesizedExpr" ;
+            output << "+parenthesizedExpr" ;
             incTab();
             print(n->symtable);
             print(n->symbol);
@@ -687,7 +687,7 @@ void NodeDebugPrinter::print(Node::Ptr node) {
         }
             break;
         case arguCallExpr: {
-            output << L"+arguCallExpr" ;
+            output << "+arguCallExpr" ;
             auto n = std::static_pointer_cast<ArguCallExpr>(node);
             incTab();
             print(n->symtable);
@@ -698,7 +698,7 @@ void NodeDebugPrinter::print(Node::Ptr node) {
         }
             break;
         case funcCallExpr: {
-            output << L"+functionCallExpr" ;
+            output << "+functionCallExpr" ;
             auto n = std::static_pointer_cast<FuncCallExpr>(node);
             incTab();
             print(n->symtable);
@@ -714,7 +714,7 @@ void NodeDebugPrinter::print(Node::Ptr node) {
             break;
         case memberAccessExpr: {
             auto n = std::static_pointer_cast<MemberAccessExpr>(node);
-            output << L"+memberAccessExpr" ;
+            output << "+memberAccessExpr" ;
             incTab();
             print(n->symtable);
             print(n->symbol);
@@ -725,7 +725,7 @@ void NodeDebugPrinter::print(Node::Ptr node) {
             break;
         case memberFuncCallExpr: {
             auto n = std::static_pointer_cast<MemberFuncCallExpr>(node);
-            output << L"+memberFuncCallExpr";
+            output << "+memberFuncCallExpr";
             incTab();
             print(n->symtable);
             print(n->symbol);
@@ -741,13 +741,13 @@ void NodeDebugPrinter::print(Node::Ptr node) {
             break;
         case literalExpr: {
             auto n = std::static_pointer_cast<LiteralExpr>(node);
-            output << L"+literalExpr(" << n->literal->rawValue << ")" ;
+            output << "+literalExpr(" << n->literal->rawValue << ")" ;
             print(n->symtable);
             print(n->symbol);
         }
             break;
         case arrayLiteralExpr: {
-            output << L"+arrayLiteralExpr" ;
+            output << "+arrayLiteralExpr" ;
             auto n = std::static_pointer_cast<ArrayLiteralExpr>(node);
             incTab();
             print(n->symtable);
@@ -757,10 +757,10 @@ void NodeDebugPrinter::print(Node::Ptr node) {
         }
             break;
         case dictLiteralExpr:
-            output << L"+dictLiteralExpr" ;
+            output << "+dictLiteralExpr" ;
             break;
         case assignmentExpr: {
-            output << L"+assignmentExpr" ;
+            output << "+assignmentExpr" ;
             auto n = std::static_pointer_cast<AssignmentExpr>(node);
             incTab();
             print(n->symtable);
@@ -771,7 +771,7 @@ void NodeDebugPrinter::print(Node::Ptr node) {
         }
             break;
         case binaryExpr: {
-            output << L"+binaryExpr" ;
+            output << "+binaryExpr" ;
             auto n = std::static_pointer_cast<BinaryExpr>(node);
             incTab();
             print(n->symtable);
@@ -787,7 +787,7 @@ void NodeDebugPrinter::print(Node::Ptr node) {
             break;
         case operatorExpr: {
             auto n = std::static_pointer_cast<OperatorExpr>(node);
-            output << L"+operatorExpr(" << n->token->rawValue << ")" ;
+            output << "+operatorExpr(" << n->token->rawValue << ")" ;
             incTab();
             print(n->symtable);
             print(n->symbol);
@@ -796,7 +796,7 @@ void NodeDebugPrinter::print(Node::Ptr node) {
             break;
         case returnStatement: {
             auto n = std::static_pointer_cast<ReturnStatement>(node);
-            output << L"+returnStatement";
+            output << "+returnStatement";
             incTab();
             print(n->symtable);
             print(n->symbol);
@@ -806,7 +806,7 @@ void NodeDebugPrinter::print(Node::Ptr node) {
             break;
         case subscriptExpr: {
             auto n = std::static_pointer_cast<SubscriptExpr>(node);
-            output << L"+subscriptExpr";
+            output << "+subscriptExpr";
             incTab();
             print(n->symtable);
             print(n->symbol);
@@ -817,7 +817,7 @@ void NodeDebugPrinter::print(Node::Ptr node) {
             break;
         case whileStatement: {
             auto n = std::static_pointer_cast<WhileStatement>(node);
-            output << L"+whileStatement";
+            output << "+whileStatement";
             incTab();
             print(n->expr);
             print(n->codeBlock);
@@ -826,12 +826,12 @@ void NodeDebugPrinter::print(Node::Ptr node) {
             break;
         case fileimportDecl: {
             auto n = std::static_pointer_cast<FileImportDecl>(node);
-            output << L"+fileimport(\"" << n->stringLiteral->rawValue << "\")";
+            output << "+fileimport(\"" << n->stringLiteral->rawValue << "\")";
         }
             break;
         case moduleMemberAccessExpr: {
             auto n = std::static_pointer_cast<ModuleMemberAccessExpr>(node);
-            output << L"+moduleMemberAccessExpr(\"" << n->moduleClass->name << "\")";
+            output << "+moduleMemberAccessExpr(\"" << n->moduleClass->name << "\")";
             incTab();
             print(n->member);
             decTab();
@@ -839,7 +839,7 @@ void NodeDebugPrinter::print(Node::Ptr node) {
             break;
         case moduleFuncCallExpr: {
             auto n = std::static_pointer_cast<ModuleFuncCallExpr>(node);
-            output << L"+moduleFuncCallExpr";
+            output << "+moduleFuncCallExpr";
             incTab();
             print(n->symtable);
             print(n->symbol);
@@ -860,7 +860,7 @@ void NodeDebugPrinter::print(Node::Ptr node) {
 }
 
 void NodeDebugPrinter::printTab() {
-    output << std::wstring(size*2, L' ') ;
+    output << std::string(size*2, ' ') ;
 }
 
 void NodeDebugPrinter::incTab() {

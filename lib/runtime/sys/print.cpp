@@ -14,19 +14,19 @@ void JrFuncPrint::operator()(JrRuntimeContext* context, JrFunction* func) {
         case typeString: {
             auto stringObjRef = value.intValue;
             auto stringObj = (JrObjectString*)context->gc->get(stringObjRef);
-            std::wcout << *(stringObj->content) << std::endl;
+            std::cout << *(stringObj->content) << std::endl;
         }
             break;
         case typeObject: {
-            std::wcout << L"[object] #" << value.intValue << std::endl;
+            std::cout << "[object] #" << value.intValue << std::endl;
         }
             break;
         case typeNil: {
-            std::wcout << L"[nil] #" << value.intValue << std::endl;
+            std::cout << "[nil] #" << value.intValue << std::endl;
         }
             break;
         default: {
-            std::wcout << value.intValue << std::endl;
+            std::cout << value.intValue << std::endl;
         }
             break;
     }
@@ -35,7 +35,7 @@ void JrFuncPrint::operator()(JrRuntimeContext* context, JrFunction* func) {
 
 void JrFuncPrint::init() {
     JrFuncPrint::Func = new JrFunction {
-        .name = L"print(message:)",
+        .name = "print(message:)",
         .kind = jrFuncNative,
         .paramTypes = { (JrType*)JrType::Any },
         .nativeCode = new JrFuncPrint()
@@ -52,20 +52,20 @@ void JrFuncObjectPrint::operator()(JrRuntimeContext* context, JrFunction* func) 
     auto object = context->gc->get(objectRef.objRefValue);
     auto arrayObject = static_cast<JrObjectArray*>(object);
     
-    std::wcout << L"[";
+    std::cout << "[";
     for(int i = 0; i < arrayObject->slots->size(); i ++) {
         if(i > 0) {
-            std::wcout << L", ";
+            std::cout << ", ";
         }
-        std::wcout << (*arrayObject->slots)[i].intValue;
+        std::cout << (*arrayObject->slots)[i].intValue;
         
     }
-    std::wcout << L"]" << std::endl;
+    std::cout << "]" << std::endl;
 }
 
 void JrFuncObjectPrint::init() {
     JrFuncObjectPrint::Func = new JrFunction {
-        .name = L"print(object:)",
+        .name = "print(object:)",
         .kind = jrFuncNative,
         .paramTypes = { (JrType*)JrType::Any },
         .nativeCode = new JrFuncObjectPrint()

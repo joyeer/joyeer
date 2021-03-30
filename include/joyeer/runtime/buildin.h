@@ -21,7 +21,7 @@ struct Global {
     static std::vector<JrModuleClass*> modules;
     
     // global strings
-    static std::vector<std::wstring> strings;
+    static std::vector<std::string> strings;
     
     // global symbol table
     static std::vector<SymbolTable::Ptr> symtables;
@@ -40,23 +40,23 @@ struct Global {
 
 class TypeTablePrinter {
 public:
-    TypeTablePrinter(const std::wstring filename);
+    TypeTablePrinter(const std::string filename);
     void print();
     void print(JrFieldType::Ptr field);
     void print(int addressOfFunc);
     void close();
     
 private:
-    std::wofstream output;
+    std::ofstream output;
 };
 
 class FunctionTablePrinter {
 public:
-    FunctionTablePrinter(const std::wstring filename);
+    FunctionTablePrinter(const std::string filename);
     void print();
     void close();
     
 private:
-    std::wofstream output;
+    std::ofstream output;
 };
 #endif

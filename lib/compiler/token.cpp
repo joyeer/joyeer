@@ -1,7 +1,7 @@
 #include "joyeer/compiler/token.h"
 #include <unordered_map>
 
-Token::Token(TokenKind kind, const std::wstring& rawValue, size_t lineNumber, size_t columnAt):
+Token::Token(TokenKind kind, const std::string& rawValue, size_t lineNumber, size_t columnAt):
   kind(kind),
   rawValue(rawValue),
   lineNumber(lineNumber),
@@ -9,29 +9,29 @@ Token::Token(TokenKind kind, const std::wstring& rawValue, size_t lineNumber, si
 
 }
 
-std::unordered_set<std::wstring> initKeywordMap();
+std::unordered_set<std::string> initKeywordMap();
 
-const std::wstring Keywords::CLASS = L"class";
-const std::wstring Keywords::FUNC = L"func";
-const std::wstring Keywords::STRUCT = L"struct";
-const std::wstring Keywords::VAR = L"var";
-const std::wstring Keywords::LET = L"let";
-const std::wstring Keywords::IF = L"if";
-const std::wstring Keywords::ELSE = L"else";
-const std::wstring Keywords::FOR = L"for";
-const std::wstring Keywords::WHILE = L"while";
-const std::wstring Keywords::IMPORT = L"import";
-const std::wstring Keywords::TRY = L"try";
-const std::wstring Keywords::IN = L"in";
-const std::wstring Keywords::INIT = L"init";
-const std::wstring Keywords::SELF = L"self";
-const std::wstring Keywords::RETURN = L"return";
-const std::wstring Keywords::FILEIMPORT = L"fileimport";
+const std::string Keywords::CLASS = "class";
+const std::string Keywords::FUNC = "func";
+const std::string Keywords::STRUCT = "struct";
+const std::string Keywords::VAR = "var";
+const std::string Keywords::LET = "let";
+const std::string Keywords::IF = "if";
+const std::string Keywords::ELSE = "else";
+const std::string Keywords::FOR = "for";
+const std::string Keywords::WHILE = "while";
+const std::string Keywords::IMPORT = "import";
+const std::string Keywords::TRY = "try";
+const std::string Keywords::IN = "in";
+const std::string Keywords::INIT = "init";
+const std::string Keywords::SELF = "self";
+const std::string Keywords::RETURN = "return";
+const std::string Keywords::FILEIMPORT = "fileimport";
 
-const std::unordered_set<std::wstring> Keywords::map = initKeywordMap();
+const std::unordered_set<std::string> Keywords::map = initKeywordMap();
 
-std::unordered_set<std::wstring> initKeywordMap() {
-    std::unordered_set<std::wstring> map;
+std::unordered_set<std::string> initKeywordMap() {
+    std::unordered_set<std::string> map;
     map.insert(Keywords::CLASS);
     map.insert(Keywords::FUNC);
     map.insert(Keywords::STRUCT);
@@ -51,41 +51,41 @@ std::unordered_set<std::wstring> initKeywordMap() {
     return map;
 }
 
-bool isKeyword(const std::wstring& keyword) {
+bool isKeyword(const std::string& keyword) {
   return Keywords::map.find(keyword) != Keywords::map.end();
 }
 
 /// Punctuation
-const std::wstring Punctuations::OPEN_CURLY_BRACKET = L"{";
-const std::wstring Punctuations::CLOSE_CURLY_BRACKET = L"}";
-const std::wstring Punctuations::OPEN_ROUND_BRACKET = L"(";
-const std::wstring Punctuations::CLOSE_ROUND_BRACKET = L")";
-const std::wstring Punctuations::OPEN_SQUARE_BRACKET = L"[";
-const std::wstring Punctuations::CLOSE_SQUARE_BRACKET = L"]";
-const std::wstring Punctuations::COLON = L":";
-const std::wstring Punctuations::COMMA = L",";
-const std::wstring Punctuations::DOT = L".";
+const std::string Punctuations::OPEN_CURLY_BRACKET = "{";
+const std::string Punctuations::CLOSE_CURLY_BRACKET = "}";
+const std::string Punctuations::OPEN_ROUND_BRACKET = "(";
+const std::string Punctuations::CLOSE_ROUND_BRACKET = ")";
+const std::string Punctuations::OPEN_SQUARE_BRACKET = "[";
+const std::string Punctuations::CLOSE_SQUARE_BRACKET = "]";
+const std::string Punctuations::COLON = ":";
+const std::string Punctuations::COMMA = ",";
+const std::string Punctuations::DOT = ".";
 
 
 // Operators
-const std::wstring Operators::EQUALS = L"=";
-const std::wstring Operators::NOT_EQUALS = L"!=";
-const std::wstring Operators::EQUAL_EQUAL = L"==";
-const std::wstring Operators::AND_AND = L"&&";
-const std::wstring Operators::QUESTION = L"?";
-const std::wstring Operators::POINT = L"!";
-const std::wstring Operators::PLUS = L"+";
-const std::wstring Operators::MINUS = L"-";
-const std::wstring Operators::MULTIPLY = L"*";
-const std::wstring Operators::DIV = L"/";
-const std::wstring Operators::PERCENTAGE = L"%";
-const std::wstring Operators::GREATER = L">";
-const std::wstring Operators::LESS = L"<";
-const std::wstring Operators::LESS_EQ = L"<=";
-const std::wstring Operators::GERATER_EQ = L">=";
+const std::string Operators::EQUALS = "=";
+const std::string Operators::NOT_EQUALS = "!=";
+const std::string Operators::EQUAL_EQUAL = "==";
+const std::string Operators::AND_AND = "&&";
+const std::string Operators::QUESTION = "?";
+const std::string Operators::POINT = "!";
+const std::string Operators::PLUS = "+";
+const std::string Operators::MINUS = "-";
+const std::string Operators::MULTIPLY = "*";
+const std::string Operators::DIV = "/";
+const std::string Operators::PERCENTAGE = "%";
+const std::string Operators::GREATER = ">";
+const std::string Operators::LESS = "<";
+const std::string Operators::LESS_EQ = "<=";
+const std::string Operators::GERATER_EQ = ">=";
 
-std::unordered_map<std::wstring, OperatorPriority> initOperatorPriorities() {
-    std::unordered_map<std::wstring, OperatorPriority> result {
+std::unordered_map<std::string, OperatorPriority> initOperatorPriorities() {
+    std::unordered_map<std::string, OperatorPriority> result {
         { Operators::EQUALS, OperatorPriority::high },
         { Operators::NOT_EQUALS, OperatorPriority::high },
         { Operators::EQUAL_EQUAL, OperatorPriority::high },
@@ -105,15 +105,15 @@ std::unordered_map<std::wstring, OperatorPriority> initOperatorPriorities() {
     return result;
 }
 
-const std::unordered_map<std::wstring, OperatorPriority> Operators::prioprityMap = initOperatorPriorities();
+const std::unordered_map<std::string, OperatorPriority> Operators::prioprityMap = initOperatorPriorities();
 
-OperatorPriority Operators::getPriority(const std::wstring& op) {
+OperatorPriority Operators::getPriority(const std::string& op) {
     return prioprityMap.find(op)->second;
 }
 
 
 // Literals
-const std::wstring Literals::FALSE = L"false";
-const std::wstring Literals::TRUE = L"true";
-const std::wstring Literals::NIL = L"nil";
+const std::string Literals::FALSE = "false";
+const std::string Literals::TRUE = "true";
+const std::string Literals::NIL = "nil";
 

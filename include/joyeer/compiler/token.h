@@ -26,7 +26,7 @@ public:
     
 public:
     TokenKind kind;
-    std::wstring rawValue;
+    std::string rawValue;
     union {
         int intValue;
         int index;
@@ -38,43 +38,43 @@ public:
     int lineNumber;
     int columnAt;
 
-    Token(TokenKind kind, const std::wstring& rawValue, size_t lineNumber, size_t columnAt);
+    Token(TokenKind kind, const std::string& rawValue, size_t lineNumber, size_t columnAt);
 
 };
 
 struct Keywords {
-    static const std::wstring FUNC;
-    static const std::wstring CLASS;
-    static const std::wstring STRUCT;
-    static const std::wstring VAR;
-    static const std::wstring LET;
-    static const std::wstring IF;
-    static const std::wstring ELSE;
-    static const std::wstring FOR;
-    static const std::wstring WHILE;
-    static const std::wstring IMPORT;
-    static const std::wstring TRY;
-    static const std::wstring IN;
-    static const std::wstring INIT;
-    static const std::wstring SELF;
-    static const std::wstring RETURN;
-    static const std::wstring FILEIMPORT;
+    static const std::string FUNC;
+    static const std::string CLASS;
+    static const std::string STRUCT;
+    static const std::string VAR;
+    static const std::string LET;
+    static const std::string IF;
+    static const std::string ELSE;
+    static const std::string FOR;
+    static const std::string WHILE;
+    static const std::string IMPORT;
+    static const std::string TRY;
+    static const std::string IN;
+    static const std::string INIT;
+    static const std::string SELF;
+    static const std::string RETURN;
+    static const std::string FILEIMPORT;
     
-    static const std::unordered_set<std::wstring> map;
+    static const std::unordered_set<std::string> map;
 };
 
-bool isKeyword(const std::wstring& keyword);
+bool isKeyword(const std::string& keyword);
 
 struct Punctuations {
-    static const std::wstring OPEN_CURLY_BRACKET;   // {
-    static const std::wstring CLOSE_CURLY_BRACKET;  // }
-    static const std::wstring OPEN_ROUND_BRACKET;   // (
-    static const std::wstring CLOSE_ROUND_BRACKET;  // )
-    static const std::wstring OPEN_SQUARE_BRACKET;  // [
-    static const std::wstring CLOSE_SQUARE_BRACKET; // ]
-    static const std::wstring COLON;                // :
-    static const std::wstring COMMA;                // ,
-    static const std::wstring DOT;                  // .
+    static const std::string OPEN_CURLY_BRACKET;   // {
+    static const std::string CLOSE_CURLY_BRACKET;  // }
+    static const std::string OPEN_ROUND_BRACKET;   // (
+    static const std::string CLOSE_ROUND_BRACKET;  // )
+    static const std::string OPEN_SQUARE_BRACKET;  // [
+    static const std::string CLOSE_SQUARE_BRACKET; // ]
+    static const std::string COLON;                // :
+    static const std::string COMMA;                // ,
+    static const std::string DOT;                  // .
 };
 
 enum OperatorPriority {
@@ -83,33 +83,33 @@ enum OperatorPriority {
 };
 
 struct Operators {
-    static const std::wstring EQUALS;               // =
-    static const std::wstring NOT_EQUALS;           // !=
-    static const std::wstring EQUAL_EQUAL;          // ==
-    static const std::wstring AND_AND;              // &&
-    static const std::wstring QUESTION;             // ?
-    static const std::wstring POINT;                // !
-    static const std::wstring PLUS;                 // +
-    static const std::wstring MINUS;                // -
-    static const std::wstring MULTIPLY;             // *
-    static const std::wstring DIV;                  // /
-    static const std::wstring PERCENTAGE;           // %
-    static const std::wstring LESS;                 // <
-    static const std::wstring LESS_EQ;              // <=
-    static const std::wstring GREATER;              // >
-    static const std::wstring GERATER_EQ;           // >=
+    static const std::string EQUALS;               // =
+    static const std::string NOT_EQUALS;           // !=
+    static const std::string EQUAL_EQUAL;          // ==
+    static const std::string AND_AND;              // &&
+    static const std::string QUESTION;             // ?
+    static const std::string POINT;                // !
+    static const std::string PLUS;                 // +
+    static const std::string MINUS;                // -
+    static const std::string MULTIPLY;             // *
+    static const std::string DIV;                  // /
+    static const std::string PERCENTAGE;           // %
+    static const std::string LESS;                 // <
+    static const std::string LESS_EQ;              // <=
+    static const std::string GREATER;              // >
+    static const std::string GERATER_EQ;           // >=
     
     
     // get the operator's priority
-    static OperatorPriority getPriority(const std::wstring& name);
+    static OperatorPriority getPriority(const std::string& name);
     
-    static const std::unordered_map<std::wstring, OperatorPriority> prioprityMap;
+    static const std::unordered_map<std::string, OperatorPriority> prioprityMap;
 };
 
 struct Literals {
-  static const std::wstring TRUE;
-  static const std::wstring FALSE;
-  static const std::wstring NIL;
+  static const std::string TRUE;
+  static const std::string FALSE;
+  static const std::string NIL;
 };
 
 #endif

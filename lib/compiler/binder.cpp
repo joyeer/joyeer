@@ -22,13 +22,13 @@ Node::Ptr Binder::visit(Node::Ptr node) {
 Node::Ptr Binder::visit(SourceBlock::Ptr sourceBlock) {
     
     // Module class self
-    auto moduleClass = new JrModuleClass(L"Module@__FILE__@" + sourceBlock->filename);
+    auto moduleClass = new JrModuleClass("Module@__FILE__@" + sourceBlock->filename);
     Global::registerObjectType(moduleClass);
     Global::registerModuleType(moduleClass);
     
     // Module constructor function
     auto function = new JrFunction {
-        .name = L"Module@__MAIN__@" + sourceBlock->filename,
+        .name = "Module@__MAIN__@" + sourceBlock->filename,
         .kind = jrFuncConstructor,
     };
     function->paramTypes.push_back(moduleClass);
@@ -211,7 +211,7 @@ Node::Ptr Binder::visit(ClassDecl::Ptr decl) {
     if(hasCustomizedConstructor == false) {
         // if has no customize constructors , we will bind an default constructor
         auto defaultConstructor = new JrFunction();
-        defaultConstructor->name = name + L"()";
+        defaultConstructor->name = name + "()";
         defaultConstructor->kind = jrFuncVM;
         defaultConstructor->returnType = objectType;
         defaultConstructor->kind = jrFuncConstructor;

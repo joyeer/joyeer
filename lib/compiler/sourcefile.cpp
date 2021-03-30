@@ -4,10 +4,10 @@
 #include <fstream>
 
 
-void SourceFile::open(const std::wstring &path) {
+void SourceFile::open(const std::string &path) {
     location = path;
-    std::wifstream wif(path);
-    std::wstringstream wss;
+    std::ifstream wif(path);
+    std::stringstream wss;
     wss << wif.rdbuf();
     
     content = wss.str();

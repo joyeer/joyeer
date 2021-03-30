@@ -15,7 +15,7 @@ auto JrObjectStringFinalizer = [](JrObject* object) {
 
 struct JrObjectStringType : public JrObjectType {
     JrObjectStringType():
-        JrObjectType(L"String", JrObjectStringInitializer, JrObjectStringFinalizer) {
+        JrObjectType("String", JrObjectStringInitializer, JrObjectStringFinalizer) {
     }
     
     JrInt size() {
@@ -26,7 +26,7 @@ struct JrObjectStringType : public JrObjectType {
 JrObjectType* JrObjectString::Type = new JrObjectStringType();
 
 JrObjectString::JrObjectString() :
-content(new std::wstring()){
+content(new std::string()){
 }
 
 JrObjectString::~JrObjectString() {
@@ -50,7 +50,7 @@ auto JrObjectStringBuilderFinalizer = [](JrObject* object) {
 
 struct JrObjectStringBuilderType: public JrObjectType {
     JrObjectStringBuilderType():
-        JrObjectType(L"StringBuilder", JrObjectStringBuilderInitializer, JrObjectStringBuilderFinalizer) {
+        JrObjectType("StringBuilder", JrObjectStringBuilderInitializer, JrObjectStringBuilderFinalizer) {
     }
     
     JrInt size() {
@@ -64,7 +64,7 @@ JrFunction* JrObjectStringBuilder_Append::Func;
 JrFunction* JrObjectStringBuilder_toString::Func;
 
 JrObjectStringBuilder::JrObjectStringBuilder()
-:stringstream(new std::wstringstream()) {
+:stringstream(new std::stringstream()) {
 }
 
 JrObjectStringBuilder::~JrObjectStringBuilder() {
@@ -75,11 +75,11 @@ void JrObjectStringBuilder::init() {
     Global::registerObjectType(JrObjectStringBuilder::Type);
     
     JrObjectStringBuilder::Constructor = new JrFunction {
-        .name = L"StringBuilder@StringBuilder()",
+        .name = "StringBuilder@StringBuilder()",
         .kind = jrFuncConstructor,
         .paramTypes = { JrObjectStringBuilder::Type },
         .localVars = { JrVar {
-            .name = L"self",
+            .name = "self",
             .type = JrObjectStringBuilder::Type,
             .addressOfVariable = 0
         }},
@@ -91,7 +91,7 @@ void JrObjectStringBuilder::init() {
     };
     
     JrObjectStringBuilder_Append::Func = new JrFunction {
-        .name = L"StringBuilder@append(content:)",
+        .name = "StringBuilder@append(content:)",
         .kind = jrFuncNative,
         .paramTypes = { JrObjectStringBuilder::Type, JrObjectString::Type },
         .returnType = JrPrimaryType::Void,
@@ -99,7 +99,7 @@ void JrObjectStringBuilder::init() {
     };
     
     JrObjectStringBuilder_toString::Func = new JrFunction {
-        .name = L"StringBuilder@toString()",
+        .name = "StringBuilder@toString()",
         .kind = jrFuncNative,
         .paramTypes = { JrObjectStringBuilder::Type },
         .returnType = JrPrimaryType::Void,
@@ -117,7 +117,7 @@ void JrObjectStringBuilder_Append::operator()(JrRuntimeContext* context, JrFunct
     
     auto stringBuildObjRef = context->stack->pop();
     auto stringBuilder = (JrObjectStringBuilder*)context->gc->get(stringBuildObjRef.objRefValue);
-    std::wstringstream& sstream = *(stringBuilder->stringstream);
+    std::stringstream& sstream = *(stringBuilder->stringstream);
     sstream << *(stringObject->content);
 }
 
@@ -127,7 +127,7 @@ void JrObjectStringBuilder_toString::operator()(JrRuntimeContext* context, JrFun
     
     auto stringObjRef = context->gc->alloc(JrObjectString::Type);
     auto stringObject = (JrObjectString*)context->gc->get(stringObjRef);
-    stringObject->content = new std::wstring(stringBuilder->stringstream->str());
+    stringObject->content = new std::string(stringBuilder->stringstream->str());
     
     context->stack->push({.kind = typeString, .objRefValue = stringObjRef});
 }

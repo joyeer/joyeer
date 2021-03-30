@@ -5,9 +5,9 @@ ErrorLevel Diagnostics::errorLevel = none;
 
 void Diagnostics::reportError(const char* message) {
     errorLevel = failure;
-    std::wcout << message << std::endl;
+    std::cout << message << std::endl;
 }
 
 void Diagnostics::reportError(ErrorLevel level, const char* error, ...) {
-    std::wcout << error << std::endl;
+    std::cout << error << std::endl;
 }

@@ -15,7 +15,7 @@ auto JrObjectIntArrayFinalizer = [](JrObject* object) {
 
 struct JrObjectIntArrayType : public JrObjectType {
     JrObjectIntArrayType():
-        JrObjectType(L"Array", JrObjectIntArrayInitializer, JrObjectIntArrayFinalizer) {
+        JrObjectType("Array", JrObjectIntArrayInitializer, JrObjectIntArrayFinalizer) {
     }
     
     JrInt size() {
@@ -76,11 +76,11 @@ void JrObjectArray_Set::operator()(JrRuntimeContext* context, JrFunction* func) 
 void JrObjectArray::init() {
     
     JrObjectArray::Constructor = new JrFunction {
-        .name = L"Array@Array()",
+        .name = "Array@Array()",
         .kind = jrFuncConstructor,
         .paramTypes = { JrObjectArray::Type },
         .localVars = { JrVar {
-            .name = L"self",
+            .name = "self",
             .type = JrObjectArray::Type,
             .addressOfVariable = 0
         }},
@@ -92,7 +92,7 @@ void JrObjectArray::init() {
     };
     
     JrObjectArray_Size::Func = new JrFunction {
-        .name = L"Array@size()",
+        .name = "Array@size()",
         .kind = jrFuncNative,
         .paramTypes = { JrObjectArray::Type },
         .returnType = JrPrimaryType::Int,
@@ -100,7 +100,7 @@ void JrObjectArray::init() {
     };
     
     JrObjectArray_Append::Func = new JrFunction {
-        .name = L"Array@append(value:)",
+        .name = "Array@append(value:)",
         .kind = jrFuncNative,
         .paramTypes = { JrObjectArray::Type, JrType::Any },
         .returnType = JrPrimaryType::Void,
@@ -108,7 +108,7 @@ void JrObjectArray::init() {
     };
     
     JrObjectArray_Get::Func = new JrFunction {
-        .name = L"Array@get(index:)",
+        .name = "Array@get(index:)",
         .kind = jrFuncNative,
         .paramTypes = { JrObjectArray::Type, JrPrimaryType::Int },
         .returnType = JrPrimaryType::Int,
@@ -116,7 +116,7 @@ void JrObjectArray::init() {
     };
     
     JrObjectArray_Set::Func = new JrFunction {
-        .name = L"Array@set(index:value:)",
+        .name = "Array@set(index:value:)",
         .kind = jrFuncNative,
         .paramTypes = { JrObjectArray::Type, JrPrimaryType::Int },
         .returnType = JrPrimaryType::Void,

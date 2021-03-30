@@ -23,7 +23,7 @@ Program::Program(CompileOpts::Ptr opts):
 options(opts) {
 }
 
-void Program::run(std::wstring inputfile) {
+void Program::run(std::string inputfile) {
     auto sourcelife = findSourceFile(inputfile);
     compile(sourcelife);
     
@@ -32,7 +32,7 @@ void Program::run(std::wstring inputfile) {
     interpreter.run(sourcelife->moduleClass);
 }
 
-SourceFile* Program::findSourceFile(const std::wstring &path, const std::wstring relativeFolder) {
+SourceFile* Program::findSourceFile(const std::string &path, const std::string relativeFolder) {
     auto sourcefile = std::filesystem::path(path);
     if(sourcefile.is_relative()) {
         // check the relative folder
@@ -42,7 +42,7 @@ SourceFile* Program::findSourceFile(const std::wstring &path, const std::wstring
         }
     }
     
-    auto sourcefilePath = sourcefile.wstring();
+    auto sourcefilePath = sourcefile.string();
     if(sourcefiles.find(sourcefilePath) == sourcefiles.end()) {
         auto sourcefile = new SourceFile();
         sourcefile->open(sourcefilePath);
@@ -66,8 +66,8 @@ void Program::compile(SourceFile *sourcefile) {
     // syntax analyze
     SyntaxParser syntaxParser(lexParser.tokens);
     auto block = syntaxParser.parse();
-    block->filename = sourcefile->location.wstring();
-    debugPrint(block, block->filename + L".parser.debug.txt");
+    block->filename = sourcefile->location.string();
+    debugPrint(block, block->filename + ".parser.debug.txt");
     CHECK_ERROR_CONTINUE
     
     // Detect for type creating
@@ -75,13 +75,13 @@ void Program::compile(SourceFile *sourcefile) {
     binder.importDelegate = std::bind(&Program::tryImport, this, std::placeholders::_1, std::placeholders::_2);
     
     binder.visit(block);
-    debugPrint(block, block->filename + L".binder.debug.txt");
+    debugPrint(block, block->filename + ".binder.debug.txt");
     CHECK_ERROR_CONTINUE
     
     // verify the types
     TypeChecker typeChecker(context);
     typeChecker.visit(std::static_pointer_cast<Node>(block));
-    debugPrint(block, sourcefile->location.wstring() + L".typechecker.debug.txt");
+    debugPrint(block, sourcefile->location.string() + ".typechecker.debug.txt");
     CHECK_ERROR_CONTINUE
 
     // generate IR code
@@ -93,9 +93,9 @@ void Program::compile(SourceFile *sourcefile) {
     
 }
 
-SourceFile* Program::tryImport(CompileContext::Ptr context, const std::wstring &moduleName) {
+SourceFile* Program::tryImport(CompileContext::Ptr context, const std::string &moduleName) {
     auto sourcefile = context->sourceFile;
-    auto relativedFolder = sourcefile->location.parent_path().wstring();
+    auto relativedFolder = sourcefile->location.parent_path().string();
     auto importfile = findSourceFile(moduleName, relativedFolder);
     if(importfile == nullptr) {
         Diagnostics::reportError("Error: Module cannot be found");
@@ -107,7 +107,7 @@ SourceFile* Program::tryImport(CompileContext::Ptr context, const std::wstring &
     return importfile;
 }
 
-void Program::debugPrint(Node::Ptr node, const std::wstring &debugFilePath) {
+void Program::debugPrint(Node::Ptr node, const std::string &debugFilePath) {
     if(options->vmDebug) {
         NodeDebugPrinter syntaxDebugger(debugFilePath);
         syntaxDebugger.print(node);
@@ -115,13 +115,13 @@ void Program::debugPrint(Node::Ptr node, const std::wstring &debugFilePath) {
     }
 }
 
-void Program::debugPrint(const std::wstring &debugFilePath) {
+void Program::debugPrint(const std::string &debugFilePath) {
     if(options->vmDebug) {
-        TypeTablePrinter typePrinter(L"debug.table.types.txt");
+        TypeTablePrinter typePrinter("debug.table.types.txt");
         typePrinter.print();
         typePrinter.close();
         
-        FunctionTablePrinter funcPrinter(L"debug.table.functions.txt");
+        FunctionTablePrinter funcPrinter("debug.table.functions.txt");
         funcPrinter.print();
         funcPrinter.close();
     }

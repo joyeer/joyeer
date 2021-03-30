@@ -10,53 +10,53 @@ void JrCodeWriter::write(const std::vector<Instruction> &inss) {
     instructions.insert(instructions.end(), std::begin(inss), std::end(inss));
 }
 
-const std::unordered_map<Opcode, std::wstring> JrInstructionDebugPrinter::maps = {
-    { OP_NOP, L"nop" },
-    { OP_NEW, L"new" },
-    { OP_OCONST_NIL, L"const.nil" },
-    { OP_ICONST, L"const.int" },
-    { OP_ICONST_64, L"const.int.64" },
-    { OP_SCONST, L"const.string" },
+const std::unordered_map<Opcode, std::string> JrInstructionDebugPrinter::maps = {
+    { OP_NOP, "nop" },
+    { OP_NEW, "new" },
+    { OP_OCONST_NIL, "const.nil" },
+    { OP_ICONST, "const.int" },
+    { OP_ICONST_64, "const.int.64" },
+    { OP_SCONST, "const.string" },
     
-    { OP_ISTORE, L"store.int" },
-    { OP_ILOAD, L"load.int" },
-    { OP_OLOAD, L"oload" },
-    { OP_PUTFIELD, L"putfield"},
-    { OP_GETFIELD, L"getfield"},
+    { OP_ISTORE, "store.int" },
+    { OP_ILOAD, "load.int" },
+    { OP_OLOAD, "oload" },
+    { OP_PUTFIELD, "putfield"},
+    { OP_GETFIELD, "getfield"},
     
-    { OP_IAND, L"and.int" },
-    { OP_INEG, L"neg.int" },
-    { OP_ICMP_G, L"cmp.large.int" },
-    { OP_ICMP_GE, L"cmp.large.equals.int" },
-    { OP_ICMP_L, L"cmp.less.int" },
-    { OP_ICMP_LE, L"cmp.less.equals.int" },
-    { OP_ICMP_NE, L"cmp.not.equals.int"},
-    { OP_ICMP_EQ, L"cmp.equals.int" },
-    { OP_IADD, L"add.int" },
-    { OP_ISUB, L"sub.int" },
-    { OP_IMUL, L"mul.int" },
-    { OP_IDIV, L"div.int" },
-    { OP_IREM, L"rem.int" },
+    { OP_IAND, "and.int" },
+    { OP_INEG, "neg.int" },
+    { OP_ICMP_G, "cmp.large.int" },
+    { OP_ICMP_GE, "cmp.large.equals.int" },
+    { OP_ICMP_L, "cmp.less.int" },
+    { OP_ICMP_LE, "cmp.less.equals.int" },
+    { OP_ICMP_NE, "cmp.not.equals.int"},
+    { OP_ICMP_EQ, "cmp.equals.int" },
+    { OP_IADD, "add.int" },
+    { OP_ISUB, "sub.int" },
+    { OP_IMUL, "mul.int" },
+    { OP_IDIV, "div.int" },
+    { OP_IREM, "rem.int" },
     
-    { OP_IFEQ, L"if.eq" },
-    { OP_IFNE, L"if.ne" },
-    { OP_IFLT, L"if.lt" },
-    { OP_IFLE, L"if.le" },
-    { OP_IFGT, L"if.gt" },
-    { OP_IFGE, L"if.ge" },
+    { OP_IFEQ, "if.eq" },
+    { OP_IFNE, "if.ne" },
+    { OP_IFLT, "if.lt" },
+    { OP_IFLE, "if.le" },
+    { OP_IFGT, "if.gt" },
+    { OP_IFGE, "if.ge" },
     
-    { OP_RETURN, L"return" },
-    { OP_IRETURN, L"return.int" },
-    { OP_ORETURN, L"return.object" },
-    { OP_INVOKE, L"invoke" },
-    { OP_GOTO, L"goto"},
-    { OP_DEBUG, L"debug"},
-    { OP_ONEWARRAY, L"new.array.object"},
-    { OP_DUP, L"dup" }
+    { OP_RETURN, "return" },
+    { OP_IRETURN, "return.int" },
+    { OP_ORETURN, "return.object" },
+    { OP_INVOKE, "invoke" },
+    { OP_GOTO, "goto"},
+    { OP_DEBUG, "debug"},
+    { OP_ONEWARRAY, "new.array.object"},
+    { OP_DUP, "dup" }
 };
 
-std::wstring JrInstructionDebugPrinter::print(const Instruction& instruction) {
-    std::wstringstream ss;
-    ss << JrInstructionDebugPrinter::maps.find(instruction.opcode)->second << L", " <<  instruction.value;
+std::string JrInstructionDebugPrinter::print(const Instruction& instruction) {
+    std::stringstream ss;
+    ss << JrInstructionDebugPrinter::maps.find(instruction.opcode)->second << ", " <<  instruction.value;
     return ss.str();
 }

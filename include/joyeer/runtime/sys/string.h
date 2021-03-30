@@ -8,7 +8,7 @@
 struct JrObjectString: public JrObject {
     static JrObjectType* Type;
     
-    std::wstring* content = nullptr;
+    std::string* content = nullptr;
     
     JrObjectString();
     ~JrObjectString();
@@ -23,7 +23,7 @@ struct JrObjectStringBuilder: public JrObject {
     JrObjectStringBuilder();
     ~JrObjectStringBuilder();
     
-    std::wstringstream* stringstream;
+    std::stringstream* stringstream;
     
     static void init();
 };

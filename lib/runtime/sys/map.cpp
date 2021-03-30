@@ -17,7 +17,7 @@ auto JrObjectMapFinalizer = [](JrObject* object) {
 
 struct JrObjectMapType: public JrObjectType {
     JrObjectMapType():
-        JrObjectType(L"Map", JrObjectMapInitializer, JrObjectMapFinalizer) {
+        JrObjectType("Map", JrObjectMapInitializer, JrObjectMapFinalizer) {
     }
     
     JrInt size() {
@@ -40,11 +40,11 @@ void JrObjectMap::init() {
     Global::registerObjectType(JrObjectMap::Type);
     
     JrObjectMap::Constructor = new JrFunction {
-        .name = L"Map@Map()",
+        .name = "Map@Map()",
         .kind = jrFuncConstructor,
         .paramTypes = { JrObjectMap::Type },
         .localVars = { JrVar {
-            .name = L"self",
+            .name = "self",
             .type = JrObjectMap::Type,
             .addressOfVariable = 0
         }},
@@ -56,7 +56,7 @@ void JrObjectMap::init() {
     };
 
     JrObjectMap_Insert::Func = new JrFunction{
-        .name = L"Map@insert(key:value:)",
+        .name = "Map@insert(key:value:)",
         .kind = jrFuncNative,
         .paramTypes = { JrObjectMap::Type, JrType::Any, JrType::Any },
         .returnType = JrPrimaryType::Void,
@@ -64,7 +64,7 @@ void JrObjectMap::init() {
     };
     
     JrObjectMap_Get::Func = new JrFunction{
-        .name = L"Map@get(key:)",
+        .name = "Map@get(key:)",
         .kind = jrFuncNative,
         .paramTypes = { JrObjectMap::Type, JrType::Any },
         .returnType = JrType::Any,

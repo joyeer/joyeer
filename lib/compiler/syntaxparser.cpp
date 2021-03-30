@@ -898,7 +898,7 @@ Token::Ptr SyntaxParser::tryEat(TokenKind kind) {
     return nullptr;
 }
 
-Token::Ptr SyntaxParser::tryEat(TokenKind kind, const std::wstring &value) {
+Token::Ptr SyntaxParser::tryEat(TokenKind kind, const std::string &value) {
     auto pToken = tryEat(kind);
     if(pToken == nullptr) {
         return nullptr;

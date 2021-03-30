@@ -7,12 +7,12 @@
 
 std::vector<JrType*> Global::types = {};
 std::vector<JrModuleClass*> Global::modules = {};
-std::vector<std::wstring> Global::strings = {};
+std::vector<std::string> Global::strings = {};
 std::vector<JrFunction*> Global::functions = {};
 std::vector<SymbolTable::Ptr> Global::symtables = {};
 
 // init the types tables
-static std::unordered_map<std::wstring, JrFunction*>  funtionsMap;
+static std::unordered_map<std::string, JrFunction*>  funtionsMap;
 
 void Global::initGlobalTables() {
 
@@ -66,14 +66,14 @@ void Global::registerModuleType(JrModuleClass *moduleClass) {
 //////////////////////////////////////////////////////////////////////////////////////////////////
 // Debug printer
 //////////////////////////////////////////////////////////////////////////////////////////////////
-TypeTablePrinter::TypeTablePrinter(const std::wstring filename) {
+TypeTablePrinter::TypeTablePrinter(const std::string filename) {
     output.open(filename);
 }
 
 void TypeTablePrinter::print() {
     int index = 0;
     for(auto type: Global::types) {
-        output << L"#" << index << L": " << type->name << std::endl;
+        output << "#" << index << ": " << type->name << std::endl;
         if(type->kind == typeObject) {
             auto objectType = (JrObjectType*)type;
             for(auto field: objectType->virtualFields) {
@@ -93,54 +93,54 @@ void TypeTablePrinter::print() {
 }
 
 void TypeTablePrinter::print(JrFieldType::Ptr field) {
-    output << L"    @field: #" << field->addressOfField << L" " << field->name << L", " << field->type->name <<std::endl;
+    output << "    @field: #" << field->addressOfField << " " << field->name << ", " << field->type->name <<std::endl;
 }
 
 void TypeTablePrinter::print(int addressOfFunc) {
     auto func = Global::functions[addressOfFunc];
-    auto name = func->kind == jrFuncConstructor ? L"constructor" : L"method";
-    output << L"    @"<< name <<": #" << func->addressOfFunc << L" " << func->name <<std::endl;
+    auto name = func->kind == jrFuncConstructor ? "constructor" : "method";
+    output << "    @"<< name << ": #" << func->addressOfFunc << " " << func->name <<std::endl;
 }
 
 void TypeTablePrinter::close() {
     output.close();
 }
 
-FunctionTablePrinter::FunctionTablePrinter(const std::wstring filename) {
+FunctionTablePrinter::FunctionTablePrinter(const std::string filename) {
     output.open(filename);
 }
 
 void FunctionTablePrinter::print() {
     int index = 0;
     for(auto function: Global::functions) {
-        output << L"#" << index << L": " << function->name << std::endl;
+        output << "#" << index << ": " << function->name << std::endl;
         // print the parameters:
-        output << L"    .params" << std::endl;
+        output << "    .params" << std::endl;
         int paramIndex = 0;
         for(auto param: function->paramTypes) {
-            output << L"        #"<< paramIndex << L": " << param->name << std::endl;
+            output << "        #"<< paramIndex << ": " << param->name << std::endl;
             paramIndex ++;
         }
         
         // print the local variables
-        output << L"    .localVars" << std::endl;
+        output << "    .localVars" << std::endl;
         int localVarIndex = 0;
         for(auto localVar: function->localVars) {
-            output << L"        #"<< localVarIndex << L": " << localVar.name << L", " << localVar.type->name << std::endl;
+            output << "        #"<< localVarIndex << ": " << localVar.name << ", " << localVar.type->name << std::endl;
             localVarIndex ++;
         }
     
         // print the instructions
-        output << L"    .opcodes" << std::endl;
+        output << "    .opcodes" << std::endl;
         int instrunctionIndex = 0;
         for(auto instruction: function->instructions) {
             JrInstructionDebugPrinter instructionPrinter;
-            output << L"        #" << instrunctionIndex << L": " << instructionPrinter.print(instruction) << std::endl;
+            output << "        #" << instrunctionIndex << ": " << instructionPrinter.print(instruction) << std::endl;
             instrunctionIndex ++;
         }
         index ++;
         
-        output << L"------------------------------------------" << std::endl << std::endl;
+        output << "------------------------------------------" << std::endl << std::endl;
     }
 }
 

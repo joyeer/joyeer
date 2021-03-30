@@ -3,11 +3,11 @@
 #include <cassert>
 
 
-JrType* JrType::Any = new JrType{typeAny, L"Any"};
-JrType* JrType::Void = new JrType{typeVoid, L"Void"};
-JrType* JrType::Nil = new JrType{typeNil, L"nil"};
+JrType* JrType::Any = new JrType{typeAny, "Any"};
+JrType* JrType::Void = new JrType{typeVoid, "Void"};
+JrType* JrType::Nil = new JrType{typeNil, "nil"};
 
-JrType::JrType(JrTypeKind kind, const std::wstring& name):
+JrType::JrType(JrTypeKind kind, const std::string& name):
 kind(kind),
 name(name) {
 }
@@ -19,11 +19,11 @@ JrInt JrType::size() {
 // JrPrimaryType
 ////////////////////////////////////////////////////////////////
 
-JrPrimaryType* JrPrimaryType::Int = new JrPrimaryType(typeInt, L"Int");
-JrPrimaryType* JrPrimaryType::Float = new JrPrimaryType(typeFloat, L"Float");
-JrPrimaryType* JrPrimaryType::Boolean = new JrPrimaryType(typeBoolean, L"Boolean");
+JrPrimaryType* JrPrimaryType::Int = new JrPrimaryType(typeInt, "Int");
+JrPrimaryType* JrPrimaryType::Float = new JrPrimaryType(typeFloat, "Float");
+JrPrimaryType* JrPrimaryType::Boolean = new JrPrimaryType(typeBoolean, "Boolean");
 
-JrPrimaryType::JrPrimaryType(JrTypeKind kind, const std::wstring& name):
+JrPrimaryType::JrPrimaryType(JrTypeKind kind, const std::string& name):
 JrType(kind, name) {
 }
 
@@ -40,7 +40,7 @@ JrInt JrPrimaryType::size() {
 // JrObjectType
 ////////////////////////////////////////////////////////////////
 
-JrObjectType::JrObjectType(const std::wstring& name, JrObjectInitializer initializer, JrObjectFinalizer finalizer):
+JrObjectType::JrObjectType(const std::string& name, JrObjectInitializer initializer, JrObjectFinalizer finalizer):
 JrType(typeObject, name) {
     this->initializer = initializer;
     this->finalizer = finalizer;
@@ -59,7 +59,7 @@ JrInt JrObjectType::size() {
 // JrModuleType
 ////////////////////////////////////////////////////////////////
 
-JrModuleClass::JrModuleClass(const std::wstring& name):
+JrModuleClass::JrModuleClass(const std::string& name):
 JrObjectType(name) {
 }
 

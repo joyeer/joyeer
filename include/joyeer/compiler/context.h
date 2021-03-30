@@ -37,7 +37,7 @@ public:
     CompileStage curStage() const;
     
     // look up name's mapped symbol
-    Symbol::Ptr lookup(const std::wstring& name);
+    Symbol::Ptr lookup(const std::string& name);
     
     SymbolTable::Ptr curSymTable() ;
     void entry(SymbolTable::Ptr table);

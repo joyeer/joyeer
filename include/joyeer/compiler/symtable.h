@@ -18,7 +18,7 @@ enum SymbolFlag {
     moduleSymbol =          6
 };
 
-std::wstring debugStringOfSymbolFlag(SymbolFlag flag);
+std::string debugStringOfSymbolFlag(SymbolFlag flag);
 
 enum SymbolScope: int8_t {
     globalScope     =   1,
@@ -44,7 +44,7 @@ public:
     SymbolFlag flag;
     SymbolScope scope;
     
-    std::wstring name;
+    std::string name;
     
     union {
         // index address of type in Global::types
@@ -76,9 +76,9 @@ public:
     bool insert(Symbol::Ptr symbol);
     
     // find symbol by a given name
-    Symbol::Ptr find(const std::wstring& name) const;
+    Symbol::Ptr find(const std::string& name) const;
     
-    std::unordered_map<std::wstring, Symbol::Ptr> symbols;
+    std::unordered_map<std::string, Symbol::Ptr> symbols;
 };
 
 #endif
