@@ -21,12 +21,10 @@ void CompileOpts::parse(std::vector<std::string>& arguments) {
         if(*iterator == "--debug-vm") {
             vmDebug = true;
         } else {
-            inputfile = std::filesystem::path(*iterator);
+            // input file
+            parseInputFile(*iterator);
         }
     }
-    
-    // current working directory
-    workingDirectory = std::filesystem::current_path();
     
     if(inputfile.is_absolute()) {
         inputfile = workingDirectory / inputfile;
@@ -43,4 +41,15 @@ void CompileOpts::parse(std::vector<std::string>& arguments) {
 
 void CompileOpts::printUsage() {
     std::cout << "Usage: joyeer <inputfile>" << std::endl;
+}
+
+void CompileOpts::parseInputFile(const std::string &inputpath) {
+    inputfile = std::filesystem::path(inputpath);
+    if(inputfile.is_relative()) {
+        auto path = std::filesystem::current_path() / inputfile.parent_path();
+        workingDirectory = std::filesystem::canonical(path);
+    } else {
+        // using input file as working directory
+        workingDirectory = inputfile.parent_path();
+    }
 }
