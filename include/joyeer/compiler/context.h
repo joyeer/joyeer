@@ -1,7 +1,7 @@
 #ifndef __joyeer_compiler_context_h__
 #define __joyeer_compiler_context_h__
 
-#include "joyeer/compiler/compileopts.h"
+#include "joyeer/driver/arguments.h"
 #include "joyeer/compiler/symtable.h"
 #include "joyeer/runtime/function.h"
 

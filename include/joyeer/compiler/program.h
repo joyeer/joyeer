@@ -1,8 +1,8 @@
 #ifndef __joyeer_compiler_program_h__
 #define __joyeer_compiler_program_h__
 
+#include "joyeer/driver/arguments.h"
 #include "joyeer/compiler/sourcefile.h"
-#include "joyeer/compiler/compileopts.h"
 #include "joyeer/compiler/context.h"
 
 #include <unordered_map>

@@ -1,3 +1,4 @@
+#include "joyeer/driver/arguments.h"
 #include "joyeer/compiler/program.h"
 #include "joyeer/runtime/buildin.h"
 

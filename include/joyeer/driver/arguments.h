@@ -1,5 +1,5 @@
-#ifndef __joyeer_compiler_compileopts_h__
-#define __joyeer_compiler_compileopts_h__
+#ifndef __joyeer_driver_arguments_h__
+#define __joyeer_driver_arguments_h__
 
 #include <filesystem>
 #include <string>
@@ -30,6 +30,5 @@ private:
     // according to the input file , analyse the working directory
     void parseInputFile(const std::string& inputpath);
 };
-
 
 #endif
