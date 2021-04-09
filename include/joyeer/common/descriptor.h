@@ -38,6 +38,9 @@ struct DescriptorType {
 
 class Descritpor {
 
+public:
+
+    const std::string& getRawDescriptor() const { return rawDescriptor; }
 protected:
     std::string rawDescriptor;
 };
