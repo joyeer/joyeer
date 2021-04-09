@@ -1,9 +1,18 @@
-file(GLOB SRCS *.cpp)
 
-ADD_EXECUTABLE(testcases ${SRCS})
-
-TARGET_LINK_LIBRARIES(testcases
+add_executable(UnitTests 
+    main.cpp
+    common_descriptor.cpp
 )
 
-add_test(NAME testcases
-         COMMAND testcases)
+TARGET_LINK_LIBRARIES(UnitTests
+    libgtest
+    libgmock
+    joyeerCommon
+    joyeerCompiler
+    joyeerDriver
+    joyeerRuntime
+)
+
+add_test(NAME UnitTests COMMAND UnitTests)
+
+add_dependencies(joyeer UnitTests)
