@@ -5,7 +5,7 @@
 Node::Ptr NodeVisitor::visit(Node::Ptr node) {
     switch (node->kind) {
         case sourceBlock:
-            return visit(std::static_pointer_cast<SourceBlock>(node));
+            return visit(std::static_pointer_cast<FileModuleNode>(node));
         case type:
             return visit(std::static_pointer_cast<Type>(node));
         case pattern:

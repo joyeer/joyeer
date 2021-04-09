@@ -63,7 +63,7 @@ void NodeDebugPrinter::print(Node::Ptr node) {
     switch (node->kind) {
         case sourceBlock: {
             
-            auto n = std::static_pointer_cast<SourceBlock>(node);
+            auto n = std::static_pointer_cast<FileModuleNode>(node);
             output << "+sourceBLock(filename: \"" << n->filename << "\")" ;
             incTab();
             print(n->symtable);

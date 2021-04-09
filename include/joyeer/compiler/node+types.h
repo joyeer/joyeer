@@ -3,14 +3,14 @@
 
 #include "node.h"
 
-struct SourceBlock: Node {
-    using Ptr = std::shared_ptr<SourceBlock>;
+struct FileModuleNode: Node {
+    using Ptr = std::shared_ptr<FileModuleNode>;
     
     std::vector<Node::Ptr> statements;
     
     std::string filename;
 
-    SourceBlock(std::vector<Node::Ptr> statements);
+    FileModuleNode(std::vector<Node::Ptr> statements);
 
     std::vector<FileImportDecl::Ptr> getFileImports();
     

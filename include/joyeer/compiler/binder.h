@@ -17,7 +17,7 @@ public:
     
     Binder(CompileContext::Ptr context);
     
-    virtual Node::Ptr visit(SourceBlock::Ptr sourceBlock);
+    virtual Node::Ptr visit(FileModuleNode::Ptr sourceBlock);
 protected:
     // recursive bind down node
     virtual Node::Ptr visit(Node::Ptr node);

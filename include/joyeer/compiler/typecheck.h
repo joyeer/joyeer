@@ -13,7 +13,7 @@ public:
     virtual Node::Ptr visit(Node::Ptr node);
     
 protected:
-    virtual Node::Ptr visit(SourceBlock::Ptr decl);
+    virtual Node::Ptr visit(FileModuleNode::Ptr decl);
     virtual Node::Ptr visit(ClassDecl::Ptr classDecl);
     virtual Node::Ptr visit(LetDecl::Ptr decl);
     virtual Node::Ptr visit(VarDecl::Ptr varDecl);
@@ -65,7 +65,7 @@ protected:
     JrType* typeOf(PrefixExpr::Ptr node);
     
     // Get Codeblock's return type
-    void verifyReturnStatement(SourceBlock::Ptr node);
+    void verifyReturnStatement(FileModuleNode::Ptr node);
     void verifyReturnStatement(CodeBlock::Ptr node);
     void verifyReturnStatement(std::vector<Node::Ptr>& statements);
     JrType* returnTypeOf(Node::Ptr node);

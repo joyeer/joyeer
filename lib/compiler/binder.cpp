@@ -19,7 +19,7 @@ Node::Ptr Binder::visit(Node::Ptr node) {
     return NodeVisitor::visit(node);
 }
 
-Node::Ptr Binder::visit(SourceBlock::Ptr sourceBlock) {
+Node::Ptr Binder::visit(FileModuleNode::Ptr sourceBlock) {
     
     // Module class self
     auto moduleClass = new JrModuleClass("Module@__FILE__@" + sourceBlock->filename);

@@ -18,7 +18,7 @@ struct SourceFile {
     std::filesystem::path location;
     std::string content;
     
-    SourceBlock::Ptr sourceblock;
+    FileModuleNode::Ptr sourceblock;
     JrModuleClass* moduleClass;
     
     SymbolTable::Ptr exportedSymbolTable = nullptr;

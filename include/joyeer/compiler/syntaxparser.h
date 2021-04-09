@@ -7,7 +7,7 @@ class SyntaxParser
 {
 public:
     SyntaxParser(const std::vector<std::shared_ptr<Token>> &tokens);
-    SourceBlock::Ptr parse();
+    FileModuleNode::Ptr parse();
 
 private:
 

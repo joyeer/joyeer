@@ -15,7 +15,7 @@ context(context) {
 void IRGen::emit(Node::Ptr node) {
     switch (node->kind) {
         case sourceBlock:
-            emit(std::static_pointer_cast<SourceBlock>(node));
+            emit(std::static_pointer_cast<FileModuleNode>(node));
             break;
         case letDecl:
             emit(std::static_pointer_cast<LetDecl>(node));
@@ -94,7 +94,7 @@ void IRGen::emit(Node::Ptr node) {
     }
 }
 
-JrModuleClass* IRGen::emit(SourceBlock::Ptr block) {
+JrModuleClass* IRGen::emit(FileModuleNode::Ptr block) {
     
     assert(block->symbol->flag == moduleSymbol);
     auto moduleType = (JrModuleClass*)Global::types[block->symbol->addressOfType];
