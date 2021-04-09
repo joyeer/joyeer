@@ -4,7 +4,7 @@
 #include <filesystem>
 #include <string>
 #include "joyeer/runtime/object.h"
-#include "joyeer/compiler/node.h"
+#include "joyeer/compiler/node+types.h"
 #include "joyeer/runtime/sys/module.h"
 
 // SourceFile contains all information of source file in disk

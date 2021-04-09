@@ -2,7 +2,8 @@
 #define __joyeer_compiler_syntax_binder_h__
 
 
-#include "node.h"
+#include "joyeer/compiler/node+types.h"
+#include "joyeer/compiler/node+visitor.h"
 #include "context.h"
 
 

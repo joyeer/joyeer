@@ -1,7 +1,8 @@
 #ifndef __joyeer_compiler_typecheck_h__
 #define __joyeer_compiler_typecheck_h__
 
-#include "node.h"
+#include "joyeer/compiler/node+visitor.h"
+#include "joyeer/compiler/node+types.h"
 #include "context.h"
 #include "joyeer/runtime/runtime.h"
 

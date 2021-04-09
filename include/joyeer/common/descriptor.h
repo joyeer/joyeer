@@ -36,7 +36,7 @@ struct DescriptorType {
     static const char END = ';' ;
 };
 
-class Descritpor {
+class Descriptor {
 
 public:
 
@@ -48,12 +48,22 @@ protected:
 // File Module descriptor, e.g.
 // foo.joyeer, descriptor: #foo;
 // bar/foo.joyeer, descriptor: #bar/foo;
-class FileModuleDescriptor: public Descritpor {
+class FileModuleDescriptor: public Descriptor {
 public:
     FileModuleDescriptor(const std::string& filename);
 };
 
-class ClassDescriptor: public Descritpor {
+class VariableDescriptor: public Descriptor {
+public:
+    VariableDescriptor(const std::string& filename);
+};
+
+class FunctionDescriptor: public Descriptor {
+public:
+    FunctionDescriptor(const std::string& filename);
+};
+
+class ClassDescriptor: public Descriptor {
 
 };
 

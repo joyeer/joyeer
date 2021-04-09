@@ -1,4 +1,5 @@
 #include "joyeer/compiler/program.h"
+#include "joyeer/compiler/node+debugprinter.h"
 #include "joyeer/compiler/lexparser.h"
 #include "joyeer/compiler/diagnostic.h"
 #include "joyeer/compiler/binder.h"

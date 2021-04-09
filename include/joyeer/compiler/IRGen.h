@@ -1,7 +1,7 @@
 #ifndef __joyeer_compiler_irgen_h__
 #define __joyeer_compiler_irgen_h__
 
-#include "joyeer/compiler/node.h"
+#include "joyeer/compiler/node+types.h"
 #include "joyeer/runtime/runtime.h"
 #include "joyeer/runtime/instruction.h"
 #include "joyeer/runtime/function.h"
