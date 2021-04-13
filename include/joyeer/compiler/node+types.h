@@ -1,9 +1,11 @@
 #ifndef __joyeer_compiler_node_types_h__
 #define __joyeer_compiler_node_types_h__
 
-#include "node.h"
+#include "joyeer/compiler/node.h"
 
-struct FileModuleNode: Node {
+// Reprensent an FileModule in Ast tree, each xxx.joyeer file is a file module
+class FileModuleNode: public Node {
+public:
     using Ptr = std::shared_ptr<FileModuleNode>;
     
     std::vector<Node::Ptr> statements;
@@ -15,6 +17,9 @@ struct FileModuleNode: Node {
     std::vector<FileImportDecl::Ptr> getFileImports();
     
     virtual std::string getName();
+
+    // get the top level declarations
+    std::vector<Node::Ptr> getTopLevelDecls();
 };
 
 

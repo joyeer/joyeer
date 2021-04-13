@@ -33,7 +33,7 @@ void Program::run(std::string inputfile) {
     interpreter.run(sourcelife->moduleClass);
 }
 
-SourceFile* Program::findSourceFile(const std::string &path, const std::string relativeFolder) {
+SourceFile::Ptr Program::findSourceFile(const std::string &path, const std::string relativeFolder) {
     auto sourcefile = std::filesystem::path(path);
     if(sourcefile.is_relative()) {
         // check the relative folder
@@ -45,7 +45,7 @@ SourceFile* Program::findSourceFile(const std::string &path, const std::string r
     
     auto sourcefilePath = sourcefile.string();
     if(sourcefiles.find(sourcefilePath) == sourcefiles.end()) {
-        auto sourcefile = new SourceFile();
+        auto sourcefile = std::make_shared<SourceFile>();
         sourcefile->open(sourcefilePath);
         sourcefiles.insert({sourcefilePath, sourcefile});
     }
@@ -54,18 +54,17 @@ SourceFile* Program::findSourceFile(const std::string &path, const std::string r
 }
 
 
-void Program::compile(SourceFile *sourcefile) {
+void Program::compile(SourceFile::Ptr sourcefile) {
     
     auto context= std::make_shared<CompileContext>(options);
-    context->sourceFile = sourcefile;
-    
+    context->sourcefile = sourcefile;
     // lex structure analyze
     LexParser lexParser;
-    lexParser.parse(sourcefile->content);
+    lexParser.parse(sourcefile);
     CHECK_ERROR_CONTINUE
     
     // syntax analyze
-    SyntaxParser syntaxParser(lexParser.tokens);
+    SyntaxParser syntaxParser(sourcefile->tokens);
     auto block = syntaxParser.parse();
     block->filename = sourcefile->location.string();
     debugPrint(block, block->filename + ".parser.debug.txt");
@@ -94,8 +93,8 @@ void Program::compile(SourceFile *sourcefile) {
     
 }
 
-SourceFile* Program::tryImport(CompileContext::Ptr context, const std::string &moduleName) {
-    auto sourcefile = context->sourceFile;
+SourceFile::Ptr Program::tryImport(CompileContext::Ptr context, const std::string &moduleName) {
+    auto sourcefile = context->sourcefile;
     auto relativedFolder = sourcefile->location.parent_path().string();
     auto importfile = findSourceFile(moduleName, relativedFolder);
     if(importfile == nullptr) {

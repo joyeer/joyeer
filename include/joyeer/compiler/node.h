@@ -1,9 +1,9 @@
 #ifndef __joyeer_compiler_AST_node_h__
 #define __joyeer_compiler_AST_node_h__
 
-#include "token.h"
-#include "symtable.h"
-#include "context.h"
+#include "joyeer/compiler/token.h"
+#include "joyeer/compiler/symtable.h"
+#include "joyeer/runtime/runtime.h"
 #include <fstream>
 
 enum SyntaxKind {

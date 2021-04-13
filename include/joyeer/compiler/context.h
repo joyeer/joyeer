@@ -4,8 +4,7 @@
 #include "joyeer/driver/arguments.h"
 #include "joyeer/compiler/symtable.h"
 #include "joyeer/runtime/function.h"
-
-struct SourceFile;
+#include "joyeer/compiler/sourcefile.h"
 
 enum CompileStage {
     visitSourceBlock,
@@ -63,7 +62,7 @@ public:
     SymbolTable::Ptr exportedSymbols = nullptr;
     
     // The compiler's source file
-    SourceFile* sourceFile = nullptr;
+    SourceFile::Ptr sourcefile = nullptr;
 protected:
     // initializ global scope, e.g. buildin functions/object etc
     void initializeGlobalScope();

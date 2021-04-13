@@ -2,14 +2,14 @@
 #include "joyeer/compiler/diagnostic.h"
 #include "joyeer/runtime/buildin.h"
 #include <codecvt>
-#include <string>
 
 
-void LexParser::parse(const std::string& content) {
-    this->content = content;
-    iterator = content.begin();
-    endIterator = content.end();
-
+void LexParser::parse(const SourceFile::Ptr sourcefile) {
+    
+    this->sourcefile = sourcefile;
+    iterator = sourcefile->content.begin();
+    endIterator = sourcefile->content.end();
+    
     while (iterator != endIterator) {
         switch (*iterator ++) {
             case '\u0000':
@@ -41,7 +41,7 @@ void LexParser::parse(const std::string& content) {
                 if (iterator == endIterator) {
                     auto token = std::make_shared<Token>(TokenKind::decimalLiteral, "0", lineNumber, iterator - lineStartAtPosition);
                     token->intValue = 0;
-                    tokens.push_back(token);
+                    sourcefile->tokens.push_back(token);
                     break;
                 }
                 switch (*iterator) {
@@ -54,7 +54,7 @@ void LexParser::parse(const std::string& content) {
                     default:
                         auto token = std::make_shared<Token>(TokenKind::decimalLiteral, "0", lineNumber, iterator - lineStartAtPosition);
                         token->intValue = 0;
-                        tokens.push_back(token);
+                        sourcefile->tokens.push_back(token);
                         break;
                 }
                 
@@ -197,7 +197,7 @@ void LexParser::parseOctalLiteral(std::string::const_iterator startAt) {
 label:
     std::string number(startAt, iterator);
     auto token = std::make_shared<Token>(TokenKind::decimalLiteral, number, lineNumber, startAt - lineStartAtPosition);
-    tokens.push_back(token);
+    sourcefile->tokens.push_back(token);
 }
 
 void LexParser::parseNumberLiteral(std::string::const_iterator startAt) {
@@ -240,7 +240,7 @@ void LexParser::parseNumberLiteral(std::string::const_iterator startAt) {
     std::string identifier(startAt, iterator);
     auto token = std::make_shared<Token>(TokenKind::decimalLiteral, identifier, lineNumber, iterator - startAt);
     token->intValue = std::stoi(identifier);
-    tokens.push_back(token);
+    sourcefile->tokens.push_back(token);
 }
 
 void LexParser::parseHexLiteral(std::string::const_iterator startAt) {
@@ -249,18 +249,18 @@ void LexParser::parseHexLiteral(std::string::const_iterator startAt) {
 
 void LexParser::parseOperator(std::string::const_iterator startIterator) {
   std::string operators(startIterator, startIterator + 1);
-  tokens.push_back(
+  sourcefile->tokens.push_back(
     std::shared_ptr<Token>(new Token(TokenKind::operators, operators, lineNumber, iterator - startIterator))
   );
 }
 
 void LexParser::pushOperator(TokenKind kind, std::string op, std::string::const_iterator startIterator) {
-    tokens.push_back(std::shared_ptr<Token>(new Token(TokenKind::operators, op, lineNumber, iterator - startIterator)));
+    sourcefile->tokens.push_back(std::shared_ptr<Token>(new Token(TokenKind::operators, op, lineNumber, iterator - startIterator)));
 }
 
 void LexParser::parsePunctuation(std::string::const_iterator startIterator) {
   std::string punctuation(startIterator, startIterator + 1);
-  tokens.push_back(
+  sourcefile->tokens.push_back(
     std::shared_ptr<Token>(new Token(TokenKind::punctuation, punctuation, lineNumber, iterator - startIterator))
   );
 }
@@ -293,7 +293,7 @@ void LexParser::parseStringIdentifier() {
     } else {
         token = std::shared_ptr<Token>(new Token(TokenKind::identifier, identifier, lineNumber, iterator - startAt));
     }
-    tokens.push_back(token);
+    sourcefile->tokens.push_back(token);
 }
 
 void LexParser::parseStringLiteral() {
@@ -316,5 +316,5 @@ void LexParser::parseStringLiteral() {
     auto stringLiteral = std::make_shared<Token>(TokenKind::stringLiteral, identifier, lineNumber, iterator - startAt);
     Global::strings.push_back(identifier);
     stringLiteral->index = Global::strings.size() - 1;
-    tokens.push_back(stringLiteral);
+    sourcefile->tokens.push_back(stringLiteral);
 }

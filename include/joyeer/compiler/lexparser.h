@@ -1,14 +1,13 @@
 #ifndef __joyeer_compiler_lexer_lexparser_h__
 #define __joyeer_compiler_lexer_lexparser_h__
 
-
-#include <string>
-#include <vector>
-#include "token.h"
+#include "joyeer/compiler/sourcefile.h"
+#include "joyeer/compiler/token.h"
 
 class LexParser {
 public:
-  void parse(const std::string& content);
+    // parse and tokenize the source file
+    void parse(const SourceFile::Ptr sourcefile);
     
 private:
     void parseStringIdentifier();
@@ -20,16 +19,15 @@ private:
     void parseOperator(std::string::const_iterator startIterator);
     void parsePunctuation(std::string::const_iterator startIterator);
 
-public:
-  std::vector<Token::Ptr> tokens;
-
 private:
-  std::string content;
-  std::string::const_iterator iterator;
-  std::string::const_iterator endIterator;
+    std::string::const_iterator iterator;
+    std::string::const_iterator endIterator;
 
-  size_t lineNumber = 0;
-  std::string::const_iterator lineStartAtPosition;
+    size_t lineNumber = 0;
+    std::string::const_iterator lineStartAtPosition;
+
+    // Source files
+    SourceFile::Ptr sourcefile; 
 };
 
 

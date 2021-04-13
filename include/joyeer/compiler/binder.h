@@ -2,9 +2,8 @@
 #define __joyeer_compiler_syntax_binder_h__
 
 
-#include "joyeer/compiler/node+types.h"
 #include "joyeer/compiler/node+visitor.h"
-#include "context.h"
+#include "joyeer/compiler/context.h"
 
 
 struct SourceFile;
@@ -13,7 +12,7 @@ struct SourceFile;
 // Reduce the expression's depth level
 class Binder: public NodeVisitor {
 public:
-    std::function<SourceFile*(CompileContext::Ptr, const std::string&)> importDelegate;
+    std::function<SourceFile::Ptr(CompileContext::Ptr, const std::string&)> importDelegate;
     
     Binder(CompileContext::Ptr context);
     

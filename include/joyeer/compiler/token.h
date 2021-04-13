@@ -22,7 +22,7 @@ enum TokenKind {
 
 struct Token {
 public:
-    typedef std::shared_ptr<Token> Ptr;
+    using Ptr = std::shared_ptr<Token>;
     
 public:
     TokenKind kind;
@@ -35,8 +35,8 @@ public:
         int opValue;
     };
 
-    int lineNumber;
-    int columnAt;
+    uint16_t lineNumber;
+    uint16_t columnAt;
 
     Token(TokenKind kind, const std::string& rawValue, size_t lineNumber, size_t columnAt);
 
