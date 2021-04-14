@@ -9,7 +9,7 @@ add_joyeer_library(joyeerCompiler STATIC
     node+types.cpp
     node+visitor.cpp
     node+debugprinter.cpp
-    program.cpp
+    compiler+service.cpp
     sourcefile.cpp
     symtable.cpp
     syntaxparser.cpp

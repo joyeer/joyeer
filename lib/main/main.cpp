@@ -1,5 +1,4 @@
-#include "joyeer/driver/arguments.h"
-#include "joyeer/compiler/program.h"
+#include "joyeer/driver/driver.h"
 #include "joyeer/runtime/buildin.h"
 
 int main(int argc, char** argv) {
@@ -10,11 +9,11 @@ int main(int argc, char** argv) {
         options->printUsage();
         return -1;
     }
-    
+
     Global::initGlobalTables();
     
-    Program program(options);
-    program.run(options->inputfile.string());
+    Driver driver(options);
+    driver.run();
     
     return 0;
 }

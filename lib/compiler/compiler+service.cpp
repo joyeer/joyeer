@@ -1,4 +1,4 @@
-#include "joyeer/compiler/program.h"
+#include "joyeer/compiler/compiler+service.h"
 #include "joyeer/compiler/node+debugprinter.h"
 #include "joyeer/compiler/lexparser.h"
 #include "joyeer/compiler/diagnostic.h"
@@ -20,11 +20,11 @@
         return nullptr; \
     }
 
-Program::Program(CommandLineArguments::Ptr opts):
+CompilerService::CompilerService(CommandLineArguments::Ptr opts):
 options(opts) {
 }
 
-void Program::run(std::string inputfile) {
+void CompilerService::run(std::string inputfile) {
     auto sourcelife = findSourceFile(inputfile);
     compile(sourcelife);
     
@@ -33,7 +33,7 @@ void Program::run(std::string inputfile) {
     interpreter.run(sourcelife->moduleClass);
 }
 
-SourceFile::Ptr Program::findSourceFile(const std::string &path, const std::string relativeFolder) {
+SourceFile::Ptr CompilerService::findSourceFile(const std::string &path, const std::string relativeFolder) {
     auto sourcefile = std::filesystem::path(path);
     if(sourcefile.is_relative()) {
         // check the relative folder
@@ -54,7 +54,7 @@ SourceFile::Ptr Program::findSourceFile(const std::string &path, const std::stri
 }
 
 
-void Program::compile(SourceFile::Ptr sourcefile) {
+void CompilerService::compile(SourceFile::Ptr sourcefile) {
     
     auto context= std::make_shared<CompileContext>(options);
     context->sourcefile = sourcefile;
@@ -72,7 +72,7 @@ void Program::compile(SourceFile::Ptr sourcefile) {
     
     // Detect for type creating
     Binder binder(context);
-    binder.importDelegate = std::bind(&Program::tryImport, this, std::placeholders::_1, std::placeholders::_2);
+    binder.importDelegate = std::bind(&CompilerService::tryImport, this, std::placeholders::_1, std::placeholders::_2);
     
     binder.visit(block);
     debugPrint(block, block->filename + ".binder.debug.txt");
@@ -93,7 +93,7 @@ void Program::compile(SourceFile::Ptr sourcefile) {
     
 }
 
-SourceFile::Ptr Program::tryImport(CompileContext::Ptr context, const std::string &moduleName) {
+SourceFile::Ptr CompilerService::tryImport(CompileContext::Ptr context, const std::string &moduleName) {
     auto sourcefile = context->sourcefile;
     auto relativedFolder = sourcefile->location.parent_path().string();
     auto importfile = findSourceFile(moduleName, relativedFolder);
@@ -107,7 +107,7 @@ SourceFile::Ptr Program::tryImport(CompileContext::Ptr context, const std::strin
     return importfile;
 }
 
-void Program::debugPrint(Node::Ptr node, const std::string &debugFilePath) {
+void CompilerService::debugPrint(Node::Ptr node, const std::string &debugFilePath) {
     if(options->vmDebug) {
         NodeDebugPrinter syntaxDebugger(debugFilePath);
         syntaxDebugger.print(node);
@@ -115,7 +115,7 @@ void Program::debugPrint(Node::Ptr node, const std::string &debugFilePath) {
     }
 }
 
-void Program::debugPrint(const std::string &debugFilePath) {
+void CompilerService::debugPrint(const std::string &debugFilePath) {
     if(options->vmDebug) {
         TypeTablePrinter typePrinter("debug.table.types.txt");
         typePrinter.print();

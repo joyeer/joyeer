@@ -1,14 +1,14 @@
-#ifndef __joyeer_compiler_program_h__
-#define __joyeer_compiler_program_h__
+#ifndef __joyeer_compiler_compiler_service_h__
+#define __joyeer_compiler_compiler_service_h__
 
 #include "joyeer/driver/arguments.h"
 #include "joyeer/compiler/context.h"
 
 #include <unordered_map>
 
-class Program {
+class CompilerService {
 public:
-    Program(CommandLineArguments::Ptr options);
+    CompilerService(CommandLineArguments::Ptr options);
     void run(std::string inputfile);
     
 private:
