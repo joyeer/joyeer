@@ -3,7 +3,7 @@
 #include <codecvt>
 #include <iostream>
 
-CompileOpts::CompileOpts(int argc, char** argv) {
+CommandLineArguments::CommandLineArguments(int argc, char** argv) {
     std::vector<std::string> arguments;
     for(int i = 0 ; i < argc; i ++) {
         arguments.push_back(std::string(argv[i]));
@@ -12,7 +12,7 @@ CompileOpts::CompileOpts(int argc, char** argv) {
     parse(arguments);
 }
 
-void CompileOpts::parse(std::vector<std::string>& arguments) {
+void CommandLineArguments::parse(std::vector<std::string>& arguments) {
     std::vector<std::string>::const_iterator iterator = arguments.begin();
     vmLocation = *iterator;
     
@@ -39,11 +39,11 @@ void CompileOpts::parse(std::vector<std::string>& arguments) {
     }
 }
 
-void CompileOpts::printUsage() {
+void CommandLineArguments::printUsage() {
     std::cout << "Usage: joyeer <inputfile>" << std::endl;
 }
 
-void CompileOpts::parseInputFile(const std::string &inputpath) {
+void CommandLineArguments::parseInputFile(const std::string &inputpath) {
     inputfile = std::filesystem::path(inputpath);
     if(inputfile.is_relative()) {
         auto path = std::filesystem::current_path() / inputfile.parent_path();

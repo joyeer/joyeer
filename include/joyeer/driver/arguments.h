@@ -6,8 +6,8 @@
 #include <vector>
 #include <memory>
 
-struct CompileOpts {
-    using Ptr = std::shared_ptr<CompileOpts>;
+struct CommandLineArguments {
+    using Ptr = std::shared_ptr<CommandLineArguments>;
     
     // the executable of joyeer's location
     std::filesystem::path vmLocation;
@@ -19,7 +19,7 @@ struct CompileOpts {
     bool vmDebug = false;
     bool accepted = false;
     
-    CompileOpts(int argc, char** argv);
+    CommandLineArguments(int argc, char** argv);
     
     // print compiler usage
     void printUsage();

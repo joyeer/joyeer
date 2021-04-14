@@ -7,7 +7,7 @@
 
 
 
-CompileContext::CompileContext(CompileOpts::Ptr options):
+CompileContext::CompileContext(CommandLineArguments::Ptr options):
 options(options) {
     initializeSymTable();
     initializeGlobalScope();

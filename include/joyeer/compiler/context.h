@@ -27,7 +27,7 @@ class CompileContext {
 public:
     typedef std::shared_ptr<CompileContext> Ptr;
     
-    CompileContext(CompileOpts::Ptr options);
+    CompileContext(CommandLineArguments::Ptr options);
     
     SymbolTable::Ptr initializeSymTable();
     void finalizeSymTable();
@@ -84,7 +84,7 @@ protected:
     
     std::unordered_map<JrInt, SymbolTable::Ptr> mapOfTypeAndSymbolTable;
     
-    CompileOpts::Ptr options;
+    CommandLineArguments::Ptr options;
 };
 
 #endif

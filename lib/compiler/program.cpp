@@ -20,7 +20,7 @@
         return nullptr; \
     }
 
-Program::Program(CompileOpts::Ptr opts):
+Program::Program(CommandLineArguments::Ptr opts):
 options(opts) {
 }
 

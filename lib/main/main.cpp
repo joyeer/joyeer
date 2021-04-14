@@ -4,7 +4,7 @@
 
 int main(int argc, char** argv) {
     // command line arguments
-    auto options = std::make_shared<CompileOpts>(argc, argv);
+    auto options = std::make_shared<CommandLineArguments>(argc, argv);
     
     if(!options->accepted) {
         options->printUsage();

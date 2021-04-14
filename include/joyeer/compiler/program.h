@@ -8,7 +8,7 @@
 
 class Program {
 public:
-    Program(CompileOpts::Ptr options);
+    Program(CommandLineArguments::Ptr options);
     void run(std::string inputfile);
     
 private:
@@ -22,7 +22,7 @@ private:
     void debugPrint(Node::Ptr node, const std::string& debugFilePath);
     void debugPrint(const std::string& debugFilePath);
     
-    CompileOpts::Ptr options;
+    CommandLineArguments::Ptr options;
     std::unordered_map<std::string, SourceFile::Ptr> sourcefiles;
 };
 #endif
