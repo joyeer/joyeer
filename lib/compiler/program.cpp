@@ -64,7 +64,7 @@ void Program::compile(SourceFile::Ptr sourcefile) {
     CHECK_ERROR_CONTINUE
     
     // syntax analyze
-    SyntaxParser syntaxParser(sourcefile->tokens);
+    SyntaxParser syntaxParser(sourcefile);
     auto block = syntaxParser.parse();
     block->filename = sourcefile->location.string();
     debugPrint(block, block->filename + ".parser.debug.txt");

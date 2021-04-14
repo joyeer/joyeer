@@ -2,10 +2,9 @@
 #include "joyeer/compiler/diagnostic.h"
 #include <cassert>
 
-SyntaxParser::SyntaxParser(const std::vector<std::shared_ptr<Token>> &tokens) : tokens(tokens)
-{
-    iterator = tokens.begin();
-    endIterator = tokens.end();
+SyntaxParser::SyntaxParser(SourceFile::Ptr sourcefile) {
+    iterator = sourcefile->tokens.begin();
+    endIterator = sourcefile->tokens.end();
 }
 
 FileModuleNode::Ptr SyntaxParser::parse() {

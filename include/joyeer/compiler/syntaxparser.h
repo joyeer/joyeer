@@ -1,12 +1,12 @@
 #ifndef __joyeer_syntax_syntaxparser_h__
 #define __joyeer_syntax_syntaxparser_h__
 
-#include "node+types.h"
-
+#include "joyeer/compiler/node+types.h"
+#include "joyeer/compiler/sourcefile.h"
 class SyntaxParser
 {
 public:
-    SyntaxParser(const std::vector<std::shared_ptr<Token>> &tokens);
+    SyntaxParser(SourceFile::Ptr sourcefile);
     FileModuleNode::Ptr parse();
 
 private:
@@ -125,7 +125,6 @@ private:
     Token::Ptr curToken() const;
 
 private:
-    const std::vector<Token::Ptr> &tokens;
     std::vector<Token::Ptr>::const_iterator iterator;
     std::vector<Token::Ptr>::const_iterator endIterator;
 };

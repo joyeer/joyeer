@@ -4,7 +4,6 @@
 
 class CompilerService {
 public:
-    static void performRequest(Request* request);
 };
 
 #endif
