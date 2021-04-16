@@ -93,6 +93,9 @@ void CompilerService::compile(SourceFile::Ptr sourcefile) {
     
 }
 
+void CompilerService::declare(FileModuleNode::Ptr filemodule) {
+}
+
 SourceFile::Ptr CompilerService::tryImport(CompileContext::Ptr context, const std::string &moduleName) {
     auto sourcefile = context->sourcefile;
     auto relativedFolder = sourcefile->location.parent_path().string();

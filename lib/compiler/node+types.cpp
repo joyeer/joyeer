@@ -1,4 +1,5 @@
 #include "joyeer/compiler/node+types.h"
+#include <fstream>
 
 FileModuleNode::FileModuleNode(std::vector<std::shared_ptr<Node>> statements):
 Node(SyntaxKind::sourceBlock),

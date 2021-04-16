@@ -13,15 +13,23 @@ ExternalProject_Add(
 # Get GTest source and binary directories from CMake project
 ExternalProject_Get_Property(gtest source_dir binary_dir install_dir)
 
+set(gTest "${install_dir}/lib/libgtest.a")
+set(gMock "${install_dir}/lib/libgmock.a")
+if(XCODE) 
+    set(gTest "${install_dir}/lib/libgtestd.a")
+    set(gMock "${install_dir}/lib/libgmockd.a")
+endif()
+
+
 # Create a libgtest target to be used as a dependency by test programs
 add_library(libgtest IMPORTED STATIC GLOBAL)
-
 add_dependencies(libgtest gtest)
 
 # Set libgtest properties
 set_target_properties(libgtest PROPERTIES
-    "IMPORTED_LOCATION" "${install_dir}/lib/libgtest.a"
+    "IMPORTED_LOCATION" "${gTest}"
     "IMPORTED_LINK_INTERFACE_LIBRARIES" "${CMAKE_THREAD_LIBS_INIT}"
+    "CMAKE_DEBUG_POSTFIX" ""
 )
 
 # Create a libgmock target to be used as a dependency by test programs
@@ -30,8 +38,9 @@ add_dependencies(libgmock gtest)
 
 # Set libgmock properties
 set_target_properties(libgmock PROPERTIES
-    "IMPORTED_LOCATION" "${install_dir}/lib/libgmock.a"
+    "IMPORTED_LOCATION" "${gMock}"
     "IMPORTED_LINK_INTERFACE_LIBRARIES" "${CMAKE_THREAD_LIBS_INIT}"
+    "CMAKE_DEBUG_POSTFIX" ""
 )
 
 include_directories("${source_dir}/googletest/include"

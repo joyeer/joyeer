@@ -37,9 +37,8 @@ struct DescriptorType {
 };
 
 class Descriptor {
-
 public:
-
+    using Ptr = std::shared_ptr<Descriptor>;
     const std::string& getRawDescriptor() const { return rawDescriptor; }
 protected:
     std::string rawDescriptor;
@@ -49,6 +48,8 @@ protected:
 // foo.joyeer, descriptor: #foo;
 // bar/foo.joyeer, descriptor: #bar/foo;
 class FileModuleDescriptor: public Descriptor {
+public:
+    using Ptr = std::shared_ptr<FileModuleDescriptor>;
 public:
     FileModuleDescriptor(const std::string& filename);
 };

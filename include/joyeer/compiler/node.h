@@ -1,10 +1,10 @@
 #ifndef __joyeer_compiler_AST_node_h__
 #define __joyeer_compiler_AST_node_h__
 
+#include "joyeer/common/descriptor.h"
 #include "joyeer/compiler/token.h"
 #include "joyeer/compiler/symtable.h"
 #include "joyeer/runtime/runtime.h"
-#include <fstream>
 
 enum SyntaxKind {
     sourceBlock = 1L,
@@ -61,6 +61,7 @@ struct Node {
     Symbol::Ptr symbol = nullptr;
     SymbolTable::Ptr symtable = nullptr;
     JrType* type = nullptr;
+    Descriptor::Ptr descriptor = nullptr;
     
     virtual std::string getName();
     // The type name of the Node

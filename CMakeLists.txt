@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 3.16)
 project (joyeer VERSION 0.0.1)
 
 cmake_policy(SET CMP0110 NEW)
+cmake_policy(SET CMP0114 NEW)
 
 set(CMAKE_DISABLE_IN_SOURCE_BUILD ON)
 

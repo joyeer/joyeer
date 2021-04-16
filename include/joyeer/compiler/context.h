@@ -6,6 +6,9 @@
 #include "joyeer/runtime/function.h"
 #include "joyeer/compiler/sourcefile.h"
 
+class CompilerService;
+using CompilerServicePtr = std::shared_ptr<CompilerService>;
+
 enum CompileStage {
     visitSourceBlock,
     visitCodeBlock,
@@ -85,6 +88,7 @@ protected:
     std::unordered_map<JrInt, SymbolTable::Ptr> mapOfTypeAndSymbolTable;
     
     CommandLineArguments::Ptr options;
+    CompilerServicePtr compiler;
 };
 
 #endif

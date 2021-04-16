@@ -2,6 +2,7 @@
 #define __joyeer_compiler_node_debugprint_h__
 
 #include "joyeer/compiler/node.h"
+#include <fstream>
 
 // ASM node printer
 struct NodeDebugPrinter {

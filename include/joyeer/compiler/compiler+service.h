@@ -3,14 +3,20 @@
 
 #include "joyeer/driver/arguments.h"
 #include "joyeer/compiler/context.h"
+#include "joyeer/compiler/compiler+request.h"
 
 #include <unordered_map>
+
 
 class CompilerService {
 public:
     CompilerService(CommandLineArguments::Ptr options);
     void run(std::string inputfile);
     
+    // declare a File Module
+    void declare(FileModuleNode::Ptr filemodule);
+
+    void query(const std::string& descriptor);
 private:
     
     // Compile an SourceFile
@@ -24,5 +30,6 @@ private:
     
     CommandLineArguments::Ptr options;
     std::unordered_map<std::string, SourceFile::Ptr> sourcefiles;
+    
 };
 #endif

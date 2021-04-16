@@ -7,6 +7,8 @@
 class FileModuleNode: public Node {
 public:
     using Ptr = std::shared_ptr<FileModuleNode>;
+
+public:
     
     std::vector<Node::Ptr> statements;
     
