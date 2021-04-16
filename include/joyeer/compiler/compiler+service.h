@@ -1,9 +1,9 @@
 #ifndef __joyeer_compiler_compiler_service_h__
 #define __joyeer_compiler_compiler_service_h__
 
-#include "joyeer/driver/arguments.h"
 #include "joyeer/compiler/context.h"
 #include "joyeer/compiler/compiler+request.h"
+#include "joyeer/compiler/symbol+repo.h"
 
 #include <unordered_map>
 
@@ -31,5 +31,7 @@ private:
     CommandLineArguments::Ptr options;
     std::unordered_map<std::string, SourceFile::Ptr> sourcefiles;
     
+    // All the delcaration descriptors include FileModule/Class/Node
+    std::unordered_map<std::string, Node::Ptr> descriptors;
 };
 #endif

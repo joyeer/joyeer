@@ -9,7 +9,7 @@ public:
     using Ptr = std::shared_ptr<FileModuleNode>;
 
 public:
-    FileModuleNode(std::vector<Node::Ptr> statements);
+    FileModuleNode(FileModuleDescriptor::Ptr descriptor, std::vector<Node::Ptr> statements);
     
     std::vector<Node::Ptr> statements;
     

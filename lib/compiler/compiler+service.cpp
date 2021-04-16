@@ -65,7 +65,7 @@ void CompilerService::compile(SourceFile::Ptr sourcefile) {
     // syntax analyze
     SyntaxParser syntaxParser(sourcefile);
     auto block = syntaxParser.parse();
-    block->filename = sourcefile->location.string();
+    block->filename = sourcefile->getAbstractLocation();
     debugPrint(block, block->filename + ".parser.debug.txt");
     CHECK_ERROR_CONTINUE
     
@@ -80,7 +80,7 @@ void CompilerService::compile(SourceFile::Ptr sourcefile) {
     // verify the types
     TypeChecker typeChecker(context);
     typeChecker.visit(std::static_pointer_cast<Node>(block));
-    debugPrint(block, sourcefile->location.string() + ".typechecker.debug.txt");
+    debugPrint(block, sourcefile->getAbstractLocation() + ".typechecker.debug.txt");
     CHECK_ERROR_CONTINUE
 
     // generate IR code
@@ -90,14 +90,18 @@ void CompilerService::compile(SourceFile::Ptr sourcefile) {
     sourcefile->exportedSymbolTable = context->exportedSymbols;
     CHECK_ERROR_CONTINUE
     
+    // delcare the FileModuleNode in repos
+    declare(block);
 }
 
 void CompilerService::declare(FileModuleNode::Ptr filemodule) {
+    const std::string descriptor = filemodule->descriptor->getRawDescriptor();
+    descriptors[descriptor] = filemodule;
 }
 
 SourceFile::Ptr CompilerService::tryImport(CompileContext::Ptr context, const std::string &moduleName) {
     auto sourcefile = context->sourcefile;
-    auto relativedFolder = sourcefile->location.parent_path().string();
+    auto relativedFolder = sourcefile->getParentFolder();
     auto importfile = findSourceFile(moduleName, relativedFolder);
     if(importfile == nullptr) {
         Diagnostics::reportError("Error: Module cannot be found");

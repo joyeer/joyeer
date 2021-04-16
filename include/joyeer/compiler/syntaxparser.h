@@ -125,6 +125,7 @@ private:
     Token::Ptr curToken() const;
 
 private:
+    SourceFile::Ptr sourcefile;
     std::vector<Token::Ptr>::const_iterator iterator;
     std::vector<Token::Ptr>::const_iterator endIterator;
 };

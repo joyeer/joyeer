@@ -1,10 +1,10 @@
 #include "joyeer/compiler/node+types.h"
 #include <fstream>
 
-FileModuleNode::FileModuleNode(std::vector<std::shared_ptr<Node>> statements):
+FileModuleNode::FileModuleNode(FileModuleDescriptor::Ptr descriptor, std::vector<std::shared_ptr<Node>> statements):
 Node(SyntaxKind::sourceBlock),
 statements(statements) {
-
+    this->descriptor = descriptor;
 }
 
 std::string FileModuleNode::getName() {

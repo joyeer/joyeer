@@ -13,8 +13,20 @@ public:
 public:
     SourceFile(const std::string& workingDirectory, const std::string& path);
     
-    // file location
-    std::filesystem::path location;
+    // get .joyeer file's relative location against the working directory
+    const std::string& getLocation() const {
+        return pathInWorkingDirectory;
+    }
+    
+    // get .joyeer file's abstract location
+    const std::string getAbstractLocation() const {
+        return location.string();
+    }
+    
+    // get .joyeer's parent folder
+    const std::string getParentFolder() const {
+        return location.parent_path().string();
+    }
     
     // file content
     std::string content;
@@ -33,7 +45,10 @@ public:
 protected:
     // the path relatived to the working directory
     std::string pathInWorkingDirectory;
-
+    
+    // file location
+    std::filesystem::path location;
+    
     void open(const std::string& path);
 };
 

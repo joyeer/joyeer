@@ -2,7 +2,8 @@
 #include "joyeer/compiler/diagnostic.h"
 #include <cassert>
 
-SyntaxParser::SyntaxParser(SourceFile::Ptr sourcefile) {
+SyntaxParser::SyntaxParser(SourceFile::Ptr sourcefile):
+sourcefile(sourcefile) {
     iterator = sourcefile->tokens.begin();
     endIterator = sourcefile->tokens.end();
 }
@@ -19,7 +20,8 @@ FileModuleNode::Ptr SyntaxParser::parse() {
         decls.push_back(decl);
     }
     
-    return std::make_shared<FileModuleNode>(decls);
+    auto descriptor = std::make_shared<FileModuleDescriptor>(sourcefile->getLocation());
+    return std::make_shared<FileModuleNode>(descriptor, decls);
 }
 
 ////////////////////////////////////////////////////////////////////////////
