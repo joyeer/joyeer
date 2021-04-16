@@ -9,17 +9,15 @@ public:
     using Ptr = std::shared_ptr<FileModuleNode>;
 
 public:
+    FileModuleNode(std::vector<Node::Ptr> statements);
     
     std::vector<Node::Ptr> statements;
     
     std::string filename;
 
-    FileModuleNode(std::vector<Node::Ptr> statements);
-
     std::vector<FileImportDecl::Ptr> getFileImports();
     
     virtual std::string getName();
-
     // get the top level declarations
     std::vector<Node::Ptr> getTopLevelDecls();
 };

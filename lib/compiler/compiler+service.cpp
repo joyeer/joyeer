@@ -45,8 +45,7 @@ SourceFile::Ptr CompilerService::findSourceFile(const std::string &path, const s
     
     auto sourcefilePath = sourcefile.string();
     if(sourcefiles.find(sourcefilePath) == sourcefiles.end()) {
-        auto sourcefile = std::make_shared<SourceFile>();
-        sourcefile->open(sourcefilePath);
+        auto sourcefile = std::make_shared<SourceFile>(options->workingDirectory, sourcefilePath);
         sourcefiles.insert({sourcefilePath, sourcefile});
     }
     

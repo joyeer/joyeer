@@ -1,8 +1,7 @@
 #ifndef __joyeer_compiler_sourcefile_h__
 #define __joyeer_compiler_sourcefile_h__
 
-#include <filesystem>
-#include <string>
+#include "joyeer/driver/arguments.h"
 #include "joyeer/compiler/node+types.h"
 #include "joyeer/runtime/sys/module.h"
 
@@ -10,15 +9,16 @@
 class SourceFile {
 public:
     using Ptr = std::shared_ptr<SourceFile>;
+    
 public:
-    void open(const std::string& path);
+    SourceFile(const std::string& workingDirectory, const std::string& path);
     
     // file location
     std::filesystem::path location;
-
+    
     // file content
     std::string content;
-
+    
     // lexer parsing result: token list
     std::vector<Token::Ptr> tokens;
 
@@ -29,7 +29,12 @@ public:
     JrModuleClass* moduleClass;
     
     SymbolTable::Ptr exportedSymbolTable = nullptr;
+    
+protected:
+    // the path relatived to the working directory
+    std::string pathInWorkingDirectory;
 
+    void open(const std::string& path);
 };
 
 #endif
