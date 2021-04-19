@@ -12,3 +12,22 @@ TEST(DescriptorTest, FileModileDescritpor) {
     EXPECT_EQ(rawDescriptor2, "#bar/foo;");
     
 }
+
+TEST(DescriptorTest, PrimaryTypeChecker) {
+    EXPECT_EQ(BoolDescriptor().getRawDescriptor(), "B");
+    EXPECT_EQ(IntDescriptor().getRawDescriptor(), "L");
+    EXPECT_EQ(UIntDescriptor().getRawDescriptor(), "l");
+    EXPECT_EQ(Int8Descriptor().getRawDescriptor(), "D");
+    EXPECT_EQ(UInt8Descriptor().getRawDescriptor(), "d");
+    EXPECT_EQ(Int16Descriptor().getRawDescriptor(), "H");
+    EXPECT_EQ(UInt16Descriptor().getRawDescriptor(), "h");
+    EXPECT_EQ(Int32Descriptor().getRawDescriptor(), "K");
+    EXPECT_EQ(UInt32Descriptor().getRawDescriptor(), "k");
+    EXPECT_EQ(Int128Descriptor().getRawDescriptor(), "X");
+    EXPECT_EQ(UInt128Descriptor().getRawDescriptor(), "x");
+    EXPECT_EQ(FloatDescriptor().getRawDescriptor(), "F");
+    EXPECT_EQ(DoubleDescriptor().getRawDescriptor(), "O");
+    EXPECT_EQ(Float128Descriptor().getRawDescriptor(), "W");
+    EXPECT_EQ(StringDescriptor().getRawDescriptor(), "S");
+    EXPECT_EQ(VoidDescriptor().getRawDescriptor(), "V");
+}
