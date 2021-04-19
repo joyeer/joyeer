@@ -51,29 +51,6 @@ Node(SyntaxKind::parameterClause),
 parameters(parameters) {
 }
 
-FuncDecl::FuncDecl(Node::Ptr identifier, Node::Ptr parameterClause, Node::Ptr returnType, Node::Ptr codeBlock):
-Node(SyntaxKind::funcDecl),
-identifier(identifier),
-parameterClause(parameterClause),
-returnType(returnType),
-codeBlock(codeBlock) {
-}
-
-std::string FuncDecl::getTypeName() {
-    std::stringstream ss;
-    if(identifier != nullptr && identifier->symbol != nullptr) {
-        ss << identifier->getTypeName();
-        ss << "@";
-    }
-    ss << std::static_pointer_cast<IdentifierExpr>(identifier)->token->rawValue << "(";
-    for(auto p: std::static_pointer_cast<ParameterClause>(parameterClause)->parameters) {
-        ss << p->identifier->token->rawValue << ":";
-    }
-    ss << ")";
-    return ss.str();
-}
-
-
 Pattern::Pattern(IdentifierExpr::Ptr identifier, Node::Ptr type):
 Node(SyntaxKind::pattern),
 identifier(identifier),
@@ -82,24 +59,6 @@ type(type) {
 
 const std::string& Pattern::getIdentifierName() {
     return identifier->token->rawValue;
-}
-
-
-ConstructorDecl::ConstructorDecl(std::shared_ptr<Node> parameterClause, std::shared_ptr<Node> codeBlock):
-Node(SyntaxKind::constructorDecl),
-parameterClause(parameterClause),
-codeBlock(codeBlock) {
-}
-
-const std::string ConstructorDecl::getName(JrType* type) {
-    std::stringstream ss;
-    ss << type->name << "(";
-    auto parameterClause = std::static_pointer_cast<ParameterClause>(this->parameterClause);
-    for(auto parameter: parameterClause->parameters) {
-        ss << parameter->getIdentifierName() << ":";
-    }
-    ss << ")";
-    return ss.str();
 }
 
 Expr::Expr(Node::Ptr prefix, std::vector<Node::Ptr> binaries):

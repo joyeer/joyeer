@@ -172,31 +172,6 @@ struct ParameterClause: Node {
     ParameterClause(std::vector<Pattern::Ptr> parameters);
 };
 
-struct FuncDecl: Node {
-    typedef std::shared_ptr<FuncDecl> Ptr;
-    
-    Node::Ptr identifier;               //IdentifierExpr
-    Node::Ptr parameterClause;
-    Node::Ptr codeBlock;
-    Node::Ptr returnType;
-
-    FuncDecl(Node::Ptr identifier, Node::Ptr parameterClause, Node::Ptr returnType, Node::Ptr codeBlock);
-    
-    virtual std::string getTypeName();
-};
-
-struct ConstructorDecl: Node {
-    typedef std::shared_ptr<ConstructorDecl> Ptr;
-    
-    Node::Ptr parameterClause;
-    Node::Ptr codeBlock;
-    
-    ConstructorDecl(Node::Ptr parameterClause, Node::Ptr codeBlock);
-    
-    // return constructor's symbol name e.g. init(...)
-    const std::string getName(JrType* ownerType);
-};
-
 struct Expr : Node {
     typedef std::shared_ptr<Expr> Ptr;
     

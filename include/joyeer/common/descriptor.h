@@ -3,6 +3,7 @@
 
 
 #include <string>
+#include <vector>
 
 //  interpretation of a Type
 struct DescriptorType {
@@ -44,16 +45,7 @@ protected:
     std::string rawDescriptor;
 };
 
-// File Module descriptor, e.g.
-// foo.joyeer, descriptor: #foo;
-// bar/foo.joyeer, descriptor: #bar/foo;
-class FileModuleDescriptor: public Descriptor {
-public:
-    using Ptr = std::shared_ptr<FileModuleDescriptor>;
-public:
-    FileModuleDescriptor(const std::string& filename);
-};
-
+// Represent an Variable
 class VariableDescriptor: public Descriptor {
 public:
     VariableDescriptor(const std::string& filename);
@@ -66,6 +58,21 @@ public:
 
 class ClassDescriptor: public Descriptor {
 
+};
+
+// File Module descriptor, e.g.
+// foo.joyeer, descriptor: #foo;
+// bar/foo.joyeer, descriptor: #bar/foo;
+class FileModuleDescriptor: public Descriptor {
+public:
+    using Ptr = std::shared_ptr<FileModuleDescriptor>;
+public:
+    FileModuleDescriptor(const std::string& filename);
+    
+    FunctionDescriptor::Ptr constructor;
+    std::vector<VariableDescriptor::Ptr> variables;
+    std::vector<FunctionDescriptor::Ptr> functions;
+    std::vector<ClassDescriptor::Ptr> classes;
 };
 
 #endif

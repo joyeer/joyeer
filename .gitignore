@@ -4,3 +4,4 @@ build/
 xcode/
 *.debug.txt
 *.pyc
+xcode-build
