@@ -6,7 +6,7 @@
 #include "joyeer/compiler/symtable.h"
 #include "joyeer/runtime/runtime.h"
 
-enum SyntaxKind {
+enum class SyntaxKind {
     sourceBlock = 1L,
 
     type,

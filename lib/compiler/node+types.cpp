@@ -17,7 +17,7 @@ std::vector<FileImportStatement::Ptr> FileModuleNode::getFileImports() {
     std::vector<FileImportStatement::Ptr> result;
     for(std::vector<Node::Ptr>::const_iterator iterator = statements.begin(); iterator != statements.end(); iterator ++ ) {
         auto node = *iterator;
-        if(node->kind == fileimportStatement) {
+        if(node->kind == SyntaxKind::fileimportStatement) {
             result.push_back(std::static_pointer_cast<FileImportStatement>(node));
         }
     }

@@ -198,7 +198,7 @@ Node::Ptr Binder::visit(ClassDecl::Ptr decl) {
         std::vector<Node::Ptr> result;
         for(auto member: decl->members) {
             result.push_back(visit(member));
-            if(member->kind == constructorDecl) {
+            if(member->kind == SyntaxKind::constructorDecl) {
                 // if its constructor, we should register it in parent's symbol table
                 auto cdecl = std::static_pointer_cast<ConstructorDecl>(member);
                 symtable->insert(cdecl->symbol);
@@ -307,7 +307,7 @@ Node::Ptr Binder::visit(LetDecl::Ptr decl) {
 
 Node::Ptr Binder::visit(FuncCallExpr::Ptr decl) {
     
-    if(decl->identifier->kind == memberAccessExpr) {
+    if(decl->identifier->kind == SyntaxKind::memberAccessExpr) {
         // Transfer to MemberF
         auto memberAccessExpr = std::static_pointer_cast<MemberAccessExpr>(decl->identifier);
         auto memberFuncCallExpr = std::make_shared<MemberFuncCallExpr>(memberAccessExpr->parent, memberAccessExpr->member, decl->arguments);
@@ -387,29 +387,29 @@ Node::Ptr Binder::visit(IdentifierExpr::Ptr decl) {
 Node::Ptr Binder::visit(Expr::Ptr decl) {
     
     // If binary is assignment
-    if(decl->binaries.size() == 1 && decl->binaries[0]->kind == assignmentExpr) {
-        if(decl->prefix->kind == identifierExpr) {
+    if(decl->binaries.size() == 1 && decl->binaries[0]->kind == SyntaxKind::assignmentExpr) {
+        if(decl->prefix->kind == SyntaxKind::identifierExpr) {
             auto identifier = std::static_pointer_cast<IdentifierExpr>(visit(decl->prefix));
             auto assignmentExpr = std::static_pointer_cast<AssignmentExpr>(visit(decl->binaries[0]));
             assignmentExpr->left = identifier;
             return assignmentExpr;
         }
         
-        if(decl->prefix->kind == selfExpr) {
+        if(decl->prefix->kind == SyntaxKind::selfExpr) {
             auto selfExpr = std::static_pointer_cast<SelfExpr>(visit(decl->prefix));
             auto assignmentExpr = std::static_pointer_cast<AssignmentExpr>(visit(decl->binaries[0]));
             assignmentExpr->left = selfExpr;
             return assignmentExpr;
         }
         
-        if(decl->prefix->kind == memberAccessExpr) {
+        if(decl->prefix->kind == SyntaxKind::memberAccessExpr) {
             auto memberAccessExpr = std::static_pointer_cast<MemberAccessExpr>(visit(decl->prefix));
             auto assignmentExpr = std::static_pointer_cast<AssignmentExpr>(visit(decl->binaries[0]));
             assignmentExpr->left = memberAccessExpr;
             return assignmentExpr;
         }
         
-        if(decl->prefix->kind == subscriptExpr) {
+        if(decl->prefix->kind == SyntaxKind::subscriptExpr) {
             auto subscriptExpr = std::static_pointer_cast<SubscriptExpr>(visit(decl->prefix));
             auto assignmentExpr = std::static_pointer_cast<AssignmentExpr>(visit(decl->binaries[0]));
             assignmentExpr->left = subscriptExpr;
@@ -438,7 +438,7 @@ Node::Ptr Binder::visit(Expr::Ptr decl) {
     nodes.push_back(decl->prefix);
     
     for(auto node: decl->binaries) {
-        if(node->kind != binaryExpr) {
+        if(node->kind != SyntaxKind::binaryExpr) {
             Diagnostics::reportError("[Error] Except an binary expression");
             return decl;
         }
@@ -454,7 +454,7 @@ Node::Ptr Binder::visit(Expr::Ptr decl) {
     
     for(auto iterator = nodes.begin(); iterator != nodes.end(); iterator ++ ) {
         auto n  = *iterator;
-        if(n->kind != operatorExpr) {
+        if(n->kind != SyntaxKind::operatorExpr) {
             temps.push_back(n);
             continue;
         }
@@ -524,7 +524,7 @@ Node::Ptr Binder::visit(OperatorExpr::Ptr decl) {
 }
 
 Node::Ptr Binder::visit(ParenthesizedExpr::Ptr decl) {
-    if(decl->expr->kind == parenthesizedExpr) {
+    if(decl->expr->kind == SyntaxKind::parenthesizedExpr) {
         auto n = std::static_pointer_cast<ParenthesizedExpr>(decl->expr);
         return visit(n);
     }
@@ -669,7 +669,7 @@ FileModuleNode::Ptr  Binder::normalizeFileModule(FileModuleNode::Ptr filemodule)
     
     auto constructor = std::vector<Node::Ptr>();
     for(auto statement: filemodule->statements) {
-        if(statement->kind == varDecl ) {
+        if(statement->kind == SyntaxKind::varDecl ) {
             
         }
     }

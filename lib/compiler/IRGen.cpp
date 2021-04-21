@@ -14,79 +14,79 @@ context(context) {
 
 void IRGen::emit(Node::Ptr node) {
     switch (node->kind) {
-        case sourceBlock:
+        case SyntaxKind::sourceBlock:
             emit(std::static_pointer_cast<FileModuleNode>(node));
             break;
-        case letDecl:
+        case SyntaxKind::letDecl:
             emit(std::static_pointer_cast<LetDecl>(node));
             break;
-        case varDecl:
+        case SyntaxKind::varDecl:
             emit(std::static_pointer_cast<VarDecl>(node));
             break;
-        case funcDecl:
+        case SyntaxKind::funcDecl:
             emit(std::static_pointer_cast<FuncDecl>(node));
             break;
-        case memberFuncCallExpr:
+        case SyntaxKind::memberFuncCallExpr:
             emit(std::static_pointer_cast<MemberFuncCallExpr>(node));
             break;
-        case constructorDecl:
+        case SyntaxKind::constructorDecl:
             emit(std::static_pointer_cast<ConstructorDecl>(node));
             break;
-        case classDecl:
+        case SyntaxKind::classDecl:
             emit(std::static_pointer_cast<ClassDecl>(node));
             break;
-        case codeBlock:
+        case SyntaxKind::codeBlock:
             emit(std::static_pointer_cast<CodeBlock>(node));
             break;
-        case ifStatement:
+        case SyntaxKind::ifStatement:
             emit(std::static_pointer_cast<IfStatement>(node));
             break;
-        case expr:
+        case SyntaxKind::expr:
             emit(std::static_pointer_cast<Expr>(node));
             break;
-        case prefixExpr:
+        case SyntaxKind::prefixExpr:
             emit(std::static_pointer_cast<PrefixExpr>(node));
             break;
-        case identifierExpr:
+        case SyntaxKind::identifierExpr:
             emit(std::static_pointer_cast<IdentifierExpr>(node));
             break;
-        case parenthesizedExpr:
+        case SyntaxKind::parenthesizedExpr:
             emit(std::static_pointer_cast<ParenthesizedExpr>(node));
             break;
-        case arguCallExpr:
+        case SyntaxKind::arguCallExpr:
             emit(std::static_pointer_cast<ArguCallExpr>(node));
             break;
-        case funcCallExpr:
+        case SyntaxKind::funcCallExpr:
             emit(std::static_pointer_cast<FuncCallExpr>(node));
             break;
-        case memberAccessExpr:
+        case SyntaxKind::memberAccessExpr:
             emit(std::static_pointer_cast<MemberAccessExpr>(node));
             break;
-        case literalExpr:
+        case SyntaxKind::literalExpr:
             emit(std::static_pointer_cast<LiteralExpr>(node));
             break;
-        case arrayLiteralExpr:
+        case SyntaxKind::arrayLiteralExpr:
             emit(std::static_pointer_cast<ArrayLiteralExpr>(node));
             break;
-        case dictLiteralExpr:
+        case SyntaxKind::dictLiteralExpr:
             emit(std::static_pointer_cast<DictLiteralExpr>(node));
             break;
-        case assignmentExpr:
+        case SyntaxKind::assignmentExpr:
             emit(std::static_pointer_cast<AssignmentExpr>(node));
             break;
-        case operatorExpr:
+        case SyntaxKind::operatorExpr:
             emit(std::static_pointer_cast<OperatorExpr>(node));
             break;
-        case returnStatement:
+        case SyntaxKind::returnStatement:
             emit(std::static_pointer_cast<ReturnStatement>(node));
             break;
-        case subscriptExpr:
+        case SyntaxKind::subscriptExpr:
             emit(std::static_pointer_cast<SubscriptExpr>(node));
             break;
-        case whileStatement:
+        case SyntaxKind::whileStatement:
             emit(std::static_pointer_cast<WhileStatement>(node));
             break;
-        case fileimportStatement:
+        case SyntaxKind::fileimportStatement:
             emit(std::static_pointer_cast<FileImportStatement>(node));
             break;
         default:
@@ -130,7 +130,7 @@ void IRGen::emit(FuncCallExpr::Ptr funcCallExpr) {
                 .value = (int32_t)function->addressOfFunc
             });
         } else {
-            if(funcCallExpr->identifier->kind == memberAccessExpr) {
+            if(funcCallExpr->identifier->kind == SyntaxKind::memberAccessExpr) {
                 emit(funcCallExpr->identifier);
             }
             
@@ -297,7 +297,7 @@ void IRGen::emit(IdentifierExpr::Ptr node) {
 void IRGen::emit(AssignmentExpr::Ptr node) {
     
     
-    if(node->left->kind == identifierExpr) {
+    if(node->left->kind == SyntaxKind::identifierExpr) {
         emit(node->expr);
         auto identifierExpr = std::static_pointer_cast<IdentifierExpr>(node->left);
         if(identifierExpr->symbol->flag == fieldSymbol) {
@@ -318,7 +318,7 @@ void IRGen::emit(AssignmentExpr::Ptr node) {
             });
         }
         
-    } else if( node->left->kind == selfExpr ) {
+    } else if( node->left->kind == SyntaxKind::selfExpr ) {
         emit(node->expr);
         auto selfExpr = std::static_pointer_cast<SelfExpr>(node->left);
         
@@ -334,7 +334,7 @@ void IRGen::emit(AssignmentExpr::Ptr node) {
             .opcode = OP_PUTFIELD,
             .value = addressOfField
         });
-    } else if( node->left->kind == memberAccessExpr) {
+    } else if( node->left->kind == SyntaxKind::memberAccessExpr) {
         emit(node->expr);
         auto memberAccessExpr = std::static_pointer_cast<MemberAccessExpr>(node->left);
         auto identifierExpr = std::static_pointer_cast<IdentifierExpr>(memberAccessExpr->parent);
@@ -342,7 +342,7 @@ void IRGen::emit(AssignmentExpr::Ptr node) {
             .opcode = OP_ISTORE,
             .value = identifierExpr->symbol->addressOfVariable
         });
-    } else if(node->left->kind == subscriptExpr) {
+    } else if(node->left->kind == SyntaxKind::subscriptExpr) {
         
         auto subscriptExpr = std::static_pointer_cast<SubscriptExpr>(node->left);
         emit(subscriptExpr->identifier);
@@ -381,7 +381,7 @@ void IRGen::emit(Expr::Ptr node) {
         // Use the StringBuilder to append the string content
         for(std::vector<Node::Ptr>::const_reverse_iterator iterator = node->nodes.rbegin(); iterator != node->nodes.rend(); iterator ++ ) {
             auto n = *iterator;
-            if(n->kind == operatorExpr) {
+            if(n->kind == SyntaxKind::operatorExpr) {
                 auto operatorExpr = std::static_pointer_cast<OperatorExpr>(n);
                 assert(operatorExpr->token->rawValue == "+");
             } else {
@@ -563,7 +563,7 @@ void IRGen::emit(DictLiteralExpr::Ptr node) {
 
 void IRGen::emit(ClassDecl::Ptr node) {
     for(auto member: node->members) {
-        if(member->kind == funcDecl || member->kind == constructorDecl) {
+        if(member->kind == SyntaxKind::funcDecl || member->kind == SyntaxKind::constructorDecl) {
             emit(member);
         }
     }

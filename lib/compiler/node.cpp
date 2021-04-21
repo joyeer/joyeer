@@ -160,12 +160,12 @@ literal(literal) {
 }
 
 ArrayLiteralExpr::ArrayLiteralExpr(std::vector<Node::Ptr> items):
-Node(arrayLiteralExpr),
+Node(SyntaxKind::arrayLiteralExpr),
 items(items) {
 }
 
 DictLiteralExpr::DictLiteralExpr(std::vector<std::tuple<Node::Ptr, Node::Ptr>> items):
-Node(dictLiteralExpr),
+Node(SyntaxKind::dictLiteralExpr),
 items(items) {
 }
 
@@ -201,7 +201,7 @@ identifier(identifier) {
 }
 
 SubscriptExpr::SubscriptExpr(Node::Ptr identifier, Node::Ptr indexExpr):
-Node(subscriptExpr),
+Node(SyntaxKind::subscriptExpr),
 identifier(identifier),
 indexExpr(indexExpr) {
 }

@@ -152,7 +152,7 @@ Node::Ptr TypeChecker::visit(FuncCallExpr::Ptr node) {
     
     Symbol::Ptr symbol = nullptr;
     
-    if(node->identifier->kind == dictLiteralExpr) {
+    if(node->identifier->kind == SyntaxKind::dictLiteralExpr) {
         node->identifier = visit(node->identifier);
         auto dictLiteral = std::static_pointer_cast<DictLiteralExpr>(node->identifier);
         if( dictLiteral->items.size() == 1) {
@@ -166,7 +166,7 @@ Node::Ptr TypeChecker::visit(FuncCallExpr::Ptr node) {
         }
     }
     
-    if(node->identifier->kind == arrayLiteralExpr) {
+    if(node->identifier->kind == SyntaxKind::arrayLiteralExpr) {
         visit(node->identifier);
         auto arrayLiteral = std::static_pointer_cast<ArrayLiteralExpr>(node->identifier);
         if(arrayLiteral->items.size() == 1) {
@@ -548,35 +548,35 @@ Node::Ptr TypeChecker::visit(OperatorExpr::Ptr decl) {
 
 JrType* TypeChecker::typeOf(Node::Ptr node) {
     switch (node->kind) {
-        case identifierExpr:
+        case SyntaxKind::identifierExpr:
             return typeOf(std::static_pointer_cast<IdentifierExpr>(node));
-        case expr:
+        case SyntaxKind::expr:
             return typeOf(std::static_pointer_cast<Expr>(node));
-        case funcCallExpr:
+        case SyntaxKind::funcCallExpr:
             return typeOf(std::static_pointer_cast<FuncCallExpr>(node));
-        case literalExpr:
+        case SyntaxKind::literalExpr:
             return typeOf(std::static_pointer_cast<LiteralExpr>(node));
-        case parenthesizedExpr:
+        case SyntaxKind::parenthesizedExpr:
             return typeOf(std::static_pointer_cast<ParenthesizedExpr>(node));
-        case selfExpr:
+        case SyntaxKind::selfExpr:
             return typeOf(std::static_pointer_cast<SelfExpr>(node));
-        case pattern:
+        case SyntaxKind::pattern:
             return typeOf(std::static_pointer_cast<Pattern>(node));
-        case type:
+        case SyntaxKind::type:
             return typeOf(std::static_pointer_cast<Type>(node));
-        case arrayLiteralExpr:
+        case SyntaxKind::arrayLiteralExpr:
             return typeOf(std::static_pointer_cast<ArrayLiteralExpr>(node));
-        case dictLiteralExpr:
+        case SyntaxKind::dictLiteralExpr:
             return typeOf(std::static_pointer_cast<DictLiteralExpr>(node));
-        case memberAccessExpr:
+        case SyntaxKind::memberAccessExpr:
             return typeOf(std::static_pointer_cast<MemberAccessExpr>(node));
-        case memberFuncCallExpr:
+        case SyntaxKind::memberFuncCallExpr:
             return typeOf(std::static_pointer_cast<MemberFuncCallExpr>(node));
-        case subscriptExpr:
+        case SyntaxKind::subscriptExpr:
             return typeOf(std::static_pointer_cast<SubscriptExpr>(node));
-        case arrayType:
+        case SyntaxKind::arrayType:
             return typeOf(std::static_pointer_cast<ArrayType>(node));
-        case prefixExpr:
+        case SyntaxKind::prefixExpr:
             return typeOf(std::static_pointer_cast<PrefixExpr>(node));
         default:
             assert(false);
@@ -608,7 +608,7 @@ JrType* TypeChecker::typeOf(Expr::Ptr node) {
     
     std::stack<JrType*> stack;
     for(auto n: node->nodes) {
-        if(n->kind == operatorExpr) {
+        if(n->kind == SyntaxKind::operatorExpr) {
             auto leftType = stack.top();
             stack.pop();
             auto rightType = stack.top();
@@ -777,9 +777,9 @@ JrType* TypeChecker::returnTypeOf(FuncCallExpr::Ptr node) {
 
 JrType* TypeChecker::returnTypeOf(Node::Ptr node) {
     switch (node->kind) {
-        case codeBlock:
+        case SyntaxKind::codeBlock:
             return returnTypeOf(std::static_pointer_cast<CodeBlock>(node));
-        case returnStatement: {
+        case SyntaxKind::returnStatement: {
             auto returnStatement = std::static_pointer_cast<ReturnStatement>(node);
             if(returnStatement->expr == nullptr) {
                 return JrType::Void;
@@ -787,20 +787,20 @@ JrType* TypeChecker::returnTypeOf(Node::Ptr node) {
                 return typeOf(returnStatement->expr);
             }
         }
-        case ifStatement:
+        case SyntaxKind::ifStatement:
             return returnTypeOf(std::static_pointer_cast<IfStatement>(node));
-        case funcCallExpr:
+        case SyntaxKind::funcCallExpr:
             return returnTypeOf(std::static_pointer_cast<FuncCallExpr>(node));
-        case whileStatement:
+        case SyntaxKind::whileStatement:
             return returnTypeOf(std::static_pointer_cast<WhileStatement>(node));
-        case assignmentExpr:
-        case identifierExpr:
-        case arrayLiteralExpr:
-        case varDecl:
-        case memberAccessExpr:
-        case memberFuncCallExpr:
-        case funcDecl:
-        case fileimportStatement:
+        case SyntaxKind::assignmentExpr:
+        case SyntaxKind::identifierExpr:
+        case SyntaxKind::arrayLiteralExpr:
+        case SyntaxKind::varDecl:
+        case SyntaxKind::memberAccessExpr:
+        case SyntaxKind::memberFuncCallExpr:
+        case SyntaxKind::funcDecl:
+        case SyntaxKind::fileimportStatement:
             return nullptr;
         default:
             assert(false);
