@@ -40,7 +40,7 @@ protected:
     void emit(ArrayLiteralExpr::Ptr node);
     void emit(DictLiteralExpr::Ptr node);
     void emit(SubscriptExpr::Ptr node);
-    void emit(FileImportDecl::Ptr node);
+    void emit(FileImportStatement::Ptr node);
     
 private:
     JrCodeWriter writer;

@@ -534,7 +534,7 @@ Node::Ptr TypeChecker::visit(PrefixExpr::Ptr node) {
     return node;
 }
 
-Node::Ptr TypeChecker::visit(FileImportDecl::Ptr node) {
+Node::Ptr TypeChecker::visit(FileImportStatement::Ptr node) {
     return node;
 }
 
@@ -800,7 +800,7 @@ JrType* TypeChecker::returnTypeOf(Node::Ptr node) {
         case memberAccessExpr:
         case memberFuncCallExpr:
         case funcDecl:
-        case fileimportDecl:
+        case fileimportStatement:
             return nullptr;
         default:
             assert(false);

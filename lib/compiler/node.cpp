@@ -230,12 +230,12 @@ std::string DictType::getTypeName() {
     return "Map@Map";
 }
 
-FileImportDecl::FileImportDecl(Token::Ptr stringLiteral):
-Node(SyntaxKind::fileimportDecl),
+FileImportStatement::FileImportStatement(Token::Ptr stringLiteral):
+Node(SyntaxKind::fileimportStatement),
 stringLiteral(stringLiteral) {
 }
 
-const std::string FileImportDecl::getImportedFilename() {
+const std::string FileImportStatement::getImportedFilename() {
     return stringLiteral->rawValue;
 }
 

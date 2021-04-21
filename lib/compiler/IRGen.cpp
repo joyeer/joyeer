@@ -86,8 +86,8 @@ void IRGen::emit(Node::Ptr node) {
         case whileStatement:
             emit(std::static_pointer_cast<WhileStatement>(node));
             break;
-        case fileimportDecl:
-            emit(std::static_pointer_cast<FileImportDecl>(node));
+        case fileimportStatement:
+            emit(std::static_pointer_cast<FileImportStatement>(node));
             break;
         default:
             assert(false);
@@ -622,6 +622,6 @@ void IRGen::emit(SubscriptExpr::Ptr node) {
     }
 }
 
-void IRGen::emit(FileImportDecl::Ptr node) {
+void IRGen::emit(FileImportStatement::Ptr node) {
     
 }

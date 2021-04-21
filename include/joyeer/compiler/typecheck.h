@@ -45,7 +45,7 @@ protected:
     virtual Node::Ptr visit(MemberAccessExpr::Ptr decl);
     virtual Node::Ptr visit(SubscriptExpr::Ptr decl);
     virtual Node::Ptr visit(ArrayType::Ptr decl);
-    virtual Node::Ptr visit(FileImportDecl::Ptr decl);
+    virtual Node::Ptr visit(FileImportStatement::Ptr decl);
 
     JrType* typeOf(Node::Ptr node);
     JrType* typeOf(IdentifierExpr::Ptr node);

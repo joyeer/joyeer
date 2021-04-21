@@ -104,11 +104,11 @@ void NodeDebugPrinter::print(Node::Ptr node) {
             decTab();
         }
             break;
-        case importDecl:
-            output << "+importDecl" ;
+        case importStatement:
+            output << "+importStatement" ;
             break;
         case letDecl: {
-            output << "+constantDecl" ;
+            output << "+letDecl" ;
             auto n = std::static_pointer_cast<LetDecl>(node);
             incTab();
             print(n->symtable);
@@ -117,7 +117,6 @@ void NodeDebugPrinter::print(Node::Ptr node) {
             print(n->initializer);
             decTab();
         }
-            
             break;
         case varDecl: {
             output << "+varDecl" ;
@@ -407,8 +406,8 @@ void NodeDebugPrinter::print(Node::Ptr node) {
             decTab();
         }
             break;
-        case fileimportDecl: {
-            auto n = std::static_pointer_cast<FileImportDecl>(node);
+        case fileimportStatement: {
+            auto n = std::static_pointer_cast<FileImportStatement>(node);
             output << "+fileimport(\"" << n->stringLiteral->rawValue << "\")";
         }
             break;

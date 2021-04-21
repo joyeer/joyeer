@@ -13,12 +13,12 @@ std::string FileModuleNode::getName() {
     return p.replace_extension().string();
 }
 
-std::vector<FileImportDecl::Ptr> FileModuleNode::getFileImports() {
-    std::vector<FileImportDecl::Ptr> result;
+std::vector<FileImportStatement::Ptr> FileModuleNode::getFileImports() {
+    std::vector<FileImportStatement::Ptr> result;
     for(std::vector<Node::Ptr>::const_iterator iterator = statements.begin(); iterator != statements.end(); iterator ++ ) {
         auto node = *iterator;
-        if(node->kind == fileimportDecl) {
-            result.push_back(std::static_pointer_cast<FileImportDecl>(node));
+        if(node->kind == fileimportStatement) {
+            result.push_back(std::static_pointer_cast<FileImportStatement>(node));
         }
     }
     return result;

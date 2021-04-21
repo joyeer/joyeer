@@ -51,7 +51,29 @@ protected:
     virtual Node::Ptr visit(MemberAccessExpr::Ptr decl);
     virtual Node::Ptr visit(SubscriptExpr::Ptr decl);
     virtual Node::Ptr visit(ArrayType::Ptr decl);
-    virtual Node::Ptr visit(FileImportDecl::Ptr decl);
+    virtual Node::Ptr visit(FileImportStatement::Ptr decl);
+    
+private:
+    /**
+     Normalize the FileModule's statements & declarations, group into an ConstructorDecl
+     FileModuleNode
+        + FileImportStatement
+        + statement1
+        + statement2
+        + declaration1
+        + declaration2
+        + statement3
+    after normalized --->
+     FileModuleNode
+        + FileImportStatement
+        + ConstructorDecl
+            + statement1
+            + statement2
+            + statement3
+        + declaration1
+        + declaration2
+    */
+    FileModuleNode::Ptr normalizeFileModule(FileModuleNode::Ptr filemodule);
 private:
     CompileContext::Ptr context;
 };

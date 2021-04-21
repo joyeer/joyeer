@@ -38,7 +38,7 @@ protected:
     virtual Node::Ptr visit(MemberAccessExpr::Ptr decl) = 0;
     virtual Node::Ptr visit(SubscriptExpr::Ptr decl) = 0;
     virtual Node::Ptr visit(ArrayType::Ptr decl) = 0;
-    virtual Node::Ptr visit(FileImportDecl::Ptr decl) = 0;
+    virtual Node::Ptr visit(FileImportStatement::Ptr decl) = 0;
 };
 
 #endif

@@ -15,7 +15,7 @@ public:
     
     std::string filename;
 
-    std::vector<FileImportDecl::Ptr> getFileImports();
+    std::vector<FileImportStatement::Ptr> getFileImports();
     
     virtual std::string getName();
     // get the top level declarations

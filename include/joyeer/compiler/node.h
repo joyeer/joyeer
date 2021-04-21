@@ -14,8 +14,6 @@ enum SyntaxKind {
     dictType,
     pattern,
     
-    importDecl,
-    fileimportDecl,
     letDecl,
     varDecl,
     funcDecl,
@@ -29,6 +27,8 @@ enum SyntaxKind {
     ifStatement,
     whileStatement,
     returnStatement,
+    importStatement,
+    fileimportStatement,
 
     expr,
     assignmentExpr,
@@ -313,13 +313,13 @@ struct SubscriptExpr: Node {
     SubscriptExpr(Node::Ptr identifier, Node::Ptr indexExpr);
 };
 
-struct FileImportDecl: Node {
-    typedef std::shared_ptr<FileImportDecl> Ptr;
+struct FileImportStatement: Node {
+    typedef std::shared_ptr<FileImportStatement> Ptr;
     
     Token::Ptr stringLiteral;
     JrModuleClass* moduleClass;
     
-    FileImportDecl(Token::Ptr stringLiteral);
+    FileImportStatement(Token::Ptr stringLiteral);
     
     const std::string getImportedFilename();
     

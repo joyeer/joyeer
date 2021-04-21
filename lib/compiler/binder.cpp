@@ -651,7 +651,7 @@ Node::Ptr Binder::visit(ArrayType::Ptr decl) {
     return decl;
 }
 
-Node::Ptr Binder::visit(FileImportDecl::Ptr decl) {
+Node::Ptr Binder::visit(FileImportStatement::Ptr decl) {
     if(context->curStage() != visitSourceBlock) {
         Diagnostics::reportError(Diagnostics::errorFileImportShouldAtTopOfSourceFile);
         return nullptr;
@@ -664,3 +664,16 @@ Node::Ptr Binder::visit(FileImportDecl::Ptr decl) {
 
     return decl;
 }
+
+FileModuleNode::Ptr  Binder::normalizeFileModule(FileModuleNode::Ptr filemodule) {
+    
+    auto constructor = std::vector<Node::Ptr>();
+    for(auto statement: filemodule->statements) {
+        if(statement->kind == varDecl ) {
+            
+        }
+    }
+    
+    return filemodule;
+}
+

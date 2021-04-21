@@ -31,8 +31,8 @@ private:
     // Parse the parameter clause
     Node::Ptr tryParseParameterClause();
     
-    // Parse the fileimport delcaration;
-    Node::Ptr tryParseFileImportDecl();
+    // Parse the fileimport statement;
+    Node::Ptr tryParseFileImportStatement();
 
     ////////////////////////////////////////////////////////////////////////////
     // Statements

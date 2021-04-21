@@ -64,8 +64,8 @@ Node::Ptr NodeVisitor::visit(Node::Ptr node) {
             return visit(std::static_pointer_cast<SubscriptExpr>(node));
         case arrayType:
             return visit(std::static_pointer_cast<ArrayType>(node));
-        case fileimportDecl:
-            return visit(std::static_pointer_cast<FileImportDecl>(node));
+        case fileimportStatement:
+            return visit(std::static_pointer_cast<FileImportStatement>(node));
         case moduleMemberAccessExpr:
             return visit(std::static_pointer_cast<ModuleMemberAccessExpr>(node));
         case moduleFuncCallExpr:
