@@ -3,6 +3,19 @@
 
 #include "joyeer/compiler/node.h"
 
+// Represent a Constructor of Class in AST tree
+struct ConstructorDecl: Node {
+    typedef std::shared_ptr<ConstructorDecl> Ptr;
+    
+    Node::Ptr parameterClause;
+    Node::Ptr codeBlock;
+    
+    ConstructorDecl(Node::Ptr parameterClause, Node::Ptr codeBlock);
+    
+    // return constructor's symbol name e.g. init(...)
+    const std::string getName(JrType* ownerType);
+};
+
 // Reprensent an FileModule in Ast tree, each xxx.joyeer file is a file module
 class FileModuleNode: public Node {
 public:
@@ -12,6 +25,8 @@ public:
     FileModuleNode(FileModuleDescriptor::Ptr descriptor, std::vector<Node::Ptr> statements);
     
     std::vector<Node::Ptr> statements;
+    // the default initializer function of the filemodule
+    ConstructorDecl::Ptr defaultInitializer;
     
     std::string filename;
 
@@ -37,21 +52,5 @@ public:
     
     virtual std::string getTypeName();
 };
-
-// Represent a Constructor of Class in AST tree
-struct ConstructorDecl: Node {
-    typedef std::shared_ptr<ConstructorDecl> Ptr;
-    
-    Node::Ptr parameterClause;
-    Node::Ptr codeBlock;
-    
-    ConstructorDecl(Node::Ptr parameterClause, Node::Ptr codeBlock);
-    
-    // return constructor's symbol name e.g. init(...)
-    const std::string getName(JrType* ownerType);
-};
-
-
-
 
 #endif

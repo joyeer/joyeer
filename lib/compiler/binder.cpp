@@ -21,6 +21,7 @@ Node::Ptr Binder::visit(Node::Ptr node) {
 
 Node::Ptr Binder::visit(FileModuleNode::Ptr sourceBlock) {
     
+    sourceBlock = normalizeFileModule(sourceBlock);
     // Module class self
     auto moduleClass = new JrModuleClass("Module@__FILE__@" + sourceBlock->filename);
     Global::registerObjectType(moduleClass);
@@ -667,12 +668,21 @@ Node::Ptr Binder::visit(FileImportStatement::Ptr decl) {
 
 FileModuleNode::Ptr  Binder::normalizeFileModule(FileModuleNode::Ptr filemodule) {
     
-    auto constructor = std::vector<Node::Ptr>();
+    auto declarations = std::vector<Node::Ptr>();
+    auto statementsOfDefaultModuleInitilizer = std::vector<Node::Ptr>();
     for(auto statement: filemodule->statements) {
-        if(statement->kind == SyntaxKind::varDecl ) {
-            
+        if(statement->isDecl()) {
+            declarations.push_back(statement);
+        } else {
+            statementsOfDefaultModuleInitilizer.push_back(statement);
         }
     }
+    
+    auto defaultModuleInitializerCodeBlock = std::make_shared<CodeBlock>(statementsOfDefaultModuleInitilizer);
+    auto defaultModuleParams = std::make_shared<ParameterClause>(std::vector<Pattern::Ptr>());
+    auto defaultModuleInitializer = std::make_shared<ConstructorDecl>(defaultModuleParams, defaultModuleInitializerCodeBlock);
+    filemodule->defaultInitializer = defaultModuleInitializer;
+    filemodule->statements = declarations;
     
     return filemodule;
 }

@@ -65,10 +65,11 @@ void NodeDebugPrinter::print(Node::Ptr node) {
         case SyntaxKind::sourceBlock: {
             
             auto n = std::static_pointer_cast<FileModuleNode>(node);
-            output << "+sourceBLock(filename: \"" << n->filename << "\")" ;
+            output << "+FileModule(descriptor: \"" << n->descriptor->getRawDescriptor() << "\")" ;
             incTab();
             print(n->symtable);
             print(n->symbol);
+            print(n->defaultInitializer);
             for(auto statement: n->statements) {
                 print(statement);
             }

@@ -67,6 +67,19 @@ struct Node {
     // The type name of the Node
     virtual std::string getTypeName();
     
+    bool isDecl() {
+        switch(kind) {
+            case SyntaxKind::letDecl:
+            case SyntaxKind::varDecl:
+            case SyntaxKind::funcDecl:
+            case SyntaxKind::constructorDecl:
+            case SyntaxKind::classDecl:
+                return true;
+            default:
+                return false;
+        }
+    }
+    
 protected:
     Node(SyntaxKind kind);
 
@@ -264,6 +277,10 @@ struct MemberAccessExpr: Node {
     MemberAccessExpr(Node::Ptr parent, Node::Ptr member);
     
     virtual std::string getTypeName();
+};
+
+struct StaticAccessExpr: Node {
+    using Ptr = std::shared_ptr<StaticAccessExpr>;
 };
 
 struct LiteralExpr : Node {
