@@ -73,7 +73,7 @@ private:
         + declaration1
         + declaration2
     */
-    FileModuleNode::Ptr normalizeFileModule(FileModuleNode::Ptr filemodule);
+    FileModuleNode::Ptr normalizeAndPrepareDefaultStaticConstructorForFileModule(FileModuleNode::Ptr filemodule);
 private:
     CompileContext::Ptr context;
 };

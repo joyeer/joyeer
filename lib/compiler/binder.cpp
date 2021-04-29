@@ -1,8 +1,10 @@
 #include "joyeer/compiler/binder.h"
 #include "joyeer/compiler/diagnostic.h"
 #include "joyeer/compiler/sourcefile.h"
+#include "joyeer/compiler/compiler+service.h"
 #include "joyeer/runtime/buildin.h"
 #include "joyeer/runtime/sys/module.h"
+
 #include <cassert>
 
 
@@ -20,10 +22,11 @@ Node::Ptr Binder::visit(Node::Ptr node) {
 }
 
 Node::Ptr Binder::visit(FileModuleNode::Ptr sourceBlock) {
+    context->compiler->declare(sourceBlock);
     
-    sourceBlock = normalizeFileModule(sourceBlock);
+    sourceBlock = normalizeAndPrepareDefaultStaticConstructorForFileModule(sourceBlock);
     // Module class self
-    auto moduleClass = new JrModuleClass("Module@__FILE__@" + sourceBlock->filename);
+    auto moduleClass = new JrModuleClass(sourceBlock->descriptor->getRawDescriptor());
     Global::registerObjectType(moduleClass);
     Global::registerModuleType(moduleClass);
     
@@ -64,6 +67,7 @@ Node::Ptr Binder::visit(FileModuleNode::Ptr sourceBlock) {
         entry.second->addressOfModule = moduleClass->addressOfMudule;
     }
 
+    
     return sourceBlock;
 }
 
@@ -666,7 +670,7 @@ Node::Ptr Binder::visit(FileImportStatement::Ptr decl) {
     return decl;
 }
 
-FileModuleNode::Ptr  Binder::normalizeFileModule(FileModuleNode::Ptr filemodule) {
+FileModuleNode::Ptr  Binder::normalizeAndPrepareDefaultStaticConstructorForFileModule(FileModuleNode::Ptr filemodule) {
     
     auto declarations = std::vector<Node::Ptr>();
     auto statementsOfDefaultModuleInitilizer = std::vector<Node::Ptr>();

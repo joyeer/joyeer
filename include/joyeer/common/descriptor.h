@@ -6,33 +6,43 @@
 #include <vector>
 
 //  interpretation of a Type
-struct DescriptorType {
-    static const char Bool = 'B';
-    static const char Int = 'L';
-    static const char UInt = 'l';
-    static const char Int8 = 'D';
-    static const char UInt8 = 'd';
-    static const char Int16 = 'H';
-    static const char UInt16 = 'h';
-    static const char Int32 = 'K';
-    static const char UInt32 = 'k';
-    static const char Int128 = 'X';
-    static const char UInt128 = 'x';
-    static const char Float = 'F';
-    static const char Double = 'O';
-    static const char Float128 = 'W';
-    static const char String = 'S';
-    static const char Void = 'V';
+struct DescriptorConstants {
+    static constexpr char Bool = 'B';
+    static constexpr char Int = 'L';
+    static constexpr char UInt = 'l';
+    static constexpr char Int8 = 'D';
+    static constexpr char UInt8 = 'd';
+    static constexpr char Int16 = 'H';
+    static constexpr char UInt16 = 'h';
+    static constexpr char Int32 = 'K';
+    static constexpr char UInt32 = 'k';
+    static constexpr char Int128 = 'X';
+    static constexpr char UInt128 = 'x';
+    static constexpr char Float = 'F';
+    static constexpr char Double = 'O';
+    static constexpr char Float128 = 'W';
+    static constexpr char String = 'S';
+    static constexpr char Void = 'V';
 
     // descriptor prefix of class/interface/func/file module/array/variable
-    static const char ClassPrefix = '^';
-    static const char InterfacePrefix = '~';
-    static const char FuncPrefix = '&';
-    static const char ArrayPrefix = '[';
-    static const char FileModulePrefix = '#';
-    static const char VariablePrefix = '@';
+    static constexpr char ClassPrefix = '^';
+    static constexpr char InterfacePrefix = '~';
+    static constexpr char FuncPrefix = '&';
+    static constexpr char ArrayPrefix = '[';
+    static constexpr char FileModulePrefix = '#';
+    static constexpr char VariablePrefix = '@';
 
-    static const char END = ';' ;
+    // punctuation
+    static constexpr char Colon = ':' ;
+    static constexpr char ParenthesisOpen = '(';
+    static constexpr char ParenthesisClose = ')';
+    static constexpr char Separator = '/';
+    
+    // constants
+    static constexpr std::string_view FileModuleInitializer = "filemodule-initializer";
+    static constexpr std::string_view Constructor = "constructor";
+    
+    static constexpr char END = ';' ;
 };
 
 class Descriptor {
@@ -52,22 +62,22 @@ public: \
     } \
 };
 
-DECLARE_DESCRIPTOR(Bool,        DescriptorType::Bool)
-DECLARE_DESCRIPTOR(Int,         DescriptorType::Int)
-DECLARE_DESCRIPTOR(UInt,        DescriptorType::UInt)
-DECLARE_DESCRIPTOR(Int8,        DescriptorType::Int8)
-DECLARE_DESCRIPTOR(UInt8,       DescriptorType::UInt8)
-DECLARE_DESCRIPTOR(Int16,       DescriptorType::Int16)
-DECLARE_DESCRIPTOR(UInt16,      DescriptorType::UInt16)
-DECLARE_DESCRIPTOR(Int32,       DescriptorType::Int32)
-DECLARE_DESCRIPTOR(UInt32,      DescriptorType::UInt32)
-DECLARE_DESCRIPTOR(Int128,      DescriptorType::Int128)
-DECLARE_DESCRIPTOR(UInt128,     DescriptorType::UInt128)
-DECLARE_DESCRIPTOR(Float,       DescriptorType::Float)
-DECLARE_DESCRIPTOR(Double,      DescriptorType::Double)
-DECLARE_DESCRIPTOR(Float128,    DescriptorType::Float128)
-DECLARE_DESCRIPTOR(String,      DescriptorType::String)
-DECLARE_DESCRIPTOR(Void,        DescriptorType::Void)
+DECLARE_DESCRIPTOR(Bool,        DescriptorConstants::Bool)
+DECLARE_DESCRIPTOR(Int,         DescriptorConstants::Int)
+DECLARE_DESCRIPTOR(UInt,        DescriptorConstants::UInt)
+DECLARE_DESCRIPTOR(Int8,        DescriptorConstants::Int8)
+DECLARE_DESCRIPTOR(UInt8,       DescriptorConstants::UInt8)
+DECLARE_DESCRIPTOR(Int16,       DescriptorConstants::Int16)
+DECLARE_DESCRIPTOR(UInt16,      DescriptorConstants::UInt16)
+DECLARE_DESCRIPTOR(Int32,       DescriptorConstants::Int32)
+DECLARE_DESCRIPTOR(UInt32,      DescriptorConstants::UInt32)
+DECLARE_DESCRIPTOR(Int128,      DescriptorConstants::Int128)
+DECLARE_DESCRIPTOR(UInt128,     DescriptorConstants::UInt128)
+DECLARE_DESCRIPTOR(Float,       DescriptorConstants::Float)
+DECLARE_DESCRIPTOR(Double,      DescriptorConstants::Double)
+DECLARE_DESCRIPTOR(Float128,    DescriptorConstants::Float128)
+DECLARE_DESCRIPTOR(String,      DescriptorConstants::String)
+DECLARE_DESCRIPTOR(Void,        DescriptorConstants::Void)
 
 // Represent an Variable
 class VariableDescriptor: public Descriptor {
@@ -78,10 +88,23 @@ public:
     Descriptor::Ptr typeDescriptor = nullptr;
 };
 
+// Pattern descriptor, e.g  foo: Int
+class PatternDescriptor: public Descriptor {
+public:
+    using Ptr = std::shared_ptr<PatternDescriptor>;
+public:
+    PatternDescriptor(Descriptor::Ptr label, Descriptor::Ptr type);
+    
+    Descriptor::Ptr label;
+    Descriptor::Ptr type;
+};
+
+// Function descriptor
 class FunctionDescriptor: public Descriptor {
 public:
-    FunctionDescriptor(const std::string& filename);
+    FunctionDescriptor(Descriptor::Ptr parent, const std::string& funcName, std::vector<PatternDescriptor::Ptr> parameters);
 };
+
 
 class ClassDescriptor: public Descriptor {
 
@@ -101,5 +124,17 @@ public:
     std::vector<FunctionDescriptor::Ptr> functions;
     std::vector<ClassDescriptor::Ptr> classes;
 };
+
+// FileModule initializer function descriptor
+// foo.joyeer, FileModuleInitializer
+class FileModuleInitializerDescriptor: public FunctionDescriptor {
+public:
+    using Ptr = std::shared_ptr<FileModuleInitializerDescriptor>();
+public:
+    FileModuleInitializerDescriptor(FileModuleDescriptor::Ptr parent);
+    
+    FileModuleDescriptor::Ptr filemodule;
+};
+
 
 #endif

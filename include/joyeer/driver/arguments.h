@@ -16,7 +16,7 @@ struct CommandLineArguments {
     // working directory for source code
     std::filesystem::path workingDirectory;
     
-    bool vmDebug = true;
+    bool vmDebug = false;
     bool accepted = false;
     
     CommandLineArguments(int argc, char** argv);

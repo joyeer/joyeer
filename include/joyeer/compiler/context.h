@@ -64,8 +64,12 @@ public:
     // The module's exported symbols
     SymbolTable::Ptr exportedSymbols = nullptr;
     
-    // The compiler's source file
+    // the current parsing source file
     SourceFile::Ptr sourcefile = nullptr;
+    
+    // The global compiler service
+    CompilerServicePtr compiler;
+    
 protected:
     // initializ global scope, e.g. buildin functions/object etc
     void initializeGlobalScope();
@@ -88,7 +92,7 @@ protected:
     std::unordered_map<JrInt, SymbolTable::Ptr> mapOfTypeAndSymbolTable;
     
     CommandLineArguments::Ptr options;
-    CompilerServicePtr compiler;
+    
 };
 
 #endif

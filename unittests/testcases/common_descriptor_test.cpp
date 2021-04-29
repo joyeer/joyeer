@@ -13,6 +13,14 @@ TEST(DescriptorTest, FileModileDescritpor) {
     
 }
 
+TEST(DescriptorTest, FileModuleInitializerDescriptor) {
+    auto descriptor = std::make_shared<FileModuleDescriptor>(std::string("foo.joyeer"));
+    
+    auto fileModuleInitializerDescriptor = std::make_shared<FileModuleInitializerDescriptor>(descriptor);
+    auto rawDescriptor = fileModuleInitializerDescriptor->getRawDescriptor();
+    EXPECT_EQ(rawDescriptor, "#foo;/&filemodule-initializer();");
+}
+
 TEST(DescriptorTest, PrimaryTypeChecker) {
     EXPECT_EQ(BoolDescriptor().getRawDescriptor(), "B");
     EXPECT_EQ(IntDescriptor().getRawDescriptor(), "L");
@@ -31,3 +39,4 @@ TEST(DescriptorTest, PrimaryTypeChecker) {
     EXPECT_EQ(StringDescriptor().getRawDescriptor(), "S");
     EXPECT_EQ(VoidDescriptor().getRawDescriptor(), "V");
 }
+
