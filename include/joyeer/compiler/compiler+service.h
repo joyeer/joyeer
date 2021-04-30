@@ -8,7 +8,7 @@
 #include <unordered_map>
 
 
-class CompilerService {
+class CompilerService : public std::enable_shared_from_this<CompilerService> {
 public:
     CompilerService(CommandLineArguments::Ptr options);
     void run(std::string inputfile);

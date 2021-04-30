@@ -57,6 +57,8 @@ void CompilerService::compile(SourceFile::Ptr sourcefile) {
     
     auto context= std::make_shared<CompileContext>(options);
     context->sourcefile = sourcefile;
+    context->compiler = this;
+    
     // lex structure analyze
     LexParser lexParser;
     lexParser.parse(sourcefile);

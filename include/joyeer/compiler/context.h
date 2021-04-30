@@ -7,7 +7,6 @@
 #include "joyeer/compiler/sourcefile.h"
 
 class CompilerService;
-using CompilerServicePtr = std::shared_ptr<CompilerService>;
 
 enum CompileStage {
     visitSourceBlock,
@@ -68,7 +67,7 @@ public:
     SourceFile::Ptr sourcefile = nullptr;
     
     // The global compiler service
-    CompilerServicePtr compiler;
+    CompilerService* compiler;
     
 protected:
     // initializ global scope, e.g. buildin functions/object etc
