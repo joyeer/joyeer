@@ -22,6 +22,7 @@ Node::Ptr Binder::visit(Node::Ptr node) {
 }
 
 Node::Ptr Binder::visit(FileModuleNode::Ptr sourceBlock) {
+    // register FileModule
     context->compiler->declare(sourceBlock);
     
     sourceBlock = normalizeAndPrepareDefaultStaticConstructorForFileModule(sourceBlock);
@@ -682,12 +683,19 @@ FileModuleNode::Ptr  Binder::normalizeAndPrepareDefaultStaticConstructorForFileM
         }
     }
     
+    // prepare for FileModule initializer
     auto defaultModuleInitializerCodeBlock = std::make_shared<CodeBlock>(statementsOfDefaultModuleInitilizer);
     auto defaultModuleParams = std::make_shared<ParameterClause>(std::vector<Pattern::Ptr>());
     auto defaultModuleInitializer = std::make_shared<ConstructorDecl>(defaultModuleParams, defaultModuleInitializerCodeBlock);
     filemodule->defaultInitializer = defaultModuleInitializer;
     filemodule->statements = declarations;
+
+    // preapre for filemodule initializer's descriptor
+    auto filemoduleInitializerDescriptor = std::make_shared<FileModuleInitializerDescriptor>(std::static_pointer_cast<FileModuleDescriptor>(filemodule->descriptor));
+    defaultModuleInitializer->descriptor = filemoduleInitializerDescriptor;
     
+    // register filemodule initializer in compile service
+    context->compiler->declare(defaultModuleInitializer);
     return filemodule;
 }
 

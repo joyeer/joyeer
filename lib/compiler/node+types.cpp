@@ -3,7 +3,7 @@
 #include <sstream>
 
 FileModuleNode::FileModuleNode(FileModuleDescriptor::Ptr descriptor, std::vector<std::shared_ptr<Node>> statements):
-Node(SyntaxKind::sourceBlock),
+DeclNode(SyntaxKind::sourceBlock),
 statements(statements) {
     this->descriptor = descriptor;
 }
@@ -26,7 +26,7 @@ std::vector<FileImportStatement::Ptr> FileModuleNode::getFileImports() {
 
 /// Function Decl declaration
 FuncDecl::FuncDecl(Node::Ptr identifier, Node::Ptr parameterClause, Node::Ptr returnType, Node::Ptr codeBlock):
-Node(SyntaxKind::funcDecl),
+DeclNode(SyntaxKind::funcDecl),
 identifier(identifier),
 parameterClause(parameterClause),
 returnType(returnType),
@@ -50,7 +50,7 @@ std::string FuncDecl::getTypeName() {
 
 /// Class Constructor declaration
 ConstructorDecl::ConstructorDecl(std::shared_ptr<Node> parameterClause, std::shared_ptr<Node> codeBlock):
-Node(SyntaxKind::constructorDecl),
+DeclNode(SyntaxKind::constructorDecl),
 parameterClause(parameterClause),
 codeBlock(codeBlock) {
 }

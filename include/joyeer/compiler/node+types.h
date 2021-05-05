@@ -3,8 +3,14 @@
 
 #include "joyeer/compiler/node.h"
 
+
+struct DeclNode : public Node {
+public:
+    DeclNode(SyntaxKind kind): Node(kind) {}
+};
+
 // Represent a Constructor of Class in AST tree
-struct ConstructorDecl: Node {
+struct ConstructorDecl: public DeclNode {
     typedef std::shared_ptr<ConstructorDecl> Ptr;
     
     Node::Ptr parameterClause;
@@ -17,7 +23,7 @@ struct ConstructorDecl: Node {
 };
 
 // Reprensent an FileModule in Ast tree, each xxx.joyeer file is a file module
-class FileModuleNode: public Node {
+class FileModuleNode: public DeclNode {
 public:
     using Ptr = std::shared_ptr<FileModuleNode>;
 
@@ -39,7 +45,7 @@ public:
 
 
 // Represent a Function in Ast tree.
-struct FuncDecl: Node {
+struct FuncDecl: public DeclNode {
 public:
     using Ptr = std::shared_ptr<FuncDecl>;
     

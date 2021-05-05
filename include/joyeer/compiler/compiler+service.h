@@ -15,7 +15,9 @@ public:
     
     // declare a File Module
     void declare(FileModuleNode::Ptr filemodule);
-
+    // declare a Constructor
+    void declare(ConstructorDecl::Ptr filemodule);
+    
     void query(const std::string& descriptor);
 private:
     

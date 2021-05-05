@@ -101,6 +101,11 @@ void CompilerService::declare(FileModuleNode::Ptr filemodule) {
     descriptors[descriptor] = filemodule;
 }
 
+void CompilerService::declare(ConstructorDecl::Ptr constructor) {
+    const std::string descriptor = constructor->descriptor->getRawDescriptor();
+    descriptors[descriptor] = constructor;
+}
+
 SourceFile::Ptr CompilerService::tryImport(CompileContext::Ptr context, const std::string &moduleName) {
     auto sourcefile = context->sourcefile;
     auto relativedFolder = sourcefile->getParentFolder();
