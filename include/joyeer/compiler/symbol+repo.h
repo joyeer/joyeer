@@ -6,19 +6,25 @@
 class NodeRepository {
 public:
     using Ptr = std::shared_ptr<NodeRepository>;
+    
 public:
-    int store(Node::Ptr node) {
-        int pos = repos.size();
-        repos.push_back(node);
+    int store(DeclNode::Ptr decl) {
+        auto descriptorString = decl->descriptor->getRawDescriptor();
+        if(descriptors.contains(descriptorString)) {
+            return descriptors[descriptorString];
+        }
+        int pos = nodes.size();
+        nodes.push_back(decl);
         return pos;
     }
 
     Node::Ptr get(int position) {
-        return repos[position];
+        return nodes[position];
     }
-
+    
 private:
-    std::vector<Node::Ptr> repos;
+    std::unordered_map<std::string, int> descriptors;
+    std::vector<DeclNode::Ptr> nodes;
 };
 
 #endif

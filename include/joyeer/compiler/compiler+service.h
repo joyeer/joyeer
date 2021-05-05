@@ -13,10 +13,8 @@ public:
     CompilerService(CommandLineArguments::Ptr options);
     void run(std::string inputfile);
     
-    // declare a File Module
-    void declare(FileModuleNode::Ptr filemodule);
-    // declare a Constructor
-    void declare(ConstructorDecl::Ptr filemodule);
+    // declare a DeclNode
+    void declare(DeclNode::Ptr decl);
     
     void query(const std::string& descriptor);
 private:
@@ -34,6 +32,6 @@ private:
     std::unordered_map<std::string, SourceFile::Ptr> sourcefiles;
     
     // All the delcaration descriptors include FileModule/Class/Node
-    std::unordered_map<std::string, Node::Ptr> descriptors;
+    NodeRepository::Ptr repository = std::make_shared<NodeRepository>();
 };
 #endif

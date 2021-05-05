@@ -96,14 +96,8 @@ void CompilerService::compile(SourceFile::Ptr sourcefile) {
     declare(block);
 }
 
-void CompilerService::declare(FileModuleNode::Ptr filemodule) {
-    const std::string descriptor = filemodule->descriptor->getRawDescriptor();
-    descriptors[descriptor] = filemodule;
-}
-
-void CompilerService::declare(ConstructorDecl::Ptr constructor) {
-    const std::string descriptor = constructor->descriptor->getRawDescriptor();
-    descriptors[descriptor] = constructor;
+void CompilerService::declare(DeclNode::Ptr decl) {
+    repository->store(decl);
 }
 
 SourceFile::Ptr CompilerService::tryImport(CompileContext::Ptr context, const std::string &moduleName) {

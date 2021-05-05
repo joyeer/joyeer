@@ -5,6 +5,7 @@
 
 
 struct DeclNode : public Node {
+    using Ptr = std::shared_ptr<DeclNode>;
 public:
     Descriptor::Ptr descriptor = nullptr;
     
