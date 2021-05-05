@@ -676,7 +676,7 @@ FileModuleNode::Ptr  Binder::normalizeAndPrepareDefaultStaticConstructorForFileM
     auto declarations = std::vector<Node::Ptr>();
     auto statementsOfDefaultModuleInitilizer = std::vector<Node::Ptr>();
     for(auto statement: filemodule->statements) {
-        if(statement->isDecl()) {
+        if(statement->isDeclNode()) {
             declarations.push_back(statement);
         } else {
             statementsOfDefaultModuleInitilizer.push_back(statement);

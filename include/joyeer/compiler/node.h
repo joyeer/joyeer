@@ -61,13 +61,14 @@ struct Node {
     Symbol::Ptr symbol = nullptr;
     SymbolTable::Ptr symtable = nullptr;
     JrType* type = nullptr;
-    Descriptor::Ptr descriptor = nullptr;
     
     virtual std::string getName();
+    
     // The type name of the Node
     virtual std::string getTypeName();
     
-    bool isDecl() {
+    // detect if its a declaration node
+    bool isDeclNode() {
         switch(kind) {
             case SyntaxKind::letDecl:
             case SyntaxKind::varDecl:

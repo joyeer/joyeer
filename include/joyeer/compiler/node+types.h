@@ -6,6 +6,8 @@
 
 struct DeclNode : public Node {
 public:
+    Descriptor::Ptr descriptor = nullptr;
+    
     DeclNode(SyntaxKind kind): Node(kind) {}
 };
 
