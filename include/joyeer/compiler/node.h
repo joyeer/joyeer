@@ -158,26 +158,6 @@ struct LetDecl: Node {
     LetDecl(Pattern::Ptr pattern, std::shared_ptr<Node> initializer);
 };
 
-struct VarDecl: public Node {
-    typedef std::shared_ptr<VarDecl> Ptr;
-    
-    Pattern::Ptr pattern;
-    Node::Ptr initializer;
-    
-    VarDecl(Pattern::Ptr pattern, std::shared_ptr<Node> initializer);
-};
-
-struct ClassDecl: Node {
-    typedef std::shared_ptr<ClassDecl> Ptr;
-    
-    Token::Ptr name;
-    std::vector<Node::Ptr> members;
-    
-    ClassDecl(Token::Ptr name, std::vector<Node::Ptr> members);
-    
-    std::string getName();
-};
-
 struct ParameterClause: Node {
     typedef std::shared_ptr<ParameterClause> Ptr;
     

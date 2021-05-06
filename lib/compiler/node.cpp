@@ -30,22 +30,6 @@ pattern(pattern),
 initializer(initializer) {
 }
 
-VarDecl::VarDecl(Pattern::Ptr pattern, std::shared_ptr<Node> initializer):
-Node(SyntaxKind::varDecl),
-pattern(pattern),
-initializer(initializer) {
-}
-
-ClassDecl::ClassDecl(Token::Ptr name, std::vector<Node::Ptr> members):
-Node(SyntaxKind::classDecl),
-name(name),
-members(members) {
-}
-
-std::string ClassDecl::getName() {
-    return name->rawValue;
-}
-
 ParameterClause::ParameterClause(std::vector<std::shared_ptr<Pattern>> parameters):
 Node(SyntaxKind::parameterClause),
 parameters(parameters) {

@@ -8,8 +8,8 @@ struct DeclNode : public Node {
     using Ptr = std::shared_ptr<DeclNode>;
 public:
     Descriptor::Ptr descriptor = nullptr;
-    
     DeclNode(SyntaxKind kind): Node(kind) {}
+        
 };
 
 // Represent a Constructor of Class in AST tree
@@ -60,6 +60,29 @@ public:
     FuncDecl(Node::Ptr identifier, Node::Ptr parameterClause, Node::Ptr returnType, Node::Ptr codeBlock);
     
     virtual std::string getTypeName();
+};
+
+struct ClassDecl: public DeclNode {
+    using Ptr = std::shared_ptr<ClassDecl>;
+    
+    Token::Ptr name;
+    std::vector<Node::Ptr> members;
+    
+    ClassDecl(Token::Ptr name, std::vector<Node::Ptr> members);
+    
+    std::string getName();
+};
+
+struct VarDecl: public DeclNode {
+    using Ptr = std::shared_ptr<VarDecl>;
+    
+    Pattern::Ptr pattern;
+    Node::Ptr initializer;
+    Descriptor::Ptr parentDescriptor;
+    
+    VarDecl(Pattern::Ptr pattern, std::shared_ptr<Node> initializer);
+    
+    void updateDescriptor(Descriptor::Ptr parent);
 };
 
 #endif

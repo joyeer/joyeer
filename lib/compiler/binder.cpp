@@ -49,7 +49,7 @@ Node::Ptr Binder::visit(FileModuleNode::Ptr sourceBlock) {
     sourceBlock->symtable = context->initializeSymTable();
     
     context->entry(moduleClass);
-    context->visit(CompileStage::visitSourceBlock, [sourceBlock, this]() {
+    context->visit(CompileStage::visitSourceBlock, sourceBlock->descriptor, [sourceBlock, this]() {
         auto nodes = std::vector<Node::Ptr>();
         for(auto& statement : sourceBlock->statements) {
             nodes.push_back(visit(statement));
@@ -146,8 +146,7 @@ Node::Ptr Binder::visit(ConstructorDecl::Ptr decl) {
     
     context->initializeSymTable();
     // visit func decleration
-    context->visit(CompileStage::visitFuncDecl, [this, decl]() {
-        
+    context->visit(CompileStage::visitFuncDecl, decl->descriptor, [this, decl]() {
         // start to process function parameters
         context->visit(CompileStage::visitFuncParamDecl, [this, decl]() {
             decl->parameterClause = visit(decl->parameterClause);
@@ -190,7 +189,7 @@ Node::Ptr Binder::visit(ClassDecl::Ptr decl) {
     decl->symtable = context->curSymTable();
     context->entry(objectType);
     bool hasCustomizedConstructor = false;
-    context->visit(CompileStage::visitClassDecl, [this, decl, symtable, &hasCustomizedConstructor]() {
+    context->visit(CompileStage::visitClassDecl, decl->descriptor, [this, decl, symtable, &hasCustomizedConstructor]() {
         std::vector<Node::Ptr> result;
         for(auto member: decl->members) {
             result.push_back(visit(member));

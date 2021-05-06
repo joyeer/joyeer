@@ -65,3 +65,19 @@ const std::string ConstructorDecl::getName(JrType* type) {
     ss << ")";
     return ss.str();
 }
+
+ClassDecl::ClassDecl(Token::Ptr name, std::vector<Node::Ptr> members):
+DeclNode(SyntaxKind::classDecl),
+name(name),
+members(members) {
+}
+
+std::string ClassDecl::getName() {
+    return name->rawValue;
+}
+
+VarDecl::VarDecl(Pattern::Ptr pattern, std::shared_ptr<Node> initializer):
+DeclNode(SyntaxKind::varDecl),
+pattern(pattern),
+initializer(initializer) {
+}
