@@ -59,16 +59,6 @@ Node::Ptr Binder::visit(FileModuleNode::Ptr sourceBlock) {
     context->leave(moduleClass);
     context->finalizeSymTable();
     
-    // The module class's symbols table is exporting
-    context->exportedSymbols = sourceBlock->symtable;
-    
-    // Mark the exported flag in symbols
-    for(const auto &entry: context->exportedSymbols->symbols) {
-        entry.second->isExported = true;
-        entry.second->addressOfModule = moduleClass->addressOfMudule;
-    }
-
-    
     return sourceBlock;
 }
 

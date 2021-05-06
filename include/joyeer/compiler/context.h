@@ -60,9 +60,6 @@ public:
     // when import a module, we will import the symbol table
     void importSymbolTableOfModule(SymbolTable::Ptr table);
     
-    // The module's exported symbols
-    SymbolTable::Ptr exportedSymbols = nullptr;
-    
     // the current parsing source file
     SourceFile::Ptr sourcefile = nullptr;
     

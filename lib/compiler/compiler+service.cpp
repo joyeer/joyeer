@@ -88,8 +88,6 @@ void CompilerService::compile(SourceFile::Ptr sourcefile) {
     // generate IR code
     IRGen irGen(context);
     sourcefile->moduleClass = irGen.emit(block);
-    assert(context->exportedSymbols != nullptr);
-    sourcefile->exportedSymbolTable = context->exportedSymbols;
     CHECK_ERROR_CONTINUE
     
     // delcare the FileModuleNode in repos
