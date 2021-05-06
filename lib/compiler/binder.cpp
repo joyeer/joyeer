@@ -49,7 +49,7 @@ Node::Ptr Binder::visit(FileModuleNode::Ptr sourceBlock) {
     sourceBlock->symtable = context->initializeSymTable();
     
     context->entry(moduleClass);
-    context->visit(visitSourceBlock, [sourceBlock, this]() {
+    context->visit(CompileStage::visitSourceBlock, [sourceBlock, this]() {
         auto nodes = std::vector<Node::Ptr>();
         for(auto& statement : sourceBlock->statements) {
             nodes.push_back(visit(statement));
@@ -85,7 +85,7 @@ Node::Ptr Binder::visit(FuncDecl::Ptr decl) {
     decl->symbol = symbol;
     
     // If the parsing stage is visitClassDecl or visitSourceBlock, we will register function into target type
-    if(type != nullptr && (context->curStage() == visitClassDecl || context->curStage() == visitSourceBlock)) {
+    if(type != nullptr && (context->curStage() == CompileStage::visitClassDecl || context->curStage() == CompileStage::visitSourceBlock)) {
         // if the function inside of class declaration, we will register it as virtual functions
         auto classType = (JrObjectType*)type;
         if(type->name == function->name) {
@@ -98,15 +98,15 @@ Node::Ptr Binder::visit(FuncDecl::Ptr decl) {
     
     decl->symtable = context->initializeSymTable();
     // visit func decleration
-    context->visit(visitFuncDecl, [this, decl]() {
+    context->visit(CompileStage::visitFuncDecl, [this, decl]() {
         
         // start to process function name
-        context->visit(visitFuncNameDecl, [this, decl]() {
+        context->visit(CompileStage::visitFuncNameDecl, [this, decl]() {
             decl->identifier = visit(decl->identifier);
         });
         
         // start to process function parameters
-        context->visit(visitFuncParamDecl, [this, decl]() {
+        context->visit(CompileStage::visitFuncParamDecl, [this, decl]() {
             decl->parameterClause = visit(decl->parameterClause);
         });
         
@@ -146,10 +146,10 @@ Node::Ptr Binder::visit(ConstructorDecl::Ptr decl) {
     
     context->initializeSymTable();
     // visit func decleration
-    context->visit(visitFuncDecl, [this, decl]() {
+    context->visit(CompileStage::visitFuncDecl, [this, decl]() {
         
         // start to process function parameters
-        context->visit(visitFuncParamDecl, [this, decl]() {
+        context->visit(CompileStage::visitFuncParamDecl, [this, decl]() {
             decl->parameterClause = visit(decl->parameterClause);
         });
         
@@ -190,7 +190,7 @@ Node::Ptr Binder::visit(ClassDecl::Ptr decl) {
     decl->symtable = context->curSymTable();
     context->entry(objectType);
     bool hasCustomizedConstructor = false;
-    context->visit(visitClassDecl, [this, decl, symtable, &hasCustomizedConstructor]() {
+    context->visit(CompileStage::visitClassDecl, [this, decl, symtable, &hasCustomizedConstructor]() {
         std::vector<Node::Ptr> result;
         for(auto member: decl->members) {
             result.push_back(visit(member));
@@ -246,7 +246,7 @@ Node::Ptr Binder::visit(VarDecl::Ptr decl) {
     
     // double check the domplciate
     auto stage = context->curStage();
-    auto symbolFlag = (stage == visitClassDecl || stage == visitSourceBlock) ? fieldSymbol : varSymbol;
+    auto symbolFlag = (stage == CompileStage::visitClassDecl || stage == CompileStage::visitSourceBlock) ? fieldSymbol : varSymbol;
     
     auto symbol = std::shared_ptr<Symbol>(new Symbol{
         .name = name,
@@ -261,7 +261,7 @@ Node::Ptr Binder::visit(VarDecl::Ptr decl) {
         decl->initializer = visit(decl->initializer);
     }
     
-    if(stage == visitClassDecl || stage == visitSourceBlock) {
+    if(stage == CompileStage::visitClassDecl || stage == CompileStage::visitSourceBlock) {
         // If var decl is a field, let's register it in type's field list
         auto ownerType = (JrObjectType*)context->curType();
         auto field = JrFieldType::Ptr(new JrFieldType {
@@ -350,7 +350,7 @@ Node::Ptr Binder::visit(IdentifierExpr::Ptr decl) {
     auto name = decl->getName();
     
     switch (context->curStage()) {
-        case visitFuncParamDecl: {
+        case CompileStage::visitFuncParamDecl: {
             // verify the func delcaration's parameter duplicate name
             auto table = context->curSymTable();
             if(table->find(name) != nullptr) {
@@ -551,7 +551,7 @@ Node::Ptr Binder::visit(CodeBlock::Ptr decl) {
     decl->symtable = table;
     
     // start to process code block
-    context->visit(visitCodeBlock, [decl, this]() {
+    context->visit(CompileStage::visitCodeBlock, [decl, this]() {
         std::vector<Node::Ptr> statements;
         for(auto s: decl->statements) {
             statements.push_back(visit(s));
@@ -648,7 +648,7 @@ Node::Ptr Binder::visit(ArrayType::Ptr decl) {
 }
 
 Node::Ptr Binder::visit(FileImportStatement::Ptr decl) {
-    if(context->curStage() != visitSourceBlock) {
+    if(context->curStage() != CompileStage::visitSourceBlock) {
         Diagnostics::reportError(Diagnostics::errorFileImportShouldAtTopOfSourceFile);
         return nullptr;
     }

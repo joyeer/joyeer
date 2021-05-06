@@ -5,8 +5,6 @@
 #include <cassert>
 #include <memory>
 
-
-
 CompileContext::CompileContext(CommandLineArguments::Ptr options):
 options(options) {
     initializeSymTable();
@@ -28,9 +26,23 @@ SymbolTable::Ptr CompileContext::curSymTable() {
     return symbols.back();
 }
 
-void CompileContext::visit(CompileStage stage, std::function<void ()> visit) {
+void CompileContext::visit(CompileStage stage, std::function<void ()> visitor) {
+    visit(stage, nullptr, visitor);
+}
+
+void CompileContext::visit(CompileStage stage, Descriptor::Ptr underDescriptor, std::function<void()> visit) {
     stages.push_back(stage);
+    if(underDescriptor != nullptr) {
+        descriptors.push(underDescriptor);
+    }
+    
+    // visit
     visit();
+    
+    if(underDescriptor != nullptr) {
+        assert(descriptors.top() == underDescriptor);
+        descriptors.pop();
+    }
     assert(stages.back() == stage);
     stages.pop_back();
 }

@@ -103,7 +103,7 @@ JrModuleClass* IRGen::emit(FileModuleNode::Ptr block) {
     
     context->entry(moduleType);
     context->entry(func);
-    context->visit(visitSourceBlock, [this, block]() {
+    context->visit(CompileStage::visitSourceBlock, [this, block]() {
         for(auto& statement: block->statements) {
             emit(statement);
         }
@@ -116,7 +116,7 @@ JrModuleClass* IRGen::emit(FileModuleNode::Ptr block) {
 }
 
 void IRGen::emit(FuncCallExpr::Ptr funcCallExpr) {
-    context->visit(visitFuncCall, [this, funcCallExpr](){
+    context->visit(CompileStage::visitFuncCall, [this, funcCallExpr](){
         
         for(auto argument : funcCallExpr->arguments) {
             emit(argument);
@@ -144,7 +144,7 @@ void IRGen::emit(FuncCallExpr::Ptr funcCallExpr) {
 }
 
 void IRGen::emit(MemberFuncCallExpr::Ptr memberFuncCallExpr) {
-    context->visit(visitFuncCall, [this, memberFuncCallExpr](){
+    context->visit(CompileStage::visitFuncCall, [this, memberFuncCallExpr](){
         for(auto argument : memberFuncCallExpr->arguments) {
             emit(argument);
         }
@@ -491,7 +491,7 @@ void IRGen::emit(WhileStatement::Ptr node) {
 }
 
 void IRGen::emit(CodeBlock::Ptr node) {
-    context->visit(visitCodeBlock, [this, node]() {
+    context->visit(CompileStage::visitCodeBlock, [this, node]() {
         for(auto statement: node->statements) {
             emit(statement);
         }

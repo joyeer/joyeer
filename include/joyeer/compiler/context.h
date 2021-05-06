@@ -8,7 +8,7 @@
 
 class CompilerService;
 
-enum CompileStage {
+enum class CompileStage {
     visitSourceBlock,
     visitCodeBlock,
     visitClassDecl,
@@ -35,6 +35,8 @@ public:
     void finalizeSymTable();
     
     void visit(CompileStage stage, std::function<void(void)> visit);
+    void visit(CompileStage stage, Descriptor::Ptr descriptor, std::function<void(void)> visit);
+    Descriptor::Ptr parentDescriptor();
     CompileStage curStage() const;
     
     // look up name's mapped symbol
@@ -53,7 +55,7 @@ public:
     void leave(JrType* type);
     
     // Associate Type with symbol table
-    void associate(JrType*, SymbolTable::Ptr table);
+    void associate(JrType* type, SymbolTable::Ptr table);
     // return assoicated symbol table with type
     SymbolTable::Ptr symtableOfType(JrType*);
    
@@ -84,6 +86,9 @@ protected:
     
     // parsing class/struct/enum stacks
     std::vector<JrType*> types;
+    
+    // parsing scope's descriptor stacks
+    std::stack<Descriptor::Ptr> descriptors;
     
     std::unordered_map<JrInt, SymbolTable::Ptr> mapOfTypeAndSymbolTable;
     
