@@ -14,7 +14,7 @@ Node::Ptr TypeChecker::visit(Node::Ptr node) {
     return NodeVisitor::visit(node);
 }
 
-Node::Ptr TypeChecker::visit(FileModuleNode::Ptr node) {
+Node::Ptr TypeChecker::visit(FileModuleDecl::Ptr node) {
     
     assert(node->symbol->flag == moduleSymbol);
     auto moduleClass = (JrModuleClass*)(Global::types[node->symbol->addressOfType]);
@@ -723,7 +723,7 @@ JrType* TypeChecker::typeOf(PrefixExpr::Ptr node) {
     return typeOf(node->expr);
 }
 
-void TypeChecker::verifyReturnStatement(FileModuleNode::Ptr node) {
+void TypeChecker::verifyReturnStatement(FileModuleDecl::Ptr node) {
     verifyReturnStatement(node->statements);
 }
 

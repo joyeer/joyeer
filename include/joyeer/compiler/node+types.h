@@ -9,7 +9,9 @@ struct DeclNode : public Node {
 public:
     Descriptor::Ptr descriptor = nullptr;
     DeclNode(SyntaxKind kind): Node(kind) {}
-        
+    
+    // update self descriptor
+    virtual void updateDescriptor() { }
 };
 
 // Represent a Constructor of Class in AST tree
@@ -25,13 +27,24 @@ struct ConstructorDecl: public DeclNode {
     const std::string getName(JrType* ownerType);
 };
 
+struct ClassDecl: public DeclNode {
+    using Ptr = std::shared_ptr<ClassDecl>;
+    
+    Token::Ptr name = nullptr;
+    std::vector<Node::Ptr> members;
+    
+    ClassDecl(Token::Ptr name, std::vector<Node::Ptr> members);
+    
+    std::string getName();
+};
+
 // Reprensent an FileModule in Ast tree, each xxx.joyeer file is a file module
-class FileModuleNode: public DeclNode {
+class FileModuleDecl: public DeclNode {
 public:
-    using Ptr = std::shared_ptr<FileModuleNode>;
+    using Ptr = std::shared_ptr<FileModuleDecl>;
 
 public:
-    FileModuleNode(FileModuleDescriptor::Ptr descriptor, std::vector<Node::Ptr> statements);
+    FileModuleDecl(FileModuleDescriptor::Ptr descriptor, std::vector<Node::Ptr> statements);
     
     std::vector<Node::Ptr> statements;
     // the default initializer function of the filemodule
@@ -62,16 +75,6 @@ public:
     virtual std::string getTypeName();
 };
 
-struct ClassDecl: public DeclNode {
-    using Ptr = std::shared_ptr<ClassDecl>;
-    
-    Token::Ptr name;
-    std::vector<Node::Ptr> members;
-    
-    ClassDecl(Token::Ptr name, std::vector<Node::Ptr> members);
-    
-    std::string getName();
-};
 
 struct VarDecl: public DeclNode {
     using Ptr = std::shared_ptr<VarDecl>;
@@ -82,7 +85,6 @@ struct VarDecl: public DeclNode {
     
     VarDecl(Pattern::Ptr pattern, std::shared_ptr<Node> initializer);
     
-    void updateDescriptor(Descriptor::Ptr parent);
 };
 
 #endif

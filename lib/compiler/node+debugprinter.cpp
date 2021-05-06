@@ -64,7 +64,7 @@ void NodeDebugPrinter::print(Node::Ptr node) {
     switch (node->kind) {
         case SyntaxKind::sourceBlock: {
             
-            auto n = std::static_pointer_cast<FileModuleNode>(node);
+            auto n = std::static_pointer_cast<FileModuleDecl>(node);
             output << "+FileModule(descriptor: \"" << n->descriptor->getRawDescriptor() << "\")" ;
             incTab();
             print(n->symtable);

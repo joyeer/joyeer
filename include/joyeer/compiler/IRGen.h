@@ -12,7 +12,7 @@ class IRGen {
 public:
     IRGen(CompileContext::Ptr context);
     
-    JrModuleClass* emit(FileModuleNode::Ptr block);
+    JrModuleClass* emit(FileModuleDecl::Ptr block);
     
 protected:
     void emit(Node::Ptr node);

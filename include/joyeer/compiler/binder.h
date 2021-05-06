@@ -16,7 +16,7 @@ public:
     
     Binder(CompileContext::Ptr context);
     
-    virtual Node::Ptr visit(FileModuleNode::Ptr sourceBlock);
+    virtual Node::Ptr visit(FileModuleDecl::Ptr sourceBlock);
 protected:
     // recursive bind down node
     virtual Node::Ptr visit(Node::Ptr node);
@@ -73,7 +73,7 @@ private:
         + declaration1
         + declaration2
     */
-    FileModuleNode::Ptr normalizeAndPrepareDefaultStaticConstructorForFileModule(FileModuleNode::Ptr filemodule);
+    FileModuleDecl::Ptr normalizeAndPrepareDefaultStaticConstructorForFileModule(FileModuleDecl::Ptr filemodule);
 private:
     CompileContext::Ptr context;
 };

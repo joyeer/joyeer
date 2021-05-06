@@ -21,7 +21,7 @@ Node::Ptr Binder::visit(Node::Ptr node) {
     return NodeVisitor::visit(node);
 }
 
-Node::Ptr Binder::visit(FileModuleNode::Ptr sourceBlock) {
+Node::Ptr Binder::visit(FileModuleDecl::Ptr sourceBlock) {
     // register FileModule
     context->compiler->declare(sourceBlock);
     
@@ -660,7 +660,7 @@ Node::Ptr Binder::visit(FileImportStatement::Ptr decl) {
     return decl;
 }
 
-FileModuleNode::Ptr  Binder::normalizeAndPrepareDefaultStaticConstructorForFileModule(FileModuleNode::Ptr filemodule) {
+FileModuleDecl::Ptr  Binder::normalizeAndPrepareDefaultStaticConstructorForFileModule(FileModuleDecl::Ptr filemodule) {
     
     auto declarations = std::vector<Node::Ptr>();
     auto statementsOfDefaultModuleInitilizer = std::vector<Node::Ptr>();

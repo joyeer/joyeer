@@ -2,18 +2,28 @@
 #include <fstream>
 #include <sstream>
 
-FileModuleNode::FileModuleNode(FileModuleDescriptor::Ptr descriptor, std::vector<std::shared_ptr<Node>> statements):
+ClassDecl::ClassDecl(Token::Ptr name, std::vector<Node::Ptr> members):
+DeclNode(SyntaxKind::classDecl),
+name(name),
+members(members) {
+}
+
+std::string ClassDecl::getName() {
+    return name->rawValue;
+}
+
+FileModuleDecl::FileModuleDecl(FileModuleDescriptor::Ptr descriptor, std::vector<std::shared_ptr<Node>> statements):
 DeclNode(SyntaxKind::sourceBlock),
 statements(statements) {
     this->descriptor = descriptor;
 }
 
-std::string FileModuleNode::getName() {
+std::string FileModuleDecl::getName() {
     std::filesystem::path p = filename;
     return p.replace_extension().string();
 }
 
-std::vector<FileImportStatement::Ptr> FileModuleNode::getFileImports() {
+std::vector<FileImportStatement::Ptr> FileModuleDecl::getFileImports() {
     std::vector<FileImportStatement::Ptr> result;
     for(std::vector<Node::Ptr>::const_iterator iterator = statements.begin(); iterator != statements.end(); iterator ++ ) {
         auto node = *iterator;
@@ -64,16 +74,6 @@ const std::string ConstructorDecl::getName(JrType* type) {
     }
     ss << ")";
     return ss.str();
-}
-
-ClassDecl::ClassDecl(Token::Ptr name, std::vector<Node::Ptr> members):
-DeclNode(SyntaxKind::classDecl),
-name(name),
-members(members) {
-}
-
-std::string ClassDecl::getName() {
-    return name->rawValue;
 }
 
 VarDecl::VarDecl(Pattern::Ptr pattern, std::shared_ptr<Node> initializer):

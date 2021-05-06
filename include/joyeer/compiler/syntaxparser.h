@@ -7,7 +7,7 @@ class SyntaxParser
 {
 public:
     SyntaxParser(SourceFile::Ptr sourcefile);
-    FileModuleNode::Ptr parse();
+    FileModuleDecl::Ptr parse();
 
 private:
 

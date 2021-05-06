@@ -36,7 +36,7 @@ public:
 
     // grammer parsing result, 
     // filemodule is the root node of AST 
-    FileModuleNode::Ptr filemodule;
+    FileModuleDecl::Ptr filemodule;
 
     JrModuleClass* moduleClass;
     

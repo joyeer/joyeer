@@ -48,7 +48,7 @@ struct DescriptorConstants {
 class Descriptor {
 public:
     using Ptr = std::shared_ptr<Descriptor>;
-    const std::string& getRawDescriptor() const { return rawDescriptor; }
+    virtual const std::string getRawDescriptor() const { return rawDescriptor; }
 protected:
     std::string rawDescriptor;
 };
