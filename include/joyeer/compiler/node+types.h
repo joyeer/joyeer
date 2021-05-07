@@ -83,11 +83,12 @@ public:
     std::vector<Node::Ptr> getTopLevelDecls();
 };
 
-
-
+// `let` or `var` declaration
 struct VarDecl: public DeclNode {
     using Ptr = std::shared_ptr<VarDecl>;
     
+    // `let` mutable = false, `var` mutable = true
+    bool _mutable = true;
     Pattern::Ptr pattern;
     Node::Ptr initializer;
     Descriptor::Ptr parentDescriptor;

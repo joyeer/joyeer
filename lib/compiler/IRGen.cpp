@@ -17,9 +17,6 @@ void IRGen::emit(Node::Ptr node) {
         case SyntaxKind::filemodule:
             emit(std::static_pointer_cast<FileModuleDecl>(node));
             break;
-        case SyntaxKind::letDecl:
-            emit(std::static_pointer_cast<LetDecl>(node));
-            break;
         case SyntaxKind::varDecl:
             emit(std::static_pointer_cast<VarDecl>(node));
             break;
@@ -193,17 +190,6 @@ void IRGen::emit(LiteralExpr::Ptr node) {
             assert(false);
             break;
     }
-}
-
-void IRGen::emit(LetDecl::Ptr node) {
-    emit(node->initializer);
-    
-    // TODO: detect the variable's type
-    writer.write({
-        .opcode = OP_ISTORE,
-        .value = node->symbol->addressOfVariable
-    });
-    
 }
 
 void IRGen::emit(VarDecl::Ptr node) {

@@ -10,8 +10,6 @@ Node::Ptr NodeVisitor::visit(Node::Ptr node) {
             return visit(std::static_pointer_cast<Type>(node));
         case SyntaxKind::pattern:
             return visit(std::static_pointer_cast<Pattern>(node));
-        case SyntaxKind::letDecl:
-            return visit(std::static_pointer_cast<LetDecl>(node));
         case SyntaxKind::varDecl:
             return visit(std::static_pointer_cast<VarDecl>(node));
         case SyntaxKind::funcDecl:

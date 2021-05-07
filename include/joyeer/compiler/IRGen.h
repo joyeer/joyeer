@@ -20,7 +20,6 @@ protected:
     void emit(MemberFuncCallExpr::Ptr node);
     void emit(ArguCallExpr::Ptr node);
     void emit(LiteralExpr::Ptr node);
-    void emit(LetDecl::Ptr node);
     void emit(VarDecl::Ptr node);
     void emit(PrefixExpr::Ptr node);
     void emit(IdentifierExpr::Ptr node);

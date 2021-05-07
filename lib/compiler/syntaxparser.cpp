@@ -185,7 +185,7 @@ Node::Ptr SyntaxParser::tryParseConstDecl() {
         }
     }
 
-    return std::shared_ptr<Node>(new LetDecl(pattern, initializer));
+    return std::shared_ptr<Node>(new VarDecl(pattern, initializer));
 }
 
 Node::Ptr SyntaxParser::tryParseVarDecl() {

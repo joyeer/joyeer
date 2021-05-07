@@ -15,7 +15,6 @@ public:
 protected:
     virtual Node::Ptr visit(FileModuleDecl::Ptr decl);
     virtual Node::Ptr visit(ClassDecl::Ptr classDecl);
-    virtual Node::Ptr visit(LetDecl::Ptr decl);
     virtual Node::Ptr visit(VarDecl::Ptr varDecl);
     virtual Node::Ptr visit(ConstructorDecl::Ptr decl);
     virtual Node::Ptr visit(Type::Ptr decl);

@@ -14,7 +14,6 @@ enum class SyntaxKind {
     dictType,
     pattern,
     
-    letDecl,
     varDecl,
     funcDecl,
     constructorDecl,
@@ -70,7 +69,6 @@ struct Node {
     // detect if its a declaration node
     bool isDeclNode() {
         switch(kind) {
-            case SyntaxKind::letDecl:
             case SyntaxKind::varDecl:
             case SyntaxKind::funcDecl:
             case SyntaxKind::constructorDecl:
@@ -147,15 +145,6 @@ struct Pattern: public Node {
     
     const std::string& getIdentifierName();
 
-};
-
-struct LetDecl: Node {
-    typedef std::shared_ptr<LetDecl> Ptr;
-    
-    Pattern::Ptr pattern;
-    Node::Ptr initializer;
-    
-    LetDecl(Pattern::Ptr pattern, std::shared_ptr<Node> initializer);
 };
 
 struct ParameterClause: Node {

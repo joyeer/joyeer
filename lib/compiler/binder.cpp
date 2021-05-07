@@ -273,33 +273,6 @@ Node::Ptr Binder::visit(VarDecl::Ptr decl) {
     return decl;
 }
 
-Node::Ptr Binder::visit(LetDecl::Ptr decl) {
-    assert(false);
-    auto pattern = decl->pattern;
-    auto name = pattern->getIdentifierName();
-    
-    auto table = context->curSymTable();
-    if(table->find(name) != nullptr) {
-        Diagnostics::reportError("[Error] duplicate variable name");
-        return nullptr;
-    }
-    
-    auto symbol = std::shared_ptr<Symbol>(new Symbol{
-        .name = name,
-        .flag = SymbolFlag::varSymbol,
-        .isMutable = false
-    });
-    
-    
-    table->insert(symbol);
-    decl->symbol = symbol;
-    
-    if(decl->initializer != nullptr) {
-        decl->initializer = visit(decl->initializer);
-    }
-    return decl;
-}
-
 Node::Ptr Binder::visit(FuncCallExpr::Ptr decl) {
     
     if(decl->identifier->kind == SyntaxKind::memberAccessExpr) {

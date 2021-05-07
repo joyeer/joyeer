@@ -108,17 +108,6 @@ void NodeDebugPrinter::print(Node::Ptr node) {
         case SyntaxKind::importStatement:
             output << "+importStatement" ;
             break;
-        case SyntaxKind::letDecl: {
-            output << "+letDecl" ;
-            auto n = std::static_pointer_cast<LetDecl>(node);
-            incTab();
-            print(n->symtable);
-            print(n->symbol);
-            print(n->pattern);
-            print(n->initializer);
-            decTab();
-        }
-            break;
         case SyntaxKind::varDecl: {
             output << "+varDecl" ;
             auto n = std::static_pointer_cast<VarDecl>(node);

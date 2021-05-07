@@ -271,37 +271,6 @@ Node::Ptr TypeChecker::visit(VarDecl::Ptr node) {
     return node;
 }
 
-Node::Ptr TypeChecker::visit(LetDecl::Ptr node) {
-    context->visit(CompileStage::visitLetDecl, [this, node]() {
-        node->pattern = std::static_pointer_cast<Pattern>(visit(node->pattern));
-    });
-    
-    if(node->pattern->type == nullptr) {
-        // change the symbol to unfixed symbol
-        node->symbol->flag = varSymbol;
-        node->symbol->isMutable = false;
-        node->symbol->addressOfType = JrType::Any->addressOfType;
-    }
-    
-    if(node->initializer != nullptr) {
-        node->initializer = visit(node->initializer);
-    }
-    
-    // declare the local variable in function
-    auto function = context->curFunction();
-    auto addressOfVariable = (int)function->localVars.size();
-    node->symbol->addressOfVariable = addressOfVariable;
-    
-    assert(Global::types[node->symbol->addressOfType] != nullptr);
-    function->localVars.push_back(JrVar {
-        .name = node->pattern->getIdentifierName(),
-        .type = Global::types[node->symbol->addressOfType],
-        .addressOfVariable = addressOfVariable
-    });
-
-    return node;
-}
-
 Node::Ptr TypeChecker::visit(ParameterClause::Ptr node) {
     auto symtable = context->curSymTable();
     auto parameters = std::vector<Pattern::Ptr>();

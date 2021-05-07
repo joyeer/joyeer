@@ -21,13 +21,7 @@ std::string Node::getTypeName() {
 OperatorExpr::OperatorExpr(Token::Ptr token):
 Node(SyntaxKind::operatorExpr),
 token(token) {
-    
-}
 
-LetDecl::LetDecl(Pattern::Ptr pattern, std::shared_ptr<Node> initializer):
-Node(SyntaxKind::letDecl),
-pattern(pattern),
-initializer(initializer) {
 }
 
 ParameterClause::ParameterClause(std::vector<std::shared_ptr<Pattern>> parameters):
