@@ -7,7 +7,7 @@
 #include "joyeer/runtime/runtime.h"
 
 enum class SyntaxKind {
-    sourceBlock = 1L,
+    filemodule = 1L,
 
     type,
     arrayType,

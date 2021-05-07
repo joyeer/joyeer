@@ -5,7 +5,11 @@
 ClassDecl::ClassDecl(Token::Ptr name, std::vector<Node::Ptr> members):
 DeclNode(SyntaxKind::classDecl),
 name(name),
-members(members) {
+members(members),
+staticFields(),
+staticMethods(),
+instanceMethods(),
+instanceFields() {
 }
 
 std::string ClassDecl::getName() {
@@ -13,8 +17,9 @@ std::string ClassDecl::getName() {
 }
 
 FileModuleDecl::FileModuleDecl(FileModuleDescriptor::Ptr descriptor, CodeBlock::Ptr block):
-DeclNode(SyntaxKind::sourceBlock),
+ClassDecl(nullptr, block->statements),
 block(block) {
+    kind = SyntaxKind::filemodule;
     this->descriptor = descriptor;
 }
 

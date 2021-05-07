@@ -4,7 +4,7 @@
 
 Node::Ptr NodeVisitor::visit(Node::Ptr node) {
     switch (node->kind) {
-        case SyntaxKind::sourceBlock:
+        case SyntaxKind::filemodule:
             return visit(std::static_pointer_cast<FileModuleDecl>(node));
         case SyntaxKind::type:
             return visit(std::static_pointer_cast<Type>(node));

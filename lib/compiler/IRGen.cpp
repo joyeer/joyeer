@@ -14,7 +14,7 @@ context(context) {
 
 void IRGen::emit(Node::Ptr node) {
     switch (node->kind) {
-        case SyntaxKind::sourceBlock:
+        case SyntaxKind::filemodule:
             emit(std::static_pointer_cast<FileModuleDecl>(node));
             break;
         case SyntaxKind::letDecl:

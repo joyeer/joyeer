@@ -27,11 +27,35 @@ struct ConstructorDecl: public DeclNode {
     const std::string getName(JrType* ownerType);
 };
 
+// Represent a Function in Ast tree.
+struct FuncDecl: public DeclNode {
+public:
+    using Ptr = std::shared_ptr<FuncDecl>;
+    
+    Node::Ptr identifier;               //IdentifierExpr
+    Node::Ptr parameterClause;
+    Node::Ptr codeBlock;
+    Node::Ptr returnType;
+
+    FuncDecl(Node::Ptr identifier, Node::Ptr parameterClause, Node::Ptr returnType, Node::Ptr codeBlock);
+    
+    virtual std::string getTypeName();
+};
+
+
 struct ClassDecl: public DeclNode {
     using Ptr = std::shared_ptr<ClassDecl>;
     
     Token::Ptr name = nullptr;
     std::vector<Node::Ptr> members;
+    
+    std::vector<DeclNode::Ptr> staticFields;
+    std::vector<DeclNode::Ptr> instanceFields;
+    std::vector<DeclNode::Ptr> staticMethods;
+    std::vector<DeclNode::Ptr> instanceMethods;
+    std::vector<ConstructorDecl::Ptr> constructors;
+    
+    ConstructorDecl::Ptr defaultConstructor;
     
     ClassDecl(Token::Ptr name, std::vector<Node::Ptr> members);
     
@@ -39,7 +63,7 @@ struct ClassDecl: public DeclNode {
 };
 
 // Reprensent an FileModule in Ast tree, each xxx.joyeer file is a file module
-class FileModuleDecl: public DeclNode {
+class FileModuleDecl: public ClassDecl {
 public:
     using Ptr = std::shared_ptr<FileModuleDecl>;
 
@@ -59,21 +83,6 @@ public:
     std::vector<Node::Ptr> getTopLevelDecls();
 };
 
-
-// Represent a Function in Ast tree.
-struct FuncDecl: public DeclNode {
-public:
-    using Ptr = std::shared_ptr<FuncDecl>;
-    
-    Node::Ptr identifier;               //IdentifierExpr
-    Node::Ptr parameterClause;
-    Node::Ptr codeBlock;
-    Node::Ptr returnType;
-
-    FuncDecl(Node::Ptr identifier, Node::Ptr parameterClause, Node::Ptr returnType, Node::Ptr codeBlock);
-    
-    virtual std::string getTypeName();
-};
 
 
 struct VarDecl: public DeclNode {

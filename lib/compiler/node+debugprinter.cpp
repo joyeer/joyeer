@@ -62,7 +62,7 @@ void NodeDebugPrinter::print(Node::Ptr node) {
     printTab();
     
     switch (node->kind) {
-        case SyntaxKind::sourceBlock: {
+        case SyntaxKind::filemodule: {
             
             auto n = std::static_pointer_cast<FileModuleDecl>(node);
             output << "+FileModule(descriptor: \"" << n->descriptor->getRawDescriptor() << "\")" ;
