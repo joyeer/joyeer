@@ -21,19 +21,19 @@ Node::Ptr Binder::visit(Node::Ptr node) {
     return NodeVisitor::visit(node);
 }
 
-Node::Ptr Binder::visit(FileModuleDecl::Ptr sourceBlock) {
+Node::Ptr Binder::visit(FileModuleDecl::Ptr filemodule) {
     // register FileModule
-    context->compiler->declare(sourceBlock);
+    context->compiler->declare(filemodule);
     
-    sourceBlock = normalizeAndPrepareDefaultStaticConstructorForFileModule(sourceBlock);
+    filemodule = normalizeAndPrepareDefaultStaticConstructorForFileModule(filemodule);
     // Module class self
-    auto moduleClass = new JrModuleClass(sourceBlock->descriptor->getRawDescriptor());
+    auto moduleClass = new JrModuleClass(filemodule->descriptor->getRawDescriptor());
     Global::registerObjectType(moduleClass);
     Global::registerModuleType(moduleClass);
     
     // Module constructor function
     auto function = new JrFunction {
-        .name = "Module@__MAIN__@" + sourceBlock->filename,
+        .name = "Module@__MAIN__@" + filemodule->filename,
         .kind = jrFuncConstructor,
     };
     function->paramTypes.push_back(moduleClass);
@@ -45,21 +45,21 @@ Node::Ptr Binder::visit(FileModuleDecl::Ptr sourceBlock) {
         .addressOfType = moduleClass->addressOfType
     });
     moduleClass->constructors.push_back(function->addressOfFunc);
-    sourceBlock->symbol = symbol;
-    sourceBlock->symtable = context->initializeSymTable();
+    filemodule->symbol = symbol;
+    filemodule->symtable = context->initializeSymTable();
     
     context->entry(moduleClass);
-    context->visit(CompileStage::visitSourceBlock, sourceBlock->descriptor, [sourceBlock, this]() {
+    context->visit(CompileStage::visitFileModule, filemodule->descriptor, [filemodule, this]() {
         auto nodes = std::vector<Node::Ptr>();
-        for(auto& statement : sourceBlock->block->statements) {
+        for(auto& statement : filemodule->block->statements) {
             nodes.push_back(visit(statement));
         }
-        sourceBlock->block->statements = nodes;
+        filemodule->block->statements = nodes;
     });
     context->leave(moduleClass);
     context->finalizeSymTable();
     
-    return sourceBlock;
+    return filemodule;
 }
 
 Node::Ptr Binder::visit(FuncDecl::Ptr decl) {
@@ -85,7 +85,7 @@ Node::Ptr Binder::visit(FuncDecl::Ptr decl) {
     decl->symbol = symbol;
     
     // If the parsing stage is visitClassDecl or visitSourceBlock, we will register function into target type
-    if(type != nullptr && (context->curStage() == CompileStage::visitClassDecl || context->curStage() == CompileStage::visitSourceBlock)) {
+    if(type != nullptr && (context->curStage() == CompileStage::visitClassDecl || context->curStage() == CompileStage::visitFileModule)) {
         // if the function inside of class declaration, we will register it as virtual functions
         auto classType = (JrObjectType*)type;
         if(type->name == function->name) {
@@ -245,7 +245,7 @@ Node::Ptr Binder::visit(VarDecl::Ptr decl) {
     
     // double check the domplciate
     auto stage = context->curStage();
-    auto symbolFlag = (stage == CompileStage::visitClassDecl || stage == CompileStage::visitSourceBlock) ? fieldSymbol : varSymbol;
+    auto symbolFlag = (stage == CompileStage::visitClassDecl || stage == CompileStage::visitFileModule) ? fieldSymbol : varSymbol;
     
     auto symbol = std::shared_ptr<Symbol>(new Symbol{
         .name = name,
@@ -260,7 +260,7 @@ Node::Ptr Binder::visit(VarDecl::Ptr decl) {
         decl->initializer = visit(decl->initializer);
     }
     
-    if(stage == CompileStage::visitClassDecl || stage == CompileStage::visitSourceBlock) {
+    if(stage == CompileStage::visitClassDecl || stage == CompileStage::visitFileModule) {
         // If var decl is a field, let's register it in type's field list
         auto ownerType = (JrObjectType*)context->curType();
         auto field = JrFieldType::Ptr(new JrFieldType {
@@ -647,7 +647,7 @@ Node::Ptr Binder::visit(ArrayType::Ptr decl) {
 }
 
 Node::Ptr Binder::visit(FileImportStatement::Ptr decl) {
-    if(context->curStage() != CompileStage::visitSourceBlock) {
+    if(context->curStage() != CompileStage::visitFileModule) {
         Diagnostics::reportError(Diagnostics::errorFileImportShouldAtTopOfSourceFile);
         return nullptr;
     }

@@ -9,7 +9,7 @@
 class CompilerService;
 
 enum class CompileStage {
-    visitSourceBlock,
+    visitFileModule,
     visitCodeBlock,
     visitClassDecl,
     visitVarDecl,

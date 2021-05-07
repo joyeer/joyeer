@@ -103,7 +103,7 @@ JrModuleClass* IRGen::emit(FileModuleDecl::Ptr decl) {
     
     context->entry(moduleType);
     context->entry(func);
-    context->visit(CompileStage::visitSourceBlock, [this,  decl]() {
+    context->visit(CompileStage::visitFileModule, [this,  decl]() {
         for(auto& statement:  decl->block->statements) {
             emit(statement);
         }

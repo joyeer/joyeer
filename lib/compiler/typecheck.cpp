@@ -27,7 +27,7 @@ Node::Ptr TypeChecker::visit(FileModuleDecl::Ptr node) {
     context->entry(moduleClass);
     context->entry(constructor);
     
-    context->visit(CompileStage::visitSourceBlock, [this, node](){
+    context->visit(CompileStage::visitFileModule, [this, node](){
         auto statements = std::vector<Node::Ptr>();
         for(auto statement: node->block->statements) {
             statements.push_back(visit(statement));
@@ -248,7 +248,7 @@ Node::Ptr TypeChecker::visit(VarDecl::Ptr node) {
     
     
     auto stage = context->curStage();
-    if(stage == CompileStage::visitSourceBlock || stage == CompileStage::visitClassDecl) {
+    if(stage == CompileStage::visitFileModule || stage == CompileStage::visitClassDecl) {
         auto objectType = (JrObjectType*)(context->curType());
         auto fieldType = objectType->virtualFields[node->symbol->addressOfField];
         assert(fieldType->type == nullptr);
@@ -333,7 +333,7 @@ Node::Ptr TypeChecker::visit(Pattern::Ptr node) {
 Node::Ptr TypeChecker::visit(IdentifierExpr::Ptr node) {
     auto name = node->getName();
     switch (context->curStage()) {
-        case CompileStage::visitSourceBlock:
+        case CompileStage::visitFileModule:
         case CompileStage::visitExpr:
         case CompileStage::visitCodeBlock:
         case CompileStage::visitMemberAccess: {
