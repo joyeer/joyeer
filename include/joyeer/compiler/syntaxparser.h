@@ -38,13 +38,13 @@ private:
     // Statements
     ////////////////////////////////////////////////////////////////////////////
 
-    Node::Ptr tryParseCodeBlock();
-    Node::Ptr tryParseStatement();
-    Node::Ptr tryParseLoopStatement();
-    Node::Ptr tryparseWhileStatement();
-    Node::Ptr tryParseBranchStatement();
-    Node::Ptr tryParseIfStatement();
-    Node::Ptr tryParseReturnStatement();
+    Node::Ptr tryParseStmtsBlock();
+    Node::Ptr tryParseStmt();
+    Node::Ptr tryParseLoopStmt();
+    Node::Ptr tryparseWhileStmt();
+    Node::Ptr tryParseBranchStmt();
+    Node::Ptr tryParseIfStmt();
+    Node::Ptr tryParseReturnStmt();
 
     ////////////////////////////////////////////////////////////////////////////
     // Type

@@ -11,7 +11,7 @@ sourcefile(sourcefile) {
 FileModuleDecl::Ptr SyntaxParser::parse() {
     std::vector<std::shared_ptr<Node>> decls;
     while(iterator != endIterator) {
-        std::shared_ptr<Node> decl = tryParseStatement();
+        std::shared_ptr<Node> decl = tryParseStmt();
         if(decl == nullptr) {
             Diagnostics::reportError("[Error]");
             return nullptr; 
@@ -81,7 +81,7 @@ Node::Ptr SyntaxParser::tryParseFunctionDecl() {
 
     auto returnType = tryParseTypeAnnotation();
     
-    auto codeBlock = tryParseCodeBlock();
+    auto codeBlock = tryParseStmtsBlock();
     if(codeBlock == nullptr) {
         Diagnostics::reportError("[Error] Function execpt code block");
         return nullptr;
@@ -100,7 +100,7 @@ Node::Ptr SyntaxParser::tryParseConstructorDecl() {
         return nullptr;
     }
 
-    auto codeBlock = tryParseCodeBlock();
+    auto codeBlock = tryParseStmtsBlock();
     if(codeBlock == nullptr) {
         Diagnostics::reportError("Error");
         return nullptr;
@@ -242,7 +242,7 @@ Node::Ptr SyntaxParser::tryParseClassDecl() {
     return std::make_shared<ClassDecl>(className, members);
 }
 
-Node::Ptr SyntaxParser::tryParseCodeBlock() {
+Node::Ptr SyntaxParser::tryParseStmtsBlock() {
     // Code block
     if (tryEat(TokenKind::punctuation, Punctuations::OPEN_CURLY_BRACKET) == nullptr) {
         return nullptr; 
@@ -251,7 +251,7 @@ Node::Ptr SyntaxParser::tryParseCodeBlock() {
     std::vector<std::shared_ptr<Node>> statements;
     
     while(true) {
-        std::shared_ptr<Node> statement = tryParseStatement();
+        std::shared_ptr<Node> statement = tryParseStmt();
         if(statement == nullptr) {
             break;
         }
@@ -266,7 +266,7 @@ Node::Ptr SyntaxParser::tryParseCodeBlock() {
     return std::shared_ptr<Node>(new StmtsBlock(statements));
 }
 
-Node::Ptr SyntaxParser::tryParseStatement() {
+Node::Ptr SyntaxParser::tryParseStmt() {
     auto expr = tryParseExpr();
     if(expr != nullptr) {
         return expr;
@@ -277,22 +277,22 @@ Node::Ptr SyntaxParser::tryParseStatement() {
         return decl;
     }
 
-    auto loopStatement = tryParseLoopStatement();
+    auto loopStatement = tryParseLoopStmt();
     if(loopStatement != nullptr) {
         return loopStatement;
     }
     
-    auto branchStatement = tryParseBranchStatement();
+    auto branchStatement = tryParseBranchStmt();
     if(branchStatement != nullptr) {
         return branchStatement;
     }
 
-    auto returnStatement = tryParseReturnStatement();
+    auto returnStatement = tryParseReturnStmt();
     if(returnStatement != nullptr) {
         return returnStatement;
     }
     
-    auto whileStatement = tryparseWhileStatement();
+    auto whileStatement = tryparseWhileStmt();
     if(whileStatement != nullptr) {
         return whileStatement;
     }
@@ -300,7 +300,7 @@ Node::Ptr SyntaxParser::tryParseStatement() {
     return nullptr;
 }
 
-Node::Ptr SyntaxParser::tryParseLoopStatement() {
+Node::Ptr SyntaxParser::tryParseLoopStmt() {
     if(tryEat(TokenKind::keyword, Keywords::FOR) == nullptr) {
         return nullptr;
     }
@@ -321,12 +321,12 @@ Node::Ptr SyntaxParser::tryParseLoopStatement() {
         Diagnostics::reportError("Error");
     }
 
-    auto codeBlock = tryParseCodeBlock();
+    auto codeBlock = tryParseStmtsBlock();
 
     return std::shared_ptr<Node>(std::make_shared<ForInStmt>(pattern, expr, codeBlock));
 }
 
-Node::Ptr SyntaxParser::tryparseWhileStatement() {
+Node::Ptr SyntaxParser::tryparseWhileStmt() {
     if(tryEat(TokenKind::keyword, Keywords::WHILE) == nullptr) {
         return nullptr;
     }
@@ -337,7 +337,7 @@ Node::Ptr SyntaxParser::tryparseWhileStatement() {
         return nullptr;
     }
     
-    auto block = tryParseCodeBlock();
+    auto block = tryParseStmtsBlock();
     if(block == nullptr) {
         Diagnostics::reportError("Error");
         return nullptr;
@@ -346,11 +346,11 @@ Node::Ptr SyntaxParser::tryparseWhileStatement() {
     return std::make_shared<WhileStmt>(expr, block);
 }
 
-Node::Ptr SyntaxParser::tryParseBranchStatement() {
-    return tryParseIfStatement();
+Node::Ptr SyntaxParser::tryParseBranchStmt() {
+    return tryParseIfStmt();
 }
 
-Node::Ptr SyntaxParser::tryParseIfStatement() {
+Node::Ptr SyntaxParser::tryParseIfStmt() {
     if(tryEat(TokenKind::keyword, Keywords::IF) == nullptr) {
         return nullptr;
     }
@@ -360,7 +360,7 @@ Node::Ptr SyntaxParser::tryParseIfStatement() {
         return nullptr; //TODO: Report an grammar error
     }
 
-    std::shared_ptr<Node> codeBlock = tryParseCodeBlock();
+    std::shared_ptr<Node> codeBlock = tryParseStmtsBlock();
     if(codeBlock == nullptr) {
         return nullptr; // TODO: Report a grammar error
     }
@@ -368,12 +368,12 @@ Node::Ptr SyntaxParser::tryParseIfStatement() {
     if(tryEat(TokenKind::keyword, Keywords::ELSE) == nullptr) {
         return std::shared_ptr<Node>(new IfStmt(condition, codeBlock, nullptr));
     } else {
-        std::shared_ptr<Node> elseIfStatement = tryParseIfStatement();
+        std::shared_ptr<Node> elseIfStatement = tryParseIfStmt();
         if(elseIfStatement != nullptr) {
             return std::shared_ptr<Node>(new IfStmt(condition, codeBlock, elseIfStatement));
         }
 
-        std::shared_ptr<Node> elseStatement = tryParseCodeBlock();
+        std::shared_ptr<Node> elseStatement = tryParseStmtsBlock();
         if(elseStatement == nullptr) {
             return nullptr; // TODO: report an error, miss an else code block
         }
@@ -382,7 +382,7 @@ Node::Ptr SyntaxParser::tryParseIfStatement() {
     }
 }
 
-Node::Ptr SyntaxParser::tryParseReturnStatement() {
+Node::Ptr SyntaxParser::tryParseReturnStmt() {
     if(tryEat(TokenKind::keyword, Keywords::RETURN) == nullptr) {
         return nullptr;
     }
