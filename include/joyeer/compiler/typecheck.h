@@ -31,20 +31,20 @@ protected:
     virtual Node::Ptr visit(BinaryExpr::Ptr decl);
     virtual Node::Ptr visit(OperatorExpr::Ptr decl);
     virtual Node::Ptr visit(ParenthesizedExpr::Ptr decl);
-    virtual Node::Ptr visit(IfStatement::Ptr decl);
-    virtual Node::Ptr visit(WhileStatement::Ptr decl);
-    virtual Node::Ptr visit(CodeBlock::Ptr decl);
+    virtual Node::Ptr visit(IfStmt::Ptr decl);
+    virtual Node::Ptr visit(WhileStmt::Ptr decl);
+    virtual Node::Ptr visit(StmtsBlock::Ptr decl);
     virtual Node::Ptr visit(FuncDecl::Ptr decl);
     virtual Node::Ptr visit(ParameterClause::Ptr decl);
     virtual Node::Ptr visit(Pattern::Ptr decl);
-    virtual Node::Ptr visit(ReturnStatement::Ptr decl);
+    virtual Node::Ptr visit(ReturnStmt::Ptr decl);
     virtual Node::Ptr visit(SelfExpr::Ptr decl);
     virtual Node::Ptr visit(ArrayLiteralExpr::Ptr decl);
     virtual Node::Ptr visit(DictLiteralExpr::Ptr decl);
     virtual Node::Ptr visit(MemberAccessExpr::Ptr decl);
     virtual Node::Ptr visit(SubscriptExpr::Ptr decl);
     virtual Node::Ptr visit(ArrayType::Ptr decl);
-    virtual Node::Ptr visit(FileImportStatement::Ptr decl);
+    virtual Node::Ptr visit(FileImportStmt::Ptr decl);
 
     JrType* typeOf(Node::Ptr node);
     JrType* typeOf(IdentifierExpr::Ptr node);
@@ -65,13 +65,13 @@ protected:
     
     // Get Codeblock's return type
     void verifyReturnStatement(FileModuleDecl::Ptr node);
-    void verifyReturnStatement(CodeBlock::Ptr node);
+    void verifyReturnStatement(StmtsBlock::Ptr node);
     void verifyReturnStatement(std::vector<Node::Ptr>& statements);
     JrType* returnTypeOf(Node::Ptr node);
-    JrType* returnTypeOf(IfStatement::Ptr node);
-    JrType* returnTypeOf(CodeBlock::Ptr node);
+    JrType* returnTypeOf(IfStmt::Ptr node);
+    JrType* returnTypeOf(StmtsBlock::Ptr node);
     JrType* returnTypeOf(FuncCallExpr::Ptr node);
-    JrType* returnTypeOf(WhileStatement::Ptr node);
+    JrType* returnTypeOf(WhileStmt::Ptr node);
     
     CompileContext::Ptr context;
 };

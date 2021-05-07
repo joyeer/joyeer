@@ -501,7 +501,7 @@ Node::Ptr Binder::visit(ParenthesizedExpr::Ptr decl) {
     return decl;
 }
 
-Node::Ptr Binder::visit(IfStatement::Ptr decl) {
+Node::Ptr Binder::visit(IfStmt::Ptr decl) {
     decl->condition = visit(decl->condition);
     decl->ifCodeBlock = visit(decl->ifCodeBlock);
     if(decl->elseCodeBlock != nullptr) {
@@ -510,13 +510,13 @@ Node::Ptr Binder::visit(IfStatement::Ptr decl) {
     return decl;
 }
 
-Node::Ptr Binder::visit(WhileStatement::Ptr decl) {
+Node::Ptr Binder::visit(WhileStmt::Ptr decl) {
     decl->expr = visit(decl->expr);
     decl->codeBlock = visit(decl->codeBlock);
     return decl;
 }
 
-Node::Ptr Binder::visit(CodeBlock::Ptr decl) {
+Node::Ptr Binder::visit(StmtsBlock::Ptr decl) {
     
     context->initializeSymTable();
     auto table = context->curSymTable();
@@ -557,7 +557,7 @@ Node::Ptr Binder::visit(Type::Ptr decl) {
     return decl;
 }
 
-Node::Ptr Binder::visit(ReturnStatement::Ptr decl) {
+Node::Ptr Binder::visit(ReturnStmt::Ptr decl) {
     if(decl->expr != nullptr) {
         decl->expr = visit(decl->expr);
     }
@@ -619,7 +619,7 @@ Node::Ptr Binder::visit(ArrayType::Ptr decl) {
     return decl;
 }
 
-Node::Ptr Binder::visit(FileImportStatement::Ptr decl) {
+Node::Ptr Binder::visit(FileImportStmt::Ptr decl) {
     if(context->curStage() != CompileStage::visitFileModule) {
         Diagnostics::reportError(Diagnostics::errorFileImportShouldAtTopOfSourceFile);
         return nullptr;
@@ -646,7 +646,7 @@ FileModuleDecl::Ptr  Binder::normalizeAndPrepareDefaultStaticConstructorForFileM
     }
     
     // prepare for FileModule initializer
-    auto defaultModuleInitializerCodeBlock = std::make_shared<CodeBlock>(statementsOfDefaultModuleInitilizer);
+    auto defaultModuleInitializerCodeBlock = std::make_shared<StmtsBlock>(statementsOfDefaultModuleInitilizer);
     auto defaultModuleParams = std::make_shared<ParameterClause>(std::vector<Pattern::Ptr>());
     auto defaultModuleInitializer = std::make_shared<ConstructorDecl>(defaultModuleParams, defaultModuleInitializerCodeBlock);
     filemodule->defaultInitializer = defaultModuleInitializer;

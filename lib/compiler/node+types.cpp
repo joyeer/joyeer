@@ -16,7 +16,7 @@ std::string ClassDecl::getName() {
     return name->rawValue;
 }
 
-FileModuleDecl::FileModuleDecl(FileModuleDescriptor::Ptr descriptor, CodeBlock::Ptr block):
+FileModuleDecl::FileModuleDecl(FileModuleDescriptor::Ptr descriptor, StmtsBlock::Ptr block):
 ClassDecl(nullptr, block->statements),
 block(block) {
     kind = SyntaxKind::filemodule;
@@ -28,12 +28,12 @@ std::string FileModuleDecl::getName() {
     return p.replace_extension().string();
 }
 
-std::vector<FileImportStatement::Ptr> FileModuleDecl::getFileImports() {
-    std::vector<FileImportStatement::Ptr> result;
+std::vector<FileImportStmt::Ptr> FileModuleDecl::getFileImports() {
+    std::vector<FileImportStmt::Ptr> result;
     for(std::vector<Node::Ptr>::const_iterator iterator = block->statements.begin(); iterator != block->statements.end(); iterator ++ ) {
         auto node = *iterator;
-        if(node->kind == SyntaxKind::fileimportStatement) {
-            result.push_back(std::static_pointer_cast<FileImportStatement>(node));
+        if(node->kind == SyntaxKind::fileimportStmt) {
+            result.push_back(std::static_pointer_cast<FileImportStmt>(node));
         }
     }
     return result;

@@ -32,11 +32,11 @@ void IRGen::emit(Node::Ptr node) {
         case SyntaxKind::classDecl:
             emit(std::static_pointer_cast<ClassDecl>(node));
             break;
-        case SyntaxKind::codeBlock:
-            emit(std::static_pointer_cast<CodeBlock>(node));
+        case SyntaxKind::stmtsBlock:
+            emit(std::static_pointer_cast<StmtsBlock>(node));
             break;
-        case SyntaxKind::ifStatement:
-            emit(std::static_pointer_cast<IfStatement>(node));
+        case SyntaxKind::ifStmt:
+            emit(std::static_pointer_cast<IfStmt>(node));
             break;
         case SyntaxKind::expr:
             emit(std::static_pointer_cast<Expr>(node));
@@ -74,17 +74,17 @@ void IRGen::emit(Node::Ptr node) {
         case SyntaxKind::operatorExpr:
             emit(std::static_pointer_cast<OperatorExpr>(node));
             break;
-        case SyntaxKind::returnStatement:
-            emit(std::static_pointer_cast<ReturnStatement>(node));
+        case SyntaxKind::returnStmt:
+            emit(std::static_pointer_cast<ReturnStmt>(node));
             break;
         case SyntaxKind::subscriptExpr:
             emit(std::static_pointer_cast<SubscriptExpr>(node));
             break;
-        case SyntaxKind::whileStatement:
-            emit(std::static_pointer_cast<WhileStatement>(node));
+        case SyntaxKind::whileStmt:
+            emit(std::static_pointer_cast<WhileStmt>(node));
             break;
-        case SyntaxKind::fileimportStatement:
-            emit(std::static_pointer_cast<FileImportStatement>(node));
+        case SyntaxKind::fileimportStmt:
+            emit(std::static_pointer_cast<FileImportStmt>(node));
             break;
         default:
             assert(false);
@@ -427,7 +427,7 @@ void IRGen::emit(ParenthesizedExpr::Ptr node) {
     emit(node->expr);
 }
 
-void IRGen::emit(IfStatement::Ptr node) {
+void IRGen::emit(IfStmt::Ptr node) {
     IRGen gen(context);
     gen.emit(node->ifCodeBlock);
     auto instructions = gen.writer.instructions;
@@ -455,7 +455,7 @@ void IRGen::emit(IfStatement::Ptr node) {
     
 }
 
-void IRGen::emit(WhileStatement::Ptr node) {
+void IRGen::emit(WhileStmt::Ptr node) {
     IRGen gen(context);
     gen.emit(node->codeBlock);
     
@@ -476,7 +476,7 @@ void IRGen::emit(WhileStatement::Ptr node) {
     
 }
 
-void IRGen::emit(CodeBlock::Ptr node) {
+void IRGen::emit(StmtsBlock::Ptr node) {
     context->visit(CompileStage::visitCodeBlock, [this, node]() {
         for(auto statement: node->statements) {
             emit(statement);
@@ -498,7 +498,7 @@ void IRGen::emit(FuncDecl::Ptr node) {
     context->leave(function);
 }
 
-void IRGen::emit(ReturnStatement::Ptr node) {
+void IRGen::emit(ReturnStmt::Ptr node) {
     Opcode op = OP_RETURN;
     if(node->expr != nullptr) {
         emit(node->expr);
@@ -608,6 +608,6 @@ void IRGen::emit(SubscriptExpr::Ptr node) {
     }
 }
 
-void IRGen::emit(FileImportStatement::Ptr node) {
+void IRGen::emit(FileImportStmt::Ptr node) {
     
 }

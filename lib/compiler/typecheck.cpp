@@ -89,7 +89,7 @@ Node::Ptr TypeChecker::visit(FuncDecl::Ptr node) {
     node->codeBlock = visit(node->codeBlock);
     
     // verify return statement
-    verifyReturnStatement(std::static_pointer_cast<CodeBlock>(node->codeBlock));
+    verifyReturnStatement(std::static_pointer_cast<StmtsBlock>(node->codeBlock));
     
     context->leave(function);
     context->leave(node->symtable);
@@ -139,7 +139,7 @@ Node::Ptr TypeChecker::visit(ConstructorDecl::Ptr node) {
         .addressOfVariable = static_cast<int>(function->localVars.size())
     });
     node->codeBlock = visit(node->codeBlock);
-    auto codeblock = std::static_pointer_cast<CodeBlock>(node->codeBlock);
+    auto codeblock = std::static_pointer_cast<StmtsBlock>(node->codeBlock);
     verifyReturnStatement(codeblock);
     
     context->leave(function);
@@ -336,7 +336,7 @@ Node::Ptr TypeChecker::visit(Type::Ptr node) {
     return node;
 }
 
-Node::Ptr TypeChecker::visit(CodeBlock::Ptr node) {
+Node::Ptr TypeChecker::visit(StmtsBlock::Ptr node) {
     assert(node->symtable != nullptr);
     context->entry(node->symtable);
     context->visit(CompileStage::visitCodeBlock, [this, node]() {
@@ -350,7 +350,7 @@ Node::Ptr TypeChecker::visit(CodeBlock::Ptr node) {
     return node;
 }
 
-Node::Ptr TypeChecker::visit(ReturnStatement::Ptr node) {
+Node::Ptr TypeChecker::visit(ReturnStmt::Ptr node) {
     node->expr = visit(node->expr);
     return node;
 }
@@ -384,7 +384,7 @@ Node::Ptr TypeChecker::visit(ParenthesizedExpr::Ptr node) {
     return node;
 }
 
-Node::Ptr TypeChecker::visit(IfStatement::Ptr node) {
+Node::Ptr TypeChecker::visit(IfStmt::Ptr node) {
     node->condition = visit(node->condition);
     
     context->visit(CompileStage::visitCodeBlock, [this, node](){
@@ -400,7 +400,7 @@ Node::Ptr TypeChecker::visit(IfStatement::Ptr node) {
     return node;
 }
 
-Node::Ptr TypeChecker::visit(WhileStatement::Ptr node) {
+Node::Ptr TypeChecker::visit(WhileStmt::Ptr node) {
     node->expr = visit(node->expr);
     
     context->visit(CompileStage::visitCodeBlock, [this, node]() {
@@ -503,7 +503,7 @@ Node::Ptr TypeChecker::visit(PrefixExpr::Ptr node) {
     return node;
 }
 
-Node::Ptr TypeChecker::visit(FileImportStatement::Ptr node) {
+Node::Ptr TypeChecker::visit(FileImportStmt::Ptr node) {
     return node;
 }
 
@@ -696,22 +696,22 @@ void TypeChecker::verifyReturnStatement(FileModuleDecl::Ptr node) {
     verifyReturnStatement(node->block->statements);
 }
 
-void TypeChecker::verifyReturnStatement(CodeBlock::Ptr node) {
+void TypeChecker::verifyReturnStatement(StmtsBlock::Ptr node) {
     verifyReturnStatement(node->statements);
 }
 
 void TypeChecker::verifyReturnStatement(std::vector<Node::Ptr>& statements) {
     if(statements.size() == 0) {
-        statements.push_back(std::make_shared<ReturnStatement>(nullptr));
+        statements.push_back(std::make_shared<ReturnStmt>(nullptr));
     }
     auto lastStatement = statements.back();
     auto returnType = returnTypeOf(lastStatement);
     if(returnType == nullptr) {
-        statements.push_back(std::make_shared<ReturnStatement>(nullptr));
+        statements.push_back(std::make_shared<ReturnStmt>(nullptr));
     }
 }
 
-JrType* TypeChecker::returnTypeOf(CodeBlock::Ptr node) {
+JrType* TypeChecker::returnTypeOf(StmtsBlock::Ptr node) {
     if(node->statements.size() == 0) {
         return nullptr;
     }
@@ -720,7 +720,7 @@ JrType* TypeChecker::returnTypeOf(CodeBlock::Ptr node) {
     return returnTypeOf(n);
 }
 
-JrType* TypeChecker::returnTypeOf(IfStatement::Ptr node) {
+JrType* TypeChecker::returnTypeOf(IfStmt::Ptr node) {
     JrType* ifBlock = returnTypeOf(node->ifCodeBlock);
     if(ifBlock == nullptr || node->elseCodeBlock == nullptr) {
         return ifBlock;
@@ -734,7 +734,7 @@ JrType* TypeChecker::returnTypeOf(IfStatement::Ptr node) {
     return ifBlock;
 }
 
-JrType* TypeChecker::returnTypeOf(WhileStatement::Ptr node) {
+JrType* TypeChecker::returnTypeOf(WhileStmt::Ptr node) {
     return returnTypeOf(node->codeBlock);
 }
 
@@ -746,22 +746,22 @@ JrType* TypeChecker::returnTypeOf(FuncCallExpr::Ptr node) {
 
 JrType* TypeChecker::returnTypeOf(Node::Ptr node) {
     switch (node->kind) {
-        case SyntaxKind::codeBlock:
-            return returnTypeOf(std::static_pointer_cast<CodeBlock>(node));
-        case SyntaxKind::returnStatement: {
-            auto returnStatement = std::static_pointer_cast<ReturnStatement>(node);
+        case SyntaxKind::stmtsBlock:
+            return returnTypeOf(std::static_pointer_cast<StmtsBlock>(node));
+        case SyntaxKind::returnStmt: {
+            auto returnStatement = std::static_pointer_cast<ReturnStmt>(node);
             if(returnStatement->expr == nullptr) {
                 return JrType::Void;
             } else {
                 return typeOf(returnStatement->expr);
             }
         }
-        case SyntaxKind::ifStatement:
-            return returnTypeOf(std::static_pointer_cast<IfStatement>(node));
+        case SyntaxKind::ifStmt:
+            return returnTypeOf(std::static_pointer_cast<IfStmt>(node));
         case SyntaxKind::funcCallExpr:
             return returnTypeOf(std::static_pointer_cast<FuncCallExpr>(node));
-        case SyntaxKind::whileStatement:
-            return returnTypeOf(std::static_pointer_cast<WhileStatement>(node));
+        case SyntaxKind::whileStmt:
+            return returnTypeOf(std::static_pointer_cast<WhileStmt>(node));
         case SyntaxKind::assignmentExpr:
         case SyntaxKind::identifierExpr:
         case SyntaxKind::arrayLiteralExpr:
@@ -769,7 +769,7 @@ JrType* TypeChecker::returnTypeOf(Node::Ptr node) {
         case SyntaxKind::memberAccessExpr:
         case SyntaxKind::memberFuncCallExpr:
         case SyntaxKind::funcDecl:
-        case SyntaxKind::fileimportStatement:
+        case SyntaxKind::fileimportStmt:
             return nullptr;
         default:
             assert(false);

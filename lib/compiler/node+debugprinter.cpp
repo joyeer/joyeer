@@ -105,7 +105,7 @@ void NodeDebugPrinter::print(Node::Ptr node) {
             decTab();
         }
             break;
-        case SyntaxKind::importStatement:
+        case SyntaxKind::importStmt:
             output << "+importStatement" ;
             break;
         case SyntaxKind::varDecl: {
@@ -167,8 +167,8 @@ void NodeDebugPrinter::print(Node::Ptr node) {
             decTab();
         }
             break;
-        case SyntaxKind::codeBlock: {
-            auto n = std::static_pointer_cast<CodeBlock>(node);
+        case SyntaxKind::stmtsBlock: {
+            auto n = std::static_pointer_cast<StmtsBlock>(node);
             output << "+codeBlock" ;
             incTab();
             print(n->symtable);
@@ -177,11 +177,11 @@ void NodeDebugPrinter::print(Node::Ptr node) {
             decTab();
         }
             break;
-        case SyntaxKind::forInStatement:
+        case SyntaxKind::forInStmt:
             output << "+forInStatement" ;
             break;
-        case SyntaxKind::ifStatement: {
-            auto n = std::static_pointer_cast<IfStatement>(node);
+        case SyntaxKind::ifStmt: {
+            auto n = std::static_pointer_cast<IfStmt>(node);
             output << "+ifStatement" ;
             incTab();
             print(n->symtable);
@@ -366,8 +366,8 @@ void NodeDebugPrinter::print(Node::Ptr node) {
             decTab();
         }
             break;
-        case SyntaxKind::returnStatement: {
-            auto n = std::static_pointer_cast<ReturnStatement>(node);
+        case SyntaxKind::returnStmt: {
+            auto n = std::static_pointer_cast<ReturnStmt>(node);
             output << "+returnStatement";
             incTab();
             print(n->symtable);
@@ -387,8 +387,8 @@ void NodeDebugPrinter::print(Node::Ptr node) {
             decTab();
         }
             break;
-        case SyntaxKind::whileStatement: {
-            auto n = std::static_pointer_cast<WhileStatement>(node);
+        case SyntaxKind::whileStmt: {
+            auto n = std::static_pointer_cast<WhileStmt>(node);
             output << "+whileStatement";
             incTab();
             print(n->expr);
@@ -396,8 +396,8 @@ void NodeDebugPrinter::print(Node::Ptr node) {
             decTab();
         }
             break;
-        case SyntaxKind::fileimportStatement: {
-            auto n = std::static_pointer_cast<FileImportStatement>(node);
+        case SyntaxKind::fileimportStmt: {
+            auto n = std::static_pointer_cast<FileImportStmt>(node);
             output << "+fileimport(\"" << n->stringLiteral->rawValue << "\")";
         }
             break;

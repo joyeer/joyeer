@@ -27,11 +27,11 @@ protected:
     void emit(Expr::Ptr node);
     void emit(OperatorExpr::Ptr node);
     void emit(ParenthesizedExpr::Ptr node);
-    void emit(IfStatement::Ptr node);
-    void emit(WhileStatement::Ptr node);
-    void emit(CodeBlock::Ptr node);
+    void emit(IfStmt::Ptr node);
+    void emit(WhileStmt::Ptr node);
+    void emit(StmtsBlock::Ptr node);
     void emit(FuncDecl::Ptr node);
-    void emit(ReturnStatement::Ptr node);
+    void emit(ReturnStmt::Ptr node);
     void emit(MemberAccessExpr::Ptr node);
     
     void emit(ClassDecl::Ptr node);
@@ -39,7 +39,7 @@ protected:
     void emit(ArrayLiteralExpr::Ptr node);
     void emit(DictLiteralExpr::Ptr node);
     void emit(SubscriptExpr::Ptr node);
-    void emit(FileImportStatement::Ptr node);
+    void emit(FileImportStmt::Ptr node);
     
 private:
     JrCodeWriter writer;

@@ -208,12 +208,12 @@ std::string DictType::getTypeName() {
     return "Map@Map";
 }
 
-FileImportStatement::FileImportStatement(Token::Ptr stringLiteral):
-Node(SyntaxKind::fileimportStatement),
+FileImportStmt::FileImportStmt(Token::Ptr stringLiteral):
+Node(SyntaxKind::fileimportStmt),
 stringLiteral(stringLiteral) {
 }
 
-const std::string FileImportStatement::getImportedFilename() {
+const std::string FileImportStmt::getImportedFilename() {
     return stringLiteral->rawValue;
 }
 
@@ -229,32 +229,32 @@ moduleClass(moduleClass),
 member(member) {
 }
 
-CodeBlock::CodeBlock(std::vector<std::shared_ptr<Node>> statements):
-Node(SyntaxKind::codeBlock),
+StmtsBlock::StmtsBlock(std::vector<std::shared_ptr<Node>> statements):
+Node(SyntaxKind::stmtsBlock),
 statements(statements) {
 }
 
-ForInStatement::ForInStatement(Node::Ptr pattern, Node::Ptr inExpr, Node::Ptr codeBlock):
-Node(SyntaxKind::forInStatement),
+ForInStmt::ForInStmt(Node::Ptr pattern, Node::Ptr inExpr, Node::Ptr codeBlock):
+Node(SyntaxKind::forInStmt),
 pattern(pattern),
 inExpr(inExpr),
 codeBlock(codeBlock) {
 }
 
-WhileStatement::WhileStatement(Node::Ptr expr, Node::Ptr codeBlock):
-Node(SyntaxKind::whileStatement),
+WhileStmt::WhileStmt(Node::Ptr expr, Node::Ptr codeBlock):
+Node(SyntaxKind::whileStmt),
 expr(expr),
 codeBlock(codeBlock) {
 }
 
-IfStatement::IfStatement(Node::Ptr condition, Node::Ptr ifCodeBlock, std::shared_ptr<Node> elseCodeBlock):
-Node(SyntaxKind::ifStatement),
+IfStmt::IfStmt(Node::Ptr condition, Node::Ptr ifCodeBlock, std::shared_ptr<Node> elseCodeBlock):
+Node(SyntaxKind::ifStmt),
 condition(condition),
 ifCodeBlock(ifCodeBlock),
 elseCodeBlock(elseCodeBlock) {
 }
 
-ReturnStatement::ReturnStatement(Node::Ptr expr):
-Node(SyntaxKind::returnStatement),
+ReturnStmt::ReturnStmt(Node::Ptr expr):
+Node(SyntaxKind::returnStmt),
 expr(expr) {
 }

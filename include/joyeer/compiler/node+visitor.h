@@ -24,20 +24,20 @@ protected:
     virtual Node::Ptr visit(BinaryExpr::Ptr decl) = 0;
     virtual Node::Ptr visit(OperatorExpr::Ptr decl) = 0;
     virtual Node::Ptr visit(ParenthesizedExpr::Ptr decl) = 0;
-    virtual Node::Ptr visit(IfStatement::Ptr decl) = 0;
-    virtual Node::Ptr visit(WhileStatement::Ptr decl) = 0;
-    virtual Node::Ptr visit(CodeBlock::Ptr decl) = 0;
+    virtual Node::Ptr visit(IfStmt::Ptr decl) = 0;
+    virtual Node::Ptr visit(WhileStmt::Ptr decl) = 0;
+    virtual Node::Ptr visit(StmtsBlock::Ptr decl) = 0;
     virtual Node::Ptr visit(FuncDecl::Ptr decl) = 0;
     virtual Node::Ptr visit(ParameterClause::Ptr decl) = 0;
     virtual Node::Ptr visit(Pattern::Ptr decl) = 0;
-    virtual Node::Ptr visit(ReturnStatement::Ptr decl) = 0;
+    virtual Node::Ptr visit(ReturnStmt::Ptr decl) = 0;
     virtual Node::Ptr visit(SelfExpr::Ptr decl) = 0;
     virtual Node::Ptr visit(ArrayLiteralExpr::Ptr decl) = 0;
     virtual Node::Ptr visit(DictLiteralExpr::Ptr decl) = 0;
     virtual Node::Ptr visit(MemberAccessExpr::Ptr decl) = 0;
     virtual Node::Ptr visit(SubscriptExpr::Ptr decl) = 0;
     virtual Node::Ptr visit(ArrayType::Ptr decl) = 0;
-    virtual Node::Ptr visit(FileImportStatement::Ptr decl) = 0;
+    virtual Node::Ptr visit(FileImportStmt::Ptr decl) = 0;
 };
 
 #endif

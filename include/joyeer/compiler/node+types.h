@@ -68,15 +68,15 @@ public:
     using Ptr = std::shared_ptr<FileModuleDecl>;
 
 public:
-    FileModuleDecl(FileModuleDescriptor::Ptr descriptor, CodeBlock::Ptr block);
+    FileModuleDecl(FileModuleDescriptor::Ptr descriptor, StmtsBlock::Ptr block);
     
-    CodeBlock::Ptr block;
+    StmtsBlock::Ptr block;
     // the default initializer function of the filemodule
     ConstructorDecl::Ptr defaultInitializer;
     
     std::string filename;
 
-    std::vector<FileImportStatement::Ptr> getFileImports();
+    std::vector<FileImportStmt::Ptr> getFileImports();
     
     virtual std::string getName();
     // get the top level declarations

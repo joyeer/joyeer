@@ -20,12 +20,12 @@ Node::Ptr NodeVisitor::visit(Node::Ptr node) {
             return visit(std::static_pointer_cast<ClassDecl>(node));
         case SyntaxKind::parameterClause:
             return visit(std::static_pointer_cast<ParameterClause>(node));
-        case SyntaxKind::codeBlock:
-            return visit(std::static_pointer_cast<CodeBlock>(node));
-        case SyntaxKind::ifStatement:
-            return visit(std::static_pointer_cast<IfStatement>(node));
-        case SyntaxKind::whileStatement:
-            return visit(std::static_pointer_cast<WhileStatement>(node));
+        case SyntaxKind::stmtsBlock:
+            return visit(std::static_pointer_cast<StmtsBlock>(node));
+        case SyntaxKind::ifStmt:
+            return visit(std::static_pointer_cast<IfStmt>(node));
+        case SyntaxKind::whileStmt:
+            return visit(std::static_pointer_cast<WhileStmt>(node));
         case SyntaxKind::expr:
             return visit(std::static_pointer_cast<Expr>(node));
         case SyntaxKind::selfExpr:
@@ -56,14 +56,14 @@ Node::Ptr NodeVisitor::visit(Node::Ptr node) {
             return visit(std::static_pointer_cast<BinaryExpr>(node));
         case SyntaxKind::operatorExpr:
             return visit(std::static_pointer_cast<OperatorExpr>(node));
-        case SyntaxKind::returnStatement:
-            return visit(std::static_pointer_cast<ReturnStatement>(node));
+        case SyntaxKind::returnStmt:
+            return visit(std::static_pointer_cast<ReturnStmt>(node));
         case SyntaxKind::subscriptExpr:
             return visit(std::static_pointer_cast<SubscriptExpr>(node));
         case SyntaxKind::arrayType:
             return visit(std::static_pointer_cast<ArrayType>(node));
-        case SyntaxKind::fileimportStatement:
-            return visit(std::static_pointer_cast<FileImportStatement>(node));
+        case SyntaxKind::fileimportStmt:
+            return visit(std::static_pointer_cast<FileImportStmt>(node));
         case SyntaxKind::moduleMemberAccessExpr:
             return visit(std::static_pointer_cast<ModuleMemberAccessExpr>(node));
         case SyntaxKind::moduleFuncCallExpr:

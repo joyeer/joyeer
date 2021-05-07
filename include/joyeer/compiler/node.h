@@ -21,13 +21,13 @@ enum class SyntaxKind {
     
     parameterClause,
 
-    codeBlock,
-    forInStatement,
-    ifStatement,
-    whileStatement,
-    returnStatement,
-    importStatement,
-    fileimportStatement,
+    stmtsBlock,
+    forInStmt,
+    ifStmt,
+    whileStmt,
+    returnStmt,
+    importStmt,
+    fileimportStmt,
 
     expr,
     assignmentExpr,
@@ -300,13 +300,13 @@ struct SubscriptExpr: Node {
     SubscriptExpr(Node::Ptr identifier, Node::Ptr indexExpr);
 };
 
-struct FileImportStatement: Node {
-    typedef std::shared_ptr<FileImportStatement> Ptr;
+struct FileImportStmt: Node {
+    typedef std::shared_ptr<FileImportStmt> Ptr;
     
     Token::Ptr stringLiteral;
     JrModuleClass* moduleClass;
     
-    FileImportStatement(Token::Ptr stringLiteral);
+    FileImportStmt(Token::Ptr stringLiteral);
     
     const std::string getImportedFilename();
     
@@ -330,51 +330,52 @@ struct ModuleFuncCallExpr: public Node {
     ModuleFuncCallExpr(JrModuleClass* moduleClass, Node::Ptr member);
 };
 
-// StatBlock represent an { ... } code block
-struct CodeBlock: Node {
-    typedef std::shared_ptr<CodeBlock> Ptr;
+// StmtsBlock represent an { ... } code block
+struct StmtsBlock: Node {
+    typedef std::shared_ptr<StmtsBlock> Ptr;
     
     std::vector<Node::Ptr> statements;
 
-    CodeBlock(std::vector<Node::Ptr> statements);
+    StmtsBlock(std::vector<Node::Ptr> statements);
 
 };
 
-struct ForInStatement: Node {
-    typedef std::shared_ptr<ForInStatement> Ptr;
+// For In statement
+struct ForInStmt: Node {
+    typedef std::shared_ptr<ForInStmt> Ptr;
     
     Node::Ptr pattern;
     Node::Ptr inExpr;
     Node::Ptr codeBlock;
 
-    ForInStatement(Node::Ptr pattern, Node::Ptr inExpr, Node::Ptr codeBlock);
+    ForInStmt(Node::Ptr pattern, Node::Ptr inExpr, Node::Ptr codeBlock);
 };
 
-struct WhileStatement: Node {
-    typedef std::shared_ptr<WhileStatement> Ptr;
+struct WhileStmt: Node {
+    typedef std::shared_ptr<WhileStmt> Ptr;
     
     Node::Ptr expr;
     Node::Ptr codeBlock;
     
-    WhileStatement(Node::Ptr expr, Node::Ptr codeBlock);
+    WhileStmt(Node::Ptr expr, Node::Ptr codeBlock);
 };
 
-struct IfStatement: Node {
-    typedef std::shared_ptr<IfStatement> Ptr;
+struct IfStmt: Node {
+    typedef std::shared_ptr<IfStmt> Ptr;
     
     Node::Ptr condition;
     Node::Ptr ifCodeBlock;
     Node::Ptr elseCodeBlock;
 
-    IfStatement(Node::Ptr condition, Node::Ptr ifCodeBlock, Node::Ptr elseCodeBlock);
+    IfStmt(Node::Ptr condition, Node::Ptr ifCodeBlock, Node::Ptr elseCodeBlock);
 };
 
-struct ReturnStatement: Node {
-    typedef std::shared_ptr<ReturnStatement> Ptr;
+struct ReturnStmt: Node {
+    typedef std::shared_ptr<ReturnStmt> Ptr;
     
     Node::Ptr expr;
     
-    ReturnStatement(Node::Ptr expr);
+    ReturnStmt(Node::Ptr expr);
 };
 
 
