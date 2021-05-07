@@ -12,9 +12,9 @@ std::string ClassDecl::getName() {
     return name->rawValue;
 }
 
-FileModuleDecl::FileModuleDecl(FileModuleDescriptor::Ptr descriptor, std::vector<std::shared_ptr<Node>> statements):
+FileModuleDecl::FileModuleDecl(FileModuleDescriptor::Ptr descriptor, CodeBlock::Ptr block):
 DeclNode(SyntaxKind::sourceBlock),
-statements(statements) {
+block(block) {
     this->descriptor = descriptor;
 }
 
@@ -25,7 +25,7 @@ std::string FileModuleDecl::getName() {
 
 std::vector<FileImportStatement::Ptr> FileModuleDecl::getFileImports() {
     std::vector<FileImportStatement::Ptr> result;
-    for(std::vector<Node::Ptr>::const_iterator iterator = statements.begin(); iterator != statements.end(); iterator ++ ) {
+    for(std::vector<Node::Ptr>::const_iterator iterator = block->statements.begin(); iterator != block->statements.end(); iterator ++ ) {
         auto node = *iterator;
         if(node->kind == SyntaxKind::fileimportStatement) {
             result.push_back(std::static_pointer_cast<FileImportStatement>(node));

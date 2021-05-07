@@ -341,6 +341,7 @@ struct ModuleFuncCallExpr: public Node {
     ModuleFuncCallExpr(JrModuleClass* moduleClass, Node::Ptr member);
 };
 
+// StatBlock represent an { ... } code block
 struct CodeBlock: Node {
     typedef std::shared_ptr<CodeBlock> Ptr;
     

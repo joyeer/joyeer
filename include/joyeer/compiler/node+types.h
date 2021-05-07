@@ -44,9 +44,9 @@ public:
     using Ptr = std::shared_ptr<FileModuleDecl>;
 
 public:
-    FileModuleDecl(FileModuleDescriptor::Ptr descriptor, std::vector<Node::Ptr> statements);
+    FileModuleDecl(FileModuleDescriptor::Ptr descriptor, CodeBlock::Ptr block);
     
-    std::vector<Node::Ptr> statements;
+    CodeBlock::Ptr block;
     // the default initializer function of the filemodule
     ConstructorDecl::Ptr defaultInitializer;
     

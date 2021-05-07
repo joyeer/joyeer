@@ -29,10 +29,10 @@ Node::Ptr TypeChecker::visit(FileModuleDecl::Ptr node) {
     
     context->visit(CompileStage::visitSourceBlock, [this, node](){
         auto statements = std::vector<Node::Ptr>();
-        for(auto statement: node->statements) {
+        for(auto statement: node->block->statements) {
             statements.push_back(visit(statement));
         }
-        node->statements = statements;
+        node->block->statements = statements;
     });
     
     // For Module's default consturctor
@@ -724,7 +724,7 @@ JrType* TypeChecker::typeOf(PrefixExpr::Ptr node) {
 }
 
 void TypeChecker::verifyReturnStatement(FileModuleDecl::Ptr node) {
-    verifyReturnStatement(node->statements);
+    verifyReturnStatement(node->block->statements);
 }
 
 void TypeChecker::verifyReturnStatement(CodeBlock::Ptr node) {

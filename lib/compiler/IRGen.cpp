@@ -94,17 +94,17 @@ void IRGen::emit(Node::Ptr node) {
     }
 }
 
-JrModuleClass* IRGen::emit(FileModuleDecl::Ptr block) {
+JrModuleClass* IRGen::emit(FileModuleDecl::Ptr decl) {
     
-    assert(block->symbol->flag == moduleSymbol);
-    auto moduleType = (JrModuleClass*)Global::types[block->symbol->addressOfType];
+    assert( decl->symbol->flag == moduleSymbol);
+    auto moduleType = (JrModuleClass*)Global::types[ decl->symbol->addressOfType];
     assert(moduleType->constructors.size() == 1);
     auto func = Global::functions[moduleType->constructors.back()];
     
     context->entry(moduleType);
     context->entry(func);
-    context->visit(CompileStage::visitSourceBlock, [this, block]() {
-        for(auto& statement: block->statements) {
+    context->visit(CompileStage::visitSourceBlock, [this,  decl]() {
+        for(auto& statement:  decl->block->statements) {
             emit(statement);
         }
     });

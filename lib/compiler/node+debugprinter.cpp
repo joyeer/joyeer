@@ -70,7 +70,7 @@ void NodeDebugPrinter::print(Node::Ptr node) {
             print(n->symtable);
             print(n->symbol);
             print(n->defaultInitializer);
-            for(auto statement: n->statements) {
+            for(auto statement: n->block->statements) {
                 print(statement);
             }
             decTab();

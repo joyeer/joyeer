@@ -51,10 +51,10 @@ Node::Ptr Binder::visit(FileModuleDecl::Ptr sourceBlock) {
     context->entry(moduleClass);
     context->visit(CompileStage::visitSourceBlock, sourceBlock->descriptor, [sourceBlock, this]() {
         auto nodes = std::vector<Node::Ptr>();
-        for(auto& statement : sourceBlock->statements) {
+        for(auto& statement : sourceBlock->block->statements) {
             nodes.push_back(visit(statement));
         }
-        sourceBlock->statements = nodes;
+        sourceBlock->block->statements = nodes;
     });
     context->leave(moduleClass);
     context->finalizeSymTable();
@@ -664,7 +664,7 @@ FileModuleDecl::Ptr  Binder::normalizeAndPrepareDefaultStaticConstructorForFileM
     
     auto declarations = std::vector<Node::Ptr>();
     auto statementsOfDefaultModuleInitilizer = std::vector<Node::Ptr>();
-    for(auto statement: filemodule->statements) {
+    for(auto statement: filemodule->block->statements) {
         if(statement->isDeclNode()) {
             declarations.push_back(statement);
         } else {
@@ -677,7 +677,7 @@ FileModuleDecl::Ptr  Binder::normalizeAndPrepareDefaultStaticConstructorForFileM
     auto defaultModuleParams = std::make_shared<ParameterClause>(std::vector<Pattern::Ptr>());
     auto defaultModuleInitializer = std::make_shared<ConstructorDecl>(defaultModuleParams, defaultModuleInitializerCodeBlock);
     filemodule->defaultInitializer = defaultModuleInitializer;
-    filemodule->statements = declarations;
+    filemodule->block->statements = declarations;
 
     // preapre for filemodule initializer's descriptor
     auto filemoduleInitializerDescriptor = std::make_shared<FileModuleInitializerDescriptor>(std::static_pointer_cast<FileModuleDescriptor>(filemodule->descriptor));
