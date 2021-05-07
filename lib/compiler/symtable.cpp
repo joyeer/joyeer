@@ -14,7 +14,7 @@ std::string debugStringOfSymbolFlag(SymbolFlag flag) {
             return "constructor";
         case typeSymbol:
             return "type";
-        case moduleSymbol:
+        case fileModuleSymbol:
             return "module";
     }
 }

@@ -16,7 +16,7 @@ Node::Ptr TypeChecker::visit(Node::Ptr node) {
 
 Node::Ptr TypeChecker::visit(FileModuleDecl::Ptr node) {
     
-    assert(node->symbol->flag == moduleSymbol);
+    assert(node->symbol->flag == fileModuleSymbol);
     auto moduleClass = (JrModuleClass*)(Global::types[node->symbol->addressOfType]);
     assert(moduleClass->constructors.size() == 1);
     

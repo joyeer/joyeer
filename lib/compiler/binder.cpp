@@ -41,7 +41,7 @@ Node::Ptr Binder::visit(FileModuleDecl::Ptr filemodule) {
     
     auto symbol = Symbol::Ptr(new Symbol {
         .name = moduleClass->name,
-        .flag = moduleSymbol,
+        .flag = fileModuleSymbol,
         .addressOfType = moduleClass->addressOfType
     });
     moduleClass->constructors.push_back(function->addressOfFunc);
@@ -662,11 +662,11 @@ Node::Ptr Binder::visit(FileImportStatement::Ptr decl) {
 
 FileModuleDecl::Ptr  Binder::normalizeAndPrepareDefaultStaticConstructorForFileModule(FileModuleDecl::Ptr filemodule) {
     
-    auto declarations = std::vector<Node::Ptr>();
+    auto declarations = std::vector<DeclNode::Ptr>();
     auto statementsOfDefaultModuleInitilizer = std::vector<Node::Ptr>();
     for(auto statement: filemodule->block->statements) {
         if(statement->isDeclNode()) {
-            declarations.push_back(statement);
+            declarations.push_back(std::static_pointer_cast<DeclNode>(statement));
         } else {
             statementsOfDefaultModuleInitilizer.push_back(statement);
         }
@@ -677,8 +677,10 @@ FileModuleDecl::Ptr  Binder::normalizeAndPrepareDefaultStaticConstructorForFileM
     auto defaultModuleParams = std::make_shared<ParameterClause>(std::vector<Pattern::Ptr>());
     auto defaultModuleInitializer = std::make_shared<ConstructorDecl>(defaultModuleParams, defaultModuleInitializerCodeBlock);
     filemodule->defaultInitializer = defaultModuleInitializer;
-    filemodule->block->statements = declarations;
-
+    
+    // clear the code block
+    filemodule->block = nullptr;
+    filemodule->staticFields = declarations;
     // preapre for filemodule initializer's descriptor
     auto filemoduleInitializerDescriptor = std::make_shared<FileModuleInitializerDescriptor>(std::static_pointer_cast<FileModuleDescriptor>(filemodule->descriptor));
     defaultModuleInitializer->descriptor = filemoduleInitializerDescriptor;

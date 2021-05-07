@@ -96,7 +96,7 @@ void IRGen::emit(Node::Ptr node) {
 
 JrModuleClass* IRGen::emit(FileModuleDecl::Ptr decl) {
     
-    assert( decl->symbol->flag == moduleSymbol);
+    assert( decl->symbol->flag == fileModuleSymbol);
     auto moduleType = (JrModuleClass*)Global::types[ decl->symbol->addressOfType];
     assert(moduleType->constructors.size() == 1);
     auto func = Global::functions[moduleType->constructors.back()];
