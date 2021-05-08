@@ -10,6 +10,7 @@ staticFields(),
 staticMethods(),
 instanceMethods(),
 instanceFields() {
+    symtable = std::make_shared<SymbolTable>();
 }
 
 std::string ClassDecl::getName() {
@@ -46,6 +47,7 @@ identifier(identifier),
 parameterClause(parameterClause),
 returnType(returnType),
 codeBlock(codeBlock) {
+    symtable = std::make_shared<SymbolTable>();
 }
 
 std::string FuncDecl::getTypeName() {

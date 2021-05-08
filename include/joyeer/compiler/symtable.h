@@ -31,6 +31,9 @@ public:
     
     std::string name;
     
+    // address of type descriptor
+    int addressOfDescriptor;
+    
     union {
         // index address of type in Global::types
         int addressOfType = -1;

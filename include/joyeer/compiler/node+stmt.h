@@ -17,12 +17,15 @@ struct FileImportStmt: Node {
 
 // StmtsBlock represent an { ... } code block
 struct StmtsBlock: Node {
-    typedef std::shared_ptr<StmtsBlock> Ptr;
+    using Ptr = std::shared_ptr<StmtsBlock>;
     
     std::vector<Node::Ptr> statements;
 
-    StmtsBlock(std::vector<Node::Ptr> statements);
-
+    StmtsBlock(std::vector<Node::Ptr> statements):
+        Node(SyntaxKind::stmtsBlock),
+        statements(statements) {
+            symtable = std::make_shared<SymbolTable>();
+    }
 };
 
 // For In statement

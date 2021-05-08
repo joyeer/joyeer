@@ -10,11 +10,6 @@ const std::string FileImportStmt::getImportedFilename() {
     return stringLiteral->rawValue;
 }
 
-StmtsBlock::StmtsBlock(std::vector<std::shared_ptr<Node>> statements):
-Node(SyntaxKind::stmtsBlock),
-statements(statements) {
-}
-
 ForInStmt::ForInStmt(Node::Ptr pattern, Node::Ptr inExpr, Node::Ptr codeBlock):
 Node(SyntaxKind::forInStmt),
 pattern(pattern),
