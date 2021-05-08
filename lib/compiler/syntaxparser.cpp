@@ -44,7 +44,7 @@ Node::Ptr SyntaxParser::tryParseDecl() {
         return classDecl;
     }
 
-    auto funcDecl = tryParseFunctionDecl();
+    auto funcDecl = tryParseFuncDecl();
     if(funcDecl != nullptr) {
         return funcDecl;
     }
@@ -62,7 +62,7 @@ Node::Ptr SyntaxParser::tryParseDecl() {
     return nullptr;
 }
 
-Node::Ptr SyntaxParser::tryParseFunctionDecl() {
+Node::Ptr SyntaxParser::tryParseFuncDecl() {
     if(tryEat(TokenKind::keyword, Keywords::FUNC) == nullptr) {
         return nullptr;
     }

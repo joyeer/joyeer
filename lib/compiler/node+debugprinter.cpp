@@ -1,5 +1,7 @@
 #include "joyeer/compiler/node+debugprinter.h"
 #include "joyeer/compiler/node+types.h"
+#include "joyeer/compiler/node+stmt.h"
+#include "joyeer/compiler/node+expr.h"
 #include <fstream>
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

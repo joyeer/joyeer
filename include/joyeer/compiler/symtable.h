@@ -15,7 +15,7 @@ enum SymbolFlag {
     
     // this is a type symbol
     typeSymbol =            5,
-    fileModuleSymbol =          6
+    fileModuleSymbol =      6
 };
 
 std::string debugStringOfSymbolFlag(SymbolFlag flag);

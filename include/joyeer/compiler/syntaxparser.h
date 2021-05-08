@@ -3,6 +3,7 @@
 
 #include "joyeer/compiler/node+types.h"
 #include "joyeer/compiler/sourcefile.h"
+
 class SyntaxParser
 {
 public:
@@ -18,7 +19,7 @@ private:
 
     Node::Ptr tryParseClassDecl();
 
-    Node::Ptr tryParseFunctionDecl();
+    Node::Ptr tryParseFuncDecl();
     
     Node::Ptr tryParseConstructorDecl();
 
