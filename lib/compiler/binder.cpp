@@ -41,7 +41,7 @@ Node::Ptr Binder::visit(FileModuleDecl::Ptr filemodule) {
     
     auto symbol = Symbol::Ptr(new Symbol {
         .name = moduleClass->name,
-        .flag = fileModuleSymbol,
+        .flag = SymbolFlag::fileModuleSymbol,
         .addressOfType = moduleClass->addressOfType
     });
     moduleClass->constructors.push_back(function->addressOfFunc);
@@ -78,7 +78,7 @@ Node::Ptr Binder::visit(FuncDecl::Ptr decl) {
     
     auto symbol = std::shared_ptr<Symbol>(new Symbol {
         .name = function->name,
-        .flag = funcSymbol,
+        .flag = SymbolFlag::funcSymbol,
         .addressOfFunc = function->addressOfFunc
     });
     symtable->insert(symbol);
@@ -138,7 +138,7 @@ Node::Ptr Binder::visit(ConstructorDecl::Ptr decl) {
     Global::registerFunction(function, type);
     auto symbol = std::shared_ptr<Symbol>(new Symbol {
         .name = function->name,
-        .flag = constructorSymbol,
+        .flag = SymbolFlag::constructorSymbol,
         .addressOfFunc = function->addressOfFunc
     });
     symtable->insert(symbol);
@@ -174,7 +174,7 @@ Node::Ptr Binder::visit(ClassDecl::Ptr decl) {
     }
     
     auto symbol = Symbol::Ptr(new Symbol {
-        .flag = typeSymbol,
+        .flag = SymbolFlag::typeSymbol,
         .name = name
     });
     symtable->insert(symbol);
@@ -218,7 +218,7 @@ Node::Ptr Binder::visit(ClassDecl::Ptr decl) {
         
         auto symbol = Symbol::Ptr(new Symbol{
             .name = defaultConstructor->name,
-            .flag = constructorSymbol,
+            .flag = SymbolFlag::constructorSymbol,
             .addressOfFunc = defaultConstructor->addressOfFunc
         });
         symtable->insert(symbol);
@@ -245,7 +245,7 @@ Node::Ptr Binder::visit(VarDecl::Ptr decl) {
     
     // double check the domplciate
     auto stage = context->curStage();
-    auto symbolFlag = (stage == CompileStage::visitClassDecl || stage == CompileStage::visitFileModule) ? fieldSymbol : varSymbol;
+    auto symbolFlag = (stage == CompileStage::visitClassDecl || stage == CompileStage::visitFileModule) ? SymbolFlag::fieldSymbol : SymbolFlag::varSymbol;
     
     auto symbol = std::shared_ptr<Symbol>(new Symbol{
         .name = name,

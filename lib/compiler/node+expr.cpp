@@ -120,7 +120,7 @@ std::string IdentifierExpr::getName() {
 }
 
 std::string IdentifierExpr::getTypeName() {
-    if(symbol != nullptr && (symbol->flag == varSymbol || symbol->flag == fieldSymbol)) {
+    if(symbol != nullptr && (symbol->flag == SymbolFlag::varSymbol || symbol->flag == SymbolFlag::fieldSymbol)) {
         auto type = Global::types[symbol->addressOfType];
         assert(type != nullptr);
         return type->name;

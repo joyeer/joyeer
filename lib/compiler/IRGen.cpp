@@ -93,7 +93,7 @@ void IRGen::emit(Node::Ptr node) {
 
 JrModuleClass* IRGen::emit(FileModuleDecl::Ptr decl) {
     
-    assert( decl->symbol->flag == fileModuleSymbol);
+    assert( decl->symbol->flag == SymbolFlag::fileModuleSymbol);
     auto moduleType = (JrModuleClass*)Global::types[ decl->symbol->addressOfType];
     assert(moduleType->constructors.size() == 1);
     auto func = Global::functions[moduleType->constructors.back()];
@@ -197,13 +197,13 @@ void IRGen::emit(VarDecl::Ptr node) {
     
     auto function = context->curFunction();
     switch (node->symbol->flag) {
-        case varSymbol:
+        case SymbolFlag::varSymbol:
             writer.write({
                 .opcode = OP_ISTORE,
                 .value = node->symbol->addressOfVariable
             });
             break;
-        case fieldSymbol:
+        case SymbolFlag::fieldSymbol:
             writer.write({
                 .opcode = OP_OLOAD,
                 .value = (int32_t)(function->paramTypes.size() - 1)      // last parameter is the self object
@@ -239,7 +239,7 @@ void IRGen::emit(IdentifierExpr::Ptr node) {
         return;
     }
     
-    if(symbol->flag  == varSymbol) {
+    if(symbol->flag  == SymbolFlag::varSymbol) {
         auto type = Global::types[symbol->addressOfType];
         
         if(type == JrPrimaryType::Int) {
@@ -261,7 +261,7 @@ void IRGen::emit(IdentifierExpr::Ptr node) {
         }
         
         return;
-    } else if(symbol->flag == fieldSymbol) {
+    } else if(symbol->flag == SymbolFlag::fieldSymbol) {
         
         auto function = context->curFunction();
         writer.write({
@@ -286,7 +286,7 @@ void IRGen::emit(AssignmentExpr::Ptr node) {
     if(node->left->kind == SyntaxKind::identifierExpr) {
         emit(node->expr);
         auto identifierExpr = std::static_pointer_cast<IdentifierExpr>(node->left);
-        if(identifierExpr->symbol->flag == fieldSymbol) {
+        if(identifierExpr->symbol->flag == SymbolFlag::fieldSymbol) {
             // If the identifier is a field
             auto function = context->curFunction();
             writer.write({
@@ -485,7 +485,7 @@ void IRGen::emit(StmtsBlock::Ptr node) {
 }
 
 void IRGen::emit(FuncDecl::Ptr node) {
-    assert(node->symbol->flag == funcSymbol);
+    assert(node->symbol->flag == SymbolFlag::funcSymbol);
     auto function = Global::functions[node->symbol->addressOfFunc];
     
     context->entry(function);
@@ -557,7 +557,7 @@ void IRGen::emit(ClassDecl::Ptr node) {
 
 void IRGen::emit(ConstructorDecl::Ptr node) {
     
-    assert(node->symbol->flag == constructorSymbol);
+    assert(node->symbol->flag == SymbolFlag::constructorSymbol);
     auto function = Global::functions[node->symbol->addressOfFunc];
     
     context->entry(function);

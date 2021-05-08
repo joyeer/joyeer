@@ -4,17 +4,17 @@
 
 std::string debugStringOfSymbolFlag(SymbolFlag flag) {
     switch (flag) {
-        case varSymbol:
+        case SymbolFlag::varSymbol:
             return "varSymbol";
-        case funcSymbol:
+        case SymbolFlag::funcSymbol:
             return "funcSymbol";
-        case fieldSymbol:
+        case SymbolFlag::fieldSymbol:
             return "fieldSymbol";
-        case constructorSymbol:
+        case SymbolFlag::constructorSymbol:
             return "constructor";
-        case typeSymbol:
+        case SymbolFlag::typeSymbol:
             return "type";
-        case fileModuleSymbol:
+        case SymbolFlag::fileModuleSymbol:
             return "module";
     }
 }

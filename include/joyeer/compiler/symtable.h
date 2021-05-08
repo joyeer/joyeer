@@ -6,7 +6,7 @@
 #include <stack>
 #include <vector>
 
-enum SymbolFlag {
+enum class SymbolFlag {
     
     varSymbol =             1,
     funcSymbol =            2,

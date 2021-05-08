@@ -16,7 +16,7 @@ Node::Ptr TypeChecker::visit(Node::Ptr node) {
 
 Node::Ptr TypeChecker::visit(FileModuleDecl::Ptr node) {
     
-    assert(node->symbol->flag == fileModuleSymbol);
+    assert(node->symbol->flag == SymbolFlag::fileModuleSymbol);
     auto moduleClass = (JrModuleClass*)(Global::types[node->symbol->addressOfType]);
     assert(moduleClass->constructors.size() == 1);
     
@@ -70,7 +70,7 @@ Node::Ptr TypeChecker::visit(FuncDecl::Ptr node) {
     for(auto parameter: parameterClause->parameters) {
         auto symbol = parameter->type->symbol;
         
-        assert((symbol->flag & typeSymbol) == typeSymbol);
+        assert(symbol->flag == SymbolFlag::typeSymbol);
         auto type = Global::types[symbol->addressOfType];
         function->paramTypes.push_back(type);
         
@@ -114,7 +114,7 @@ Node::Ptr TypeChecker::visit(ConstructorDecl::Ptr node) {
     for(auto parameter: parameterClause->parameters) {
         auto symbol = parameter->type->symbol;
         
-        assert((symbol->flag & typeSymbol) == typeSymbol);
+        assert(symbol->flag == SymbolFlag::typeSymbol);
         auto type = Global::types[symbol->addressOfType];
         function->paramTypes.push_back(type);
         
@@ -159,7 +159,7 @@ Node::Ptr TypeChecker::visit(FuncCallExpr::Ptr node) {
             auto item = dictLiteral->items[0];
             auto key = std::get<0>(item);
             auto value = std::get<1>(item);
-            if(key->symbol->flag == typeSymbol && key->symbol->flag == typeSymbol) {
+            if(key->symbol->flag == SymbolFlag::typeSymbol && key->symbol->flag == SymbolFlag::typeSymbol) {
                 auto dictType = std::make_shared<DictType>(key, value);
                 node->identifier = dictType;
             }
@@ -171,7 +171,7 @@ Node::Ptr TypeChecker::visit(FuncCallExpr::Ptr node) {
         auto arrayLiteral = std::static_pointer_cast<ArrayLiteralExpr>(node->identifier);
         if(arrayLiteral->items.size() == 1) {
             auto type = arrayLiteral->items[0];
-            if(type->symbol->flag == typeSymbol) {
+            if(type->symbol->flag == SymbolFlag::typeSymbol) {
                 auto arrayType = std::make_shared<ArrayType>(type);
                 node->identifier = arrayType;
             }
@@ -290,7 +290,7 @@ Node::Ptr TypeChecker::visit(Pattern::Ptr node) {
         if(node->type->symbol == nullptr) {
             node->type->symbol = std::shared_ptr<Symbol>(new Symbol{
                 .addressOfType = type->addressOfType,
-                .flag = typeSymbol
+                .flag = SymbolFlag::typeSymbol
             });
         }
         node->identifier->symbol->addressOfType = type->addressOfType;
@@ -555,9 +555,9 @@ JrType* TypeChecker::typeOf(Node::Ptr node) {
 JrType* TypeChecker::typeOf(IdentifierExpr::Ptr node) {
     
     switch(node->symbol->flag) {
-        case varSymbol:
+        case SymbolFlag::varSymbol:
             return Global::types[node->symbol->addressOfType];
-        case fieldSymbol: {
+        case SymbolFlag::fieldSymbol: {
             auto type = (JrObjectType*)(context->curType());
             auto field = type->virtualFields[node->symbol->addressOfField];
             return Global::types[field->addressOfField];
@@ -643,7 +643,7 @@ JrType* TypeChecker::typeOf(Pattern::Ptr node) {
 }
 
 JrType* TypeChecker::typeOf(Type::Ptr node) {
-    assert(node->symbol->flag == typeSymbol);
+    assert(node->symbol->flag == SymbolFlag::typeSymbol);
     return Global::types[node->symbol->addressOfType];
 }
 
