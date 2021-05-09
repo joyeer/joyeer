@@ -144,7 +144,6 @@ Node::Ptr Binder::visit(ConstructorDecl::Ptr decl) {
     symtable->insert(symbol);
     decl->symbol = symbol;
     
-    context->initializeSymTable();
     // visit func decleration
     context->visit(CompileStage::visitFuncDecl, decl->descriptor, [this, decl]() {
         // start to process function parameters
