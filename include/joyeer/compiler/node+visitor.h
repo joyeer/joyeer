@@ -10,7 +10,6 @@ protected:
     virtual Node::Ptr visit(FileModuleDecl::Ptr decl) = 0;
     virtual Node::Ptr visit(ClassDecl::Ptr classDecl) = 0;
     virtual Node::Ptr visit(VarDecl::Ptr varDecl) = 0;
-    virtual Node::Ptr visit(ConstructorDecl::Ptr decl) = 0;
     virtual Node::Ptr visit(Type::Ptr decl) = 0;
     virtual Node::Ptr visit(FuncCallExpr::Ptr decl) = 0;
     virtual Node::Ptr visit(MemberFuncCallExpr::Ptr decl) = 0;

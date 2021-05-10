@@ -134,17 +134,6 @@ void NodeDebugPrinter::print(Node::Ptr node) {
             decTab();
         }
             break;
-        case SyntaxKind::constructorDecl: {
-            output << "+constructorDecl" ;
-            auto n = std::static_pointer_cast<ConstructorDecl>(node);
-            incTab();
-            print(n->symtable);
-            print(n->symbol);
-            print(n->parameterClause);
-            print(n->codeBlock);
-            decTab();
-        }
-            break;
         case SyntaxKind::classDecl: {
             output << "+classDecl" ;
             auto members = std::static_pointer_cast<ClassDecl>(node);

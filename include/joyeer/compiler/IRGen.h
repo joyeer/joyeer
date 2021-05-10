@@ -35,7 +35,6 @@ protected:
     void emit(MemberAccessExpr::Ptr node);
     
     void emit(ClassDecl::Ptr node);
-    void emit(ConstructorDecl::Ptr node);
     void emit(ArrayLiteralExpr::Ptr node);
     void emit(DictLiteralExpr::Ptr node);
     void emit(SubscriptExpr::Ptr node);

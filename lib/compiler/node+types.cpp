@@ -64,25 +64,6 @@ std::string FuncDecl::getTypeName() {
     return ss.str();
 }
 
-
-/// Class Constructor declaration
-ConstructorDecl::ConstructorDecl(std::shared_ptr<Node> parameterClause, std::shared_ptr<Node> codeBlock):
-DeclNode(SyntaxKind::constructorDecl),
-parameterClause(parameterClause),
-codeBlock(codeBlock) {
-}
-
-const std::string ConstructorDecl::getName(JrType* type) {
-    std::stringstream ss;
-    ss << type->name << "(";
-    auto parameterClause = std::static_pointer_cast<ParameterClause>(this->parameterClause);
-    for(auto parameter: parameterClause->parameters) {
-        ss << parameter->getIdentifierName() << ":";
-    }
-    ss << ")";
-    return ss.str();
-}
-
 VarDecl::VarDecl(Pattern::Ptr pattern, std::shared_ptr<Node> initializer):
 DeclNode(SyntaxKind::varDecl),
 pattern(pattern),

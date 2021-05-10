@@ -96,58 +96,6 @@ Node::Ptr TypeChecker::visit(FuncDecl::Ptr node) {
     return node;
 }
 
-Node::Ptr TypeChecker::visit(ConstructorDecl::Ptr node) {
-    auto function = Global::functions[node->symbol->addressOfFunc];
-    
-    auto ownerType = context->curType();
-    context->entry(node->symtable);
-    context->entry(function);
-    
-    context->visit(CompileStage::visitFuncParamDecl, [this, node]() {
-        node->parameterClause = visit(node->parameterClause);
-    });
-    
-    assert(function->paramTypes.size() == 0);
-    
-    // Binding function's type
-    auto parameterClause = std::static_pointer_cast<ParameterClause>(node->parameterClause);
-    for(auto parameter: parameterClause->parameters) {
-        auto symbol = parameter->type->symbol;
-        
-        assert(symbol->flag == SymbolFlag::typeSymbol);
-        auto type = Global::types[symbol->addressOfType];
-        function->paramTypes.push_back(type);
-        
-        // register function's parameter as variable in function
-        auto addressOfVariable = (int)function->localVars.size();
-        parameter->identifier->symbol->addressOfVariable = addressOfVariable;
-
-        assert(type != nullptr);
-        function->localVars.push_back(JrVar{
-            .name = parameter->getIdentifierName(),
-            .type = type,
-            .addressOfVariable = addressOfVariable
-        });
-    }
-    
-    // the last parameter is self type
-    function->paramTypes.push_back(ownerType);
-    assert(ownerType != nullptr);
-    function->localVars.push_back(JrVar {
-        .name = Keywords::SELF,
-        .type = ownerType,
-        .addressOfVariable = static_cast<int>(function->localVars.size())
-    });
-    node->codeBlock = visit(node->codeBlock);
-    auto codeblock = std::static_pointer_cast<StmtsBlock>(node->codeBlock);
-    verifyReturnStatement(codeblock);
-    
-    context->leave(function);
-    context->leave(node->symtable);
-    
-    return node;
-}
-
 Node::Ptr TypeChecker::visit(FuncCallExpr::Ptr node) {
     
     Symbol::Ptr symbol = nullptr;

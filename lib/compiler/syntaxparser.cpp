@@ -106,7 +106,7 @@ Node::Ptr SyntaxParser::tryParseConstructorDecl() {
         return nullptr;
     }
     
-    return std::shared_ptr<Node>(new ConstructorDecl(parameterClause, codeBlock));
+    return FuncDecl::makeConstructor(parameterClause, codeBlock);
 }
 
 Node::Ptr SyntaxParser::tryParseFileImportStatement() {
@@ -242,7 +242,7 @@ Node::Ptr SyntaxParser::tryParseClassDecl() {
     return std::make_shared<ClassDecl>(className, members);
 }
 
-Node::Ptr SyntaxParser::tryParseStmtsBlock() {
+StmtsBlock::Ptr SyntaxParser::tryParseStmtsBlock() {
     // Code block
     if (tryEat(TokenKind::punctuation, Punctuations::OPEN_CURLY_BRACKET) == nullptr) {
         return nullptr; 
@@ -262,8 +262,8 @@ Node::Ptr SyntaxParser::tryParseStmtsBlock() {
         Diagnostics::reportError("Error");
         return nullptr; 
     }
-
-    return std::shared_ptr<Node>(new StmtsBlock(statements));
+    
+    return std::make_shared<StmtsBlock>(statements);
 }
 
 Node::Ptr SyntaxParser::tryParseStmt() {

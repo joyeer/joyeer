@@ -122,47 +122,6 @@ Node::Ptr Binder::visit(FuncDecl::Ptr decl) {
     return decl;
 }
 
-Node::Ptr Binder::visit(ConstructorDecl::Ptr decl) {
-    auto symtable = context->curSymTable();
-    auto function = new JrFunction();
-    auto type = context->curType();
-    function->name = decl->getName(type);
-    function->kind = jrFuncConstructor;
-    function->returnType = type;
-    if(symtable->find(function->name) != nullptr) {
-        Diagnostics::reportError("[Error] Dupliate constructor name");
-        return nullptr;
-    }
-    
-    // register this functin in global function tables
-    Global::registerFunction(function, type);
-    auto symbol = std::shared_ptr<Symbol>(new Symbol {
-        .name = function->name,
-        .flag = SymbolFlag::constructorSymbol,
-        .addressOfFunc = function->addressOfFunc
-    });
-    symtable->insert(symbol);
-    decl->symbol = symbol;
-    
-    // visit func decleration
-    context->visit(CompileStage::visitFuncDecl, decl->descriptor, [this, decl]() {
-        // start to process function parameters
-        context->visit(CompileStage::visitFuncParamDecl, [this, decl]() {
-            decl->parameterClause = visit(decl->parameterClause);
-        });
-        
-        decl->codeBlock = visit(decl->codeBlock);
-        
-    });
-    // Start to Bind sub
-    decl->symtable = context->curSymTable();
-    
-    context->finalizeSymTable();
-    
-    return decl;
-
-}
-
 Node::Ptr Binder::visit(ClassDecl::Ptr decl) {
     
     auto symtable = context->curSymTable();
@@ -192,12 +151,6 @@ Node::Ptr Binder::visit(ClassDecl::Ptr decl) {
         std::vector<Node::Ptr> result;
         for(auto member: decl->members) {
             result.push_back(visit(member));
-            if(member->kind == SyntaxKind::constructorDecl) {
-                // if its constructor, we should register it in parent's symbol table
-                auto cdecl = std::static_pointer_cast<ConstructorDecl>(member);
-                symtable->insert(cdecl->symbol);
-                hasCustomizedConstructor = true;
-            }
         }
         decl->members = result;
     });
@@ -647,7 +600,7 @@ FileModuleDecl::Ptr  Binder::normalizeAndPrepareDefaultStaticConstructorForFileM
     // prepare for FileModule initializer
     auto defaultModuleInitializerCodeBlock = std::make_shared<StmtsBlock>(statementsOfDefaultModuleInitilizer);
     auto defaultModuleParams = std::make_shared<ParameterClause>(std::vector<Pattern::Ptr>());
-    auto defaultModuleInitializer = std::make_shared<ConstructorDecl>(defaultModuleParams, defaultModuleInitializerCodeBlock);
+    auto defaultModuleInitializer = FuncDecl::makeConstructor(defaultModuleParams, defaultModuleInitializerCodeBlock);
     filemodule->defaultInitializer = defaultModuleInitializer;
     
     // clear the code block

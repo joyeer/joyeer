@@ -26,9 +26,6 @@ void IRGen::emit(Node::Ptr node) {
         case SyntaxKind::memberFuncCallExpr:
             emit(std::static_pointer_cast<MemberFuncCallExpr>(node));
             break;
-        case SyntaxKind::constructorDecl:
-            emit(std::static_pointer_cast<ConstructorDecl>(node));
-            break;
         case SyntaxKind::classDecl:
             emit(std::static_pointer_cast<ClassDecl>(node));
             break;
@@ -553,28 +550,6 @@ void IRGen::emit(ClassDecl::Ptr node) {
             emit(member);
         }
     }
-}
-
-void IRGen::emit(ConstructorDecl::Ptr node) {
-    
-    assert(node->symbol->flag == SymbolFlag::constructorSymbol);
-    auto function = Global::functions[node->symbol->addressOfFunc];
-    
-    context->entry(function);
-    IRGen generator(context);
-    generator.emit(node->codeBlock);
-    auto instructions = generator.writer.instructions;
-    if (instructions.back().opcode == OP_RETURN) {
-        instructions.pop_back();
-        instructions.push_back(Instruction{
-            .opcode = OP_ORETURN,
-            .value = function->addressOfOwnerType
-        });
-    }
-    assert(function != nullptr && function->instructions.size() == 0);
-    function->instructions = instructions;
-    
-    context->leave(function);
 }
 
 void IRGen::emit(MemberAccessExpr::Ptr node) {

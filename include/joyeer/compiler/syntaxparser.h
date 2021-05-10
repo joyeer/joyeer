@@ -39,7 +39,7 @@ private:
     // Statements
     ////////////////////////////////////////////////////////////////////////////
 
-    Node::Ptr tryParseStmtsBlock();
+    StmtsBlock::Ptr tryParseStmtsBlock();
     Node::Ptr tryParseStmt();
     Node::Ptr tryParseLoopStmt();
     Node::Ptr tryparseWhileStmt();

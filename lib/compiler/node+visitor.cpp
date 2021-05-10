@@ -14,8 +14,6 @@ Node::Ptr NodeVisitor::visit(Node::Ptr node) {
             return visit(std::static_pointer_cast<VarDecl>(node));
         case SyntaxKind::funcDecl:
             return visit(std::static_pointer_cast<FuncDecl>(node));
-        case SyntaxKind::constructorDecl:
-            return visit(std::static_pointer_cast<ConstructorDecl>(node));
         case SyntaxKind::classDecl:
             return visit(std::static_pointer_cast<ClassDecl>(node));
         case SyntaxKind::parameterClause:
