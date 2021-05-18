@@ -46,8 +46,8 @@ struct ClassDecl: public DeclNode {
     
     std::vector<DeclNode::Ptr> staticFields;
     std::vector<DeclNode::Ptr> instanceFields;
-    std::vector<DeclNode::Ptr> staticMethods;
-    std::vector<DeclNode::Ptr> instanceMethods;
+    std::vector<FuncDecl::Ptr> staticMethods;
+    std::vector<FuncDecl::Ptr> instanceMethods;
     std::vector<FuncDecl::Ptr> constructors;
     
     FuncDecl::Ptr defaultConstructor;
@@ -66,8 +66,6 @@ public:
     FileModuleDecl(FileModuleDescriptor::Ptr descriptor, StmtsBlock::Ptr block);
     
     StmtsBlock::Ptr block;
-    // the default initializer function of the filemodule
-    FuncDecl::Ptr defaultInitializer;
     
     std::string filename;
 

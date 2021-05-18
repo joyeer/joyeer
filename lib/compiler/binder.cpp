@@ -26,37 +26,46 @@ Node::Ptr Binder::visit(FileModuleDecl::Ptr filemodule) {
     context->compiler->declare(filemodule);
     
     filemodule = normalizeAndPrepareDefaultStaticConstructorForFileModule(filemodule);
-    // Module class self
-    auto moduleClass = new JrModuleClass(filemodule->descriptor->getRawDescriptor());
-    Global::registerObjectType(moduleClass);
-    Global::registerModuleType(moduleClass);
     
-    // Module constructor function
-    auto function = new JrFunction {
-        .name = "Module@__MAIN__@" + filemodule->filename,
-        .kind = jrFuncConstructor,
-    };
-    function->paramTypes.push_back(moduleClass);
-    Global::registerFunction(function, moduleClass);
-    
-    auto symbol = Symbol::Ptr(new Symbol {
-        .name = moduleClass->name,
-        .flag = SymbolFlag::fileModuleSymbol,
-        .addressOfType = moduleClass->addressOfType
-    });
-    moduleClass->constructors.push_back(function->addressOfFunc);
-    filemodule->symbol = symbol;
-    filemodule->symtable = context->initializeSymTable();
-    
-    context->entry(moduleClass);
-    context->visit(CompileStage::visitFileModule, filemodule->descriptor, [filemodule, this]() {
-        auto nodes = std::vector<Node::Ptr>();
-        for(auto& statement : filemodule->block->statements) {
-            nodes.push_back(visit(statement));
+    context->visit(CompileStage::visitFileModule, filemodule, [filemodule, this]() {
+        // visit static fields
+        auto staticFields = std::vector<DeclNode::Ptr>();
+        for(auto& fieldStatement : filemodule->staticFields) {
+            staticFields.push_back(std::static_pointer_cast<DeclNode>(visit(fieldStatement)));
         }
-        filemodule->block->statements = nodes;
+        filemodule->staticFields = staticFields;
+        
+        // visit instance fields
+        auto instanceFields = std::vector<DeclNode::Ptr>();
+        for(auto& instanceField : filemodule->instanceFields) {
+            instanceFields.push_back(std::static_pointer_cast<DeclNode>(visit(instanceField)));
+        }
+        filemodule->instanceFields = instanceFields;
+        
+        // visit default initializer
+        filemodule->defaultConstructor = std::static_pointer_cast<FuncDecl>(visit(filemodule->defaultConstructor));
+        
+        // visit constructors
+        auto constructors = std::vector<FuncDecl::Ptr>();
+        for(auto& constructor: filemodule->constructors) {
+            constructors.push_back(std::static_pointer_cast<FuncDecl>(visit(constructor)));
+        }
+        filemodule->constructors = constructors;
+        
+        // visit static methods
+        auto staticMethods = std::vector<FuncDecl::Ptr>();
+        for(auto& method: filemodule->staticMethods) {
+            staticMethods.push_back(std::static_pointer_cast<FuncDecl>(visit(method)));
+        }
+        filemodule->staticMethods = staticMethods;
+        
+        // visit instance methods
+        auto instanceMethods = std::vector<FuncDecl::Ptr>();
+        for(auto& method: filemodule->instanceMethods) {
+            instanceMethods.push_back(std::static_pointer_cast<FuncDecl>(visit(method)));
+        }
+        filemodule->instanceMethods = instanceMethods;
     });
-    context->leave(moduleClass);
     context->finalizeSymTable();
     
     return filemodule;
@@ -147,7 +156,7 @@ Node::Ptr Binder::visit(ClassDecl::Ptr decl) {
     decl->symtable = context->curSymTable();
     context->entry(objectType);
     bool hasCustomizedConstructor = false;
-    context->visit(CompileStage::visitClassDecl, decl->descriptor, [this, decl, symtable, &hasCustomizedConstructor]() {
+    context->visit(CompileStage::visitClassDecl, decl, [this, decl, symtable, &hasCustomizedConstructor]() {
         std::vector<Node::Ptr> result;
         for(auto member: decl->members) {
             result.push_back(visit(member));
@@ -212,16 +221,16 @@ Node::Ptr Binder::visit(VarDecl::Ptr decl) {
         decl->initializer = visit(decl->initializer);
     }
     
-    if(stage == CompileStage::visitClassDecl || stage == CompileStage::visitFileModule) {
-        // If var decl is a field, let's register it in type's field list
-        auto ownerType = (JrObjectType*)context->curType();
-        auto field = JrFieldType::Ptr(new JrFieldType {
-            .name = name
-        });
-        ownerType->registerField(field);
-        symbol->addressOfField = field->addressOfField;
-    }
-    
+//    if(stage == CompileStage::visitClassDecl || stage == CompileStage::visitFileModule) {
+//        // If var decl is a field, let's register it in type's field list
+//        auto ownerType = (JrObjectType*)context->curType();
+//        auto field = JrFieldType::Ptr(new JrFieldType {
+//            .name = name
+//        });
+////        ownerType->registerField(field);
+//        symbol->addressOfField = field->addressOfField;
+//    }
+//    
     return decl;
 }
 
@@ -601,7 +610,7 @@ FileModuleDecl::Ptr  Binder::normalizeAndPrepareDefaultStaticConstructorForFileM
     auto defaultModuleInitializerCodeBlock = std::make_shared<StmtsBlock>(statementsOfDefaultModuleInitilizer);
     auto defaultModuleParams = std::make_shared<ParameterClause>(std::vector<Pattern::Ptr>());
     auto defaultModuleInitializer = FuncDecl::makeConstructor(defaultModuleParams, defaultModuleInitializerCodeBlock);
-    filemodule->defaultInitializer = defaultModuleInitializer;
+    filemodule->defaultConstructor = defaultModuleInitializer;
     
     // clear the code block
     filemodule->block = nullptr;

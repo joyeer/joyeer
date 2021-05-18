@@ -71,7 +71,7 @@ void NodeDebugPrinter::print(Node::Ptr node) {
             incTab();
             print(n->symtable);
             print(n->symbol);
-            print(n->defaultInitializer);
+            print(n->defaultConstructor);
             for(auto statement: n->block->statements) {
                 print(statement);
             }

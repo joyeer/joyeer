@@ -59,6 +59,7 @@ struct Node {
 
     Symbol::Ptr symbol = nullptr;
     SymbolTable::Ptr symtable = nullptr;
+    
     JrType* type = nullptr;
     
     virtual std::string getName();

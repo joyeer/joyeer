@@ -72,6 +72,10 @@ private:
         + declaration2
     */
     FileModuleDecl::Ptr normalizeAndPrepareDefaultStaticConstructorForFileModule(FileModuleDecl::Ptr filemodule);
+    
+    // prepare default constructor for class decl
+    FuncDecl::Ptr prepareDefaultConstructorForClass(ClassDecl::Ptr decl);
+    
 private:
     CompileContext::Ptr context;
 };

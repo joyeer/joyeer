@@ -35,7 +35,7 @@ public:
     void finalizeSymTable();
     
     void visit(CompileStage stage, std::function<void(void)> visit);
-    void visit(CompileStage stage, Descriptor::Ptr descriptor, std::function<void(void)> visit);
+    void visit(CompileStage stage, Node::Ptr node, std::function<void(void)> visit);
     Descriptor::Ptr parentDescriptor();
     CompileStage curStage() const;
     
@@ -43,7 +43,7 @@ public:
     Symbol::Ptr lookup(const std::string& name);
     
     SymbolTable::Ptr curSymTable() ;
-    void entry(SymbolTable::Ptr table);
+    void entry(SymbolTable::Ptr table80);
     void leave(SymbolTable::Ptr table);
     
     JrFunction* curFunction();
