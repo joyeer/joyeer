@@ -64,6 +64,23 @@ std::string FuncDecl::getTypeName() {
     return ss.str();
 }
 
+std::string FuncDecl::getName() {
+    std::stringstream ss;
+    if(identifier != nullptr) {
+        ss << identifier->getName();
+    } else if(isConstructor) {
+        ss << DescriptorConstants::Constructor;
+    }
+    
+    ss << DescriptorConstants::ParenthesisOpen;
+    for(auto p : std::static_pointer_cast<ParameterClause>(parameterClause)->parameters) {
+        ss << p->getName() << DescriptorConstants::Colon;
+    }
+    ss << DescriptorConstants::ParenthesisClose;
+    
+    return ss.str();
+}
+
 VarDecl::VarDecl(Pattern::Ptr pattern, std::shared_ptr<Node> initializer):
 DeclNode(SyntaxKind::varDecl),
 pattern(pattern),

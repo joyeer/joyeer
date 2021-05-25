@@ -90,6 +90,9 @@ protected:
     // parsing scope's descriptor stacks
     std::stack<Descriptor::Ptr> descriptors;
     
+    // the decl stack
+    std::stack<Node::Ptr> decls;
+    
     std::unordered_map<JrInt, SymbolTable::Ptr> mapOfTypeAndSymbolTable;
     
     CommandLineArguments::Ptr options;

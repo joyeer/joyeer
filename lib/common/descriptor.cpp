@@ -3,14 +3,15 @@
 #include <filesystem>
 
 PatternDescriptor::PatternDescriptor(Descriptor::Ptr label, Descriptor::Ptr type) {
+    // full descriptor name
     std::stringstream ss;
     ss << label->getRawDescriptor() << DescriptorConstants::Colon << type->getRawDescriptor();
     ss << DescriptorConstants::END;
-    
     rawDescriptor = ss.str();
 }
 
 FunctionDescriptor::FunctionDescriptor(Descriptor::Ptr parent, const std::string& funcName, std::vector<PatternDescriptor::Ptr> parameters) {
+    // full descriptor name
     std::stringstream ss;
     ss << parent->getRawDescriptor() << DescriptorConstants::Separator << DescriptorConstants::FuncPrefix << funcName;
     

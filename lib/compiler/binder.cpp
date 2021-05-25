@@ -72,36 +72,26 @@ Node::Ptr Binder::visit(FileModuleDecl::Ptr filemodule) {
 }
 
 Node::Ptr Binder::visit(FuncDecl::Ptr decl) {
-    auto type = context->curType();
+    assert(decl->descriptor != nullptr);
     auto symtable = context->curSymTable();
-    auto function = new JrFunction {
-        .name = decl->getTypeName(),
-        .kind = jrFuncVM
-    };
-    
-    Global::registerFunction(function, type);
-    
-    if(symtable->find(function->name) != nullptr) {
+
+    auto funcDescriptor = decl->descriptor;
+    auto funcName = decl->getName();
+    // check if the function name duplicated
+    if(symtable->find(funcName) != nullptr) {
         Diagnostics::reportError("[Error] Dupliate function name");
     }
-    
+
+    // make the symbol
     auto symbol = std::shared_ptr<Symbol>(new Symbol {
-        .name = function->name,
-        .flag = SymbolFlag::funcSymbol,
-        .addressOfFunc = function->addressOfFunc
+        .name = funcName,
+        .flag = SymbolFlag::funcSymbol
     });
     symtable->insert(symbol);
     decl->symbol = symbol;
     
     // If the parsing stage is visitClassDecl or visitSourceBlock, we will register function into target type
-    if(type != nullptr && (context->curStage() == CompileStage::visitClassDecl || context->curStage() == CompileStage::visitFileModule)) {
-        // if the function inside of class declaration, we will register it as virtual functions
-        auto classType = (JrObjectType*)type;
-        if(type->name == function->name) {
-            classType->constructors.push_back(function->addressOfFunc);
-        } else {
-            classType->virtualFunctions.push_back(function->addressOfFunc);
-        }
+    if((context->curStage() == CompileStage::visitClassDecl || context->curStage() == CompileStage::visitFileModule)) {
         
     }
     

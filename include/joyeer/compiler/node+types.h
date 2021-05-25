@@ -23,11 +23,13 @@ public:
     Node::Ptr identifier = nullptr;               //IdentifierExpr
     Node::Ptr parameterClause;
     Node::Ptr codeBlock;
-    Node::Ptr returnType;
+    Node::Ptr returnType = nullptr;
     bool isConstructor = false;
+    bool isStatic = false;
 
     FuncDecl(Node::Ptr identifier, Node::Ptr parameterClause, Node::Ptr returnType, Node::Ptr codeBlock);
     
+    // make FuncDecl as Constructor
     static Ptr makeConstructor(Node::Ptr parameterClause, StmtsBlock::Ptr stmts) {
         auto decl = std::make_shared<FuncDecl>(nullptr, parameterClause, nullptr, stmts);
         decl->isConstructor = true;
@@ -35,6 +37,9 @@ public:
     }
     
     virtual std::string getTypeName();
+    
+    // return func name
+    virtual std::string getName();
 };
 
 

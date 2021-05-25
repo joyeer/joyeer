@@ -62,6 +62,7 @@ struct Node {
     
     JrType* type = nullptr;
     
+    // return the name of Node, it will be used as symbol in some cases
     virtual std::string getName();
     
     // The type name of the Node
