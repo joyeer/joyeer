@@ -41,8 +41,6 @@ enum class SyntaxKind {
     funcCallExpr,
     memberFuncCallExpr,
     memberAccessExpr,
-    moduleMemberAccessExpr,     // access module's member variable
-    moduleFuncCallExpr,         // access module's exported function
     subscriptExpr,
   
     literalExpr,
@@ -59,6 +57,7 @@ struct Node {
 
     Symbol::Ptr symbol = nullptr;
     SymbolTable::Ptr symtable = nullptr;
+    Node::Ptr parent = nullptr;
     
     JrType* type = nullptr;
     
@@ -138,7 +137,7 @@ struct DictType: Node {
 };
 
 struct Pattern: public Node {
-    typedef std::shared_ptr<Pattern> Ptr;
+    using Ptr = std::shared_ptr<Pattern>;
     
     IdentifierExpr::Ptr identifier; // the name of pattern
     Node::Ptr type; // the type of pattern, optinal nullptr
@@ -150,7 +149,7 @@ struct Pattern: public Node {
 };
 
 struct ParameterClause: Node {
-    typedef std::shared_ptr<ParameterClause> Ptr;
+    using Ptr = std::shared_ptr<ParameterClause>;
     
     std::vector<Pattern::Ptr> parameters;
     

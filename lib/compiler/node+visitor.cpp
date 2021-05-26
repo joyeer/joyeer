@@ -62,10 +62,6 @@ Node::Ptr NodeVisitor::visit(Node::Ptr node) {
             return visit(std::static_pointer_cast<ArrayType>(node));
         case SyntaxKind::fileimportStmt:
             return visit(std::static_pointer_cast<FileImportStmt>(node));
-        case SyntaxKind::moduleMemberAccessExpr:
-            return visit(std::static_pointer_cast<ModuleMemberAccessExpr>(node));
-        case SyntaxKind::moduleFuncCallExpr:
-            return visit(std::static_pointer_cast<ModuleFuncCallExpr>(node));
         default:
             assert(false);
     }

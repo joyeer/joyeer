@@ -130,7 +130,7 @@ Node::Ptr SyntaxParser::tryParseParameterClause() {
     std::vector<Pattern::Ptr> parameters;
     int i = 0 ;
     while(true) {
-        std::shared_ptr<Token> comma = nullptr;
+        Token::Ptr comma = nullptr;
         if( i > 0 ) {
             comma = tryEat(TokenKind::punctuation, Punctuations::COMMA);
         }

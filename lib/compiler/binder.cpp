@@ -292,14 +292,7 @@ Node::Ptr Binder::visit(IdentifierExpr::Ptr decl) {
             return decl;
         }
         default: {
-            auto symbol = context->lookup(name) ;
-            if(symbol != nullptr && symbol->isExported) {
-                auto moduleClass = Global::modules[symbol->addressOfModule];
-                return std::make_shared<ModuleMemberAccessExpr>(moduleClass, decl);
-            } else {
-                return decl;
-            }
-            
+            return decl;
         }
     }
 }
@@ -547,16 +540,6 @@ Node::Ptr Binder::visit(MemberAccessExpr::Ptr decl) {
     decl->parent = visit(decl->parent);
     decl->member = visit(decl->member);
     return decl;
-}
-
-Node::Ptr Binder::visit(ModuleMemberAccessExpr::Ptr decl) {
-    assert(false); // ModuleMemberAccessExpr is genareted in Binder. In Binder, we will visit this node;
-    return nullptr;
-}
-
-Node::Ptr Binder::visit(ModuleFuncCallExpr::Ptr decl) {
-    assert(false); // ModuleMemberAccessExpr is genareted in Binder. In Binder, we will visit this node;
-    return nullptr;
 }
 
 Node::Ptr Binder::visit(SubscriptExpr::Ptr decl) {

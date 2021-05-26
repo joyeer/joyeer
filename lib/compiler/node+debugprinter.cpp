@@ -392,31 +392,6 @@ void NodeDebugPrinter::print(Node::Ptr node) {
             output << "+fileimport(\"" << n->stringLiteral->rawValue << "\")";
         }
             break;
-        case SyntaxKind::moduleMemberAccessExpr: {
-            auto n = std::static_pointer_cast<ModuleMemberAccessExpr>(node);
-            output << "+moduleMemberAccessExpr(\"" << n->moduleClass->name << "\")";
-            incTab();
-            print(n->member);
-            decTab();
-        }
-            break;
-        case SyntaxKind::moduleFuncCallExpr: {
-            auto n = std::static_pointer_cast<ModuleFuncCallExpr>(node);
-            output << "+moduleFuncCallExpr";
-            incTab();
-            print(n->symtable);
-            print(n->symbol);
-//            print(n->parent);
-            print(n->member);
-            incTab();
-//            for(auto argu: n->arguments) {
-//                print(argu);
-//            }
-            decTab();
-            decTab();
-
-        }
-            break;
         default:
             assert(false);
     }

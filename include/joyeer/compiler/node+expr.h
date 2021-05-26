@@ -149,23 +149,4 @@ struct SubscriptExpr: Node {
     SubscriptExpr(Node::Ptr identifier, Node::Ptr indexExpr);
 };
 
-struct ModuleMemberAccessExpr: public Node {
-    typedef std::shared_ptr<ModuleMemberAccessExpr> Ptr;
-    
-    JrModuleClass* moduleClass;
-    Node::Ptr member;
-    
-    ModuleMemberAccessExpr(JrModuleClass* moduleClass, Node::Ptr member);
-};
-
-struct ModuleFuncCallExpr: public Node {
-    typedef std::shared_ptr<ModuleFuncCallExpr> Ptr;
-    
-    JrModuleClass* moduleClass;
-    Node::Ptr member;
-    
-    ModuleFuncCallExpr(JrModuleClass* moduleClass, Node::Ptr member);
-};
-
-
 #endif

@@ -427,13 +427,6 @@ Node::Ptr TypeChecker::visit(MemberAccessExpr::Ptr node) {
     return node;
 }
 
-Node::Ptr TypeChecker::visit(ModuleMemberAccessExpr::Ptr node) {
-    assert(false);
-}
-
-Node::Ptr TypeChecker::visit(ModuleFuncCallExpr::Ptr node) {
-    assert(false);
-}
 
 Node::Ptr TypeChecker::visit(SubscriptExpr::Ptr node) {
     node->identifier = visit(node->identifier);

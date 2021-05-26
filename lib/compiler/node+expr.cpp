@@ -146,15 +146,3 @@ Node(SyntaxKind::subscriptExpr),
 identifier(identifier),
 indexExpr(indexExpr) {
 }
-
-ModuleMemberAccessExpr::ModuleMemberAccessExpr(JrModuleClass* moduleClass, Node::Ptr member):
-Node(SyntaxKind::moduleMemberAccessExpr),
-moduleClass(moduleClass),
-member(member) {
-}
-
-ModuleFuncCallExpr::ModuleFuncCallExpr(JrModuleClass* moduleClass, Node::Ptr member):
-Node(SyntaxKind::moduleFuncCallExpr),
-moduleClass(moduleClass),
-member(member) {
-}
