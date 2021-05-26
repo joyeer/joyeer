@@ -32,13 +32,14 @@ void CompileContext::visit(CompileStage stage, std::function<void ()> visitor) {
 
 void CompileContext::visit(CompileStage stage, Node::Ptr node, std::function<void()> visit) {
     stages.push_back(stage);
-    auto isDeclNode = node->isDeclNode();
+    auto isDeclNode = node != nullptr ? node->isDeclNode() : false;
     Descriptor::Ptr descriptor = nullptr;
     
     if(isDeclNode) {
         auto declNode = std::static_pointer_cast<DeclNode>(node);
         descriptor = declNode->descriptor;
         descriptors.push(descriptor);
+        decls.push(node);
     }
     
     // visit
@@ -48,6 +49,7 @@ void CompileContext::visit(CompileStage stage, Node::Ptr node, std::function<voi
         assert(descriptor != nullptr);
         assert(descriptors.top() == descriptor);
         descriptors.pop();
+        decls.pop();
     }
     assert(stages.back() == stage);
     stages.pop_back();

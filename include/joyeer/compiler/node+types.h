@@ -9,9 +9,6 @@ struct DeclNode : public Node {
 public:
     Descriptor::Ptr descriptor = nullptr;
     DeclNode(SyntaxKind kind): Node(kind) {}
-    
-    // update self descriptor
-    virtual void updateDescriptor() { }
 };
 
 
@@ -39,7 +36,7 @@ public:
     virtual std::string getTypeName();
     
     // return func name
-    virtual std::string getName();
+    virtual std::string queryName();
 };
 
 
@@ -59,7 +56,7 @@ struct ClassDecl: public DeclNode {
     
     ClassDecl(Token::Ptr name, std::vector<Node::Ptr> members);
     
-    std::string getName();
+    std::string queryName();
 };
 
 // Reprensent an FileModule in Ast tree, each xxx.joyeer file is a file module
@@ -76,7 +73,7 @@ public:
 
     std::vector<FileImportStmt::Ptr> getFileImports();
     
-    virtual std::string getName();
+    virtual std::string queryName();
     // get the top level declarations
     std::vector<Node::Ptr> getTopLevelDecls();
 };

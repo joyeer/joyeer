@@ -10,7 +10,7 @@
 Node::Node(SyntaxKind k): kind(k) {
 }
 
-std::string Node::getName() {
+std::string Node::queryName() {
     return "";
 }
 

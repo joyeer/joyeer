@@ -74,7 +74,7 @@ arguments(arguments) {
 std::string MemberFuncCallExpr::getTypeName() {
     std::stringstream ss;
     
-    ss << parent->getTypeName() << "@" << member->getName() << "(";
+    ss << parent->getTypeName() << "@" << member->queryName() << "(";
     for(auto& argument: arguments) {
         ss << argument->label->token->rawValue << ":";
     }
@@ -90,7 +90,7 @@ member(member) {
 
 std::string MemberAccessExpr::getTypeName() {
     std::stringstream ss;
-    ss << parent->getTypeName() << "@" << member->getName();
+    ss << parent->getTypeName() << "@" << member->queryName();
     return ss.str();
 }
 
@@ -115,7 +115,7 @@ Node(SyntaxKind::identifierExpr),
 token(token) {
 }
 
-std::string IdentifierExpr::getName() {
+std::string IdentifierExpr::queryName() {
     return token->rawValue;
 }
 

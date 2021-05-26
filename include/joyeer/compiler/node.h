@@ -53,7 +53,7 @@ enum class SyntaxKind {
 };
 
 struct Node {
-    typedef std::shared_ptr<Node> Ptr;
+    using Ptr = std::shared_ptr<Node>;
     
     SyntaxKind kind;
 
@@ -63,7 +63,7 @@ struct Node {
     JrType* type = nullptr;
     
     // return the name of Node, it will be used as symbol in some cases
-    virtual std::string getName();
+    virtual std::string queryName();
     
     // The type name of the Node
     virtual std::string getTypeName();
@@ -94,7 +94,7 @@ struct IdentifierExpr: public Node {
     IdentifierExpr(Token::Ptr token);
     
     // Return identifier's name
-    virtual std::string getName();
+    virtual std::string queryName();
     virtual std::string getTypeName();
 };
 

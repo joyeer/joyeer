@@ -37,6 +37,12 @@ public:
     void visit(CompileStage stage, std::function<void(void)> visit);
     void visit(CompileStage stage, Node::Ptr node, std::function<void(void)> visit);
     Descriptor::Ptr parentDescriptor();
+    // parent node
+    Node::Ptr parentNode() {
+        assert(decls.size() > 0);
+        return decls.top();
+    }
+    
     CompileStage curStage() const;
     
     // look up name's mapped symbol

@@ -76,7 +76,7 @@ Node::Ptr Binder::visit(FuncDecl::Ptr decl) {
     auto symtable = context->curSymTable();
 
     auto funcDescriptor = decl->descriptor;
-    auto funcName = decl->getName();
+    auto funcName = decl->queryName();
     // check if the function name duplicated
     if(symtable->find(funcName) != nullptr) {
         Diagnostics::reportError("[Error] Dupliate function name");
@@ -97,11 +97,12 @@ Node::Ptr Binder::visit(FuncDecl::Ptr decl) {
     
     decl->symtable = context->initializeSymTable();
     // visit func decleration
-    context->visit(CompileStage::visitFuncDecl, [this, decl]() {
-        
+    context->visit(CompileStage::visitFuncDecl, decl, [this, decl]() {
         // start to process function name
         context->visit(CompileStage::visitFuncNameDecl, [this, decl]() {
-            decl->identifier = visit(decl->identifier);
+            if(decl->identifier != nullptr) {
+                decl->identifier = visit(decl->identifier);
+            }
         });
         
         // start to process function parameters
@@ -124,7 +125,7 @@ Node::Ptr Binder::visit(FuncDecl::Ptr decl) {
 Node::Ptr Binder::visit(ClassDecl::Ptr decl) {
     
     auto symtable = context->curSymTable();
-    auto name = decl->getName();
+    auto name = decl->queryName();
     
     if(symtable->find(name) != nullptr) {
         Diagnostics::reportError("[Error] duplicate class name");
@@ -188,7 +189,7 @@ Node::Ptr Binder::visit(VarDecl::Ptr decl) {
     
     auto pattern = decl->pattern;
     auto symtable = context->curSymTable();
-    auto name = pattern->identifier->getName();
+    auto name = pattern->identifier->queryName();
     
     if(symtable->find(name) != nullptr) {
         Diagnostics::reportError("[Error] duplicate variable name");
@@ -270,7 +271,7 @@ Node::Ptr Binder::visit(PrefixExpr::Ptr decl) {
 }
 
 Node::Ptr Binder::visit(IdentifierExpr::Ptr decl) {
-    auto name = decl->getName();
+    auto name = decl->queryName();
     
     switch (context->curStage()) {
         case CompileStage::visitFuncParamDecl: {
