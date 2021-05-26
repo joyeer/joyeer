@@ -281,7 +281,7 @@ void NodeDebugPrinter::print(Node::Ptr node) {
             incTab();
             print(n->symtable);
             print(n->symbol);
-            print(n->parent);
+            print(n->callee);
             print(n->member);
             decTab();
         }
@@ -292,7 +292,7 @@ void NodeDebugPrinter::print(Node::Ptr node) {
             incTab();
             print(n->symtable);
             print(n->symbol);
-            print(n->parent);
+            print(n->callee);
             print(n->member);
             incTab();
             for(auto argu: n->arguments) {

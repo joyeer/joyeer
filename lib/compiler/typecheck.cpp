@@ -144,13 +144,13 @@ Node::Ptr TypeChecker::visit(FuncCallExpr::Ptr node) {
 
 
 Node::Ptr TypeChecker::visit(MemberFuncCallExpr::Ptr node) {
-    visit(node->parent);
+    visit(node->callee);
     
-    auto type = Global::types[node->parent->symbol->addressOfType];
+    auto type = Global::types[node->callee->symbol->addressOfType];
     assert(type != nullptr);
-    node->parent->type = type;
+    node->callee->type = type;
     auto symtable = context->symtableOfType(type);
-    node->parent->symtable = symtable;
+    node->callee->symtable = symtable;
     
     auto name = node->getTypeName();
     auto symbol = context->lookup(name);
@@ -408,9 +408,9 @@ Node::Ptr TypeChecker::visit(DictLiteralExpr::Ptr node) {
 }
 
 Node::Ptr TypeChecker::visit(MemberAccessExpr::Ptr node) {
-    node->parent = visit(node->parent);
+    node->callee = visit(node->callee);
     
-    auto type = Global::types[node->parent->symbol->addressOfType];
+    auto type = Global::types[node->callee->symbol->addressOfType];
     auto symtable = context->symtableOfType(type);
     
     context->visit(CompileStage::visitMemberAccess, [this, node, symtable](){

@@ -143,7 +143,7 @@ void IRGen::emit(MemberFuncCallExpr::Ptr memberFuncCallExpr) {
             emit(argument);
         }
         
-        emit(memberFuncCallExpr->parent);
+        emit(memberFuncCallExpr->callee);
         
         auto function = Global::functions[memberFuncCallExpr->symbol->addressOfFunc];
         assert(function != nullptr);
@@ -320,7 +320,7 @@ void IRGen::emit(AssignmentExpr::Ptr node) {
     } else if( node->left->kind == SyntaxKind::memberAccessExpr) {
         emit(node->expr);
         auto memberAccessExpr = std::static_pointer_cast<MemberAccessExpr>(node->left);
-        auto identifierExpr = std::static_pointer_cast<IdentifierExpr>(memberAccessExpr->parent);
+        auto identifierExpr = std::static_pointer_cast<IdentifierExpr>(memberAccessExpr->callee);
         writer.write({
             .opcode = OP_ISTORE,
             .value = identifierExpr->symbol->addressOfVariable
@@ -553,7 +553,7 @@ void IRGen::emit(ClassDecl::Ptr node) {
 }
 
 void IRGen::emit(MemberAccessExpr::Ptr node) {
-    emit(node->parent);
+    emit(node->callee);
     
     writer.write({
         .opcode = OP_GETFIELD,

@@ -64,9 +64,9 @@ std::string FuncCallExpr::getTypeName() {
     return ss.str();
 }
 
-MemberFuncCallExpr::MemberFuncCallExpr(Node::Ptr parent, Node::Ptr member, std::vector<ArguCallExpr::Ptr> arguments):
+MemberFuncCallExpr::MemberFuncCallExpr(Node::Ptr callee, Node::Ptr member, std::vector<ArguCallExpr::Ptr> arguments):
 Node(SyntaxKind::memberFuncCallExpr),
-parent(parent),
+callee(callee),
 member(member),
 arguments(arguments) {
 }
@@ -74,7 +74,7 @@ arguments(arguments) {
 std::string MemberFuncCallExpr::getTypeName() {
     std::stringstream ss;
     
-    ss << parent->getTypeName() << "@" << member->queryName() << "(";
+    ss << callee->getTypeName() << "@" << member->queryName() << "(";
     for(auto& argument: arguments) {
         ss << argument->label->token->rawValue << ":";
     }
@@ -82,15 +82,15 @@ std::string MemberFuncCallExpr::getTypeName() {
     return ss.str();
 }
 
-MemberAccessExpr::MemberAccessExpr(std::shared_ptr<Node> parent, std::shared_ptr<Node> member):
+MemberAccessExpr::MemberAccessExpr(Node::Ptr callee, std::shared_ptr<Node> member):
 Node(SyntaxKind::memberAccessExpr),
-parent(parent),
+callee(callee),
 member(member) {
 }
 
 std::string MemberAccessExpr::getTypeName() {
     std::stringstream ss;
-    ss << parent->getTypeName() << "@" << member->queryName();
+    ss << callee->getTypeName() << "@" << member->queryName();
     return ss.str();
 }
 

@@ -77,12 +77,12 @@ struct FuncCallExpr: Node {
 struct MemberFuncCallExpr: Node {
     typedef std::shared_ptr<MemberFuncCallExpr> Ptr;
     
-    Node::Ptr parent;
+    Node::Ptr callee;
     Node::Ptr member;
     
     std::vector<ArguCallExpr::Ptr> arguments;
     
-    MemberFuncCallExpr(Node::Ptr parent, Node::Ptr member, std::vector<ArguCallExpr::Ptr> arguments);
+    MemberFuncCallExpr(Node::Ptr callee, Node::Ptr member, std::vector<ArguCallExpr::Ptr> arguments);
     
     virtual std::string getTypeName();
 };
@@ -90,10 +90,10 @@ struct MemberFuncCallExpr: Node {
 struct MemberAccessExpr: Node {
     typedef std::shared_ptr<MemberAccessExpr> Ptr;
     
-    Node::Ptr parent;
+    Node::Ptr callee;
     Node::Ptr member;
     
-    MemberAccessExpr(Node::Ptr parent, Node::Ptr member);
+    MemberAccessExpr(Node::Ptr callee, Node::Ptr member);
     
     virtual std::string getTypeName();
 };

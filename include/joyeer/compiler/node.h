@@ -57,7 +57,7 @@ struct Node {
 
     Symbol::Ptr symbol = nullptr;
     SymbolTable::Ptr symtable = nullptr;
-    Node::Ptr parent = nullptr;
+//    Node::Ptr parent = nullptr;
     
     JrType* type = nullptr;
     

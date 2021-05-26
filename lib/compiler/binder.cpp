@@ -230,7 +230,7 @@ Node::Ptr Binder::visit(FuncCallExpr::Ptr decl) {
     if(decl->identifier->kind == SyntaxKind::memberAccessExpr) {
         // Transfer to MemberF
         auto memberAccessExpr = std::static_pointer_cast<MemberAccessExpr>(decl->identifier);
-        auto memberFuncCallExpr = std::make_shared<MemberFuncCallExpr>(memberAccessExpr->parent, memberAccessExpr->member, decl->arguments);
+        auto memberFuncCallExpr = std::make_shared<MemberFuncCallExpr>(memberAccessExpr->callee, memberAccessExpr->member, decl->arguments);
         return visit(memberFuncCallExpr);
     }
     
@@ -245,7 +245,7 @@ Node::Ptr Binder::visit(FuncCallExpr::Ptr decl) {
 }
 
 Node::Ptr Binder::visit(MemberFuncCallExpr::Ptr decl) {
-    decl->parent = visit(decl->parent);
+    decl->callee = visit(decl->callee);
     
     std::vector<ArguCallExpr::Ptr> argus;
     for(auto &parameter: decl->arguments) {
@@ -537,7 +537,7 @@ Node::Ptr Binder::visit(DictLiteralExpr::Ptr decl) {
 }
 
 Node::Ptr Binder::visit(MemberAccessExpr::Ptr decl) {
-    decl->parent = visit(decl->parent);
+    decl->callee = visit(decl->callee);
     decl->member = visit(decl->member);
     return decl;
 }
