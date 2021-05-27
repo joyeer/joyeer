@@ -39,7 +39,6 @@ void CompileContext::visit(CompileStage stage, Node::Ptr node, std::function<voi
         auto declNode = std::static_pointer_cast<DeclNode>(node);
         descriptor = declNode->descriptor;
         descriptors.push(descriptor);
-        decls.push(node);
     }
     
     // visit
@@ -49,7 +48,6 @@ void CompileContext::visit(CompileStage stage, Node::Ptr node, std::function<voi
         assert(descriptor != nullptr);
         assert(descriptors.top() == descriptor);
         descriptors.pop();
-        decls.pop();
     }
     assert(stages.back() == stage);
     stages.pop_back();

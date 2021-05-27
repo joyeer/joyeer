@@ -37,11 +37,6 @@ public:
     void visit(CompileStage stage, std::function<void(void)> visit);
     void visit(CompileStage stage, Node::Ptr node, std::function<void(void)> visit);
     Descriptor::Ptr parentDescriptor();
-    // parent node
-    Node::Ptr parentNode() {
-        assert(decls.size() > 0);
-        return decls.top();
-    }
     
     CompileStage curStage() const;
     
@@ -95,9 +90,6 @@ protected:
     
     // parsing scope's descriptor stacks
     std::stack<Descriptor::Ptr> descriptors;
-    
-    // the decl stack
-    std::stack<Node::Ptr> decls;
     
     std::unordered_map<JrInt, SymbolTable::Ptr> mapOfTypeAndSymbolTable;
     

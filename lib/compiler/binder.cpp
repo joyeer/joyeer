@@ -44,9 +44,6 @@ Node::Ptr Binder::visit(FileModuleDecl::Ptr filemodule) {
         }
         filemodule->instanceFields = instanceFields;
         
-        // visit default initializer
-        filemodule->defaultConstructor = std::static_pointer_cast<FuncDecl>(visit(filemodule->defaultConstructor));
-        
         // visit constructors
         auto constructors = std::vector<FuncDecl::Ptr>();
         for(auto& constructor: filemodule->constructors) {
@@ -77,8 +74,10 @@ Node::Ptr Binder::visit(FuncDecl::Ptr decl) {
     assert(decl->descriptor != nullptr);
     auto symtable = context->curSymTable();
 
-    auto funcDescriptor = decl->descriptor;
     auto funcName = decl->queryName();
+    auto declaringClassDecl = decl->getDeclaringClassDecl();
+    assert(declaringClassDecl != nullptr);
+    
     // check if the function name duplicated
     if(symtable->find(funcName) != nullptr) {
         Diagnostics::reportError("[Error] Dupliate function name");
@@ -92,8 +91,8 @@ Node::Ptr Binder::visit(FuncDecl::Ptr decl) {
     symtable->insert(symbol);
     decl->symbol = symbol;
     
-    auto declaringClassDecl = decl->getDeclaringClassDecl();
-    assert(declaringClassDecl != nullptr);
+    
+    
     
     // If the parsing stage is visitClassDecl or visitSourceBlock, we will register function into target type
     if((context->curStage() == CompileStage::visitClassDecl || context->curStage() == CompileStage::visitFileModule)) {
@@ -589,7 +588,6 @@ FileModuleDecl::Ptr  Binder::normalizeAndPrepareDefaultStaticConstructorForFileM
     auto defaultModuleInitializerCodeBlock = std::make_shared<StmtsBlock>(statementsOfDefaultModuleInitilizer);
     auto defaultModuleParams = std::make_shared<ParameterClause>(std::vector<Pattern::Ptr>());
     auto defaultModuleInitializer = FuncDecl::makeConstructor(defaultModuleParams, defaultModuleInitializerCodeBlock);
-    filemodule->defaultConstructor = defaultModuleInitializer;
     
     // clear the code block
     filemodule->block = nullptr;
@@ -597,6 +595,8 @@ FileModuleDecl::Ptr  Binder::normalizeAndPrepareDefaultStaticConstructorForFileM
     // preapre for filemodule initializer's descriptor
     auto filemoduleInitializerDescriptor = std::make_shared<FileModuleInitializerDescriptor>(std::static_pointer_cast<FileModuleDescriptor>(filemodule->descriptor));
     defaultModuleInitializer->descriptor = filemoduleInitializerDescriptor;
+    
+    filemodule->constructors.push_back(defaultModuleInitializer);
     
     // register filemodule initializer in compile service
     context->compiler->declare(defaultModuleInitializer);

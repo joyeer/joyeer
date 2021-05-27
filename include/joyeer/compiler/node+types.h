@@ -59,7 +59,7 @@ struct ClassDecl: public DeclNode {
     std::vector<FuncDecl::Ptr> instanceMethods;
     std::vector<FuncDecl::Ptr> constructors;
     
-    FuncDecl::Ptr defaultConstructor;
+    FuncDecl::Ptr staticConstructor;
     
     ClassDecl(Token::Ptr name, std::vector<Node::Ptr> members);
     
@@ -84,7 +84,7 @@ struct ClassDecl: public DeclNode {
         for(auto& constructor: constructors) {
             NODE_RECURSIVE_UPDATE(constructor, NODE_UPDATE_ACTION_SET_PARENT_THIS_2(constructor))
         }
-        NODE_RECURSIVE_UPDATE(defaultConstructor, NODE_UPDATE_ACTION_SET_PARENT_THIS(defaultConstructor))
+        NODE_RECURSIVE_UPDATE(staticConstructor, NODE_UPDATE_ACTION_SET_PARENT_THIS(staticConstructor))
     }
 };
 

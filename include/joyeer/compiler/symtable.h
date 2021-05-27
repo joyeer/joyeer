@@ -7,7 +7,6 @@
 #include <vector>
 
 enum class SymbolFlag {
-    
     varSymbol =             1,
     funcSymbol =            2,
     fieldSymbol =           3,
@@ -20,18 +19,22 @@ enum class SymbolFlag {
 std::string debugStringOfSymbolFlag(SymbolFlag flag);
 
 struct Symbol {
-    typedef std::shared_ptr<Symbol> Ptr;
+    using Ptr = std::shared_ptr<Symbol>;
 public:
     bool isMutable: 1 = true;
     bool isTypeFixed: 1 = true;
     bool isExported: 1 = false;
     
     SymbolFlag flag;
-    
     std::string name;
     
-    // address of type descriptor
-    int addressOfDescriptor;
+    static Symbol::Ptr make(SymbolFlag flag, const std::string& name) {
+        return std::make_shared<Symbol>(Symbol{
+            .flag = flag,
+            .name =name
+        });
+    }
+    
     
     union {
         // index address of type in Global::types
