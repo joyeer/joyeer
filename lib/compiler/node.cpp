@@ -24,7 +24,7 @@ token(token) {
 
 }
 
-ParameterClause::ParameterClause(std::vector<std::shared_ptr<Pattern>> parameters):
+ParameterClause::ParameterClause(std::vector<Pattern::Ptr> parameters):
 Node(SyntaxKind::parameterClause),
 parameters(parameters) {
 }

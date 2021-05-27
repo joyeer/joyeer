@@ -184,8 +184,7 @@ Node::Ptr SyntaxParser::tryParseConstDecl() {
             Diagnostics::reportError("[Error] declaration must have initializer");
         }
     }
-
-    return std::shared_ptr<Node>(new VarDecl(pattern, initializer));
+    return std::make_shared<VarDecl>(pattern, initializer);
 }
 
 Node::Ptr SyntaxParser::tryParseVarDecl() {
@@ -206,7 +205,7 @@ Node::Ptr SyntaxParser::tryParseVarDecl() {
         }
     }
     
-    return std::shared_ptr<Node>(new VarDecl(pattern, initializer));
+    return std::make_shared<VarDecl>(pattern, initializer);
 }
 
 Node::Ptr SyntaxParser::tryParseClassDecl() {

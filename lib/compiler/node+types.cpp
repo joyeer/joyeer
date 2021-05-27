@@ -29,17 +29,6 @@ std::string FileModuleDecl::queryName() {
     return p.replace_extension().string();
 }
 
-std::vector<FileImportStmt::Ptr> FileModuleDecl::getFileImports() {
-    std::vector<FileImportStmt::Ptr> result;
-    for(std::vector<Node::Ptr>::const_iterator iterator = block->statements.begin(); iterator != block->statements.end(); iterator ++ ) {
-        auto node = *iterator;
-        if(node->kind == SyntaxKind::fileimportStmt) {
-            result.push_back(std::static_pointer_cast<FileImportStmt>(node));
-        }
-    }
-    return result;
-}
-
 /// Function Decl declaration
 FuncDecl::FuncDecl(Node::Ptr identifier, Node::Ptr parameterClause, Node::Ptr returnType, Node::Ptr codeBlock):
 DeclNode(SyntaxKind::funcDecl),

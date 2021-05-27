@@ -13,6 +13,7 @@ struct FileImportStmt: Node {
     
     const std::string getImportedFilename();
     
+    virtual void recursiveUpdate() { }
 };
 
 // StmtsBlock represent an { ... } code block
@@ -26,6 +27,12 @@ struct StmtsBlock: Node {
         statements(statements) {
             symtable = std::make_shared<SymbolTable>();
     }
+    
+    virtual void recursiveUpdate() {
+        for(auto& statement: statements) {
+            NODE_RECURSIVE_UPDATE(statement, NODE_UPDATE_ACTION_SET_PARENT_THIS_2(statement))
+        }
+    }
 };
 
 // For In statement
@@ -37,6 +44,12 @@ struct ForInStmt: Node {
     Node::Ptr codeBlock;
 
     ForInStmt(Node::Ptr pattern, Node::Ptr inExpr, Node::Ptr codeBlock);
+    
+    virtual void recursiveUpdate() {
+        NODE_RECURSIVE_UPDATE(pattern, NODE_UPDATE_ACTION_SET_PARENT_THIS(pattern))
+        NODE_RECURSIVE_UPDATE(inExpr, NODE_UPDATE_ACTION_SET_PARENT_THIS(inExpr))
+        NODE_RECURSIVE_UPDATE(codeBlock, NODE_UPDATE_ACTION_SET_PARENT_THIS(codeBlock))
+    }
 };
 
 struct WhileStmt: Node {
@@ -46,6 +59,11 @@ struct WhileStmt: Node {
     Node::Ptr codeBlock;
     
     WhileStmt(Node::Ptr expr, Node::Ptr codeBlock);
+    
+    virtual void recursiveUpdate() {
+        NODE_RECURSIVE_UPDATE(expr, NODE_UPDATE_ACTION_SET_PARENT_THIS(expr))
+        NODE_RECURSIVE_UPDATE(codeBlock, NODE_UPDATE_ACTION_SET_PARENT_THIS(codeBlock))
+    }
 };
 
 struct IfStmt: Node {
@@ -56,6 +74,12 @@ struct IfStmt: Node {
     Node::Ptr elseCodeBlock;
 
     IfStmt(Node::Ptr condition, Node::Ptr ifCodeBlock, Node::Ptr elseCodeBlock);
+    
+    virtual void recursiveUpdate() {
+        NODE_RECURSIVE_UPDATE(condition, NODE_UPDATE_ACTION_SET_PARENT_THIS(condition))
+        NODE_RECURSIVE_UPDATE(ifCodeBlock, NODE_UPDATE_ACTION_SET_PARENT_THIS(ifCodeBlock))
+        NODE_RECURSIVE_UPDATE(elseCodeBlock, NODE_UPDATE_ACTION_SET_PARENT_THIS(elseCodeBlock))
+    }
 };
 
 struct ReturnStmt: Node {
@@ -64,6 +88,10 @@ struct ReturnStmt: Node {
     Node::Ptr expr;
     
     ReturnStmt(Node::Ptr expr);
+    
+    virtual void recursiveUpdate() {
+        NODE_RECURSIVE_UPDATE(expr, NODE_UPDATE_ACTION_SET_PARENT_THIS(expr))
+    }
 };
 
 

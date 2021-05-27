@@ -37,6 +37,13 @@ public:
     
     // return func name
     virtual std::string queryName();
+    
+    virtual void recursiveUpdate() {
+        NODE_RECURSIVE_UPDATE(identifier, NODE_UPDATE_ACTION_SET_PARENT_THIS(identifier))
+        NODE_RECURSIVE_UPDATE(parameterClause, NODE_UPDATE_ACTION_SET_PARENT_THIS(parameterClause))
+        NODE_RECURSIVE_UPDATE(codeBlock, NODE_UPDATE_ACTION_SET_PARENT_THIS(codeBlock))
+        NODE_RECURSIVE_UPDATE(returnType, NODE_UPDATE_ACTION_SET_PARENT_THIS(returnType))
+    }
 };
 
 
@@ -57,6 +64,27 @@ struct ClassDecl: public DeclNode {
     ClassDecl(Token::Ptr name, std::vector<Node::Ptr> members);
     
     std::string queryName();
+    
+    virtual void recursiveUpdate() {
+        for(auto& member: members) {
+            NODE_RECURSIVE_UPDATE(member, NODE_UPDATE_ACTION_SET_PARENT_THIS_2(member))
+        }
+        for(auto& field: staticFields) {
+            NODE_RECURSIVE_UPDATE(field, NODE_UPDATE_ACTION_SET_PARENT_THIS_2(field))
+        }
+        for(auto& field: instanceFields) {
+            NODE_RECURSIVE_UPDATE(field, NODE_UPDATE_ACTION_SET_PARENT_THIS_2(field))
+        }
+        for(auto& method: staticMethods) {
+            NODE_RECURSIVE_UPDATE(method, NODE_UPDATE_ACTION_SET_PARENT_THIS_2(method))
+        }
+        for(auto& method: instanceMethods) {
+            NODE_RECURSIVE_UPDATE(method, NODE_UPDATE_ACTION_SET_PARENT_THIS_2(method))
+        }
+        for(auto& constructor: constructors) {
+            NODE_RECURSIVE_UPDATE(constructor, NODE_UPDATE_ACTION_SET_PARENT_THIS_2(constructor))
+        }
+    }
 };
 
 // Reprensent an FileModule in Ast tree, each xxx.joyeer file is a file module
@@ -70,12 +98,15 @@ public:
     StmtsBlock::Ptr block;
     
     std::string filename;
-
-    std::vector<FileImportStmt::Ptr> getFileImports();
     
     virtual std::string queryName();
     // get the top level declarations
     std::vector<Node::Ptr> getTopLevelDecls();
+    
+    virtual void recursiveUpdate() {
+        NODE_RECURSIVE_UPDATE(block, NODE_UPDATE_ACTION_SET_PARENT_THIS(block))
+    }
+
 };
 
 // `let` or `var` declaration
@@ -89,6 +120,11 @@ struct VarDecl: public DeclNode {
     Descriptor::Ptr parentDescriptor;
     
     VarDecl(Pattern::Ptr pattern, std::shared_ptr<Node> initializer);
+    
+    virtual void recursiveUpdate() {
+        NODE_RECURSIVE_UPDATE(pattern, NODE_UPDATE_ACTION_SET_PARENT_THIS(pattern))
+        NODE_RECURSIVE_UPDATE(initializer, NODE_UPDATE_ACTION_SET_PARENT_THIS(initializer))
+    }
     
 };
 
