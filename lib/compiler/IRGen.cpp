@@ -546,7 +546,7 @@ void IRGen::emit(DictLiteralExpr::Ptr node) {
 
 void IRGen::emit(ClassDecl::Ptr node) {
     for(auto member: node->members) {
-        if(member->kind == SyntaxKind::funcDecl || member->kind == SyntaxKind::constructorDecl) {
+        if(member->kind == SyntaxKind::funcDecl) {
             emit(member);
         }
     }

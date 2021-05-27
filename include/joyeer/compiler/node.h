@@ -16,7 +16,6 @@ enum class SyntaxKind {
     
     varDecl,
     funcDecl,
-    constructorDecl,
     classDecl,
     
     parameterClause,
@@ -95,7 +94,6 @@ struct Node: std::enable_shared_from_this<Node> {
         switch(kind) {
             case SyntaxKind::varDecl:
             case SyntaxKind::funcDecl:
-            case SyntaxKind::constructorDecl:
             case SyntaxKind::classDecl:
                 return true;
             default:
