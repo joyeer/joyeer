@@ -27,6 +27,8 @@ Node::Ptr Binder::visit(FileModuleDecl::Ptr filemodule) {
     
     filemodule = normalizeAndPrepareDefaultStaticConstructorForFileModule(filemodule);
     
+    filemodule->recursiveUpdate();
+    
     context->visit(CompileStage::visitFileModule, filemodule, [filemodule, this]() {
         // visit static fields
         auto staticFields = std::vector<DeclNode::Ptr>();
@@ -89,6 +91,9 @@ Node::Ptr Binder::visit(FuncDecl::Ptr decl) {
     });
     symtable->insert(symbol);
     decl->symbol = symbol;
+    
+    auto declaringClassDecl = decl->getDeclaringClassDecl();
+    assert(declaringClassDecl != nullptr);
     
     // If the parsing stage is visitClassDecl or visitSourceBlock, we will register function into target type
     if((context->curStage() == CompileStage::visitClassDecl || context->curStage() == CompileStage::visitFileModule)) {

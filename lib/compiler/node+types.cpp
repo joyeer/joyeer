@@ -58,6 +58,7 @@ std::string FuncDecl::queryName() {
     if(identifier != nullptr) {
         ss << identifier->queryName();
     } else if(isConstructor) {
+        
         ss << DescriptorConstants::Constructor;
     }
     

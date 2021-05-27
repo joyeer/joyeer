@@ -75,6 +75,18 @@ struct Node: std::enable_shared_from_this<Node> {
     // return the name of Node, it will be used as symbol in some cases
     virtual std::string queryName();
     
+    // return the ClassDecl representing the node in which it was declared
+    Node::Ptr getDeclaringClassDecl() {
+        Node::Ptr current = parent;
+        while(current != nullptr) {
+            if(current->kind == SyntaxKind::classDecl) {
+                return current;
+            }
+            current = current->parent;
+        }
+        return nullptr;
+    }
+    
     // The type name of the Node
     virtual std::string getTypeName();
     
@@ -93,6 +105,7 @@ struct Node: std::enable_shared_from_this<Node> {
     
     // recursive update the children node
     virtual void recursiveUpdate() = 0;
+
 protected:
     Node(SyntaxKind kind);
 

@@ -84,6 +84,7 @@ struct ClassDecl: public DeclNode {
         for(auto& constructor: constructors) {
             NODE_RECURSIVE_UPDATE(constructor, NODE_UPDATE_ACTION_SET_PARENT_THIS_2(constructor))
         }
+        NODE_RECURSIVE_UPDATE(defaultConstructor, NODE_UPDATE_ACTION_SET_PARENT_THIS(defaultConstructor))
     }
 };
 
@@ -104,6 +105,7 @@ public:
     std::vector<Node::Ptr> getTopLevelDecls();
     
     virtual void recursiveUpdate() {
+        ClassDecl::recursiveUpdate();
         NODE_RECURSIVE_UPDATE(block, NODE_UPDATE_ACTION_SET_PARENT_THIS(block))
     }
 
