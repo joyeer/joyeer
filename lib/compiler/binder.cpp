@@ -175,7 +175,7 @@ Node::Ptr Binder::visit(ClassDecl::Ptr decl) {
         
         auto symbol = Symbol::Ptr(new Symbol{
             .name = defaultConstructor->name,
-            .flag = SymbolFlag::constructorSymbol,
+            .flag = SymbolFlag::funcSymbol,
             .addressOfFunc = defaultConstructor->addressOfFunc
         });
         symtable->insert(symbol);

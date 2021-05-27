@@ -11,7 +11,6 @@ enum class SymbolFlag {
     varSymbol =             1,
     funcSymbol =            2,
     fieldSymbol =           3,
-    constructorSymbol =     4,
     
     // this is a type symbol
     typeSymbol =            5,

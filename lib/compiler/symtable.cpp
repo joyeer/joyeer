@@ -10,8 +10,6 @@ std::string debugStringOfSymbolFlag(SymbolFlag flag) {
             return "funcSymbol";
         case SymbolFlag::fieldSymbol:
             return "fieldSymbol";
-        case SymbolFlag::constructorSymbol:
-            return "constructor";
         case SymbolFlag::typeSymbol:
             return "type";
         case SymbolFlag::fileModuleSymbol:
