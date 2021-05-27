@@ -11,12 +11,18 @@ public:
     DeclNode(SyntaxKind kind): Node(kind) {}
 };
 
+enum class FuncFlag {
+    staticConstructor = 1,
+    constructor = 2,
+    function = 3
+};
 
 // Represent a Function in Ast tree.
 struct FuncDecl: public DeclNode {
 public:
     using Ptr = std::shared_ptr<FuncDecl>;
     
+    FuncFlag flag;
     Node::Ptr identifier = nullptr;               //IdentifierExpr
     Node::Ptr parameterClause;
     Node::Ptr codeBlock;
@@ -29,14 +35,14 @@ public:
     // make FuncDecl as Constructor
     static Ptr makeConstructor(Node::Ptr parameterClause, StmtsBlock::Ptr stmts) {
         auto decl = std::make_shared<FuncDecl>(nullptr, parameterClause, nullptr, stmts);
-        decl->isConstructor = true;
+        
         return decl;
     }
     
     virtual std::string getTypeName();
     
     // return func name
-    virtual std::string queryName();
+    virtual std::string getSimpleName();
     
     virtual void recursiveUpdate() {
         NODE_RECURSIVE_UPDATE(identifier, NODE_UPDATE_ACTION_SET_PARENT_THIS(identifier))
@@ -63,7 +69,7 @@ struct ClassDecl: public DeclNode {
     
     ClassDecl(Token::Ptr name, std::vector<Node::Ptr> members);
     
-    std::string queryName();
+    std::string getSimpleName();
     
     virtual void recursiveUpdate() {
         for(auto& member: members) {
@@ -100,7 +106,7 @@ public:
     
     std::string filename;
     
-    virtual std::string queryName();
+    virtual std::string getSimpleName();
     // get the top level declarations
     std::vector<Node::Ptr> getTopLevelDecls();
     

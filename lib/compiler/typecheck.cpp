@@ -248,7 +248,7 @@ Node::Ptr TypeChecker::visit(Pattern::Ptr node) {
 }
 
 Node::Ptr TypeChecker::visit(IdentifierExpr::Ptr node) {
-    auto name = node->queryName();
+    auto name = node->getSimpleName();
     switch (context->curStage()) {
         case CompileStage::visitFileModule:
         case CompileStage::visitExpr:
@@ -275,7 +275,7 @@ Node::Ptr TypeChecker::visit(IdentifierExpr::Ptr node) {
 }
 
 Node::Ptr TypeChecker::visit(Type::Ptr node) {
-    auto symbol = context->lookup(node->identifier->queryName());
+    auto symbol = context->lookup(node->identifier->getSimpleName());
     if(symbol == nullptr) {
         Diagnostics::reportError("[Error]Cannot find type");
     }

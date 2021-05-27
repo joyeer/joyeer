@@ -72,13 +72,13 @@ struct Node: std::enable_shared_from_this<Node> {
     JrType* type = nullptr;
     
     // return the name of Node, it will be used as symbol in some cases
-    virtual std::string queryName();
+    virtual std::string getSimpleName();
     
     // return the ClassDecl representing the node in which it was declared
     Node::Ptr getDeclaringClassDecl() {
         Node::Ptr current = parent;
         while(current != nullptr) {
-            if(current->kind == SyntaxKind::classDecl) {
+            if(current->kind == SyntaxKind::classDecl || current->kind == SyntaxKind::filemodule) {
                 return current;
             }
             current = current->parent;
@@ -117,7 +117,7 @@ struct IdentifierExpr: public Node {
     IdentifierExpr(Token::Ptr token);
     
     // Return identifier's name
-    virtual std::string queryName();
+    virtual std::string getSimpleName();
     virtual std::string getTypeName();
     virtual void recursiveUpdate() { /* leave empty */ }
 };

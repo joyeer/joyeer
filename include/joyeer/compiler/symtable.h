@@ -10,7 +10,7 @@ enum class SymbolFlag {
     varSymbol =             1,
     funcSymbol =            2,
     fieldSymbol =           3,
-    
+    filemodule =            4,
     // this is a type symbol
     typeSymbol =            5,
     fileModuleSymbol =      6

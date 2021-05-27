@@ -13,7 +13,7 @@ instanceFields() {
     symtable = std::make_shared<SymbolTable>();
 }
 
-std::string ClassDecl::queryName() {
+std::string ClassDecl::getSimpleName() {
     return name->rawValue;
 }
 
@@ -24,9 +24,9 @@ block(block) {
     this->descriptor = descriptor;
 }
 
-std::string FileModuleDecl::queryName() {
+std::string FileModuleDecl::getSimpleName() {
     std::filesystem::path p = filename;
-    return p.replace_extension().string();
+    return p.filename().replace_extension().string();
 }
 
 /// Function Decl declaration
@@ -53,18 +53,18 @@ std::string FuncDecl::getTypeName() {
     return ss.str();
 }
 
-std::string FuncDecl::queryName() {
+std::string FuncDecl::getSimpleName() {
     std::stringstream ss;
     if(identifier != nullptr) {
-        ss << identifier->queryName();
+        ss << identifier->getSimpleName();
     } else if(isConstructor) {
-        
-        ss << DescriptorConstants::Constructor;
+        auto declaringClassDecl = getDeclaringClassDecl();
+        ss << declaringClassDecl->getSimpleName();
     }
     
     ss << DescriptorConstants::ParenthesisOpen;
     for(auto p : std::static_pointer_cast<ParameterClause>(parameterClause)->parameters) {
-        ss << p->queryName() << DescriptorConstants::Colon;
+        ss << p->getSimpleName() << DescriptorConstants::Colon;
     }
     ss << DescriptorConstants::ParenthesisClose;
     

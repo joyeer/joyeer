@@ -74,7 +74,7 @@ Node::Ptr Binder::visit(FuncDecl::Ptr decl) {
     assert(decl->descriptor != nullptr);
     auto symtable = context->curSymTable();
 
-    auto funcName = decl->queryName();
+    auto funcName = decl->getSimpleName();
     auto declaringClassDecl = decl->getDeclaringClassDecl();
     assert(declaringClassDecl != nullptr);
     
@@ -90,9 +90,6 @@ Node::Ptr Binder::visit(FuncDecl::Ptr decl) {
     });
     symtable->insert(symbol);
     decl->symbol = symbol;
-    
-    
-    
     
     // If the parsing stage is visitClassDecl or visitSourceBlock, we will register function into target type
     if((context->curStage() == CompileStage::visitClassDecl || context->curStage() == CompileStage::visitFileModule)) {
@@ -129,7 +126,7 @@ Node::Ptr Binder::visit(FuncDecl::Ptr decl) {
 Node::Ptr Binder::visit(ClassDecl::Ptr decl) {
     
     auto symtable = context->curSymTable();
-    auto name = decl->queryName();
+    auto name = decl->getSimpleName();
     
     if(symtable->find(name) != nullptr) {
         Diagnostics::reportError("[Error] duplicate class name");
@@ -193,7 +190,7 @@ Node::Ptr Binder::visit(VarDecl::Ptr decl) {
     
     auto pattern = decl->pattern;
     auto symtable = context->curSymTable();
-    auto name = pattern->identifier->queryName();
+    auto name = pattern->identifier->getSimpleName();
     
     if(symtable->find(name) != nullptr) {
         Diagnostics::reportError("[Error] duplicate variable name");
@@ -275,7 +272,7 @@ Node::Ptr Binder::visit(PrefixExpr::Ptr decl) {
 }
 
 Node::Ptr Binder::visit(IdentifierExpr::Ptr decl) {
-    auto name = decl->queryName();
+    auto name = decl->getSimpleName();
     
     switch (context->curStage()) {
         case CompileStage::visitFuncParamDecl: {
