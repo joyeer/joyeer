@@ -11,31 +11,51 @@ public:
     DeclNode(SyntaxKind kind): Node(kind) {}
 };
 
-enum class FuncFlag {
-    staticConstructor = 1,
-    constructor = 2,
-    function = 3
+enum class FuncAccessFlag {
+    _static = 1
 };
+
+enum class FuncType {
+    staticInitializer = 1,  // class's static initialzer
+    constructor = 2,        // class constructor
+    function = 3            // function
+};
+
+// Helper FuncType to SymbolFlag
+static SymbolFlag funcTypeToSymbolFlag(FuncType type) {
+    switch (type) {
+        case FuncType::staticInitializer:
+            return SymbolFlag::staticInitializer;
+        case FuncType::constructor:
+            return SymbolFlag::constructor;
+        case FuncType::function:
+            return SymbolFlag::funcSymbol;
+    }
+}
 
 // Represent a Function in Ast tree.
 struct FuncDecl: public DeclNode {
 public:
     using Ptr = std::shared_ptr<FuncDecl>;
     
-    FuncFlag flag;
+    FuncType type;
     Node::Ptr identifier = nullptr;               //IdentifierExpr
     Node::Ptr parameterClause;
     Node::Ptr codeBlock;
     Node::Ptr returnType = nullptr;
-    bool isConstructor = false;
-    bool isStatic = false;
-
+    
     FuncDecl(Node::Ptr identifier, Node::Ptr parameterClause, Node::Ptr returnType, Node::Ptr codeBlock);
     
-    // make FuncDecl as Constructor
+    // make FuncDecl as Static initializer
+    static Ptr makeStaticInitializer(StmtsBlock::Ptr stmts) {
+        auto decl = std::make_shared<FuncDecl>(nullptr, nullptr, nullptr, stmts);
+        decl->type = FuncType::staticInitializer;
+        return decl;
+    }
+    
     static Ptr makeConstructor(Node::Ptr parameterClause, StmtsBlock::Ptr stmts) {
         auto decl = std::make_shared<FuncDecl>(nullptr, parameterClause, nullptr, stmts);
-        
+        decl->type = FuncType::constructor;
         return decl;
     }
     
@@ -69,7 +89,7 @@ struct ClassDecl: public DeclNode {
     
     ClassDecl(Token::Ptr name, std::vector<Node::Ptr> members);
     
-    std::string getSimpleName();
+    virtual std::string getSimpleName();
     
     virtual void recursiveUpdate() {
         for(auto& member: members) {
@@ -107,8 +127,6 @@ public:
     std::string filename;
     
     virtual std::string getSimpleName();
-    // get the top level declarations
-    std::vector<Node::Ptr> getTopLevelDecls();
     
     virtual void recursiveUpdate() {
         ClassDecl::recursiveUpdate();

@@ -7,18 +7,7 @@
 
 CompileContext::CompileContext(CommandLineArguments::Ptr options):
 options(options) {
-    initializeSymTable();
-    initializeGlobalScope();
-}
-
-SymbolTable::Ptr CompileContext::initializeSymTable() {
-    SymbolTable::Ptr symtable = std::make_shared<SymbolTable>();
-    symbols.push_back(symtable);
-    return symtable;
-}
-
-void CompileContext::finalizeSymTable() {
-    symbols.pop_back();
+//    initializeGlobalScope();
 }
 
 SymbolTable::Ptr CompileContext::curSymTable() {
@@ -41,6 +30,10 @@ void CompileContext::visit(CompileStage stage, Node::Ptr node, std::function<voi
         descriptors.push(descriptor);
     }
     
+    if(node->symtable) {
+        symbols.push_back(node->symtable);
+    }
+    
     // visit
     visit();
     
@@ -48,6 +41,10 @@ void CompileContext::visit(CompileStage stage, Node::Ptr node, std::function<voi
         assert(descriptor != nullptr);
         assert(descriptors.top() == descriptor);
         descriptors.pop();
+    }
+    
+    if(node->symtable) {
+        symbols.pop_back();
     }
     assert(stages.back() == stage);
     stages.pop_back();

@@ -14,6 +14,10 @@ std::string debugStringOfSymbolFlag(SymbolFlag flag) {
             return "type";
         case SymbolFlag::fileModuleSymbol:
             return "module";
+        case SymbolFlag::staticInitializer:
+            return "static-initializer";
+        case SymbolFlag::constructor:
+            return "constructor";
     }
 }
 

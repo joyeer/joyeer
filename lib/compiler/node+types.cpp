@@ -22,6 +22,7 @@ ClassDecl(nullptr, block->statements),
 block(block) {
     kind = SyntaxKind::filemodule;
     this->descriptor = descriptor;
+    assert(symtable != nullptr);
 }
 
 std::string FileModuleDecl::getSimpleName() {
@@ -55,16 +56,21 @@ std::string FuncDecl::getTypeName() {
 
 std::string FuncDecl::getSimpleName() {
     std::stringstream ss;
+    
+    // basis name
     if(identifier != nullptr) {
         ss << identifier->getSimpleName();
-    } else if(isConstructor) {
+    } else if(type == FuncType::constructor || type == FuncType::staticInitializer) {
         auto declaringClassDecl = getDeclaringClassDecl();
         ss << declaringClassDecl->getSimpleName();
     }
     
+    // parameters
     ss << DescriptorConstants::ParenthesisOpen;
-    for(auto p : std::static_pointer_cast<ParameterClause>(parameterClause)->parameters) {
-        ss << p->getSimpleName() << DescriptorConstants::Colon;
+    if(parameterClause) {
+        for(auto p : std::static_pointer_cast<ParameterClause>(parameterClause)->parameters) {
+            ss << p->getSimpleName() << DescriptorConstants::Colon;
+        }
     }
     ss << DescriptorConstants::ParenthesisClose;
     

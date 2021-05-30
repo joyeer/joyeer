@@ -31,8 +31,6 @@ public:
     
     CompileContext(CommandLineArguments::Ptr options);
     
-    SymbolTable::Ptr initializeSymTable();
-    void finalizeSymTable();
     
     void visit(CompileStage stage, std::function<void(void)> visit);
     void visit(CompileStage stage, Node::Ptr node, std::function<void(void)> visit);

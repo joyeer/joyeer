@@ -74,6 +74,9 @@ private:
     // prepare default constructor for class decl
     FuncDecl::Ptr prepareDefaultConstructorForClass(ClassDecl::Ptr decl);
     
+    // process the ClassDecl & FileModuleNode
+    void processClassDecl(ClassDecl::Ptr decl);
+    
 private:
     CompileContext::Ptr context;
 };

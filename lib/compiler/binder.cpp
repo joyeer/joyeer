@@ -65,62 +65,8 @@ Node::Ptr Binder::visit(FileModuleDecl::Ptr filemodule) {
         }
         filemodule->instanceMethods = instanceMethods;
     });
-    context->finalizeSymTable();
     
     return filemodule;
-}
-
-Node::Ptr Binder::visit(FuncDecl::Ptr decl) {
-    assert(decl->descriptor != nullptr);
-    auto symtable = context->curSymTable();
-
-    auto funcName = decl->getSimpleName();
-    auto declaringClassDecl = decl->getDeclaringClassDecl();
-    assert(declaringClassDecl != nullptr);
-    
-    // check if the function name duplicated
-    if(symtable->find(funcName) != nullptr) {
-        Diagnostics::reportError("[Error] Dupliate function name");
-    }
-
-    // make the symbol
-    auto symbol = std::shared_ptr<Symbol>(new Symbol {
-        .name = funcName,
-        .flag = SymbolFlag::funcSymbol
-    });
-    symtable->insert(symbol);
-    decl->symbol = symbol;
-    
-    // If the parsing stage is visitClassDecl or visitSourceBlock, we will register function into target type
-    if((context->curStage() == CompileStage::visitClassDecl || context->curStage() == CompileStage::visitFileModule)) {
-        
-    }
-    
-    decl->symtable = context->initializeSymTable();
-    // visit func decleration
-    context->visit(CompileStage::visitFuncDecl, decl, [this, decl]() {
-        // start to process function name
-        context->visit(CompileStage::visitFuncNameDecl, [this, decl]() {
-            if(decl->identifier != nullptr) {
-                decl->identifier = visit(decl->identifier);
-            }
-        });
-        
-        // start to process function parameters
-        context->visit(CompileStage::visitFuncParamDecl, [this, decl]() {
-            decl->parameterClause = visit(decl->parameterClause);
-        });
-        
-        if(decl->returnType != nullptr) {
-            decl->returnType = visit(decl->returnType);
-        }
-        
-        decl->codeBlock = visit(decl->codeBlock);
-        
-    });
-    context->finalizeSymTable();
-    
-    return decl;
 }
 
 Node::Ptr Binder::visit(ClassDecl::Ptr decl) {
@@ -144,7 +90,6 @@ Node::Ptr Binder::visit(ClassDecl::Ptr decl) {
     symbol->addressOfType = objectType->addressOfType;
     decl->symbol = symbol;
     
-    context->initializeSymTable();
     decl->symtable = context->curSymTable();
     context->entry(objectType);
     bool hasCustomizedConstructor = false;
@@ -178,13 +123,60 @@ Node::Ptr Binder::visit(ClassDecl::Ptr decl) {
         objectType->constructors.push_back(defaultConstructor->addressOfFunc);
     }
     
-    // assocated type with type's symbol 
+    // assocated type with type's symbol
     context->associate(objectType, context->curSymTable());
     context->leave(objectType);
-    context->finalizeSymTable();
     
     return decl;
 }
+
+Node::Ptr Binder::visit(FuncDecl::Ptr decl) {
+    assert(decl->descriptor != nullptr);
+    auto symtable = context->curSymTable();
+
+    auto funcSimpleName = decl->getSimpleName();
+    auto declaringClassDecl = decl->getDeclaringClassDecl();
+    assert(declaringClassDecl != nullptr);
+    
+    // check if the function name duplicated
+    if(symtable->find(funcSimpleName) != nullptr) {
+        Diagnostics::reportError("[Error] Dupliate function name");
+    }
+
+    // prepare the symbol, register the symbol into parent
+    decl->symbol = Symbol::make(funcTypeToSymbolFlag(decl->type), funcSimpleName);
+    symtable->insert(decl->symbol);
+    
+    // If the parsing stage is visitClassDecl or visitSourceBlock, we will register function into target type
+    if((context->curStage() == CompileStage::visitClassDecl || context->curStage() == CompileStage::visitFileModule)) {
+        
+    }
+    
+    // visit func decleration
+    context->visit(CompileStage::visitFuncDecl, decl, [this, decl]() {
+        // start to process function name
+        context->visit(CompileStage::visitFuncNameDecl, [this, decl]() {
+            if(decl->identifier != nullptr) {
+                decl->identifier = visit(decl->identifier);
+            }
+        });
+        
+        // start to process function parameters
+        context->visit(CompileStage::visitFuncParamDecl, [this, decl]() {
+            decl->parameterClause = visit(decl->parameterClause);
+        });
+        
+        if(decl->returnType != nullptr) {
+            decl->returnType = visit(decl->returnType);
+        }
+        
+        decl->codeBlock = visit(decl->codeBlock);
+        
+    });
+    
+    return decl;
+}
+
 
 Node::Ptr Binder::visit(VarDecl::Ptr decl) {
     
@@ -464,7 +456,6 @@ Node::Ptr Binder::visit(WhileStmt::Ptr decl) {
 
 Node::Ptr Binder::visit(StmtsBlock::Ptr decl) {
     
-    context->initializeSymTable();
     auto table = context->curSymTable();
     decl->symtable = table;
     
@@ -476,8 +467,6 @@ Node::Ptr Binder::visit(StmtsBlock::Ptr decl) {
         }
         decl->statements = statements;
     });
-    
-    context->finalizeSymTable();
     
     return decl;
 }
@@ -582,21 +571,20 @@ FileModuleDecl::Ptr  Binder::normalizeAndPrepareDefaultStaticConstructorForFileM
     }
     
     // prepare for FileModule initializer
-    auto defaultModuleInitializerCodeBlock = std::make_shared<StmtsBlock>(statementsOfDefaultModuleInitilizer);
-    auto defaultModuleParams = std::make_shared<ParameterClause>(std::vector<Pattern::Ptr>());
-    auto defaultModuleInitializer = FuncDecl::makeConstructor(defaultModuleParams, defaultModuleInitializerCodeBlock);
+    auto moduleStaticInitializer = FuncDecl::makeStaticInitializer(std::make_shared<StmtsBlock>(statementsOfDefaultModuleInitilizer));
+    
+    // preapre for filemodule initializer's descriptor
+    moduleStaticInitializer->descriptor = std::make_shared<FileModuleInitializerDescriptor>(std::static_pointer_cast<FileModuleDescriptor>(filemodule->descriptor));
+    
+    filemodule->constructors.push_back(moduleStaticInitializer);
     
     // clear the code block
     filemodule->block = nullptr;
     filemodule->staticFields = declarations;
-    // preapre for filemodule initializer's descriptor
-    auto filemoduleInitializerDescriptor = std::make_shared<FileModuleInitializerDescriptor>(std::static_pointer_cast<FileModuleDescriptor>(filemodule->descriptor));
-    defaultModuleInitializer->descriptor = filemoduleInitializerDescriptor;
     
-    filemodule->constructors.push_back(defaultModuleInitializer);
     
     // register filemodule initializer in compile service
-    context->compiler->declare(defaultModuleInitializer);
+    context->compiler->declare(moduleStaticInitializer);
     return filemodule;
 }
 
