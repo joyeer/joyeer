@@ -26,8 +26,9 @@ Node::Ptr Binder::visit(FileModuleDecl::Ptr filemodule) {
     context->compiler->declare(filemodule);
     
     filemodule = normalizeAndPrepareDefaultStaticConstructorForFileModule(filemodule);
-    
     filemodule->recursiveUpdate();
+    
+    filemodule->symbol = Symbol::make(SymbolFlag::fileModuleSymbol, filemodule->getSimpleName());
     
     context->visit(CompileStage::visitFileModule, filemodule, [filemodule, this]() {
         // visit static fields
@@ -147,11 +148,6 @@ Node::Ptr Binder::visit(FuncDecl::Ptr decl) {
     decl->symbol = Symbol::make(funcTypeToSymbolFlag(decl->type), funcSimpleName);
     symtable->insert(decl->symbol);
     
-    // If the parsing stage is visitClassDecl or visitSourceBlock, we will register function into target type
-    if((context->curStage() == CompileStage::visitClassDecl || context->curStage() == CompileStage::visitFileModule)) {
-        
-    }
-    
     // visit func decleration
     context->visit(CompileStage::visitFuncDecl, decl, [this, decl]() {
         // start to process function name
@@ -163,7 +159,9 @@ Node::Ptr Binder::visit(FuncDecl::Ptr decl) {
         
         // start to process function parameters
         context->visit(CompileStage::visitFuncParamDecl, [this, decl]() {
-            decl->parameterClause = visit(decl->parameterClause);
+            if(decl->parameterClause != nullptr) {
+                decl->parameterClause = visit(decl->parameterClause);
+            }
         });
         
         if(decl->returnType != nullptr) {

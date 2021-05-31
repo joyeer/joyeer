@@ -30,12 +30,16 @@ void CompileContext::visit(CompileStage stage, Node::Ptr node, std::function<voi
         descriptors.push(descriptor);
     }
     
-    if(node->symtable) {
+    if(node != nullptr && node->symtable) {
         symbols.push_back(node->symtable);
     }
     
     // visit
     visit();
+    
+    if(node != nullptr && node->symtable) {
+        symbols.pop_back();
+    }
     
     if(isDeclNode) {
         assert(descriptor != nullptr);
@@ -43,9 +47,6 @@ void CompileContext::visit(CompileStage stage, Node::Ptr node, std::function<voi
         descriptors.pop();
     }
     
-    if(node->symtable) {
-        symbols.pop_back();
-    }
     assert(stages.back() == stage);
     stages.pop_back();
 }
