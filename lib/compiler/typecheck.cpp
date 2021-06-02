@@ -17,35 +17,11 @@ Node::Ptr TypeChecker::visit(Node::Ptr node) {
 Node::Ptr TypeChecker::visit(FileModuleDecl::Ptr node) {
     
     assert(node->symbol->flag == SymbolFlag::fileModuleSymbol);
-    auto moduleClass = (JrModuleClass*)(Global::types[node->symbol->addressOfType]);
-    assert(moduleClass->constructors.size() == 1);
     
-    auto constructor = Global::functions[moduleClass->constructors.back()];
-    assert(constructor != nullptr);
-    
-    context->entry(node->symtable);
-    context->entry(moduleClass);
-    context->entry(constructor);
-    
-    context->visit(CompileStage::visitFileModule, [this, node](){
-        auto statements = std::vector<Node::Ptr>();
-        for(auto statement: node->block->statements) {
-            statements.push_back(visit(statement));
-        }
-        node->block->statements = statements;
+    context->visit(CompileStage::visitFileModule, node, [this, node](){
+        processClassDecl(node);
     });
     
-    // For Module's default consturctor
-    constructor->localVars.push_back(JrVar {
-        .name = Keywords::SELF,
-        .type = moduleClass,
-        .addressOfVariable = static_cast<int>(constructor->localVars.size())
-    });
-
-    verifyReturnStatement(node);
-    context->leave(constructor);
-    context->leave(moduleClass);
-    context->leave(node->symtable);
     return node;
 }
 
@@ -191,29 +167,6 @@ Node::Ptr TypeChecker::visit(VarDecl::Ptr node) {
         if(node->pattern->type == nullptr && rightType != JrType::Nil) {
             node->symbol->addressOfType = rightType->addressOfType;
         }
-        auto function = context->curFunction();
-    }
-    
-    
-    auto stage = context->curStage();
-    if(stage == CompileStage::visitFileModule || stage == CompileStage::visitClassDecl) {
-        auto objectType = (JrObjectType*)(context->curType());
-        auto fieldType = objectType->virtualFields[node->symbol->addressOfField];
-        assert(fieldType->type == nullptr);
-        fieldType->type = Global::types[node->symbol->addressOfType];
-    } else {
-        // declare the local variable in function
-        auto function = context->curFunction();
-        auto addressOfVariable = (int)function->localVars.size();
-        node->symbol->addressOfVariable = addressOfVariable;
-        
-        assert(Global::types[node->symbol->addressOfType] != nullptr);
-        
-        function->localVars.push_back(JrVar {
-            .name = node->pattern->getIdentifierName(),
-            .type = Global::types[node->symbol->addressOfType],
-            .addressOfVariable = addressOfVariable
-        });
     }
     
     return node;
@@ -272,6 +225,45 @@ Node::Ptr TypeChecker::visit(IdentifierExpr::Ptr node) {
             break;
     }
     return node;
+}
+
+ClassDecl::Ptr TypeChecker::processClassDecl(ClassDecl::Ptr decl) {
+    // visit static fields
+    auto staticFields = std::vector<DeclNode::Ptr>();
+    for(auto& fieldStatement : decl->staticFields) {
+        staticFields.push_back(std::static_pointer_cast<DeclNode>(visit(fieldStatement)));
+    }
+    decl->staticFields = staticFields;
+    
+    // visit instance fields
+    auto instanceFields = std::vector<DeclNode::Ptr>();
+    for(auto& instanceField : decl->instanceFields) {
+        instanceFields.push_back(std::static_pointer_cast<DeclNode>(visit(instanceField)));
+    }
+    decl->instanceFields = instanceFields;
+    
+    // visit constructors
+    auto constructors = std::vector<FuncDecl::Ptr>();
+    for(auto& constructor: decl->constructors) {
+        constructors.push_back(std::static_pointer_cast<FuncDecl>(visit(constructor)));
+    }
+    decl->constructors = constructors;
+    
+    // visit static methods
+    auto staticMethods = std::vector<FuncDecl::Ptr>();
+    for(auto& method: decl->staticMethods) {
+        staticMethods.push_back(std::static_pointer_cast<FuncDecl>(visit(method)));
+    }
+    decl->staticMethods = staticMethods;
+    
+    // visit instance methods
+    auto instanceMethods = std::vector<FuncDecl::Ptr>();
+    for(auto& method: decl->instanceMethods) {
+        instanceMethods.push_back(std::static_pointer_cast<FuncDecl>(visit(method)));
+    }
+    decl->instanceMethods = instanceMethods;
+    
+    return decl;
 }
 
 Node::Ptr TypeChecker::visit(Type::Ptr node) {
@@ -631,10 +623,6 @@ JrType* TypeChecker::typeOf(ArrayType::Ptr node) {
 
 JrType* TypeChecker::typeOf(PrefixExpr::Ptr node) {
     return typeOf(node->expr);
-}
-
-void TypeChecker::verifyReturnStatement(FileModuleDecl::Ptr node) {
-    verifyReturnStatement(node->block->statements);
 }
 
 void TypeChecker::verifyReturnStatement(StmtsBlock::Ptr node) {

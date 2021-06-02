@@ -42,6 +42,8 @@ protected:
     virtual Node::Ptr visit(SubscriptExpr::Ptr decl);
     virtual Node::Ptr visit(ArrayType::Ptr decl);
     virtual Node::Ptr visit(FileImportStmt::Ptr decl);
+    
+    ClassDecl::Ptr processClassDecl(ClassDecl::Ptr decl);
 
     JrType* typeOf(Node::Ptr node);
     JrType* typeOf(IdentifierExpr::Ptr node);
@@ -61,7 +63,6 @@ protected:
     JrType* typeOf(PrefixExpr::Ptr node);
     
     // Get Codeblock's return type
-    void verifyReturnStatement(FileModuleDecl::Ptr node);
     void verifyReturnStatement(StmtsBlock::Ptr node);
     void verifyReturnStatement(std::vector<Node::Ptr>& statements);
     JrType* returnTypeOf(Node::Ptr node);

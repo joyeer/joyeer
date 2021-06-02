@@ -33,7 +33,7 @@ void NodeDebugPrinter::print(Symbol::Ptr symbol) {
     }
     output << std::endl;
     printTab();
-    output << "@symbol-> name:\""<< symbol->name << "\", flag:\"" << debugStringOfSymbolFlag(symbol->flag) << "\", mutable:" << symbol->isMutable;
+    output << "@symbol(name:\""<< symbol->name << "\", flag:\"" << debugStringOfSymbolFlag(symbol->flag) << "\", mutable:" << symbol->isMutable << ")";
 }
 
 void NodeDebugPrinter::print(std::vector<Node::Ptr> nodes) {
@@ -64,15 +64,39 @@ void NodeDebugPrinter::print(Node::Ptr node) {
     printTab();
     
     switch (node->kind) {
-        case SyntaxKind::filemodule: {
-            
+        case SyntaxKind::filemodule:
+        case SyntaxKind::classDecl: {
             auto n = std::static_pointer_cast<FileModuleDecl>(node);
-            output << "+FileModule(descriptor: \"" << n->descriptor->getRawDescriptor() << "\")" ;
+            if(node->kind == SyntaxKind::filemodule) {
+                output << "+FileModule(simple-name:" << n->getSimpleName() << ", descriptor: \"" << n->descriptor->getRawDescriptor() << "\")" ;
+            } else {
+                output << "+ClassDecl(simple-name:" << n->getSimpleName() << ", descriptor: \"" << n->descriptor->getRawDescriptor() << "\")" ;
+            }
             incTab();
             print(n->symtable);
             print(n->symbol);
-            for(auto statement: n->block->statements) {
-                print(statement);
+            
+            // print static fields
+            for(auto var: n->staticFields) {
+                print(var);
+            }
+            // print fields
+            for(auto var: n->instanceFields) {
+                print(var);
+            }
+            // print static constructor
+            print(n->staticConstructor);
+            // print constructors
+            for (auto func: n->constructors) {
+                print(func);
+            }
+            // print static functions
+            for(auto func: n->staticMethods) {
+                print(func);
+            }
+            // print instance functions
+            for(auto func: n->instanceMethods) {
+                print(func);
             }
             decTab();
         }
@@ -110,8 +134,13 @@ void NodeDebugPrinter::print(Node::Ptr node) {
             output << "+importStatement" ;
             break;
         case SyntaxKind::varDecl: {
-            output << "+varDecl" ;
+            
             auto n = std::static_pointer_cast<VarDecl>(node);
+            if(n->varType == VarType::staticMember) {
+                output << "+static-member()" ;
+            } else if(n->varType == VarType::variable) {
+                output << "+variable()" ;
+            }
             incTab();
             print(n->symtable);
             print(n->symbol);
@@ -121,8 +150,14 @@ void NodeDebugPrinter::print(Node::Ptr node) {
         }
             break;
         case SyntaxKind::funcDecl: {
-            output << "+funcDecl" ;
             auto n = std::static_pointer_cast<FuncDecl>(node);
+            if(n->type == FuncType::function) {
+                output << "+function" ;
+            } else if(n->type == FuncType::staticInitializer) {
+                output << "+static-constructor" ;
+            } else if(n->type == FuncType::constructor) {
+                output << "+constructor";
+            }
             incTab();
             print(n->symtable);
             print(n->symbol);
@@ -133,17 +168,7 @@ void NodeDebugPrinter::print(Node::Ptr node) {
             decTab();
         }
             break;
-        case SyntaxKind::classDecl: {
-            output << "+classDecl" ;
-            auto members = std::static_pointer_cast<ClassDecl>(node);
-            incTab();
-            print(members->symtable);
-            print(members->symbol);
-            print(members->members);
-            decTab();
-        }
-            break;
-        case SyntaxKind::parameterClause: {
+                case SyntaxKind::parameterClause: {
             output << "+parameterClause" ;
             auto n = std::static_pointer_cast<ParameterClause>(node);
             incTab();

@@ -71,9 +71,6 @@ private:
     */
     FileModuleDecl::Ptr normalizeAndPrepareDefaultStaticConstructorForFileModule(FileModuleDecl::Ptr filemodule);
     
-    // prepare default constructor for class decl
-    FuncDecl::Ptr prepareDefaultConstructorForClass(ClassDecl::Ptr decl);
-    
     // process the ClassDecl & FileModuleNode
     void processClassDecl(ClassDecl::Ptr decl);
     

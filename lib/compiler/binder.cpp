@@ -203,16 +203,6 @@ Node::Ptr Binder::visit(VarDecl::Ptr decl) {
         decl->initializer = visit(decl->initializer);
     }
     
-//    if(stage == CompileStage::visitClassDecl || stage == CompileStage::visitFileModule) {
-//        // If var decl is a field, let's register it in type's field list
-//        auto ownerType = (JrObjectType*)context->curType();
-//        auto field = JrFieldType::Ptr(new JrFieldType {
-//            .name = name
-//        });
-////        ownerType->registerField(field);
-//        symbol->addressOfField = field->addressOfField;
-//    }
-//    
     return decl;
 }
 
@@ -558,31 +548,37 @@ Node::Ptr Binder::visit(FileImportStmt::Ptr decl) {
 
 FileModuleDecl::Ptr  Binder::normalizeAndPrepareDefaultStaticConstructorForFileModule(FileModuleDecl::Ptr filemodule) {
     
+    // declaration inside of the module
     auto declarations = std::vector<DeclNode::Ptr>();
-    auto statementsOfDefaultModuleInitilizer = std::vector<Node::Ptr>();
+    // statements & expression inside of the module
+    auto statements = std::vector<Node::Ptr>();
+    
     for(auto statement: filemodule->block->statements) {
         if(statement->isDeclNode()) {
-            declarations.push_back(std::static_pointer_cast<DeclNode>(statement));
+            if(statement->kind == SyntaxKind::varDecl) {
+                auto varDecl = std::static_pointer_cast<VarDecl>(statement);
+                declarations.push_back(varDecl);
+            } else {
+                declarations.push_back(std::static_pointer_cast<DeclNode>(statement));
+            }
         } else {
-            statementsOfDefaultModuleInitilizer.push_back(statement);
+            statements.push_back(statement);
         }
     }
     
     // prepare for FileModule initializer
-    auto moduleStaticInitializer = FuncDecl::makeStaticInitializer(std::make_shared<StmtsBlock>(statementsOfDefaultModuleInitilizer));
+    auto moduleStaticInitializer = FuncDecl::makeStaticInitializer(std::make_shared<StmtsBlock>(statements));
     
     // preapre for filemodule initializer's descriptor
     moduleStaticInitializer->descriptor = std::make_shared<FileModuleInitializerDescriptor>(std::static_pointer_cast<FileModuleDescriptor>(filemodule->descriptor));
     
-    filemodule->constructors.push_back(moduleStaticInitializer);
+    filemodule->staticConstructor = moduleStaticInitializer;
     
     // clear the code block
     filemodule->block = nullptr;
     filemodule->staticFields = declarations;
     
-    
     // register filemodule initializer in compile service
     context->compiler->declare(moduleStaticInitializer);
     return filemodule;
 }
-

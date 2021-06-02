@@ -11,10 +11,6 @@ public:
     DeclNode(SyntaxKind kind): Node(kind) {}
 };
 
-enum class FuncAccessFlag {
-    _static = 1
-};
-
 enum class FuncType {
     staticInitializer = 1,  // class's static initialzer
     constructor = 2,        // class constructor
@@ -43,6 +39,11 @@ public:
     Node::Ptr parameterClause;
     Node::Ptr codeBlock;
     Node::Ptr returnType = nullptr;
+    
+    struct {
+        Descriptor::Ptr returnDescriptor = nullptr;
+    };
+    
     
     FuncDecl(Node::Ptr identifier, Node::Ptr parameterClause, Node::Ptr returnType, Node::Ptr codeBlock);
     
@@ -132,13 +133,19 @@ public:
         ClassDecl::recursiveUpdate();
         NODE_RECURSIVE_UPDATE(block, NODE_UPDATE_ACTION_SET_PARENT_THIS(block))
     }
+};
 
+enum class VarType {
+    staticMember,
+    member,
+    variable
 };
 
 // `let` or `var` declaration
 struct VarDecl: public DeclNode {
     using Ptr = std::shared_ptr<VarDecl>;
     
+    VarType varType;
     // `let` mutable = false, `var` mutable = true
     bool _mutable = true;
     Pattern::Ptr pattern;
