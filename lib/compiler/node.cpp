@@ -7,7 +7,13 @@
 #include <cassert>
 
 
+static int generateVID() {
+    static int vid = 1;
+    return vid ++;
+}
+
 Node::Node(SyntaxKind k): kind(k) {
+    vid = generateVID();
 }
 
 std::string Node::getSimpleName() {

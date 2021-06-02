@@ -134,12 +134,19 @@ void NodeDebugPrinter::print(Node::Ptr node) {
             output << "+importStatement" ;
             break;
         case SyntaxKind::varDecl: {
-            
             auto n = std::static_pointer_cast<VarDecl>(node);
-            if(n->varType == VarType::staticMember) {
-                output << "+static-member()" ;
-            } else if(n->varType == VarType::variable) {
-                output << "+variable()" ;
+            switch (n->varType) {
+                case VarType::staticMember:
+                    output << "+static-member(simple-name:" << n->getSimpleName() << ")" ;
+                    break;
+                case VarType::variable:
+                    output << "+variable(simple-name:" << n->getSimpleName() << ")" ;
+                    break;
+                case VarType::member:
+                    output << "+member(simple-name:" << n->getSimpleName() << ")" ;
+                    break;
+                default:
+                    assert(false);
             }
             incTab();
             print(n->symtable);
@@ -152,11 +159,11 @@ void NodeDebugPrinter::print(Node::Ptr node) {
         case SyntaxKind::funcDecl: {
             auto n = std::static_pointer_cast<FuncDecl>(node);
             if(n->type == FuncType::function) {
-                output << "+function" ;
+                output << "+function()" ;
             } else if(n->type == FuncType::staticInitializer) {
-                output << "+static-constructor" ;
+                output << "+static-constructor()" ;
             } else if(n->type == FuncType::constructor) {
-                output << "+constructor";
+                output << "+constructor()";
             }
             incTab();
             print(n->symtable);

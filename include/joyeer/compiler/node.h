@@ -64,7 +64,6 @@ struct Node: std::enable_shared_from_this<Node> {
     using Ptr = std::shared_ptr<Node>;
     
     SyntaxKind kind;
-
     Symbol::Ptr symbol = nullptr;
     SymbolTable::Ptr symtable = nullptr;
     Node::Ptr parent = nullptr;
@@ -106,6 +105,7 @@ struct Node: std::enable_shared_from_this<Node> {
 
 protected:
     Node(SyntaxKind kind);
+    int vid = -1;
 
 };
 
@@ -186,6 +186,10 @@ struct Pattern: public Node {
     Pattern(IdentifierExpr::Ptr identifier, Node::Ptr type);
     
     const std::string& getIdentifierName();
+    
+    virtual std::string getSimpleName() {
+        return getIdentifierName();
+    }
     
     virtual void recursiveUpdate() {
         NODE_RECURSIVE_UPDATE(identifier, NODE_UPDATE_ACTION_SET_PARENT_THIS(identifier))

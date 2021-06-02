@@ -154,6 +154,10 @@ struct VarDecl: public DeclNode {
     
     VarDecl(Pattern::Ptr pattern, std::shared_ptr<Node> initializer);
     
+    virtual std::string getSimpleName() {
+        return pattern->getSimpleName();
+    }
+    
     virtual void recursiveUpdate() {
         NODE_RECURSIVE_UPDATE(pattern, NODE_UPDATE_ACTION_SET_PARENT_THIS(pattern))
         NODE_RECURSIVE_UPDATE(initializer, NODE_UPDATE_ACTION_SET_PARENT_THIS(initializer))
