@@ -151,7 +151,6 @@ Node::Ptr TypeChecker::visit(VarDecl::Ptr node) {
     
     if(node->pattern->type == nullptr) {
         // change the symbol to unfixed symbol
-        node->symbol->isMutable = true;
         node->symbol->addressOfType = JrType::Any->addressOfType;
     }
     

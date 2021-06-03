@@ -40,6 +40,7 @@ enum class SyntaxKind {
     funcCallExpr,
     memberFuncCallExpr,
     memberAccessExpr,
+    memberAssignExpr,
     subscriptExpr,
   
     literalExpr,
@@ -60,8 +61,10 @@ enum class SyntaxKind {
         node->recursiveUpdate(); \
     }
 
+
 struct Node: std::enable_shared_from_this<Node> {
     using Ptr = std::shared_ptr<Node>;
+    using VID = int;
     
     SyntaxKind kind;
     Symbol::Ptr symbol = nullptr;
@@ -105,8 +108,7 @@ struct Node: std::enable_shared_from_this<Node> {
 
 protected:
     Node(SyntaxKind kind);
-    int vid = -1;
-
+    VID vid = -1;
 };
 
 struct IdentifierExpr: public Node {

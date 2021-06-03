@@ -33,7 +33,7 @@ void NodeDebugPrinter::print(Symbol::Ptr symbol) {
     }
     output << std::endl;
     printTab();
-    output << "@symbol(name:\""<< symbol->name << "\", flag:\"" << debugStringOfSymbolFlag(symbol->flag) << "\", mutable:" << symbol->isMutable << ")";
+    output << "@symbol(name:\""<< symbol->name << "\", flag:\"" << debugStringOfSymbolFlag(symbol->flag) << "\")";
 }
 
 void NodeDebugPrinter::print(std::vector<Node::Ptr> nodes) {
@@ -137,13 +137,13 @@ void NodeDebugPrinter::print(Node::Ptr node) {
             auto n = std::static_pointer_cast<VarDecl>(node);
             switch (n->varType) {
                 case VarType::staticMember:
-                    output << "+static-member(simple-name:" << n->getSimpleName() << ")" ;
+                    output << "+static-member(simple-name:\"" << n->getSimpleName() << "\")" ;
                     break;
                 case VarType::variable:
-                    output << "+variable(simple-name:" << n->getSimpleName() << ")" ;
+                    output << "+variable(simple-name:\"" << n->getSimpleName() << "\")" ;
                     break;
                 case VarType::member:
-                    output << "+member(simple-name:" << n->getSimpleName() << ")" ;
+                    output << "+member(simple-name:\"" << n->getSimpleName() << "\")" ;
                     break;
                 default:
                     assert(false);
@@ -159,9 +159,9 @@ void NodeDebugPrinter::print(Node::Ptr node) {
         case SyntaxKind::funcDecl: {
             auto n = std::static_pointer_cast<FuncDecl>(node);
             if(n->type == FuncType::function) {
-                output << "+function()" ;
+                output << "+function(simple-name:\""<< n->getSimpleName() <<"\")" ;
             } else if(n->type == FuncType::staticInitializer) {
-                output << "+static-constructor()" ;
+                output << "+static-constructor(simple-name:\""<< n->getSimpleName() <<"\")" ;
             } else if(n->type == FuncType::constructor) {
                 output << "+constructor()";
             }
@@ -303,6 +303,17 @@ void NodeDebugPrinter::print(Node::Ptr node) {
                 print(argu);
             }
             decTab();
+            decTab();
+        }
+            break;
+        case SyntaxKind::memberAssignExpr: {
+            auto n = std::static_pointer_cast<MemberAssignExpr>(node);
+            output << "+member-assign-expr" ;
+            incTab();
+            print(n->symtable);
+            print(n->symbol);
+            print(n->member);
+            print(n->expr);
             decTab();
         }
             break;

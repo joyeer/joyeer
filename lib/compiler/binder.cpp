@@ -194,7 +194,6 @@ Node::Ptr Binder::visit(VarDecl::Ptr decl) {
         .name = name,
         .flag = symbolFlag
     });
-    symbol->isMutable = true;
     symtable->insert(symbol);
     decl->symbol = symbol;
     decl->pattern->identifier->symbol = symbol;
@@ -265,8 +264,7 @@ Node::Ptr Binder::visit(IdentifierExpr::Ptr decl) {
             
             auto symbol = std::shared_ptr<Symbol>(new Symbol {
                 .flag = SymbolFlag::varSymbol,
-                .name = name,
-                .isMutable = false
+                .name = name
             });
             table->insert(symbol);
             decl->symbol = symbol;
@@ -554,13 +552,24 @@ FileModuleDecl::Ptr  Binder::normalizeAndPrepareDefaultStaticConstructorForFileM
     auto statements = std::vector<Node::Ptr>();
     
     for(auto statement: filemodule->block->statements) {
+        if(statement->kind == SyntaxKind::varDecl ) {
+            auto varDecl = std::static_pointer_cast<VarDecl>(statement);
+            varDecl->varType = VarType::staticMember;
+            
+            // separate the VarDecl declaration and value initlizer expr
+            auto expr = varDecl->initializer;
+            auto identifierExpr = varDecl->pattern->identifier;
+            
+            auto memberAssignExpr = std::make_shared<MemberAssignExpr>(identifierExpr, expr);
+            varDecl->initializer = nullptr;
+            declarations.push_back(varDecl);
+            statements.push_back(memberAssignExpr);
+            
+            continue;
+        }
+        
         if(statement->isDeclNode()) {
-            if(statement->kind == SyntaxKind::varDecl) {
-                auto varDecl = std::static_pointer_cast<VarDecl>(statement);
-                declarations.push_back(varDecl);
-            } else {
-                declarations.push_back(std::static_pointer_cast<DeclNode>(statement));
-            }
+            declarations.push_back(std::static_pointer_cast<DeclNode>(statement));
         } else {
             statements.push_back(statement);
         }
