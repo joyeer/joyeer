@@ -95,11 +95,7 @@ Node::Ptr Binder::visit(ClassDecl::Ptr decl) {
     context->entry(objectType);
     bool hasCustomizedConstructor = false;
     context->visit(CompileStage::visitClassDecl, decl, [this, decl, symtable, &hasCustomizedConstructor]() {
-        std::vector<Node::Ptr> result;
-        for(auto member: decl->members) {
-            result.push_back(visit(member));
-        }
-        decl->members = result;
+        decl->members = std::static_pointer_cast<StmtsBlock>(visit(decl->members));
     });
     
     if(hasCustomizedConstructor == false) {
@@ -551,10 +547,10 @@ FileModuleDecl::Ptr  Binder::normalizeAndPrepareDefaultStaticConstructorForFileM
     // statements & expression inside of the module
     auto statements = std::vector<Node::Ptr>();
     
-    for(auto statement: filemodule->block->statements) {
+    for(auto statement: filemodule->members->statements) {
         if(statement->kind == SyntaxKind::varDecl ) {
             auto varDecl = std::static_pointer_cast<VarDecl>(statement);
-            varDecl->varType = VarType::staticMember;
+            varDecl->accessFlag = NodeAccessFlag::_static;
             
             // separate the VarDecl declaration and value initlizer expr
             auto expr = varDecl->initializer;
@@ -584,7 +580,7 @@ FileModuleDecl::Ptr  Binder::normalizeAndPrepareDefaultStaticConstructorForFileM
     filemodule->staticConstructor = moduleStaticInitializer;
     
     // clear the code block
-    filemodule->block = nullptr;
+    filemodule->members = nullptr;
     filemodule->staticFields = declarations;
     
     // register filemodule initializer in compile service

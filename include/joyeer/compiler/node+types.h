@@ -78,7 +78,7 @@ struct ClassDecl: public DeclNode {
     using Ptr = std::shared_ptr<ClassDecl>;
     
     Token::Ptr name = nullptr;
-    std::vector<Node::Ptr> members;
+    StmtsBlock::Ptr members;
     
     std::vector<DeclNode::Ptr> staticFields;
     std::vector<DeclNode::Ptr> instanceFields;
@@ -88,14 +88,13 @@ struct ClassDecl: public DeclNode {
     
     FuncDecl::Ptr staticConstructor;
     
-    ClassDecl(Token::Ptr name, std::vector<Node::Ptr> members);
+    ClassDecl(Token::Ptr name, StmtsBlock::Ptr members);
     
     virtual std::string getSimpleName();
     
     virtual void recursiveUpdate() {
-        for(auto& member: members) {
-            NODE_RECURSIVE_UPDATE(member, NODE_UPDATE_ACTION_SET_PARENT_THIS_2(member))
-        }
+        NODE_RECURSIVE_UPDATE(members, NODE_UPDATE_ACTION_SET_PARENT_THIS(members))
+        
         for(auto& field: staticFields) {
             NODE_RECURSIVE_UPDATE(field, NODE_UPDATE_ACTION_SET_PARENT_THIS_2(field))
         }
@@ -123,31 +122,21 @@ public:
 public:
     FileModuleDecl(FileModuleDescriptor::Ptr descriptor, StmtsBlock::Ptr block);
     
-    StmtsBlock::Ptr block;
-    
     std::string filename;
     
     virtual std::string getSimpleName();
     
     virtual void recursiveUpdate() {
         ClassDecl::recursiveUpdate();
-        NODE_RECURSIVE_UPDATE(block, NODE_UPDATE_ACTION_SET_PARENT_THIS(block))
     }
-};
-
-enum class VarType {
-    staticMember,
-    member,
-    variable
 };
 
 // `let` or `var` declaration
 struct VarDecl: public DeclNode {
     using Ptr = std::shared_ptr<VarDecl>;
     
-    VarType varType;
-    // `let` mutable = false, `var` mutable = true
-    bool _mutable = true;
+    NodeAccessFlag accessFlag;
+    
     Pattern::Ptr pattern;
     Node::Ptr initializer;
     Descriptor::Ptr parentDescriptor;
@@ -162,7 +151,7 @@ struct VarDecl: public DeclNode {
         NODE_RECURSIVE_UPDATE(pattern, NODE_UPDATE_ACTION_SET_PARENT_THIS(pattern))
         NODE_RECURSIVE_UPDATE(initializer, NODE_UPDATE_ACTION_SET_PARENT_THIS(initializer))
     }
-    
+
 };
 
 #endif

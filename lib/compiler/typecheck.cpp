@@ -227,6 +227,7 @@ Node::Ptr TypeChecker::visit(IdentifierExpr::Ptr node) {
 }
 
 ClassDecl::Ptr TypeChecker::processClassDecl(ClassDecl::Ptr decl) {
+    assert(decl->members == nullptr);
     // visit static fields
     auto staticFields = std::vector<DeclNode::Ptr>();
     for(auto& fieldStatement : decl->staticFields) {
@@ -358,11 +359,8 @@ Node::Ptr TypeChecker::visit(ClassDecl::Ptr node) {
     auto type = Global::types[node->symbol->addressOfType];
     context->entry(type);
     context->visit(CompileStage::visitClassDecl, [this, node]() {
-        auto members = std::vector<Node::Ptr>();
-        for(auto member: node->members) {
-            members.push_back(visit(member));
-        }
-        node->members = members;
+        //
+        node->members = std::static_pointer_cast<StmtsBlock>(visit(node->members));
     });
     
     context->leave(type);

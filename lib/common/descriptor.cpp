@@ -21,7 +21,7 @@ FunctionDescriptor::FunctionDescriptor(Descriptor::Ptr parent, const std::string
     }
     ss << DescriptorConstants::ParenthesisClose;
     ss << DescriptorConstants::END;
-    
+        
     rawDescriptor = ss.str();
 }
 

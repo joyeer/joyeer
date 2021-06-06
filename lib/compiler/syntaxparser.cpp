@@ -224,9 +224,9 @@ Node::Ptr SyntaxParser::tryParseClassDecl() {
         return nullptr;
     }
 
-    std::vector<std::shared_ptr<Node>> members;
+    std::vector<Node::Ptr> members;
     while (true) {
-        std::shared_ptr<Node> member = tryParseDecl();
+        auto member = tryParseDecl();
         if(member == nullptr) {
             break;
         }
@@ -238,7 +238,7 @@ Node::Ptr SyntaxParser::tryParseClassDecl() {
         return nullptr;
     }
 
-    return std::make_shared<ClassDecl>(className, members);
+    return std::make_shared<ClassDecl>(className, std::make_shared<StmtsBlock>(members));
 }
 
 StmtsBlock::Ptr SyntaxParser::tryParseStmtsBlock() {

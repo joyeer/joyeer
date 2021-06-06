@@ -2,7 +2,7 @@
 #include <fstream>
 #include <sstream>
 
-ClassDecl::ClassDecl(Token::Ptr name, std::vector<Node::Ptr> members):
+ClassDecl::ClassDecl(Token::Ptr name, StmtsBlock::Ptr members):
 DeclNode(SyntaxKind::classDecl),
 name(name),
 members(members),
@@ -18,8 +18,8 @@ std::string ClassDecl::getSimpleName() {
 }
 
 FileModuleDecl::FileModuleDecl(FileModuleDescriptor::Ptr descriptor, StmtsBlock::Ptr block):
-ClassDecl(nullptr, block->statements),
-block(block) {
+ClassDecl(nullptr, block) {
+    this->members = block;
     kind = SyntaxKind::filemodule;
     this->descriptor = descriptor;
     assert(symtable != nullptr);

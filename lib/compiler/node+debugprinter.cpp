@@ -76,6 +76,9 @@ void NodeDebugPrinter::print(Node::Ptr node) {
             print(n->symtable);
             print(n->symbol);
             
+            // origin members
+            print(n->members);
+            
             // print static fields
             for(auto var: n->staticFields) {
                 print(var);
@@ -135,18 +138,13 @@ void NodeDebugPrinter::print(Node::Ptr node) {
             break;
         case SyntaxKind::varDecl: {
             auto n = std::static_pointer_cast<VarDecl>(node);
-            switch (n->varType) {
-                case VarType::staticMember:
-                    output << "+static-member(simple-name:\"" << n->getSimpleName() << "\")" ;
-                    break;
-                case VarType::variable:
-                    output << "+variable(simple-name:\"" << n->getSimpleName() << "\")" ;
-                    break;
-                case VarType::member:
-                    output << "+member(simple-name:\"" << n->getSimpleName() << "\")" ;
+            switch (n->accessFlag) {
+                case NodeAccessFlag::_static:
+                    output << "+static-variable(simple-name:\"" << n->getSimpleName() << "\")" ;
                     break;
                 default:
-                    assert(false);
+                    output << "+variable(simple-name:\"" << n->getSimpleName() << "\")" ;
+                    break;
             }
             incTab();
             print(n->symtable);

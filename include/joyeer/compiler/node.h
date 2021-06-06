@@ -50,6 +50,13 @@ enum class SyntaxKind {
     
 };
 
+enum class NodeAccessFlag: int64_t {
+    _default    = 0,
+    _public     = 1 << 1,
+    _private    = 1 << 2,
+    _static     = 1 << 3,
+};
+
 // Lambda expr for update node's parent = this
 #define NODE_UPDATE_ACTION_SET_PARENT_THIS(node) [this]() { node->parent = shared_from_this(); }
 #define NODE_UPDATE_ACTION_SET_PARENT_THIS_2(node) [this, node]() { node->parent = shared_from_this(); }
