@@ -20,10 +20,6 @@ std::string Node::getSimpleName() {
     return "";
 }
 
-std::string Node::getTypeName() {
-    return "";
-}
-
 OperatorExpr::OperatorExpr(Token::Ptr token):
 Node(SyntaxKind::operatorExpr),
 token(token) {
@@ -55,16 +51,9 @@ Node(SyntaxKind::arrayType),
 type(type) {
 }
 
-std::string ArrayType::getTypeName() {
-    return "Array@Array";
-}
 
 DictType::DictType(Node::Ptr keyType, Node::Ptr valueType):
 Node(SyntaxKind::dictType),
 keyType(keyType),
 valueType(valueType) {
-}
-
-std::string DictType::getTypeName() {
-    return "Map@Map";
 }

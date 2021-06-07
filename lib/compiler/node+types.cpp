@@ -40,20 +40,6 @@ codeBlock(codeBlock) {
     symtable = std::make_shared<SymbolTable>();
 }
 
-std::string FuncDecl::getTypeName() {
-    std::stringstream ss;
-    if(identifier != nullptr && identifier->symbol != nullptr) {
-        ss << identifier->getTypeName();
-        ss << "@";
-    }
-    ss << std::static_pointer_cast<IdentifierExpr>(identifier)->token->rawValue << "(";
-    for(auto p: std::static_pointer_cast<ParameterClause>(parameterClause)->parameters) {
-        ss << p->identifier->token->rawValue << ":";
-    }
-    ss << ")";
-    return ss.str();
-}
-
 std::string FuncDecl::getSimpleName() {
     std::stringstream ss;
     

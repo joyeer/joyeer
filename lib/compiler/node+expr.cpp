@@ -52,18 +52,6 @@ identifier(expr),
 arguments(arguments) {
 }
 
-std::string FuncCallExpr::getTypeName() {
-    std::stringstream ss;
-
-    ss << identifier->getTypeName() << "(";
-    for(auto& argument: arguments) {
-        ss << argument->label->token->rawValue;
-        ss << ":";
-    }
-    ss << ")";
-    return ss.str();
-}
-
 MemberFuncCallExpr::MemberFuncCallExpr(Node::Ptr callee, Node::Ptr member, std::vector<ArguCallExpr::Ptr> arguments):
 Node(SyntaxKind::memberFuncCallExpr),
 callee(callee),
@@ -71,27 +59,10 @@ member(member),
 arguments(arguments) {
 }
 
-std::string MemberFuncCallExpr::getTypeName() {
-    std::stringstream ss;
-    
-    ss << callee->getTypeName() << "@" << member->getSimpleName() << "(";
-    for(auto& argument: arguments) {
-        ss << argument->label->token->rawValue << ":";
-    }
-    ss << ")";
-    return ss.str();
-}
-
 MemberAccessExpr::MemberAccessExpr(Node::Ptr callee, std::shared_ptr<Node> member):
 Node(SyntaxKind::memberAccessExpr),
 callee(callee),
 member(member) {
-}
-
-std::string MemberAccessExpr::getTypeName() {
-    std::stringstream ss;
-    ss << callee->getTypeName() << "@" << member->getSimpleName();
-    return ss.str();
 }
 
 LiteralExpr::LiteralExpr(std::shared_ptr<Token> literal):
@@ -117,18 +88,6 @@ token(token) {
 
 std::string IdentifierExpr::getSimpleName() {
     return token->rawValue;
-}
-
-std::string IdentifierExpr::getTypeName() {
-    if(symbol != nullptr && (symbol->flag == SymbolFlag::varSymbol || symbol->flag == SymbolFlag::fieldSymbol)) {
-        auto type = Global::types[symbol->addressOfType];
-        assert(type != nullptr);
-        return type->name;
-    } else {
-        return token->rawValue;
-    }
-    
-    assert(false);
 }
 
 ParenthesizedExpr::ParenthesizedExpr(std::shared_ptr<Node> expr):

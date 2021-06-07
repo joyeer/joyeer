@@ -102,7 +102,7 @@ Node::Ptr TypeChecker::visit(FuncCallExpr::Ptr node) {
         }
     }
     
-    auto name = node->getTypeName();
+    auto name = node->getSimpleName();
     symbol = context->lookup(name);
     
     if(symbol == nullptr) {
@@ -128,7 +128,7 @@ Node::Ptr TypeChecker::visit(MemberFuncCallExpr::Ptr node) {
     auto symtable = context->symtableOfType(type);
     node->callee->symtable = symtable;
     
-    auto name = node->getTypeName();
+    auto name = node->getSimpleName();
     auto symbol = context->lookup(name);
     
     if(symbol == nullptr) {
@@ -544,14 +544,14 @@ JrType* TypeChecker::typeOf(LiteralExpr::Ptr node) {
 }
 
 JrType* TypeChecker::typeOf(FuncCallExpr::Ptr node) {
-    auto funcName = node->getTypeName();
+    auto funcName = node->getSimpleName();
     auto symbol = context->lookup(funcName);
     auto function = Global::functions[node->symbol->addressOfFunc];
     return function->returnType;
 }
 
 JrType* TypeChecker::typeOf(MemberFuncCallExpr::Ptr node) {
-    auto funcName = node->getTypeName();
+    auto funcName = node->getSimpleName();
     auto symmbol = context->lookup(funcName);
     auto function = Global::functions[node->symbol->addressOfFunc];
     return function->returnType;

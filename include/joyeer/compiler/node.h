@@ -95,9 +95,6 @@ struct Node: std::enable_shared_from_this<Node> {
         return nullptr;
     }
     
-    // The type name of the Node
-    virtual std::string getTypeName();
-    
     // detect if its a declaration node
     bool isDeclNode() {
         switch(kind) {
@@ -119,7 +116,7 @@ protected:
 };
 
 struct IdentifierExpr: public Node {
-    typedef std::shared_ptr<IdentifierExpr> Ptr;
+    using Ptr = std::shared_ptr<IdentifierExpr>;
     
     Token::Ptr token;
     
@@ -127,7 +124,6 @@ struct IdentifierExpr: public Node {
     
     // Return identifier's name
     virtual std::string getSimpleName();
-    virtual std::string getTypeName();
     virtual void recursiveUpdate() { /* leave empty */ }
 };
 
@@ -163,8 +159,6 @@ struct ArrayType: Node {
     
     ArrayType(Node::Ptr type);
     
-    virtual std::string getTypeName();
-    
     virtual void recursiveUpdate() {
         NODE_RECURSIVE_UPDATE(type, NODE_UPDATE_ACTION_SET_PARENT_THIS(type))
     }
@@ -177,9 +171,7 @@ struct DictType: Node {
     Node::Ptr valueType;
     
     DictType(Node::Ptr keyType, Node::Ptr valueType);
-    
-    virtual std::string getTypeName();
-    
+
     virtual void recursiveUpdate() {
         NODE_RECURSIVE_UPDATE(keyType, NODE_UPDATE_ACTION_SET_PARENT_THIS(keyType))
         NODE_RECURSIVE_UPDATE(valueType, NODE_UPDATE_ACTION_SET_PARENT_THIS(valueType))

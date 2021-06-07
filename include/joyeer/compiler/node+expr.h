@@ -106,8 +106,6 @@ struct FuncCallExpr: Node {
     
     FuncCallExpr(Node::Ptr expr, std::vector<ArguCallExpr::Ptr> arguments);
     
-    virtual std::string getTypeName();
-    
     virtual void recursiveUpdate() {
         NODE_RECURSIVE_UPDATE(identifier, NODE_UPDATE_ACTION_SET_PARENT_THIS(identifier))
         for(auto& argu: arguments) {
@@ -127,8 +125,6 @@ struct MemberFuncCallExpr: Node {
     
     MemberFuncCallExpr(Node::Ptr callee, Node::Ptr member, std::vector<ArguCallExpr::Ptr> arguments);
     
-    virtual std::string getTypeName();
-    
     virtual void recursiveUpdate() {
         NODE_RECURSIVE_UPDATE(callee, NODE_UPDATE_ACTION_SET_PARENT_THIS(callee))
         NODE_RECURSIVE_UPDATE(member, NODE_UPDATE_ACTION_SET_PARENT_THIS(member))
@@ -146,7 +142,6 @@ struct MemberAccessExpr: Node {
     
     MemberAccessExpr(Node::Ptr callee, Node::Ptr member);
     
-    virtual std::string getTypeName();
     virtual void recursiveUpdate() {
         NODE_RECURSIVE_UPDATE(callee, NODE_UPDATE_ACTION_SET_PARENT_THIS(callee))
         NODE_RECURSIVE_UPDATE(member, NODE_UPDATE_ACTION_SET_PARENT_THIS(member))

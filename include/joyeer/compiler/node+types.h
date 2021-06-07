@@ -60,8 +60,6 @@ public:
         return decl;
     }
     
-    virtual std::string getTypeName();
-    
     // return func name
     virtual std::string getSimpleName();
     
