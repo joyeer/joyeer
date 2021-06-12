@@ -28,6 +28,9 @@ private:
     void debugPrint(Node::Ptr node, const std::string& debugFilePath);
     void debugPrint(const std::string& debugFilePath);
     
+    // intialize the global symbol table
+    void initializeGlobalSymbolTable();
+    
     CommandLineArguments::Ptr options;
     std::unordered_map<std::string, SourceFile::Ptr> sourcefiles;
     

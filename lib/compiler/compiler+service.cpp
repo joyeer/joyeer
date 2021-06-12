@@ -131,3 +131,7 @@ void CompilerService::debugPrint(const std::string &debugFilePath) {
         funcPrinter.close();
     }
 }
+
+void CompilerService::initializeGlobalSymbolTable() {
+    
+}

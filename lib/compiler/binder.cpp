@@ -535,8 +535,6 @@ Node::Ptr Binder::visit(FileImportStmt::Ptr decl) {
     auto moduleName = decl->stringLiteral->rawValue;
     auto importedSourceFile = importDelegate(context, moduleName);
     
-    context->importSymbolTableOfModule(importedSourceFile->exportedSymbolTable);
-
     return decl;
 }
 

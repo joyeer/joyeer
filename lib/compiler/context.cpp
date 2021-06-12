@@ -106,14 +106,6 @@ Symbol::Ptr CompileContext::lookup(const std::string &name) {
         }
     }
     
-    for(auto iterator = importedSymbols.rbegin(); iterator != importedSymbols.rend(); iterator ++ ) {
-        auto symtable = *iterator;
-        auto symbol = symtable->find(name);
-        if(symbol != nullptr) {
-            return symbol;
-        }
-    }
-    
     return nullptr;
 }
 
@@ -126,10 +118,6 @@ void CompileContext::associate(JrType* type, SymbolTable::Ptr table) {
 
 SymbolTable::Ptr CompileContext::symtableOfType(JrType* type) {
     return mapOfTypeAndSymbolTable[type->addressOfType];
-}
-
-void CompileContext::importSymbolTableOfModule(SymbolTable::Ptr table) {
-    importedSymbols.push_back(table);
 }
 
 void CompileContext::initializeGlobalScope() {

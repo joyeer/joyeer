@@ -58,9 +58,6 @@ public:
     // return assoicated symbol table with type
     SymbolTable::Ptr symtableOfType(JrType*);
    
-    // when import a module, we will import the symbol table
-    void importSymbolTableOfModule(SymbolTable::Ptr table);
-    
     // the current parsing source file
     SourceFile::Ptr sourcefile = nullptr;
     
@@ -73,9 +70,6 @@ protected:
     
 protected:
     std::vector<SymbolTable::Ptr> symbols;
-    
-    // The symtable for imported module
-    std::vector<SymbolTable::Ptr> importedSymbols;
     
     // stage of compiling status, the last element of stages present the current stage
     std::vector<CompileStage> stages;
