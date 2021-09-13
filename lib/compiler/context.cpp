@@ -7,7 +7,6 @@
 
 CompileContext::CompileContext(CommandLineArguments::Ptr options):
 options(options) {
-//    initializeGlobalScope();
 }
 
 SymbolTable::Ptr CompileContext::curSymTable() {
@@ -118,31 +117,4 @@ void CompileContext::associate(JrType* type, SymbolTable::Ptr table) {
 
 SymbolTable::Ptr CompileContext::symtableOfType(JrType* type) {
     return mapOfTypeAndSymbolTable[type->addressOfType];
-}
-
-void CompileContext::initializeGlobalScope() {
-    
-    assert(symbols.size() == 1); // only the global scope
-    
-    auto table = curSymTable();
-    
-    for(int index = 0 ; index < Global::functions.size(); index ++) {
-        auto func = Global::functions[index];
-        auto symbol = std::shared_ptr<Symbol>(new Symbol{
-            .name = func->name,
-            .flag = SymbolFlag::funcSymbol,
-            .addressOfFunc = index,
-        });
-        table->insert(symbol);
-    }
-    
-    for(int index = 0; index < Global::types.size(); index ++ ) {
-        auto type = Global::types[index];
-        auto symbol = std::shared_ptr<Symbol>(new Symbol{
-            .name = type->name,
-            .flag = SymbolFlag::typeSymbol,
-            .addressOfType = index
-        });
-        table->insert(symbol);
-    }
 }

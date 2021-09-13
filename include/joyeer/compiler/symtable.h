@@ -22,9 +22,6 @@ std::string debugStringOfSymbolFlag(SymbolFlag flag);
 struct Symbol {
     using Ptr = std::shared_ptr<Symbol>;
 public:
-    bool isTypeFixed: 1 = true;
-    bool isExported: 1 = false;
-    
     SymbolFlag flag;
     std::string name;
     

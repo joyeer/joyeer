@@ -22,6 +22,7 @@
 
 CompilerService::CompilerService(CommandLineArguments::Ptr opts):
 options(opts) {
+    initializeGlobalSymbolTable();
 }
 
 void CompilerService::run(std::string inputfile) {
@@ -58,6 +59,7 @@ void CompilerService::compile(SourceFile::Ptr sourcefile) {
     auto context= std::make_shared<CompileContext>(options);
     context->sourcefile = sourcefile;
     context->compiler = this;
+    context->entry(globalSymbols);
     
     // lex structure analyze
     LexParser lexParser;
@@ -92,6 +94,7 @@ void CompilerService::compile(SourceFile::Ptr sourcefile) {
     
     // delcare the FileModuleNode in repos
     declare(block);
+    context->leave(globalSymbols);
 }
 
 void CompilerService::declare(DeclNode::Ptr decl) {
@@ -133,5 +136,7 @@ void CompilerService::debugPrint(const std::string &debugFilePath) {
 }
 
 void CompilerService::initializeGlobalSymbolTable() {
-    
+    globalSymbols = std::make_shared<SymbolTable>();
+    auto symbolPrint = Symbol::make(SymbolFlag::funcSymbol, "&print(message:);");
+    globalSymbols->insert(symbolPrint);
 }

@@ -2,7 +2,6 @@
 #define __joyeer_compiler_compiler_service_h__
 
 #include "joyeer/compiler/context.h"
-#include "joyeer/compiler/compiler+request.h"
 #include "joyeer/compiler/symbol+repo.h"
 
 #include <unordered_map>
@@ -33,6 +32,9 @@ private:
     
     CommandLineArguments::Ptr options;
     std::unordered_map<std::string, SourceFile::Ptr> sourcefiles;
+    
+    // global symbols
+    SymbolTable::Ptr globalSymbols;
     
     // All the delcaration descriptors include FileModule/Class/Node
     NodeRepository::Ptr repository = std::make_shared<NodeRepository>();
