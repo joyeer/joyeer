@@ -1,11 +1,4 @@
 #include "joyeer/compiler/node.h"
-#include "joyeer/runtime/buildin.h"
-#include <iostream>
-#include <iomanip>
-#include <sstream>
-#include <filesystem>
-#include <cassert>
-
 
 static int generateVID() {
     static int vid = 1;

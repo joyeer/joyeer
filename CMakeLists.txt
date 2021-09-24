@@ -1,11 +1,14 @@
 cmake_minimum_required(VERSION 3.16)
 
-project (joyeer VERSION 0.0.1)
+project (joyeer 
+        VERSION 0.0.1
+        LANGUAGES C CXX)
 
 cmake_policy(SET CMP0110 NEW)
 cmake_policy(SET CMP0114 NEW)
 
 set(CMAKE_DISABLE_IN_SOURCE_BUILD ON)
+set(CTEST_OUTPUT_ON_FAILURE TRUE)
 
 # custom cmake module
 list(APPEND CMAKE_MODULE_PATH
@@ -18,9 +21,11 @@ enable_language(CXX)
 # Use C++20.
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS NO)
 
-set(CTEST_OUTPUT_ON_FAILURE TRUE)
+add_compile_options(
+    -std=c++20 
+    -fmodules-ts
+)
 
 get_filename_component(JOYEER_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR} REALPATH)
 

@@ -5,7 +5,7 @@
 
 enum ErrorLevel {
     none,
-    // compiler progress will be continue
+    // compiler progress will be continuing
     report,
     // compiler will stop work
     failure

@@ -3,7 +3,6 @@
 
 #include "joyeer/compiler/node.h"
 
-
 struct Expr : Node {
     using Ptr = std::shared_ptr<Expr>;
     
@@ -86,7 +85,6 @@ struct AssignmentExpr: Node {
 
 struct ArguCallExpr: Node {
     using Ptr = std::shared_ptr<ArguCallExpr>;
-    
     IdentifierExpr::Ptr label;
     Node::Ptr expr;
     

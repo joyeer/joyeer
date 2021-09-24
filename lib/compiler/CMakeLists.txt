@@ -1,5 +1,6 @@
 
 add_joyeer_library(joyeerCompiler STATIC
+    lexparser.cpp
     binder.cpp
     context.cpp
     diagnostic.cpp

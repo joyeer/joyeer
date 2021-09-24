@@ -42,8 +42,6 @@ public:
 
     JrModuleClass* moduleClass;
     
-    SymbolTable::Ptr exportedSymbolTable = nullptr;
-    
 protected:
     // the path relatived to the working directory
     std::string pathInWorkingDirectory;
