@@ -84,7 +84,7 @@ struct Node: std::enable_shared_from_this<Node> {
     virtual std::string getSimpleName();
     
     // return the ClassDecl representing the node in which it was declared
-    Node::Ptr getDeclaringClassDecl() {
+    Node::Ptr getDeclaringClassDecl() const {
         Node::Ptr current = parent;
         while(current != nullptr) {
             if(current->kind == SyntaxKind::classDecl || current->kind == SyntaxKind::filemodule) {
@@ -96,7 +96,7 @@ struct Node: std::enable_shared_from_this<Node> {
     }
     
     // detect if its a declaration node
-    bool isDeclNode() {
+    bool isDeclNode() const {
         switch(kind) {
             case SyntaxKind::varDecl:
             case SyntaxKind::funcDecl:
@@ -111,7 +111,7 @@ struct Node: std::enable_shared_from_this<Node> {
     virtual void recursiveUpdate() = 0;
 
 protected:
-    Node(SyntaxKind kind);
+    explicit Node(SyntaxKind kind);
     VID vid = -1;
 };
 
@@ -120,59 +120,59 @@ struct IdentifierExpr: public Node {
     
     Token::Ptr token;
     
-    IdentifierExpr(Token::Ptr token);
+    explicit IdentifierExpr(Token::Ptr token);
     
     // Return identifier's name
-    virtual std::string getSimpleName();
-    virtual void recursiveUpdate() { /* leave empty */ }
+    std::string getSimpleName() override;
+    void recursiveUpdate() override { /* leave empty */ }
 };
 
 struct OperatorExpr: Node {
-    typedef std::shared_ptr<OperatorExpr> Ptr;
+    using Ptr = std::shared_ptr<OperatorExpr>;
     
     Token::Ptr token;
     OperatorPriority priority;
     JrType* leftType;
     JrType* rightType;
-    OperatorExpr(Token::Ptr token);
+    explicit OperatorExpr(Token::Ptr token);
     
-    virtual void recursiveUpdate() { /* leave empty */ }
+    void recursiveUpdate() override { /* leave empty */ }
 };
 
 struct Type: Node {
-    typedef std::shared_ptr<Type> Ptr;
+    using Ptr = std::shared_ptr<Type>;
     
     Node::Ptr identifier; // identifierExpr
     
-    Type(Node::Ptr identifier);
+    explicit Type(Node::Ptr identifier);
     
-    virtual void recursiveUpdate() {
+    void recursiveUpdate() override {
         NODE_RECURSIVE_UPDATE(identifier, NODE_UPDATE_ACTION_SET_PARENT_THIS(identifier))
     }
 
 };
 
 struct ArrayType: Node {
-    typedef std::shared_ptr<ArrayType> Ptr;
+    using Ptr = std::shared_ptr<ArrayType>;
     
     Node::Ptr type;
     
-    ArrayType(Node::Ptr type);
+    explicit ArrayType(Node::Ptr type);
     
-    virtual void recursiveUpdate() {
+    void recursiveUpdate() override {
         NODE_RECURSIVE_UPDATE(type, NODE_UPDATE_ACTION_SET_PARENT_THIS(type))
     }
 };
 
 struct DictType: Node {
-    typedef std::shared_ptr<DictType> Ptr;
+    using Ptr = std::shared_ptr<DictType>;
     
     Node::Ptr keyType;
     Node::Ptr valueType;
     
     DictType(Node::Ptr keyType, Node::Ptr valueType);
 
-    virtual void recursiveUpdate() {
+    void recursiveUpdate() override {
         NODE_RECURSIVE_UPDATE(keyType, NODE_UPDATE_ACTION_SET_PARENT_THIS(keyType))
         NODE_RECURSIVE_UPDATE(valueType, NODE_UPDATE_ACTION_SET_PARENT_THIS(valueType))
     }
@@ -188,11 +188,11 @@ struct Pattern: public Node {
     
     const std::string& getIdentifierName();
     
-    virtual std::string getSimpleName() {
+    std::string getSimpleName() override {
         return getIdentifierName();
     }
     
-    virtual void recursiveUpdate() {
+    void recursiveUpdate() override {
         NODE_RECURSIVE_UPDATE(identifier, NODE_UPDATE_ACTION_SET_PARENT_THIS(identifier))
         NODE_RECURSIVE_UPDATE(type, NODE_UPDATE_ACTION_SET_PARENT_THIS(type))
     }
@@ -204,9 +204,9 @@ struct ParameterClause: Node {
     
     std::vector<Pattern::Ptr> parameters;
     
-    ParameterClause(std::vector<Pattern::Ptr> parameters);
+    explicit ParameterClause(std::vector<Pattern::Ptr> parameters);
     
-    virtual void recursiveUpdate() {
+    void recursiveUpdate() override {
         for(auto& param: parameters) {
             NODE_RECURSIVE_UPDATE(param, NODE_UPDATE_ACTION_SET_PARENT_THIS_2(param))
         }

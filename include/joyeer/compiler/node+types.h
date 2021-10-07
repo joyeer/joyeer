@@ -8,7 +8,7 @@ struct DeclNode : public Node {
     using Ptr = std::shared_ptr<DeclNode>;
 public:
     Descriptor::Ptr descriptor = nullptr;
-    DeclNode(SyntaxKind kind): Node(kind) {}
+    explicit DeclNode(SyntaxKind kind): Node(kind) {}
 };
 
 enum class FuncType {
@@ -61,9 +61,9 @@ public:
     }
     
     // return func name
-    virtual std::string getSimpleName();
+    std::string getSimpleName() override;
     
-    virtual void recursiveUpdate() {
+    void recursiveUpdate() override {
         NODE_RECURSIVE_UPDATE(identifier, NODE_UPDATE_ACTION_SET_PARENT_THIS(identifier))
         NODE_RECURSIVE_UPDATE(parameterClause, NODE_UPDATE_ACTION_SET_PARENT_THIS(parameterClause))
         NODE_RECURSIVE_UPDATE(codeBlock, NODE_UPDATE_ACTION_SET_PARENT_THIS(codeBlock))
@@ -88,9 +88,9 @@ struct ClassDecl: public DeclNode {
     
     ClassDecl(Token::Ptr name, StmtsBlock::Ptr members);
     
-    virtual std::string getSimpleName();
+    std::string getSimpleName() override;
     
-    virtual void recursiveUpdate() {
+    void recursiveUpdate() override {
         NODE_RECURSIVE_UPDATE(members, NODE_UPDATE_ACTION_SET_PARENT_THIS(members))
         
         for(auto& field: staticFields) {
@@ -112,7 +112,7 @@ struct ClassDecl: public DeclNode {
     }
 };
 
-// Reprensent an FileModule in Ast tree, each xxx.joyeer file is a file module
+// Represent an FileModule in Ast tree, each xxx.joyeer file is a file module
 class FileModuleDecl: public ClassDecl {
 public:
     using Ptr = std::shared_ptr<FileModuleDecl>;
@@ -122,9 +122,9 @@ public:
     
     std::string filename;
     
-    virtual std::string getSimpleName();
+    std::string getSimpleName() override;
     
-    virtual void recursiveUpdate() {
+    void recursiveUpdate() override {
         ClassDecl::recursiveUpdate();
     }
 };
@@ -141,11 +141,11 @@ struct VarDecl: public DeclNode {
     
     VarDecl(Pattern::Ptr pattern, std::shared_ptr<Node> initializer);
     
-    virtual std::string getSimpleName() {
+    std::string getSimpleName() override {
         return pattern->getSimpleName();
     }
     
-    virtual void recursiveUpdate() {
+    void recursiveUpdate() override {
         NODE_RECURSIVE_UPDATE(pattern, NODE_UPDATE_ACTION_SET_PARENT_THIS(pattern))
         NODE_RECURSIVE_UPDATE(initializer, NODE_UPDATE_ACTION_SET_PARENT_THIS(initializer))
     }

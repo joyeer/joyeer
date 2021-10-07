@@ -26,15 +26,15 @@ options(opts) {
 }
 
 void CompilerService::run(std::string inputfile) {
-    auto sourcelife = findSourceFile(inputfile);
-    compile(sourcelife);
+    auto sourcefile = findSourceFile(inputfile);
+    compile(sourcefile);
     
     JrRuntimeContext context;
     JrInterpreter interpreter(&context);
-    interpreter.run(sourcelife->moduleClass);
+    interpreter.run(sourcefile->moduleClass);
 }
 
-SourceFile::Ptr CompilerService::findSourceFile(const std::string &path, const std::string relativeFolder) {
+SourceFile::Ptr CompilerService::findSourceFile(const std::string &path, const std::string& relativeFolder) {
     auto sourcefile = std::filesystem::path(path);
     if(sourcefile.is_relative()) {
         // check the relative folder
@@ -46,8 +46,8 @@ SourceFile::Ptr CompilerService::findSourceFile(const std::string &path, const s
     
     auto sourcefilePath = sourcefile.string();
     if(sourcefiles.find(sourcefilePath) == sourcefiles.end()) {
-        auto sourcefile = std::make_shared<SourceFile>(options->workingDirectory, sourcefilePath);
-        sourcefiles.insert({sourcefilePath, sourcefile});
+        auto sf = std::make_shared<SourceFile>(options->workingDirectory, sourcefilePath);
+        sourcefiles.insert({sourcefilePath, sf});
     }
     
     return sourcefiles.find(sourcefilePath)->second;

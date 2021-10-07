@@ -1,6 +1,8 @@
 #ifndef __joyeer_compiler_node_expr_h__
 #define __joyeer_compiler_node_expr_h__
 
+#include <utility>
+
 #include "joyeer/compiler/node.h"
 
 struct Expr : Node {
@@ -15,7 +17,7 @@ struct Expr : Node {
     Expr(Node::Ptr prefix, std::vector<Node::Ptr> binary);
     Expr(std::vector<Node::Ptr> nodes);
     
-    virtual void recursiveUpdate() {
+    void recursiveUpdate() override {
         NODE_RECURSIVE_UPDATE(prefix, NODE_UPDATE_ACTION_SET_PARENT_THIS(prefix))
         for(auto& binary: binaries) {
             NODE_RECURSIVE_UPDATE(binary, NODE_UPDATE_ACTION_SET_PARENT_THIS_2(binary))
@@ -34,7 +36,7 @@ struct PostfixExpr: Node {
 
     PostfixExpr(Node::Ptr expr, OperatorExpr::Ptr op);
     
-    virtual void recursiveUpdate() {
+    void recursiveUpdate() override {
         NODE_RECURSIVE_UPDATE(expr, NODE_UPDATE_ACTION_SET_PARENT_THIS(expr))
         NODE_RECURSIVE_UPDATE(op, NODE_UPDATE_ACTION_SET_PARENT_THIS(op))
     }
@@ -48,7 +50,7 @@ struct PrefixExpr: Node {
     Node::Ptr expr; // postfix-expression
     
     PrefixExpr(OperatorExpr::Ptr op, Node::Ptr expr);
-    virtual void recursiveUpdate() {
+    void recursiveUpdate() override {
         NODE_RECURSIVE_UPDATE(expr, NODE_UPDATE_ACTION_SET_PARENT_THIS(expr))
         NODE_RECURSIVE_UPDATE(op, NODE_UPDATE_ACTION_SET_PARENT_THIS(op))
     }
@@ -62,7 +64,7 @@ struct BinaryExpr: Node {
     
     BinaryExpr(OperatorExpr::Ptr op, Node::Ptr expr);
     
-    virtual void recursiveUpdate() {
+    void recursiveUpdate() override {
         NODE_RECURSIVE_UPDATE(expr, NODE_UPDATE_ACTION_SET_PARENT_THIS(expr))
         NODE_RECURSIVE_UPDATE(op, NODE_UPDATE_ACTION_SET_PARENT_THIS(op))
     }
@@ -75,9 +77,10 @@ struct AssignmentExpr: Node {
     
     // After binded, the identifier will be binded
     Node::Ptr left;
-    AssignmentExpr(Node::Ptr expr);
+
+    explicit AssignmentExpr(Node::Ptr expr);
     
-    virtual void recursiveUpdate() {
+    void recursiveUpdate() override {
         NODE_RECURSIVE_UPDATE(expr, NODE_UPDATE_ACTION_SET_PARENT_THIS(expr))
         NODE_RECURSIVE_UPDATE(left, NODE_UPDATE_ACTION_SET_PARENT_THIS(left))
     }
@@ -90,7 +93,7 @@ struct ArguCallExpr: Node {
     
     ArguCallExpr(IdentifierExpr::Ptr label, Node::Ptr expr);
     
-    virtual void recursiveUpdate() {
+    void recursiveUpdate() override {
         NODE_RECURSIVE_UPDATE(expr, NODE_UPDATE_ACTION_SET_PARENT_THIS(expr))
         NODE_RECURSIVE_UPDATE(label, NODE_UPDATE_ACTION_SET_PARENT_THIS(label))
     }
@@ -104,10 +107,10 @@ struct FuncCallExpr: Node {
     
     FuncCallExpr(Node::Ptr expr, std::vector<ArguCallExpr::Ptr> arguments);
     
-    virtual void recursiveUpdate() {
+    void recursiveUpdate() override {
         NODE_RECURSIVE_UPDATE(identifier, NODE_UPDATE_ACTION_SET_PARENT_THIS(identifier))
-        for(auto& argu: arguments) {
-            NODE_RECURSIVE_UPDATE(argu, NODE_UPDATE_ACTION_SET_PARENT_THIS_2(argu))
+        for(auto& argument: arguments) {
+            NODE_RECURSIVE_UPDATE(argument, NODE_UPDATE_ACTION_SET_PARENT_THIS_2(argument))
         }
     }
 
@@ -123,11 +126,11 @@ struct MemberFuncCallExpr: Node {
     
     MemberFuncCallExpr(Node::Ptr callee, Node::Ptr member, std::vector<ArguCallExpr::Ptr> arguments);
     
-    virtual void recursiveUpdate() {
+    void recursiveUpdate() override {
         NODE_RECURSIVE_UPDATE(callee, NODE_UPDATE_ACTION_SET_PARENT_THIS(callee))
         NODE_RECURSIVE_UPDATE(member, NODE_UPDATE_ACTION_SET_PARENT_THIS(member))
-        for(auto& argu: arguments) {
-            NODE_RECURSIVE_UPDATE(argu, NODE_UPDATE_ACTION_SET_PARENT_THIS_2(argu))
+        for(auto& argument: arguments) {
+            NODE_RECURSIVE_UPDATE(argument, NODE_UPDATE_ACTION_SET_PARENT_THIS_2(argument))
         }
     }
 };
@@ -140,7 +143,7 @@ struct MemberAccessExpr: Node {
     
     MemberAccessExpr(Node::Ptr callee, Node::Ptr member);
     
-    virtual void recursiveUpdate() {
+    void recursiveUpdate() override {
         NODE_RECURSIVE_UPDATE(callee, NODE_UPDATE_ACTION_SET_PARENT_THIS(callee))
         NODE_RECURSIVE_UPDATE(member, NODE_UPDATE_ACTION_SET_PARENT_THIS(member))
     }
@@ -156,10 +159,10 @@ struct MemberAssignExpr: Node {
     
     MemberAssignExpr(IdentifierExpr::Ptr member, Node::Ptr expr):
         Node(SyntaxKind::memberAssignExpr),
-        member(member),
-        expr(expr) {}
+        member(std::move(member)),
+        expr(std::move(expr)) {}
     
-    virtual void recursiveUpdate() {
+    void recursiveUpdate() override {
         NODE_RECURSIVE_UPDATE(expr, NODE_UPDATE_ACTION_SET_PARENT_THIS(expr))
         NODE_RECURSIVE_UPDATE(member, NODE_UPDATE_ACTION_SET_PARENT_THIS(member))
     }
@@ -170,9 +173,10 @@ struct LiteralExpr : Node {
     using Ptr = std::shared_ptr<LiteralExpr>;
     
     Token::Ptr literal;
-    LiteralExpr(Token::Ptr literal);
+    explicit LiteralExpr(Token::Ptr literal);
     
-    virtual void recursiveUpdate() {}
+    void recursiveUpdate() override {
+    }
 };
 
 struct ArrayLiteralExpr: Node {
@@ -180,9 +184,9 @@ struct ArrayLiteralExpr: Node {
     
     std::vector<Node::Ptr> items;
     
-    ArrayLiteralExpr(std::vector<Node::Ptr> items);
+    explicit ArrayLiteralExpr(std::vector<Node::Ptr> items);
     
-    virtual void recursiveUpdate() {
+    void recursiveUpdate() override {
         for(auto& item: items) {
             NODE_RECURSIVE_UPDATE(item, NODE_UPDATE_ACTION_SET_PARENT_THIS_2(item))
         }
@@ -195,9 +199,9 @@ struct DictLiteralExpr: Node {
     
     std::vector<std::tuple<Node::Ptr, Node::Ptr>> items;
     
-    DictLiteralExpr(std::vector<std::tuple<Node::Ptr, Node::Ptr>> items);
+    explicit DictLiteralExpr(std::vector<std::tuple<Node::Ptr, Node::Ptr>> items);
     
-    virtual void recursiveUpdate() {
+    void recursiveUpdate() override {
         for(auto& item: items) {
             auto key = std::get<0>(item);
             auto value = std::get<1>(item);
@@ -211,9 +215,9 @@ struct ParenthesizedExpr: Node {
     using Ptr = std::shared_ptr<ParenthesizedExpr>;
     
     Node::Ptr expr;
-    ParenthesizedExpr(std::shared_ptr<Node> expr);
+    explicit ParenthesizedExpr(std::shared_ptr<Node> expr);
     
-    virtual void recursiveUpdate() {
+    void recursiveUpdate() override {
         NODE_RECURSIVE_UPDATE(expr, NODE_UPDATE_ACTION_SET_PARENT_THIS(expr))
     }
 };
@@ -223,9 +227,9 @@ struct SelfExpr: Node {
     
     IdentifierExpr::Ptr identifier;
     
-    SelfExpr(IdentifierExpr::Ptr identifier);
+    explicit SelfExpr(IdentifierExpr::Ptr identifier);
     
-    virtual void recursiveUpdate() {
+    void recursiveUpdate() override {
         NODE_RECURSIVE_UPDATE(identifier, NODE_UPDATE_ACTION_SET_PARENT_THIS(identifier))
     }
 };
@@ -238,7 +242,7 @@ struct SubscriptExpr: Node {
     
     SubscriptExpr(Node::Ptr identifier, Node::Ptr indexExpr);
     
-    virtual void recursiveUpdate() {
+    void recursiveUpdate() override {
         NODE_RECURSIVE_UPDATE(identifier, NODE_UPDATE_ACTION_SET_PARENT_THIS(identifier))
         NODE_RECURSIVE_UPDATE(indexExpr, NODE_UPDATE_ACTION_SET_PARENT_THIS(indexExpr))
     }

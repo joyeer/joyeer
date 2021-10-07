@@ -22,7 +22,7 @@ private:
     void compile(SourceFile::Ptr sourcefile);
     // try to import module, and return the exported symboltable;
     SourceFile::Ptr tryImport(CompileContext::Ptr context, const std::string& moduleName);
-    SourceFile::Ptr findSourceFile(const std::string& path, const std::string relativeFolder = "");
+    SourceFile::Ptr findSourceFile(const std::string& path, const std::string& relativeFolder = "");
     
     void debugPrint(Node::Ptr node, const std::string& debugFilePath);
     void debugPrint(const std::string& debugFilePath);
@@ -36,7 +36,7 @@ private:
     // global symbols
     SymbolTable::Ptr globalSymbols;
     
-    // All the delcaration descriptors include FileModule/Class/Node
+    // All the declaration descriptors include FileModule/Class/Node
     NodeRepository::Ptr repository = std::make_shared<NodeRepository>();
 };
 #endif
