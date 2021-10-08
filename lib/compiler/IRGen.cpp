@@ -6,15 +6,16 @@
 #include "joyeer/runtime/sys/string.h"
 #include <cassert>
 #include <unordered_map>
+#include <utility>
 
 
 IRGen::IRGen(CompileContext::Ptr context):
-context(context) {
+context(std::move(context)) {
 }
 
 void IRGen::emit(Node::Ptr node) {
     switch (node->kind) {
-        case SyntaxKind::filemodule:
+        case SyntaxKind::fileModule:
             emit(std::static_pointer_cast<FileModuleDecl>(node));
             break;
         case SyntaxKind::varDecl:

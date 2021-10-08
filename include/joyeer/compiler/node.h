@@ -7,7 +7,7 @@
 #include "joyeer/runtime/runtime.h"
 
 enum class SyntaxKind {
-    filemodule = 1L,
+    fileModule = 1L,
 
     type,
     arrayType,
@@ -87,7 +87,7 @@ struct Node: std::enable_shared_from_this<Node> {
     Node::Ptr getDeclaringClassDecl() const {
         Node::Ptr current = parent;
         while(current != nullptr) {
-            if(current->kind == SyntaxKind::classDecl || current->kind == SyntaxKind::filemodule) {
+            if(current->kind == SyntaxKind::classDecl || current->kind == SyntaxKind::fileModule) {
                 return current;
             }
             current = current->parent;

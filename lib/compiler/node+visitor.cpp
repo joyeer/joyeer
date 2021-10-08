@@ -9,7 +9,7 @@ Node::Ptr NodeVisitor::visit(Node::Ptr node) {
         return visit(std::static_pointer_cast< type >(node));
     
     switch (node->kind) {
-        NODE_VISITOR(SyntaxKind::filemodule,            FileModuleDecl)
+        NODE_VISITOR(SyntaxKind::fileModule, FileModuleDecl)
         NODE_VISITOR(SyntaxKind::funcDecl,              FuncDecl)
         NODE_VISITOR(SyntaxKind::classDecl,             ClassDecl)
         NODE_VISITOR(SyntaxKind::type,                  Type)

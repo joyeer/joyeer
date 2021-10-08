@@ -18,7 +18,7 @@ TEST(DescriptorTest, FileModuleInitializerDescriptor) {
     
     auto fileModuleInitializerDescriptor = std::make_shared<FileModuleInitializerDescriptor>(descriptor);
     auto rawDescriptor = fileModuleInitializerDescriptor->getRawDescriptor();
-    EXPECT_EQ(rawDescriptor, "#foo;/&filemodule-initializer();");
+    EXPECT_EQ(rawDescriptor, "#foo;/&fileModule-initializer();");
 }
 
 TEST(DescriptorTest, PrimaryTypeChecker) {

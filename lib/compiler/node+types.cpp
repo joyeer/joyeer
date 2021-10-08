@@ -20,7 +20,7 @@ std::string ClassDecl::getSimpleName() {
 FileModuleDecl::FileModuleDecl(FileModuleDescriptor::Ptr descriptor, StmtsBlock::Ptr block):
 ClassDecl(nullptr, block) {
     this->members = block;
-    kind = SyntaxKind::filemodule;
+    kind = SyntaxKind::fileModule;
     this->descriptor = descriptor;
     assert(symtable != nullptr);
 }

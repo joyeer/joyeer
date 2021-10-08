@@ -37,7 +37,7 @@ public:
     std::vector<Token::Ptr> tokens;
 
     // grammer parsing result, 
-    // filemodule is the root node of AST 
+    // fileModule is the root node of AST
     FileModuleDecl::Ptr filemodule;
 
     JrModuleClass* moduleClass;

@@ -572,7 +572,7 @@ FileModuleDecl::Ptr  Binder::normalizeAndPrepareDefaultStaticConstructorForFileM
     // prepare for FileModule initializer
     auto moduleStaticInitializer = FuncDecl::makeStaticInitializer(std::make_shared<StmtsBlock>(statements));
     
-    // preapre for filemodule initializer's descriptor
+    // preapre for fileModule initializer's descriptor
     moduleStaticInitializer->descriptor = std::make_shared<FileModuleInitializerDescriptor>(std::static_pointer_cast<FileModuleDescriptor>(filemodule->descriptor));
     
     filemodule->staticConstructor = moduleStaticInitializer;
@@ -581,7 +581,7 @@ FileModuleDecl::Ptr  Binder::normalizeAndPrepareDefaultStaticConstructorForFileM
     filemodule->members = nullptr;
     filemodule->staticFields = declarations;
     
-    // register filemodule initializer in compile service
+    // register fileModule initializer in compile service
     context->compiler->declare(moduleStaticInitializer);
     return filemodule;
 }

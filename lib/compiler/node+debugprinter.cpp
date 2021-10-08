@@ -64,10 +64,10 @@ void NodeDebugPrinter::print(Node::Ptr node) {
     printTab();
     
     switch (node->kind) {
-        case SyntaxKind::filemodule:
+        case SyntaxKind::fileModule:
         case SyntaxKind::classDecl: {
             auto n = std::static_pointer_cast<FileModuleDecl>(node);
-            if(node->kind == SyntaxKind::filemodule) {
+            if(node->kind == SyntaxKind::fileModule) {
                 output << "+FileModule(simple-name:" << n->getSimpleName() << ", descriptor: \"" << n->descriptor->getRawDescriptor() << "\")" ;
             } else {
                 output << "+ClassDecl(simple-name:" << n->getSimpleName() << ", descriptor: \"" << n->descriptor->getRawDescriptor() << "\")" ;
