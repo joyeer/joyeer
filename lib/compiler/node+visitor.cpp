@@ -2,14 +2,14 @@
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-Node::Ptr NodeVisitor::visit(Node::Ptr node) {
+Node::Ptr NodeVisitor::visit(const Node::Ptr& node) {
 
 #define NODE_VISITOR(flag, type) \
     case flag: \
         return visit(std::static_pointer_cast< type >(node));
     
     switch (node->kind) {
-        NODE_VISITOR(SyntaxKind::fileModule, FileModuleDecl)
+        NODE_VISITOR(SyntaxKind::fileModule,            FileModuleDecl)
         NODE_VISITOR(SyntaxKind::funcDecl,              FuncDecl)
         NODE_VISITOR(SyntaxKind::classDecl,             ClassDecl)
         NODE_VISITOR(SyntaxKind::type,                  Type)

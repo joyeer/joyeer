@@ -6,6 +6,7 @@
 #include "joyeer/runtime/sys/module.h"
 
 #include <cassert>
+#include <utility>
 
 
 /////////////////////////////////////////////////////////////////
@@ -14,10 +15,10 @@
 
 Binder::Binder(CompileContext::Ptr context):
 NodeVisitor(),
-context(context) {
+context(std::move(context)) {
 }
 
-Node::Ptr Binder::visit(Node::Ptr node) {
+Node::Ptr Binder::visit(const Node::Ptr& node) {
     return NodeVisitor::visit(node);
 }
 
@@ -98,7 +99,7 @@ Node::Ptr Binder::visit(ClassDecl::Ptr decl) {
         decl->members = std::static_pointer_cast<StmtsBlock>(visit(decl->members));
     });
     
-    if(hasCustomizedConstructor == false) {
+    if(!hasCustomizedConstructor) {
         // if has no customize constructors , we will bind an default constructor
         auto defaultConstructor = new JrFunction();
         defaultConstructor->name = name + "()";

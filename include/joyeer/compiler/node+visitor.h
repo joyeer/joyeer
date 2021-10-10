@@ -6,7 +6,7 @@
 
 struct NodeVisitor {
 protected:
-    Node::Ptr visit(Node::Ptr node);
+    virtual Node::Ptr visit(const Node::Ptr& node);
     virtual Node::Ptr visit(FileModuleDecl::Ptr decl) = 0;
     virtual Node::Ptr visit(ClassDecl::Ptr classDecl) = 0;
     virtual Node::Ptr visit(VarDecl::Ptr varDecl) = 0;

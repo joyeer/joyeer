@@ -63,9 +63,9 @@ enum class NodeAccessFlag: int64_t {
 
 // recursive update the node
 #define NODE_RECURSIVE_UPDATE(node , expr) \
-    if(node != nullptr) { \
+    if((node) != nullptr) { \
         expr(); \
-        node->recursiveUpdate(); \
+        (node)->recursiveUpdate(); \
     }
 
 

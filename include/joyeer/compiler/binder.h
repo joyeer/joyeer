@@ -14,40 +14,40 @@ class Binder: public NodeVisitor {
 public:
     std::function<SourceFile::Ptr(CompileContext::Ptr, const std::string&)> importDelegate;
     
-    Binder(CompileContext::Ptr context);
+    explicit Binder(CompileContext::Ptr context);
     
-    virtual Node::Ptr visit(FileModuleDecl::Ptr sourceBlock);
+    Node::Ptr visit(FileModuleDecl::Ptr sourceBlock) override;
 protected:
     // recursive bind down node
-    virtual Node::Ptr visit(Node::Ptr node);
-    virtual Node::Ptr visit(ClassDecl::Ptr classDecl);
-    virtual Node::Ptr visit(VarDecl::Ptr varDecl);
-    virtual Node::Ptr visit(Type::Ptr decl);
-    virtual Node::Ptr visit(FuncCallExpr::Ptr decl);
-    virtual Node::Ptr visit(MemberFuncCallExpr::Ptr decl);
-    virtual Node::Ptr visit(ArguCallExpr::Ptr decl);
-    virtual Node::Ptr visit(LiteralExpr::Ptr decl);
-    virtual Node::Ptr visit(PrefixExpr::Ptr decl);
-    virtual Node::Ptr visit(IdentifierExpr::Ptr decl);
-    virtual Node::Ptr visit(Expr::Ptr decl);
-    virtual Node::Ptr visit(AssignmentExpr::Ptr decl);
-    virtual Node::Ptr visit(BinaryExpr::Ptr decl);
-    virtual Node::Ptr visit(OperatorExpr::Ptr decl);
-    virtual Node::Ptr visit(ParenthesizedExpr::Ptr decl);
-    virtual Node::Ptr visit(IfStmt::Ptr decl);
-    virtual Node::Ptr visit(WhileStmt::Ptr decl);
-    virtual Node::Ptr visit(StmtsBlock::Ptr decl);
-    virtual Node::Ptr visit(FuncDecl::Ptr decl);
-    virtual Node::Ptr visit(ParameterClause::Ptr decl);
-    virtual Node::Ptr visit(Pattern::Ptr decl);
-    virtual Node::Ptr visit(ReturnStmt::Ptr decl);
-    virtual Node::Ptr visit(SelfExpr::Ptr decl);
-    virtual Node::Ptr visit(ArrayLiteralExpr::Ptr decl);
-    virtual Node::Ptr visit(DictLiteralExpr::Ptr decl);
-    virtual Node::Ptr visit(MemberAccessExpr::Ptr decl);
-    virtual Node::Ptr visit(SubscriptExpr::Ptr decl);
-    virtual Node::Ptr visit(ArrayType::Ptr decl);
-    virtual Node::Ptr visit(FileImportStmt::Ptr decl);
+    Node::Ptr visit(const Node::Ptr& node) override;
+    Node::Ptr visit(ClassDecl::Ptr classDecl) override;
+    Node::Ptr visit(VarDecl::Ptr varDecl) override;
+    Node::Ptr visit(Type::Ptr decl) override;
+    Node::Ptr visit(FuncCallExpr::Ptr decl) override;
+    Node::Ptr visit(MemberFuncCallExpr::Ptr decl) override;
+    Node::Ptr visit(ArguCallExpr::Ptr decl) override;
+    Node::Ptr visit(LiteralExpr::Ptr decl) override;
+    Node::Ptr visit(PrefixExpr::Ptr decl) override;
+    Node::Ptr visit(IdentifierExpr::Ptr decl) override;
+    Node::Ptr visit(Expr::Ptr decl) override;
+    Node::Ptr visit(AssignmentExpr::Ptr decl) override;
+    Node::Ptr visit(BinaryExpr::Ptr decl) override;
+    Node::Ptr visit(OperatorExpr::Ptr decl) override;
+    Node::Ptr visit(ParenthesizedExpr::Ptr decl) override;
+    Node::Ptr visit(IfStmt::Ptr decl) override;
+    Node::Ptr visit(WhileStmt::Ptr decl) override;
+    Node::Ptr visit(StmtsBlock::Ptr decl) override;
+    Node::Ptr visit(FuncDecl::Ptr decl) override;
+    Node::Ptr visit(ParameterClause::Ptr decl) override;
+    Node::Ptr visit(Pattern::Ptr decl) override;
+    Node::Ptr visit(ReturnStmt::Ptr decl) override;
+    Node::Ptr visit(SelfExpr::Ptr decl) override;
+    Node::Ptr visit(ArrayLiteralExpr::Ptr decl) override;
+    Node::Ptr visit(DictLiteralExpr::Ptr decl) override;
+    Node::Ptr visit(MemberAccessExpr::Ptr decl) override;
+    Node::Ptr visit(SubscriptExpr::Ptr decl) override;
+    Node::Ptr visit(ArrayType::Ptr decl) override;
+    Node::Ptr visit(FileImportStmt::Ptr decl) override;
     
 private:
     /**

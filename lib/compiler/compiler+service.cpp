@@ -1,5 +1,5 @@
 #include "joyeer/compiler/compiler+service.h"
-#include "joyeer/compiler/node+debugprinter.h"
+#include "debugprinter.h"
 #include "joyeer/compiler/lexparser.h"
 #include "joyeer/compiler/diagnostic.h"
 #include "joyeer/compiler/binder.h"
@@ -8,7 +8,7 @@
 #include "joyeer/compiler/IRGen.h"
 #include "joyeer/runtime/interpreter.h"
 #include "joyeer/runtime/buildin.h"
-#include <iostream>
+#include <utility>
 
 #define CHECK_ERROR_CONTINUE \
     if(Diagnostics::errorLevel != none) { \
@@ -21,11 +21,11 @@
     }
 
 CompilerService::CompilerService(CommandLineArguments::Ptr opts):
-options(opts) {
+options(std::move(opts)) {
     initializeGlobalSymbolTable();
 }
 
-void CompilerService::run(std::string inputfile) {
+void CompilerService::run(const std::string& inputfile) {
     auto sourcefile = findSourceFile(inputfile);
     compile(sourcefile);
     
@@ -54,7 +54,7 @@ SourceFile::Ptr CompilerService::findSourceFile(const std::string &path, const s
 }
 
 
-void CompilerService::compile(SourceFile::Ptr sourcefile) {
+void CompilerService::compile(const SourceFile::Ptr& sourcefile) {
     
     auto context= std::make_shared<CompileContext>(options);
     context->sourcefile = sourcefile;

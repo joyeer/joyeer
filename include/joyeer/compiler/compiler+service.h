@@ -9,17 +9,16 @@
 
 class CompilerService : public std::enable_shared_from_this<CompilerService> {
 public:
-    CompilerService(CommandLineArguments::Ptr options);
-    void run(std::string inputfile);
+    explicit CompilerService(CommandLineArguments::Ptr options);
+    void run(const std::string& inputfile);
     
     // declare a DeclNode
     void declare(DeclNode::Ptr decl);
-    
-    void query(const std::string& descriptor);
+
 private:
     
     // Compile an SourceFile
-    void compile(SourceFile::Ptr sourcefile);
+    void compile(const SourceFile::Ptr& sourcefile);
     // try to import module, and return the exported symboltable;
     SourceFile::Ptr tryImport(CompileContext::Ptr context, const std::string& moduleName);
     SourceFile::Ptr findSourceFile(const std::string& path, const std::string& relativeFolder = "");
