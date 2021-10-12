@@ -45,6 +45,7 @@ protected:
     Node::Ptr visit(ArrayLiteralExpr::Ptr decl) override;
     Node::Ptr visit(DictLiteralExpr::Ptr decl) override;
     Node::Ptr visit(MemberAccessExpr::Ptr decl) override;
+    Node::Ptr visit(MemberAssignExpr::Ptr decl) override;
     Node::Ptr visit(SubscriptExpr::Ptr decl) override;
     Node::Ptr visit(ArrayType::Ptr decl) override;
     Node::Ptr visit(FileImportStmt::Ptr decl) override;

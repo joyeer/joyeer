@@ -33,6 +33,7 @@ protected:
     virtual Node::Ptr visit(ArrayLiteralExpr::Ptr decl) = 0;
     virtual Node::Ptr visit(DictLiteralExpr::Ptr decl) = 0;
     virtual Node::Ptr visit(MemberAccessExpr::Ptr decl) = 0;
+    virtual Node::Ptr visit(MemberAssignExpr::Ptr decl) = 0;
     virtual Node::Ptr visit(SubscriptExpr::Ptr decl) = 0;
     virtual Node::Ptr visit(ArrayType::Ptr decl) = 0;
     virtual Node::Ptr visit(FileImportStmt::Ptr decl) = 0;

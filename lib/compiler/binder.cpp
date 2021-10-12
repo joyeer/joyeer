@@ -503,7 +503,7 @@ Node::Ptr Binder::visit(DictLiteralExpr::Ptr decl) {
     for(auto item: decl->items) {
         auto keyItem = visit(std::get<0>(item));
         auto valueItem = visit(std::get<1>(item));
-        result.push_back(std::make_tuple(keyItem , valueItem));
+        result.emplace_back(keyItem , valueItem);
     }
     decl->items = result;
     return decl;
@@ -512,6 +512,10 @@ Node::Ptr Binder::visit(DictLiteralExpr::Ptr decl) {
 Node::Ptr Binder::visit(MemberAccessExpr::Ptr decl) {
     decl->callee = visit(decl->callee);
     decl->member = visit(decl->member);
+    return decl;
+}
+
+Node::Ptr Binder::visit(MemberAssignExpr::Ptr decl) {
     return decl;
 }
 

@@ -1,5 +1,7 @@
 #include "joyeer/compiler/node.h"
 
+#include <utility>
+
 static int generateVID() {
     static int vid = 1;
     return vid ++;
@@ -15,13 +17,13 @@ std::string Node::getSimpleName() {
 
 OperatorExpr::OperatorExpr(Token::Ptr token):
 Node(SyntaxKind::operatorExpr),
-token(token) {
+token(std::move(token)) {
 
 }
 
 ParameterClause::ParameterClause(std::vector<Pattern::Ptr> parameters):
 Node(SyntaxKind::parameterClause),
-parameters(parameters) {
+parameters(std::move(parameters)) {
 }
 
 Pattern::Pattern(IdentifierExpr::Ptr identifier, Node::Ptr type):

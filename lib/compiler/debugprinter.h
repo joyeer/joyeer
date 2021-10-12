@@ -7,6 +7,13 @@
 
 // ASM node printer
 struct NodeDebugPrinter : public NodeVisitor {
+
+#define DEBUG_BLOCK_START \
+    incTab();             \
+    newline();
+
+#define DEBUG_BLOCK_END decTab();
+
     explicit NodeDebugPrinter(const std::string& filename);
     
     void print(const Node::Ptr& node) {
@@ -125,6 +132,21 @@ protected:
     }
 
     Node::Ptr visit(FuncCallExpr::Ptr decl) override {
+        output << "funcCallExpr:";
+        DEBUG_BLOCK_START
+            output << "identifier:";
+            DEBUG_BLOCK_START
+                NodeVisitor::visit(decl->identifier);
+            DEBUG_BLOCK_END
+            newline();
+            output << "arguments:";
+            DEBUG_BLOCK_START
+            for(const auto& argument: decl->arguments) {
+                output << "- ";
+                visit(argument);
+            }
+            DEBUG_BLOCK_END
+        DEBUG_BLOCK_END
         return decl;
     }
 
@@ -133,10 +155,23 @@ protected:
     }
 
     Node::Ptr visit(ArguCallExpr::Ptr decl) override {
+        output << "arguCallExpr:";
+        DEBUG_BLOCK_START
+            output << "label:";
+            DEBUG_BLOCK_START
+            visit(decl->label);
+            DEBUG_BLOCK_END
+            newline();
+            output << "expr:";
+            DEBUG_BLOCK_START
+            NodeVisitor::visit(decl->expr);
+            DEBUG_BLOCK_END
+        DEBUG_BLOCK_END
         return decl;
     }
 
     Node::Ptr visit(LiteralExpr::Ptr decl) override {
+        output << "literal: " << decl->literal->rawValue;
         return decl;
     }
 
@@ -146,10 +181,9 @@ protected:
 
     Node::Ptr visit(IdentifierExpr::Ptr decl) override {
         output << "identifierExpr:";
-        incTab();
-        newline();
+        DEBUG_BLOCK_START
         output << "simple-name: " << escapeString(decl->getSimpleName());
-        decTab();
+        DEBUG_BLOCK_END
         return decl;
     }
 
@@ -182,6 +216,14 @@ protected:
     }
 
     Node::Ptr visit(StmtsBlock::Ptr decl) override {
+        output << "statements:";
+        incTab();
+        for(const auto& statement: decl->statements) {
+            newline();
+            output << "- ";
+            NodeVisitor::visit(statement);
+        }
+        decTab();
         return decl;
     }
 
@@ -190,11 +232,46 @@ protected:
         incTab();
         newline();
         output << "simple-name: " << escapeString(decl->getSimpleName());
+        if(decl->parameterClause != nullptr) {
+            newline();
+            NodeVisitor::visit(decl->parameterClause);
+        }
+
+        if(decl->identifier != nullptr) {
+            newline();
+            NodeVisitor::visit(decl->identifier);
+        }
+
+        if(decl->returnType != nullptr) {
+            newline();
+            output << "return-type:";
+            incTab();
+            newline();
+            NodeVisitor::visit(decl->returnType);
+            decTab();
+        }
+
+        newline();
+        NodeVisitor::visit(decl->codeBlock);
+
         decTab();
         return decl;
     }
 
     Node::Ptr visit(ParameterClause::Ptr decl) override {
+        output << "paramClause:";
+        incTab();
+        newline();
+        output << "parameters:";
+        incTab();
+
+        for(const auto& param: decl->parameters) {
+            newline();
+            output << "- ";
+            visit(param);
+        }
+        newline();
+        decTab();
         return decl;
     }
 
@@ -228,6 +305,23 @@ protected:
     }
 
     Node::Ptr visit(MemberAccessExpr::Ptr decl) override {
+        return decl;
+    }
+
+    Node::Ptr visit(MemberAssignExpr::Ptr decl) override {
+        output << "memberAssignExpr:";
+        incTab();
+        newline();
+        output << "member:";
+        incTab();
+        newline();
+        visit(decl->member);
+        decTab();
+        output << "expr:";
+        incTab();
+        newline();
+        NodeVisitor::visit(decl->expr);
+        decTab();
         return decl;
     }
 
