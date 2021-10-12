@@ -15,16 +15,15 @@ struct NodeDebugPrinter : public NodeVisitor {
 #define DEBUG_BLOCK_END decTab();
 
     explicit NodeDebugPrinter(const std::string& filename);
-    
+
+    // print AST into debug file
     void print(const Node::Ptr& node) {
         NodeVisitor::visit(node);
     }
+
     void close();
     
 protected:
-    void print(const std::vector<Node::Ptr>& nodes);
-    void print(const SymbolTable::Ptr& symtable);
-    void print(const Symbol::Ptr& symbol);
     void printTab();
     void incTab();
     void decTab();
