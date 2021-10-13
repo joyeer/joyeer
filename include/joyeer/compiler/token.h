@@ -97,7 +97,7 @@ struct Operators {
     static const std::string LESS;                 // <
     static const std::string LESS_EQ;              // <=
     static const std::string GREATER;              // >
-    static const std::string GERATER_EQ;           // >=
+    static const std::string GREATER_EQ;           // >=
     
     
     // get the operator's priority

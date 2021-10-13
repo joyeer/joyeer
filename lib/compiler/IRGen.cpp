@@ -13,7 +13,7 @@ IRGen::IRGen(CompileContext::Ptr context):
 context(std::move(context)) {
 }
 
-void IRGen::emit(Node::Ptr node) {
+void IRGen::emit(const Node::Ptr& node) {
     switch (node->kind) {
         case SyntaxKind::fileModule:
             emit(std::static_pointer_cast<FileModuleDecl>(node));
@@ -89,13 +89,13 @@ void IRGen::emit(Node::Ptr node) {
     }
 }
 
-JrModuleClass* IRGen::emit(FileModuleDecl::Ptr decl) {
+JrModuleClass* IRGen::emit(const FileModuleDecl::Ptr& decl) {
     
     assert( decl->symbol->flag == SymbolFlag::fileModuleSymbol);
     auto moduleType = (JrModuleClass*)Global::types[ decl->symbol->addressOfType];
     assert(moduleType->constructors.size() == 1);
     auto func = Global::functions[moduleType->constructors.back()];
-    
+
     context->entry(moduleType);
     context->entry(func);
     context->visit(CompileStage::visitFileModule, [this,  decl]() {
@@ -110,10 +110,10 @@ JrModuleClass* IRGen::emit(FileModuleDecl::Ptr decl) {
     return moduleType;
 }
 
-void IRGen::emit(FuncCallExpr::Ptr funcCallExpr) {
+void IRGen::emit(const FuncCallExpr::Ptr& funcCallExpr) {
     context->visit(CompileStage::visitFuncCall, [this, funcCallExpr](){
         
-        for(auto argument : funcCallExpr->arguments) {
+        for(const auto& argument : funcCallExpr->arguments) {
             emit(argument);
         }
         
@@ -138,9 +138,9 @@ void IRGen::emit(FuncCallExpr::Ptr funcCallExpr) {
     });
 }
 
-void IRGen::emit(MemberFuncCallExpr::Ptr memberFuncCallExpr) {
+void IRGen::emit(const MemberFuncCallExpr::Ptr& memberFuncCallExpr) {
     context->visit(CompileStage::visitFuncCall, [this, memberFuncCallExpr](){
-        for(auto argument : memberFuncCallExpr->arguments) {
+        for(const auto& argument : memberFuncCallExpr->arguments) {
             emit(argument);
         }
         
@@ -155,11 +155,11 @@ void IRGen::emit(MemberFuncCallExpr::Ptr memberFuncCallExpr) {
     });
 }
 
-void IRGen::emit(ArguCallExpr::Ptr node) {
+void IRGen::emit(const ArguCallExpr::Ptr& node) {
     emit(node->expr);
 }
 
-void IRGen::emit(LiteralExpr::Ptr node) {
+void IRGen::emit(const LiteralExpr::Ptr& node) {
     switch(node->literal->kind) {
         case decimalLiteral:
             writer.write({
@@ -186,11 +186,10 @@ void IRGen::emit(LiteralExpr::Ptr node) {
             break;
         default:
             assert(false);
-            break;
     }
 }
 
-void IRGen::emit(VarDecl::Ptr node) {
+void IRGen::emit(const VarDecl::Ptr& node) {
     emit(node->initializer);
     
     auto function = context->curFunction();
@@ -218,7 +217,7 @@ void IRGen::emit(VarDecl::Ptr node) {
 
 }
 
-void IRGen::emit(PrefixExpr::Ptr node) {
+void IRGen::emit(const PrefixExpr::Ptr& node) {
     assert(node->expr != nullptr);
     emit(node->expr);
     if(node->op->token->rawValue == Operators::MINUS) {
@@ -230,7 +229,7 @@ void IRGen::emit(PrefixExpr::Ptr node) {
     }
 }
 
-void IRGen::emit(IdentifierExpr::Ptr node) {
+void IRGen::emit(const IdentifierExpr::Ptr& node) {
     auto symbol = node->symbol;
     if(symbol == nullptr) {
         Diagnostics::reportError("[Error][GenCode]");
@@ -278,9 +277,8 @@ void IRGen::emit(IdentifierExpr::Ptr node) {
     // Step2: try to find the symbol in symbols
 }
 
-void IRGen::emit(AssignmentExpr::Ptr node) {
-    
-    
+void IRGen::emit(const AssignmentExpr::Ptr& node) {
+
     if(node->left->kind == SyntaxKind::identifierExpr) {
         emit(node->expr);
         auto identifierExpr = std::static_pointer_cast<IdentifierExpr>(node->left);
@@ -352,9 +350,9 @@ void IRGen::emit(AssignmentExpr::Ptr node) {
     
 }
 
-void IRGen::emit(Expr::Ptr node) {
+void IRGen::emit(const Expr::Ptr& node) {
     assert(node->prefix == nullptr);
-    assert(node->binaries.size() == 0);
+    assert(node->binaries.empty());
     if(node->type == JrObjectString::Type) {
         
         writer.write({
@@ -388,14 +386,14 @@ void IRGen::emit(Expr::Ptr node) {
         });
         
     } else {
-        for(auto n: node->nodes) {
+        for(const auto& n: node->nodes) {
             emit(n);
         }
     }
     
 }
 
-void IRGen::emit(OperatorExpr::Ptr node) {
+void IRGen::emit(const OperatorExpr::Ptr& node) {
     
     static std::unordered_map<std::string, Opcode> imaps {
         {
@@ -405,7 +403,7 @@ void IRGen::emit(OperatorExpr::Ptr node) {
             { Operators::MULTIPLY, OP_IMUL },
             { Operators::PERCENTAGE, OP_IREM },
             { Operators::GREATER, OP_ICMP_G },
-            { Operators::GERATER_EQ, OP_ICMP_GE },
+            {Operators::GREATER_EQ, OP_ICMP_GE },
             { Operators::LESS, OP_ICMP_L },
             { Operators::LESS_EQ, OP_ICMP_LE },
             { Operators::NOT_EQUALS, OP_ICMP_NE },
@@ -421,11 +419,11 @@ void IRGen::emit(OperatorExpr::Ptr node) {
     });
 }
 
-void IRGen::emit(ParenthesizedExpr::Ptr node) {
+void IRGen::emit(const ParenthesizedExpr::Ptr& node) {
     emit(node->expr);
 }
 
-void IRGen::emit(IfStmt::Ptr node) {
+void IRGen::emit(const IfStmt::Ptr& node) {
     IRGen gen(context);
     gen.emit(node->ifCodeBlock);
     auto instructions = gen.writer.instructions;
@@ -453,7 +451,7 @@ void IRGen::emit(IfStmt::Ptr node) {
     
 }
 
-void IRGen::emit(WhileStmt::Ptr node) {
+void IRGen::emit(const WhileStmt::Ptr& node) {
     IRGen gen(context);
     gen.emit(node->codeBlock);
     
@@ -474,15 +472,15 @@ void IRGen::emit(WhileStmt::Ptr node) {
     
 }
 
-void IRGen::emit(StmtsBlock::Ptr node) {
+void IRGen::emit(const StmtsBlock::Ptr& node) {
     context->visit(CompileStage::visitCodeBlock, [this, node]() {
-        for(auto statement: node->statements) {
+        for(const auto& statement: node->statements) {
             emit(statement);
         }
     });
 }
 
-void IRGen::emit(FuncDecl::Ptr node) {
+void IRGen::emit(const FuncDecl::Ptr& node) {
     assert(node->symbol->flag == SymbolFlag::funcSymbol);
     auto function = Global::functions[node->symbol->addressOfFunc];
     
@@ -491,12 +489,12 @@ void IRGen::emit(FuncDecl::Ptr node) {
     generator.emit(node->codeBlock);
     auto instructions = generator.writer.instructions;
     
-    assert(function != nullptr && function->instructions.size() == 0);
+    assert(function != nullptr && function->instructions.empty());
     function->instructions = instructions;
     context->leave(function);
 }
 
-void IRGen::emit(ReturnStmt::Ptr node) {
+void IRGen::emit(const ReturnStmt::Ptr& node) {
     Opcode op = OP_RETURN;
     if(node->expr != nullptr) {
         emit(node->expr);
@@ -508,8 +506,8 @@ void IRGen::emit(ReturnStmt::Ptr node) {
     });
 }
 
-void IRGen::emit(ArrayLiteralExpr::Ptr node) {
-    for(auto item: node->items) {
+void IRGen::emit(const ArrayLiteralExpr::Ptr& node) {
+    for(const auto& item: node->items) {
         emit(item);
     }
     
@@ -524,7 +522,7 @@ void IRGen::emit(ArrayLiteralExpr::Ptr node) {
     });
 }
 
-void IRGen::emit(DictLiteralExpr::Ptr node) {
+void IRGen::emit(const DictLiteralExpr::Ptr& node) {
     writer.write({
         .opcode = OP_NEW,
         .value = JrObjectMap::Constructor->addressOfFunc
@@ -545,15 +543,15 @@ void IRGen::emit(DictLiteralExpr::Ptr node) {
     }
 }
 
-void IRGen::emit(ClassDecl::Ptr node) {
-    for(auto member: node->members->statements) {
+void IRGen::emit(const ClassDecl::Ptr& node) {
+    for(const auto& member: node->members->statements) {
         if(member->kind == SyntaxKind::funcDecl) {
             emit(member);
         }
     }
 }
 
-void IRGen::emit(MemberAccessExpr::Ptr node) {
+void IRGen::emit(const MemberAccessExpr::Ptr& node) {
     emit(node->callee);
     
     writer.write({
@@ -562,7 +560,7 @@ void IRGen::emit(MemberAccessExpr::Ptr node) {
     });
 }
 
-void IRGen::emit(SubscriptExpr::Ptr node) {
+void IRGen::emit(const SubscriptExpr::Ptr& node) {
     
     // handle the index expr of array access
     emit(node->indexExpr);
@@ -584,6 +582,6 @@ void IRGen::emit(SubscriptExpr::Ptr node) {
     }
 }
 
-void IRGen::emit(FileImportStmt::Ptr node) {
+void IRGen::emit(const FileImportStmt::Ptr& node) {
     
 }

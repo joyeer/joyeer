@@ -10,35 +10,35 @@ class JrCodeWriter;
 
 class IRGen {
 public:
-    IRGen(CompileContext::Ptr context);
+    explicit IRGen(CompileContext::Ptr context);
     
-    JrModuleClass* emit(FileModuleDecl::Ptr block);
+    JrModuleClass* emit(const FileModuleDecl::Ptr& block);
     
 protected:
-    void emit(Node::Ptr node);
-    void emit(FuncCallExpr::Ptr node);
-    void emit(MemberFuncCallExpr::Ptr node);
-    void emit(ArguCallExpr::Ptr node);
-    void emit(LiteralExpr::Ptr node);
-    void emit(VarDecl::Ptr node);
-    void emit(PrefixExpr::Ptr node);
-    void emit(IdentifierExpr::Ptr node);
-    void emit(AssignmentExpr::Ptr node);
-    void emit(Expr::Ptr node);
-    void emit(OperatorExpr::Ptr node);
-    void emit(ParenthesizedExpr::Ptr node);
-    void emit(IfStmt::Ptr node);
-    void emit(WhileStmt::Ptr node);
-    void emit(StmtsBlock::Ptr node);
-    void emit(FuncDecl::Ptr node);
-    void emit(ReturnStmt::Ptr node);
-    void emit(MemberAccessExpr::Ptr node);
-    
-    void emit(ClassDecl::Ptr node);
-    void emit(ArrayLiteralExpr::Ptr node);
-    void emit(DictLiteralExpr::Ptr node);
-    void emit(SubscriptExpr::Ptr node);
-    void emit(FileImportStmt::Ptr node);
+    void emit(const Node::Ptr& node);
+    void emit(const FuncCallExpr::Ptr& node);
+    void emit(const MemberFuncCallExpr::Ptr& node);
+    void emit(const ArguCallExpr::Ptr& node);
+    void emit(const LiteralExpr::Ptr& node);
+    void emit(const VarDecl::Ptr& node);
+    void emit(const PrefixExpr::Ptr& node);
+    void emit(const IdentifierExpr::Ptr& node);
+    void emit(const AssignmentExpr::Ptr& node);
+    void emit(const Expr::Ptr& node);
+    void emit(const OperatorExpr::Ptr& node);
+    void emit(const ParenthesizedExpr::Ptr& node);
+    void emit(const IfStmt::Ptr& node);
+    void emit(const WhileStmt::Ptr& node);
+    void emit(const StmtsBlock::Ptr& node);
+    void emit(const FuncDecl::Ptr& node);
+    void emit(const ReturnStmt::Ptr& node);
+    void emit(const MemberAccessExpr::Ptr& node);
+    void emit(MemberAssignExpr::Ptr node);
+    void emit(const ClassDecl::Ptr& node);
+    void emit(const ArrayLiteralExpr::Ptr& node);
+    void emit(const DictLiteralExpr::Ptr& node);
+    void emit(const SubscriptExpr::Ptr& node);
+    void emit(const FileImportStmt::Ptr& node);
     
 private:
     JrCodeWriter writer;

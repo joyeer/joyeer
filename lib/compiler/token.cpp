@@ -82,25 +82,25 @@ const std::string Operators::PERCENTAGE = "%";
 const std::string Operators::GREATER = ">";
 const std::string Operators::LESS = "<";
 const std::string Operators::LESS_EQ = "<=";
-const std::string Operators::GERATER_EQ = ">=";
+const std::string Operators::GREATER_EQ = ">=";
 
 std::unordered_map<std::string, OperatorPriority> initOperatorPriorities() {
     std::unordered_map<std::string, OperatorPriority> result {
         { Operators::EQUALS, OperatorPriority::high },
         { Operators::NOT_EQUALS, OperatorPriority::high },
         { Operators::EQUAL_EQUAL, OperatorPriority::high },
-        { Operators::AND_AND, OperatorPriority::low },
-        { Operators::QUESTION, OperatorPriority::high },
-        { Operators::POINT, OperatorPriority::high },
-        { Operators::PLUS, OperatorPriority::low },
-        { Operators::MINUS, OperatorPriority::low },
-        { Operators::MULTIPLY, OperatorPriority::high },
-        { Operators::DIV, OperatorPriority::high },
-        { Operators::PERCENTAGE, OperatorPriority::high },
-        { Operators::GREATER, OperatorPriority::high },
-        { Operators::GERATER_EQ, OperatorPriority::high },
-        { Operators::LESS, OperatorPriority::high },
-        { Operators::LESS_EQ, OperatorPriority::high }
+        { Operators::AND_AND,     OperatorPriority::low },
+        { Operators::QUESTION,    OperatorPriority::high },
+        { Operators::POINT,       OperatorPriority::high },
+        { Operators::PLUS,        OperatorPriority::low },
+        { Operators::MINUS,       OperatorPriority::low },
+        { Operators::MULTIPLY,    OperatorPriority::high },
+        { Operators::DIV,         OperatorPriority::high },
+        { Operators::PERCENTAGE,  OperatorPriority::high },
+        { Operators::GREATER,     OperatorPriority::high },
+        { Operators::GREATER_EQ,  OperatorPriority::high },
+        { Operators::LESS,        OperatorPriority::high },
+        { Operators::LESS_EQ,     OperatorPriority::high }
     };
     return result;
 }

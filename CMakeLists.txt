@@ -22,11 +22,6 @@ enable_language(CXX)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-add_compile_options(
-    -std=c++20 
-    -fmodules-ts
-)
-
 get_filename_component(JOYEER_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR} REALPATH)
 
 set(JOYEER_INCLUDE_DIR "${JOYEER_SOURCE_DIR}/include")

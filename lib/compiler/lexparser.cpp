@@ -108,7 +108,7 @@ void LexParser::parse(const SourceFile::Ptr sourcefile) {
                 if(iterator != endIterator) {
                     if(*iterator == '=') {
                         iterator ++;
-                        pushOperator(TokenKind::operators, Operators::GERATER_EQ, iterator);
+                        pushOperator(TokenKind::operators, Operators::GREATER_EQ, iterator);
                         continue;
                     }
                 }
