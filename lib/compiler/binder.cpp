@@ -550,16 +550,16 @@ FileModuleDecl::Ptr  Binder::normalizeAndPrepareDefaultStaticConstructorForFileM
     // statements & expression inside of the module
     auto statements = std::vector<Node::Ptr>();
     
-    for(auto statement: filemodule->members->statements) {
+    for(const auto& statement: filemodule->members->statements) {
         if(statement->kind == SyntaxKind::varDecl ) {
             auto varDecl = std::static_pointer_cast<VarDecl>(statement);
             varDecl->accessFlag = NodeAccessFlag::_static;
             
-            // separate the VarDecl declaration and value initlizer expr
+            // separate the VarDecl declaration and value initializer expr
             auto expr = varDecl->initializer;
             auto identifierExpr = varDecl->pattern->identifier;
             
-            auto memberAssignExpr = std::make_shared<MemberAssignExpr>(identifierExpr, expr);
+            auto memberAssignExpr = std::make_shared<MemberAssignExpr>(filemodule, identifierExpr, expr);
             varDecl->initializer = nullptr;
             declarations.push_back(varDecl);
             statements.push_back(memberAssignExpr);

@@ -7,7 +7,7 @@
 class LexParser {
 public:
     // parse and tokenize the source file
-    void parse(const SourceFile::Ptr sourcefile);
+    void parse(SourceFile::Ptr sourcefile);
     
 private:
     void parseStringIdentifier();

@@ -28,12 +28,6 @@ protected:
     void incTab();
     void decTab();
 
-    void newlineWithTab(int incTab) {
-        size += incTab;
-        output << std::endl;
-        printTab();
-    }
-
     void newline() {
         output << std::endl;
         printTab();
@@ -68,17 +62,28 @@ protected:
 
     Node::Ptr visit(FileModuleDecl::Ptr decl) override {
         output << "fileModule:";
-        newlineWithTab(1);
+        DEBUG_BLOCK_START
         output << "simple-name: " << escapeString(decl->getSimpleName());
-        newlineWithTab(0);
-        output << "static-fields:";
-        incTab();
-        for(const auto& var: decl->staticFields) {
+
+        if(decl->members != nullptr) {
             newline();
-            output << "- ";
-            NodeVisitor::visit(var);
+            output << "members:";
+            DEBUG_BLOCK_START
+            visit(decl->members);
+            DEBUG_BLOCK_END
         }
-        decTab();
+
+        if(!decl->staticFields.empty()) {
+            newline();
+            output << "static-fields:";
+            incTab();
+            for(const auto& var: decl->staticFields) {
+                newline();
+                output << "- ";
+                NodeVisitor::visit(var);
+            }
+            decTab();
+        }
 
         // print instance fields
         if(!decl->instanceFields.empty() ) {
@@ -102,6 +107,8 @@ protected:
             visit(decl->staticConstructor);
             decTab();
         }
+
+        DEBUG_BLOCK_END
         
         return decl;
     }
@@ -309,18 +316,17 @@ protected:
 
     Node::Ptr visit(MemberAssignExpr::Ptr decl) override {
         output << "memberAssignExpr:";
-        incTab();
-        newline();
-        output << "member:";
-        incTab();
-        newline();
-        visit(decl->member);
-        decTab();
-        output << "expr:";
-        incTab();
-        newline();
-        NodeVisitor::visit(decl->expr);
-        decTab();
+        DEBUG_BLOCK_START
+            output << "member:";
+            DEBUG_BLOCK_START
+            visit(decl->member);
+            DEBUG_BLOCK_END
+            newline();
+            output << "expr:";
+            DEBUG_BLOCK_START
+            NodeVisitor::visit(decl->expr);
+            DEBUG_BLOCK_END
+        DEBUG_BLOCK_END
         return decl;
     }
 

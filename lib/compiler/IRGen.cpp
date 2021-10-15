@@ -93,10 +93,10 @@ JrModuleClass* IRGen::emit(const FileModuleDecl::Ptr& decl) {
     
     assert( decl->symbol->flag == SymbolFlag::fileModuleSymbol);
     auto moduleType = (JrModuleClass*)Global::types[ decl->symbol->addressOfType];
-    assert(moduleType->constructors.size() == 1);
+    assert(decl->members == nullptr);
+    assert(decl->staticConstructor != nullptr);
     auto func = Global::functions[moduleType->constructors.back()];
 
-    context->entry(moduleType);
     context->entry(func);
     context->visit(CompileStage::visitFileModule, [this,  decl]() {
         for(auto& statement:  decl->members->statements) {
@@ -104,8 +104,7 @@ JrModuleClass* IRGen::emit(const FileModuleDecl::Ptr& decl) {
         }
     });
     context->leave(func);
-    context->leave(moduleType);
-    
+
     func->instructions = writer.instructions;
     return moduleType;
 }

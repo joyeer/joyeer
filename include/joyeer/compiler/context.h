@@ -29,21 +29,19 @@ class CompileContext {
 public:
     typedef std::shared_ptr<CompileContext> Ptr;
     
-    CompileContext(CommandLineArguments::Ptr options);
+    explicit CompileContext(CommandLineArguments::Ptr options);
     
     void visit(CompileStage stage, std::function<void(void)> visit);
     void visit(CompileStage stage, Node::Ptr node, std::function<void(void)> visit);
-    
-    Descriptor::Ptr parentDescriptor();
-    
-    CompileStage curStage() const;
+
+    [[nodiscard]] CompileStage curStage() const;
     
     // look up name's mapped symbol
     Symbol::Ptr lookup(const std::string& name);
     
     SymbolTable::Ptr curSymTable() ;
-    void entry(SymbolTable::Ptr table);
-    void leave(SymbolTable::Ptr table);
+    void entry(const SymbolTable::Ptr& table);
+    void leave(const SymbolTable::Ptr& table);
     
     JrFunction* curFunction();
     void entry(JrFunction* function);

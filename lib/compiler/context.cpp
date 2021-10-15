@@ -50,19 +50,19 @@ void CompileContext::visit(CompileStage stage, Node::Ptr node, std::function<voi
     stages.pop_back();
 }
 
-void CompileContext::entry(SymbolTable::Ptr table) {
+void CompileContext::entry(const SymbolTable::Ptr& table) {
     assert(table != nullptr);
     symbols.push_back(table);
 }
 
-void CompileContext::leave(SymbolTable::Ptr table) {
+void CompileContext::leave(const SymbolTable::Ptr& table) {
     assert(table != nullptr);
     assert(symbols.back() == table);
     symbols.pop_back();
 }
 
 JrType* CompileContext::curType() {
-    if(types.size() == 0) {
+    if(types.empty()) {
         return nullptr;
     }
     return types.back();
@@ -78,7 +78,7 @@ void CompileContext::leave(JrType* type) {
 }
 
 JrFunction* CompileContext::curFunction() {
-    assert(functions.size() > 0 );
+    assert(!functions.empty() );
     return functions.back();
 }
 
