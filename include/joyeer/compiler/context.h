@@ -53,7 +53,8 @@ public:
     
     // Associate Type with symbol table
     void associate(JrType* type, SymbolTable::Ptr table);
-    // return assoicated symbol table with type
+
+    // return associated symbol table with type
     SymbolTable::Ptr symtableOfType(JrType*);
    
     // the current parsing source file

@@ -10,7 +10,6 @@ add_joyeer_library(joyeerCompiler STATIC
         node+types.cpp
         node+visitor.cpp
         node+stmt.cpp
-        node+expr.cpp
         debugprinter.cpp
         compiler+service.cpp
         sourcefile.cpp

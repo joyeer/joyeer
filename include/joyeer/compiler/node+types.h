@@ -12,7 +12,7 @@ public:
 };
 
 enum class FuncType {
-    staticInitializer = 1,  // class's static initialzer
+    staticInitializer = 1,  // class's static initializer
     constructor = 2,        // class constructor
     function = 3            // function
 };

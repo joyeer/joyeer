@@ -9,8 +9,8 @@
 class TypeChecker : public NodeVisitor {
 public:
     explicit TypeChecker(CompileContext::Ptr context);
-    
-    virtual Node::Ptr visit(Node::Ptr node);
+
+    Node::Ptr visit(const Node::Ptr& node) override;
     
 protected:
     Node::Ptr visit(FileModuleDecl::Ptr decl) override;

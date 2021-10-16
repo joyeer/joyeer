@@ -2,7 +2,6 @@
 #define __joyeer_compiler_node_visitor_h__
 
 #include "joyeer/compiler/node+types.h"
-#include "joyeer/compiler/node+expr.h"
 
 struct NodeVisitor {
 protected:

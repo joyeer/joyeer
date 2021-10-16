@@ -445,7 +445,7 @@ Node::Ptr Binder::visit(StmtsBlock::Ptr decl) {
     // start to process code block
     context->visit(CompileStage::visitCodeBlock, [decl, this]() {
         std::vector<Node::Ptr> statements;
-        for(auto s: decl->statements) {
+        for(const auto& s: decl->statements) {
             statements.push_back(visit(s));
         }
         decl->statements = statements;
@@ -545,9 +545,9 @@ Node::Ptr Binder::visit(FileImportStmt::Ptr decl) {
 
 FileModuleDecl::Ptr  Binder::normalizeAndPrepareDefaultStaticConstructorForFileModule(FileModuleDecl::Ptr filemodule) {
     
-    // declaration inside of the module
+    // declaration inside the module
     auto declarations = std::vector<DeclNode::Ptr>();
-    // statements & expression inside of the module
+    // statements & expression inside the module
     auto statements = std::vector<Node::Ptr>();
     
     for(const auto& statement: filemodule->members->statements) {
@@ -577,7 +577,7 @@ FileModuleDecl::Ptr  Binder::normalizeAndPrepareDefaultStaticConstructorForFileM
     // prepare for FileModule initializer
     auto moduleStaticInitializer = FuncDecl::makeStaticInitializer(std::make_shared<StmtsBlock>(statements));
     
-    // preapre for fileModule initializer's descriptor
+    // prepare for fileModule initializer's descriptor
     moduleStaticInitializer->descriptor = std::make_shared<FileModuleInitializerDescriptor>(std::static_pointer_cast<FileModuleDescriptor>(filemodule->descriptor));
     
     filemodule->staticConstructor = moduleStaticInitializer;

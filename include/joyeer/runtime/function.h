@@ -13,6 +13,7 @@ enum JrFunctionKind  {
     jrFuncConstructor               = jrFuncVM | ( 1 << 2)
 };
 
+
 struct JrFunction {
     
 public:

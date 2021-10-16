@@ -27,7 +27,7 @@ struct JrType {
     
     // initialize the object after malloc memory data
     JrObjectInitializer initializer = nullptr;
-    // finialize the object before release memory
+    // finalize the object before release memory
     JrObjectFinalizer finalizer = nullptr;
 };
 

@@ -9,7 +9,6 @@ std::vector<JrType*> Global::types = {};
 std::vector<JrModuleClass*> Global::modules = {};
 std::vector<std::string> Global::strings = {};
 std::vector<JrFunction*> Global::functions = {};
-std::vector<SymbolTable::Ptr> Global::symtables = {};
 
 // init the types tables
 static std::unordered_map<std::string, JrFunction*>  funtionsMap;
@@ -56,11 +55,6 @@ void Global::registerFunction(JrFunction* func, JrType* ownerType) {
 void Global::registerObjectType(JrType* type) {
     type->addressOfType = types.size();
     types.push_back(type);
-}
-
-void Global::registerModuleType(JrModuleClass *moduleClass) {
-    moduleClass->addressOfMudule = modules.size();
-    modules.push_back(moduleClass);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////

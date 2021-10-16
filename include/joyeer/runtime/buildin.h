@@ -22,18 +22,13 @@ struct Global {
     
     // global strings
     static std::vector<std::string> strings;
-    
-    // global symbol table
-    static std::vector<SymbolTable::Ptr> symtables;
-    
+
     /// register an new function in global function table
     static void registerFunction(JrFunction* func, JrType* ownerType);
     
     /// register an new object type in global table
     static void registerObjectType(JrType* type);
-    
-    static void registerModuleType(JrModuleClass* moduleClass);
-    
+
     /// initialize all global tables
     static void initGlobalTables();
 };

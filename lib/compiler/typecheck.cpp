@@ -11,7 +11,7 @@ TypeChecker::TypeChecker(CompileContext::Ptr context):
 context(std::move(context)) {
 }
 
-Node::Ptr TypeChecker::visit(Node::Ptr node) {
+Node::Ptr TypeChecker::visit(const Node::Ptr& node) {
     return NodeVisitor::visit(node);
 }
 
