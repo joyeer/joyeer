@@ -25,8 +25,8 @@ options(std::move(opts)) {
     initializeGlobalSymbolTable();
 }
 
-void CompilerService::run(const std::string& inputfile) {
-    auto sourcefile = findSourceFile(inputfile);
+void CompilerService::run(const std::string& inputFile) {
+    auto sourcefile = findSourceFile(inputFile);
     compile(sourcefile);
     
     JrRuntimeContext context;
@@ -45,12 +45,12 @@ SourceFile::Ptr CompilerService::findSourceFile(const std::string &path, const s
     }
     
     auto sourcefilePath = sourcefile.string();
-    if(sourcefiles.find(sourcefilePath) == sourcefiles.end()) {
+    if(sourceFiles.find(sourcefilePath) == sourceFiles.end()) {
         auto sf = std::make_shared<SourceFile>(options->workingDirectory, sourcefilePath);
-        sourcefiles.insert({sourcefilePath, sf});
+        sourceFiles.insert({sourcefilePath, sf});
     }
     
-    return sourcefiles.find(sourcefilePath)->second;
+    return sourceFiles.find(sourcefilePath)->second;
 }
 
 
@@ -101,7 +101,7 @@ void CompilerService::declare(DeclNode::Ptr decl) {
     repository->store(decl);
 }
 
-SourceFile::Ptr CompilerService::tryImport(CompileContext::Ptr context, const std::string &moduleName) {
+SourceFile::Ptr CompilerService::tryImport(const CompileContext::Ptr& context, const std::string &moduleName) {
     auto sourcefile = context->sourcefile;
     auto relativedFolder = sourcefile->getParentFolder();
     auto importfile = findSourceFile(moduleName, relativedFolder);
@@ -115,7 +115,7 @@ SourceFile::Ptr CompilerService::tryImport(CompileContext::Ptr context, const st
     return importfile;
 }
 
-void CompilerService::debugPrint(Node::Ptr node, const std::string &debugFilePath) {
+void CompilerService::debugPrint(const Node::Ptr& node, const std::string &debugFilePath) {
     if(options->vmDebug) {
         NodeDebugPrinter syntaxDebugger(debugFilePath);
         syntaxDebugger.print(node);

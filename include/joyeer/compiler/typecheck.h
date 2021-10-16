@@ -46,31 +46,31 @@ protected:
     
     ClassDecl::Ptr processClassDecl(ClassDecl::Ptr decl);
 
-    JrType* typeOf(Node::Ptr node);
-    JrType* typeOf(IdentifierExpr::Ptr node);
-    JrType* typeOf(Expr::Ptr node);
-    JrType* typeOf(LiteralExpr::Ptr node);
-    JrType* typeOf(FuncCallExpr::Ptr node);
-    JrType* typeOf(ParenthesizedExpr::Ptr node);
-    JrType* typeOf(SelfExpr::Ptr node);
-    JrType* typeOf(Pattern::Ptr node);
-    JrType* typeOf(Type::Ptr node);
-    JrType* typeOf(ArrayLiteralExpr::Ptr node);
-    JrType* typeOf(DictLiteralExpr::Ptr node);
-    JrType* typeOf(MemberAccessExpr::Ptr node);
-    JrType* typeOf(MemberFuncCallExpr::Ptr node);
-    JrType* typeOf(SubscriptExpr::Ptr node);
-    JrType* typeOf(ArrayType::Ptr node);
-    JrType* typeOf(PrefixExpr::Ptr node);
+    JrType* typeOf(const Node::Ptr& node);
+    JrType* typeOf(const IdentifierExpr::Ptr& node);
+    JrType* typeOf(const Expr::Ptr& node);
+    JrType* typeOf(const LiteralExpr::Ptr& node);
+    JrType* typeOf(const FuncCallExpr::Ptr& node);
+    JrType* typeOf(const ParenthesizedExpr::Ptr& node);
+    JrType* typeOf(const SelfExpr::Ptr& node);
+    JrType* typeOf(const Pattern::Ptr& node);
+    JrType* typeOf(const Type::Ptr& node);
+    JrType* typeOf(const ArrayLiteralExpr::Ptr& node);
+    JrType* typeOf(const DictLiteralExpr::Ptr& node);
+    JrType* typeOf(const MemberAccessExpr::Ptr& node);
+    JrType* typeOf(const MemberFuncCallExpr::Ptr& node);
+    JrType* typeOf(const SubscriptExpr::Ptr& node);
+    JrType* typeOf(const ArrayType::Ptr& node);
+    JrType* typeOf(const PrefixExpr::Ptr& node);
     
-    // Get Codeblock's return type
-    void verifyReturnStatement(StmtsBlock::Ptr node);
+    // Get Code-Block's return type
+    void verifyReturnStatement(const StmtsBlock::Ptr& node);
     void verifyReturnStatement(std::vector<Node::Ptr>& statements);
-    JrType* returnTypeOf(Node::Ptr node);
-    JrType* returnTypeOf(IfStmt::Ptr node);
-    JrType* returnTypeOf(StmtsBlock::Ptr node);
-    JrType* returnTypeOf(FuncCallExpr::Ptr node);
-    JrType* returnTypeOf(WhileStmt::Ptr node);
+    JrType* returnTypeOf(const Node::Ptr& node);
+    JrType* returnTypeOf(const IfStmt::Ptr& node);
+    JrType* returnTypeOf(const StmtsBlock::Ptr& node);
+    JrType* returnTypeOf(const FuncCallExpr::Ptr& node);
+    JrType* returnTypeOf(const WhileStmt::Ptr& node);
     
     CompileContext::Ptr context;
 };
