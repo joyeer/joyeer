@@ -326,7 +326,7 @@ struct AssignmentExpr : Node {
 
     explicit AssignmentExpr(Node::Ptr expr) :
             Node(SyntaxKind::assignmentExpr),
-            expr(expr) {
+            expr(std::move(expr)) {
     }
 
     void recursiveUpdate() override {
@@ -342,8 +342,8 @@ struct ArguCallExpr : Node {
 
     ArguCallExpr(IdentifierExpr::Ptr label, Node::Ptr expr) :
             Node(SyntaxKind::arguCallExpr),
-            label(label),
-            expr(expr) {
+            label(std::move(label)),
+            expr(std::move(expr)) {
     }
 
 
@@ -481,7 +481,7 @@ struct DictLiteralExpr : Node {
 
     explicit DictLiteralExpr(std::vector<std::tuple<Node::Ptr, Node::Ptr>> items) :
             Node(SyntaxKind::dictLiteralExpr),
-            items(items) {
+            items(std::move(items)) {
     }
 
     void recursiveUpdate() override {
@@ -533,8 +533,8 @@ struct SubscriptExpr : Node {
 
     SubscriptExpr(Node::Ptr identifier, Node::Ptr indexExpr):
             Node(SyntaxKind::subscriptExpr),
-            identifier(identifier),
-            indexExpr(indexExpr) {
+            identifier(std::move(identifier)),
+            indexExpr(std::move(indexExpr)) {
     }
 
     void recursiveUpdate() override {
@@ -543,6 +543,126 @@ struct SubscriptExpr : Node {
     }
 
 };
+
+/********************************************************
+ *  Expression Section
+ *********************************************************/
+
+struct FileImportStmt: Node {
+    using Ptr = std::shared_ptr<FileImportStmt>;
+
+    Token::Ptr stringLiteral;
+    JrModuleClass* moduleClass;
+
+    explicit FileImportStmt(Token::Ptr stringLiteral):
+            Node(SyntaxKind::fileimportStmt),
+            stringLiteral(stringLiteral) {
+    }
+
+    const std::string getImportedFilename() {
+        return stringLiteral->rawValue;
+    }
+
+    void recursiveUpdate() override { }
+};
+
+// StmtsBlock represent an { ... } code block
+struct StmtsBlock: Node {
+    using Ptr = std::shared_ptr<StmtsBlock>;
+
+    std::vector<Node::Ptr> statements;
+
+    explicit StmtsBlock(std::vector<Node::Ptr> statements):
+            Node(SyntaxKind::stmtsBlock),
+            statements(std::move(statements)) {
+        symtable = std::make_shared<SymbolTable>();
+    }
+
+    void recursiveUpdate() override {
+        for(auto& statement: statements) {
+            NODE_RECURSIVE_UPDATE(statement, NODE_UPDATE_ACTION_SET_PARENT_THIS_2(statement))
+        }
+    }
+};
+
+// For In statement
+struct ForInStmt: Node {
+    using Ptr = std::shared_ptr<ForInStmt>;
+
+    Node::Ptr pattern;
+    Node::Ptr inExpr;
+    Node::Ptr codeBlock;
+
+    ForInStmt(Node::Ptr pattern, Node::Ptr inExpr, Node::Ptr codeBlock):
+            Node(SyntaxKind::forInStmt),
+            pattern(pattern),
+            inExpr(inExpr),
+            codeBlock(codeBlock) {
+    }
+
+    void recursiveUpdate() override {
+        NODE_RECURSIVE_UPDATE(pattern, NODE_UPDATE_ACTION_SET_PARENT_THIS(pattern))
+        NODE_RECURSIVE_UPDATE(inExpr, NODE_UPDATE_ACTION_SET_PARENT_THIS(inExpr))
+        NODE_RECURSIVE_UPDATE(codeBlock, NODE_UPDATE_ACTION_SET_PARENT_THIS(codeBlock))
+    }
+};
+
+struct WhileStmt: Node {
+    using Ptr = std::shared_ptr<WhileStmt>;
+
+    Node::Ptr expr;
+    Node::Ptr codeBlock;
+
+    WhileStmt(Node::Ptr expr, Node::Ptr codeBlock):
+            Node(SyntaxKind::whileStmt),
+            expr(expr),
+            codeBlock(codeBlock) {
+    }
+
+
+    void recursiveUpdate() override {
+        NODE_RECURSIVE_UPDATE(expr, NODE_UPDATE_ACTION_SET_PARENT_THIS(expr))
+        NODE_RECURSIVE_UPDATE(codeBlock, NODE_UPDATE_ACTION_SET_PARENT_THIS(codeBlock))
+    }
+};
+
+struct IfStmt: Node {
+    using Ptr = std::shared_ptr<IfStmt>;
+
+    Node::Ptr condition;
+    Node::Ptr ifCodeBlock;
+    Node::Ptr elseCodeBlock;
+
+    IfStmt(Node::Ptr condition, Node::Ptr ifCodeBlock, Node::Ptr elseCodeBlock):
+            Node(SyntaxKind::ifStmt),
+            condition(condition),
+            ifCodeBlock(ifCodeBlock),
+            elseCodeBlock(elseCodeBlock) {
+    }
+
+    void recursiveUpdate() override {
+        NODE_RECURSIVE_UPDATE(condition, NODE_UPDATE_ACTION_SET_PARENT_THIS(condition))
+        NODE_RECURSIVE_UPDATE(ifCodeBlock, NODE_UPDATE_ACTION_SET_PARENT_THIS(ifCodeBlock))
+        NODE_RECURSIVE_UPDATE(elseCodeBlock, NODE_UPDATE_ACTION_SET_PARENT_THIS(elseCodeBlock))
+    }
+};
+
+struct ReturnStmt: Node {
+    using Ptr = std::shared_ptr<ReturnStmt>;
+
+    Node::Ptr expr;
+
+    explicit ReturnStmt(Node::Ptr expr):
+        Node(SyntaxKind::returnStmt),
+        expr(expr) {
+    }
+
+
+    void recursiveUpdate() override {
+        NODE_RECURSIVE_UPDATE(expr, NODE_UPDATE_ACTION_SET_PARENT_THIS(expr))
+    }
+};
+
 
 #endif
     

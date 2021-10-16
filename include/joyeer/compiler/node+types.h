@@ -2,7 +2,6 @@
 #define __joyeer_compiler_node_types_h__
 
 #include "joyeer/compiler/node.h"
-#include "joyeer/compiler/node+stmt.h"
 
 struct DeclNode : public Node {
     using Ptr = std::shared_ptr<DeclNode>;
