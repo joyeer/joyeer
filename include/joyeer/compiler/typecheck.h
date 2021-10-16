@@ -2,7 +2,7 @@
 #define __joyeer_compiler_typecheck_h__
 
 #include "joyeer/compiler/node+visitor.h"
-#include "joyeer/compiler/node+types.h"
+#include "joyeer/compiler/node.h"
 #include "context.h"
 #include "joyeer/runtime/runtime.h"
 

@@ -7,7 +7,6 @@ add_joyeer_library(joyeerCompiler STATIC
         IRGen.cpp
         lexparser.cpp
         node.cpp
-        node+types.cpp
         node+visitor.cpp
         debugprinter.cpp
         compiler+service.cpp

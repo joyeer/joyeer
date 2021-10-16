@@ -1,7 +1,7 @@
 #ifndef __joyeer_syntax_syntaxparser_h__
 #define __joyeer_syntax_syntaxparser_h__
 
-#include "joyeer/compiler/node+types.h"
+#include "joyeer/compiler/node.h"
 #include "joyeer/compiler/sourcefile.h"
 
 class SyntaxParser

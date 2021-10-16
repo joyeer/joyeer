@@ -1,7 +1,6 @@
 #include "joyeer/compiler/lexparser.h"
 #include "joyeer/compiler/diagnostic.h"
 #include "joyeer/runtime/buildin.h"
-#include <codecvt>
 
 
 void LexParser::parse(const SourceFile::Ptr sourcefile) {

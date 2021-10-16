@@ -1,7 +1,7 @@
 #ifndef __joyeer_compiler_node_visitor_h__
 #define __joyeer_compiler_node_visitor_h__
 
-#include "joyeer/compiler/node+types.h"
+#include "joyeer/compiler/node.h"
 
 struct NodeVisitor {
 protected:
