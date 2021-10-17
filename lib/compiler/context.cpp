@@ -1,16 +1,16 @@
 #include "joyeer/compiler/context.h"
-#include "joyeer/runtime/buildin.h"
 #include "joyeer/compiler/symtable.h"
 #include "joyeer/compiler/diagnostic.h"
 #include <cassert>
 #include <memory>
+#include <utility>
 
 CompileContext::CompileContext(CommandLineArguments::Ptr options):
-options(options) {
+options(std::move(options)) {
 }
 
 SymbolTable::Ptr CompileContext::curSymTable() {
-    assert(symbols.size() > 0 );
+    assert(!symbols.empty() );
     return symbols.back();
 }
 
@@ -20,7 +20,7 @@ void CompileContext::visit(CompileStage stage, std::function<void ()> visitor) {
 
 void CompileContext::visit(CompileStage stage, Node::Ptr node, std::function<void()> visit) {
     stages.push_back(stage);
-    auto isDeclNode = node != nullptr ? node->isDeclNode() : false;
+    auto isDeclNode = node != nullptr && node->isDeclNode();
     Descriptor::Ptr descriptor = nullptr;
     
     if(isDeclNode) {
@@ -46,7 +46,7 @@ void CompileContext::visit(CompileStage stage, Node::Ptr node, std::function<voi
         descriptors.pop();
     }
     
-    assert(stages.back() == stage);
+    assert(stage == stages.back());
     stages.pop_back();
 }
 
@@ -61,38 +61,9 @@ void CompileContext::leave(const SymbolTable::Ptr& table) {
     symbols.pop_back();
 }
 
-JrType* CompileContext::curType() {
-    if(types.empty()) {
-        return nullptr;
-    }
-    return types.back();
-}
-
-void CompileContext::entry(JrType* type) {
-    types.push_back(type);
-}
-
-void CompileContext::leave(JrType* type) {
-    assert(types.back() == type);
-    types.pop_back();
-}
-
-JrFunction* CompileContext::curFunction() {
-    assert(!functions.empty() );
-    return functions.back();
-}
-
-void CompileContext::entry(JrFunction* function) {
-    functions.push_back(function);
-}
-
-void CompileContext::leave(JrFunction* function) {
-    assert(functions.back() == function);
-    functions.pop_back();
-}
 
 CompileStage CompileContext::curStage() const {
-    assert(stages.size() > 0);
+    assert(!stages.empty());
     return stages.back();
 }
 
@@ -106,15 +77,4 @@ Symbol::Ptr CompileContext::lookup(const std::string &name) {
     }
     
     return nullptr;
-}
-
-void CompileContext::associate(JrType* type, SymbolTable::Ptr table) {
-    mapOfTypeAndSymbolTable.insert({
-        type->addressOfType,
-        table
-    });
-}
-
-SymbolTable::Ptr CompileContext::symtableOfType(JrType* type) {
-    return mapOfTypeAndSymbolTable[type->addressOfType];
 }

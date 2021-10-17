@@ -1,13 +1,11 @@
 #include "joyeer/compiler/lexparser.h"
 #include "joyeer/compiler/diagnostic.h"
-#include "joyeer/runtime/buildin.h"
 
-
-void LexParser::parse(const SourceFile::Ptr sourcefile) {
+void LexParser::parse(const SourceFile::Ptr& sourceFile) {
     
-    this->sourcefile = sourcefile;
-    iterator = sourcefile->content.begin();
-    endIterator = sourcefile->content.end();
+    this->sourcefile = sourceFile;
+    iterator = sourceFile->content.begin();
+    endIterator = sourceFile->content.end();
     
     while (iterator != endIterator) {
         switch (*iterator ++) {
@@ -40,7 +38,7 @@ void LexParser::parse(const SourceFile::Ptr sourcefile) {
                 if (iterator == endIterator) {
                     auto token = std::make_shared<Token>(TokenKind::decimalLiteral, "0", lineNumber, iterator - lineStartAtPosition);
                     token->intValue = 0;
-                    sourcefile->tokens.push_back(token);
+                    sourceFile->tokens.push_back(token);
                     break;
                 }
                 switch (*iterator) {
@@ -53,7 +51,7 @@ void LexParser::parse(const SourceFile::Ptr sourcefile) {
                     default:
                         auto token = std::make_shared<Token>(TokenKind::decimalLiteral, "0", lineNumber, iterator - lineStartAtPosition);
                         token->intValue = 0;
-                        sourcefile->tokens.push_back(token);
+                        sourceFile->tokens.push_back(token);
                         break;
                 }
                 
@@ -313,7 +311,5 @@ void LexParser::parseStringLiteral() {
     
     const std::string identifier(startAt, iterator - 1);
     auto stringLiteral = std::make_shared<Token>(TokenKind::stringLiteral, identifier, lineNumber, iterator - startAt);
-    Global::strings.push_back(identifier);
-    stringLiteral->index = Global::strings.size() - 1;
     sourcefile->tokens.push_back(stringLiteral);
 }

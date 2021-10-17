@@ -6,6 +6,8 @@
 #include <stack>
 #include <vector>
 
+#include "joyeer/compiler/typedef.h"
+
 enum class SymbolFlag {
     varSymbol =             1,
     funcSymbol =            2,
@@ -31,21 +33,16 @@ public:
             .name =name
         });
     }
-    
-    union {
-        // index address of type in Global::types
-        int addressOfType = -1;
-        // index address of function in Global::types
-        int addressOfFunc;
-    };
-    
+
+    JrTypeDef::Ptr type = nullptr;
+
     // locate the var symbol's variable position in function
     union {
         int addressOfVariable = -1;
         // the address of the field in Object
         int addressOfField;
     };
- 
+
 };
 
 
@@ -60,7 +57,7 @@ public:
     bool insert(Symbol::Ptr symbol);
     
     // find symbol by a given name
-    Symbol::Ptr find(const std::string& name) const;
+    [[nodiscard]] Symbol::Ptr find(const std::string& name) const;
     
     std::unordered_map<std::string, Symbol::Ptr> symbols;
 };

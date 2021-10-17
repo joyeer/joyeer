@@ -1,13 +1,11 @@
 #include "joyeer/compiler/compiler+service.h"
-#include "debugprinter.h"
 #include "joyeer/compiler/lexparser.h"
 #include "joyeer/compiler/diagnostic.h"
 #include "joyeer/compiler/binder.h"
 #include "joyeer/compiler/typecheck.h"
 #include "joyeer/compiler/syntaxparser.h"
 #include "joyeer/compiler/IRGen.h"
-#include "joyeer/runtime/interpreter.h"
-#include "joyeer/runtime/buildin.h"
+#include "debugprinter.h"
 #include <utility>
 
 #define CHECK_ERROR_CONTINUE \
@@ -28,10 +26,6 @@ options(std::move(opts)) {
 void CompilerService::run(const std::string& inputFile) {
     auto sourcefile = findSourceFile(inputFile);
     compile(sourcefile);
-    
-    JrRuntimeContext context;
-    JrInterpreter interpreter(&context);
-    interpreter.run(sourcefile->moduleClass);
 }
 
 SourceFile::Ptr CompilerService::findSourceFile(const std::string &path, const std::string& relativeFolder) {
@@ -98,7 +92,6 @@ void CompilerService::compile(const SourceFile::Ptr& sourcefile) {
 }
 
 void CompilerService::declare(DeclNode::Ptr decl) {
-    repository->store(decl);
 }
 
 SourceFile::Ptr CompilerService::tryImport(const CompileContext::Ptr& context, const std::string &moduleName) {
@@ -120,18 +113,6 @@ void CompilerService::debugPrint(const Node::Ptr& node, const std::string &debug
         NodeDebugPrinter syntaxDebugger(debugFilePath);
         syntaxDebugger.print(node);
         syntaxDebugger.close();
-    }
-}
-
-void CompilerService::debugPrint(const std::string &debugFilePath) {
-    if(options->vmDebug) {
-        TypeTablePrinter typePrinter("debug.table.types.txt");
-        typePrinter.print();
-        typePrinter.close();
-        
-        FunctionTablePrinter funcPrinter("debug.table.functions.txt");
-        funcPrinter.print();
-        funcPrinter.close();
     }
 }
 

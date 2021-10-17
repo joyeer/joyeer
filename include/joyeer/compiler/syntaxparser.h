@@ -7,7 +7,7 @@
 class SyntaxParser
 {
 public:
-    SyntaxParser(SourceFile::Ptr sourcefile);
+    explicit SyntaxParser(SourceFile::Ptr sourcefile);
     FileModuleDecl::Ptr parse();
 
 private:
@@ -55,11 +55,10 @@ private:
     Node::Ptr tryParseTypeAnnotation();
     Node::Ptr tryParseTypeIdentifier();
     Node::Ptr tryParseTypeArray();
-    
     Node::Ptr tryParseType();
 
     ////////////////////////////////////////////////////////////////////////////
-    // Expressions02079
+    // Expressions
     ////////////////////////////////////////////////////////////////////////////
 
     Node::Ptr tryParseExpr();
@@ -69,7 +68,7 @@ private:
 
     // postfix-expression -> primary-expression
     // postfix-expression -> postfix-expression postfix-operator
-    // postfix-expression -> function-call-expression
+    // postfix-expression -> function-call-expression
     // postfix-expression -> subscript-expression
     Node::Ptr tryParsePostfixExpr(Node::Ptr postfixExpr = nullptr);
     // accept an PostfixExpr and try parse postfix-operator , and return the PostfixExpr;
@@ -79,7 +78,7 @@ private:
     
     ArguCallExpr::Ptr tryParseArguCallExpr();
     
-    Node::Ptr tryParseFuncCallExpr(Node::Ptr pos·0tfixExpr);
+    Node::Ptr tryParseFuncCallExpr(Node::Ptr postfixExpr);
     Node::Ptr tryParseMemberAccessExpr(Node::Ptr postfixExpr);
 
     Node::Ptr tryParseBinaryExpr();
@@ -123,7 +122,7 @@ private:
 
     void previous();
 
-    Token::Ptr curToken() const;
+    [[nodiscard]] Token::Ptr curToken() const;
 
 private:
     SourceFile::Ptr sourcefile;

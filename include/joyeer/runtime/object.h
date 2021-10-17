@@ -36,7 +36,7 @@ struct JrObject {
 
 struct JrObjectManaged: public JrObject {
     
-    JrObjectManaged(JrObjectType* type);
+    explicit JrObjectManaged(JrObjectType* type);
     ~JrObjectManaged();
     
     JrObjectType* type;

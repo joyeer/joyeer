@@ -8,7 +8,7 @@
 #include "joyeer/common/descriptor.h"
 #include "joyeer/compiler/token.h"
 #include "joyeer/compiler/symtable.h"
-#include "joyeer/runtime/runtime.h"
+#include "joyeer/compiler/typedef.h"
 
 enum class SyntaxKind {
     fileModule = 1L,
@@ -82,7 +82,7 @@ struct Node : std::enable_shared_from_this<Node> {
     SymbolTable::Ptr symtable = nullptr;
     Node::Ptr parent = nullptr;
 
-    JrType *type = nullptr;
+    JrTypeDef::Ptr type = nullptr;
 
     // return the name of Node, it will be used as symbol in some cases
     virtual std::string getSimpleName();
@@ -143,8 +143,8 @@ struct OperatorExpr : Node {
 
     Token::Ptr token;
     OperatorPriority priority;
-    JrType *leftType;
-    JrType *rightType;
+    JrTypeDef *leftType;
+    JrTypeDef *rightType;
 
     explicit OperatorExpr(Token::Ptr token);
 
@@ -244,7 +244,7 @@ struct Expr : Node {
             binaries(std::move(binaries)) {
     }
 
-    Expr(std::vector<Node::Ptr> nodes) :
+    explicit Expr(std::vector<Node::Ptr> nodes) :
             Node(SyntaxKind::expr),
             prefix(nullptr),
             binaries(),
@@ -289,8 +289,8 @@ struct PrefixExpr : Node {
 
     PrefixExpr(OperatorExpr::Ptr op, Node::Ptr expr) :
             Node(SyntaxKind::prefixExpr),
-            op(op),
-            expr(expr) {
+            op(std::move(op)),
+            expr(std::move(expr)) {
     }
 
 
@@ -308,8 +308,8 @@ struct BinaryExpr : Node {
 
     BinaryExpr(OperatorExpr::Ptr op, Node::Ptr expr) :
             Node(SyntaxKind::binaryExpr),
-            op(op),
-            expr(expr) {
+            op(std::move(op)),
+            expr(std::move(expr)) {
     }
 
     void recursiveUpdate() override {
@@ -365,8 +365,8 @@ struct FuncCallExpr : Node {
 
     FuncCallExpr(Node::Ptr expr, std::vector<ArguCallExpr::Ptr> arguments) :
             Node(SyntaxKind::funcCallExpr),
-            identifier(expr),
-            arguments(arguments) {
+            identifier(std::move(expr)),
+            arguments(std::move(arguments)) {
     }
 
 
@@ -389,9 +389,9 @@ struct MemberFuncCallExpr : Node {
 
     MemberFuncCallExpr(Node::Ptr callee, Node::Ptr member, std::vector<ArguCallExpr::Ptr> arguments) :
             Node(SyntaxKind::memberFuncCallExpr),
-            callee(callee),
-            member(member),
-            arguments(arguments) {
+            callee(std::move(callee)),
+            member(std::move(member)),
+            arguments(std::move(arguments)) {
     }
 
     void recursiveUpdate() override {
@@ -411,8 +411,8 @@ struct MemberAccessExpr : Node {
 
     MemberAccessExpr(Node::Ptr callee, Node::Ptr member) :
             Node(SyntaxKind::memberAccessExpr),
-            callee(callee),
-            member(member) {
+            callee(std::move(callee)),
+            member(std::move(member)) {
     }
 
 
@@ -450,7 +450,7 @@ struct LiteralExpr : Node {
 
     explicit LiteralExpr(Token::Ptr literal) :
             Node(SyntaxKind::literalExpr),
-            literal(literal) {
+            literal(std::move(literal)) {
     }
 
     void recursiveUpdate() override {
@@ -464,7 +464,7 @@ struct ArrayLiteralExpr : Node {
 
     explicit ArrayLiteralExpr(std::vector<Node::Ptr> items) :
             Node(SyntaxKind::arrayLiteralExpr),
-            items(items) {
+            items(std::move(items)) {
     }
 
 
@@ -501,9 +501,9 @@ struct ParenthesizedExpr : Node {
 
     Node::Ptr expr;
 
-    explicit ParenthesizedExpr(std::shared_ptr<Node> expr) :
+    explicit ParenthesizedExpr(Node::Ptr expr) :
             Node(SyntaxKind::parenthesizedExpr),
-            expr(expr) {
+            expr(std::move(expr)) {
     }
 
     void recursiveUpdate() override {
@@ -518,7 +518,7 @@ struct SelfExpr : Node {
 
     explicit SelfExpr(IdentifierExpr::Ptr identifier) :
             Node(SyntaxKind::selfExpr),
-            identifier(identifier) {
+            identifier(std::move(identifier)) {
     }
 
 
@@ -554,11 +554,10 @@ struct FileImportStmt : Node {
     using Ptr = std::shared_ptr<FileImportStmt>;
 
     Token::Ptr stringLiteral;
-    JrModuleClass *moduleClass;
 
     explicit FileImportStmt(Token::Ptr stringLiteral) :
             Node(SyntaxKind::fileimportStmt),
-            stringLiteral(stringLiteral) {
+            stringLiteral(std::move(stringLiteral)) {
     }
 
     const std::string getImportedFilename() {

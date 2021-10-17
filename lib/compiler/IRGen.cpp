@@ -1,9 +1,5 @@
 #include "joyeer/compiler/IRGen.h"
 #include "joyeer/compiler/diagnostic.h"
-#include "joyeer/runtime/buildin.h"
-#include "joyeer/runtime/sys/array.h"
-#include "joyeer/runtime/sys/map.h"
-#include "joyeer/runtime/sys/string.h"
 #include <cassert>
 #include <unordered_map>
 #include <utility>
@@ -89,10 +85,9 @@ void IRGen::emit(const Node::Ptr& node) {
     }
 }
 
-JrModuleClass* IRGen::emit(const FileModuleDecl::Ptr& decl) {
+JrModuleTypeDef::Ptr IRGen::emit(const FileModuleDecl::Ptr& decl) {
     
     assert( decl->symbol->flag == SymbolFlag::fileModuleSymbol);
-    auto moduleType = (JrModuleClass*)Global::types[ decl->symbol->addressOfType];
     assert(decl->members == nullptr);
     assert(decl->staticConstructor != nullptr);
     auto func = Global::functions[moduleType->constructors.back()];

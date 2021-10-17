@@ -12,7 +12,6 @@ enum TokenKind {
   keyword,
   punctuation,
   operators,
-
   booleanLiteral,
   nilLiteral,
   floatLiteral,

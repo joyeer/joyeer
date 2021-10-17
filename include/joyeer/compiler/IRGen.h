@@ -1,18 +1,17 @@
 #ifndef __joyeer_compiler_irgen_h__
 #define __joyeer_compiler_irgen_h__
 
+#include <joyeer/runtime/instruction.h>
 #include "joyeer/compiler/context.h"
-#include "joyeer/runtime/runtime.h"
-#include "joyeer/runtime/instruction.h"
-#include "joyeer/runtime/function.h"
+#include "joyeer/compiler/typedef.h"
 
 class JrCodeWriter;
 
 class IRGen {
 public:
     explicit IRGen(CompileContext::Ptr context);
-    
-    JrModuleClass* emit(const FileModuleDecl::Ptr& block);
+
+    JrModuleTypeDef::Ptr emit(const FileModuleDecl::Ptr& block);
     
 protected:
     void emit(const Node::Ptr& node);
@@ -33,7 +32,7 @@ protected:
     void emit(const FuncDecl::Ptr& node);
     void emit(const ReturnStmt::Ptr& node);
     void emit(const MemberAccessExpr::Ptr& node);
-    void emit(MemberAssignExpr::Ptr node);
+    void emit(const MemberAssignExpr::Ptr& node);
     void emit(const ClassDecl::Ptr& node);
     void emit(const ArrayLiteralExpr::Ptr& node);
     void emit(const DictLiteralExpr::Ptr& node);

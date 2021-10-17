@@ -2,9 +2,7 @@
 #define __joyeer_compiler_context_h__
 
 #include "joyeer/driver/arguments.h"
-#include "joyeer/compiler/symtable.h"
 #include "joyeer/compiler/sourcefile.h"
-#include "joyeer/runtime/function.h"
 
 class CompilerService;
 
@@ -42,43 +40,27 @@ public:
     SymbolTable::Ptr curSymTable() ;
     void entry(const SymbolTable::Ptr& table);
     void leave(const SymbolTable::Ptr& table);
-    
-    JrFunction* curFunction();
-    void entry(JrFunction* function);
-    void leave(JrFunction* function);
-    
-    JrType* curType();
-    void entry(JrType* type);
-    void leave(JrType* type);
-    
-    // Associate Type with symbol table
-    void associate(JrType* type, SymbolTable::Ptr table);
 
-    // return associated symbol table with type
-    SymbolTable::Ptr symtableOfType(JrType*);
-   
+    // return the current FuncDef in the parsing stack
+    JrFuncTypeDef::Ptr curFuncDef() const;
+
+    // return
+    JrModuleTypeDef::Ptr curModuleDef() const;
+
     // the current parsing source file
     SourceFile::Ptr sourcefile = nullptr;
     
     // The global compiler service
-    CompilerService* compiler;
+    CompilerService* compiler{};
     
 protected:
     std::vector<SymbolTable::Ptr> symbols;
     
     // stage of compiling status, the last element of stages present the current stage
     std::vector<CompileStage> stages;
-    
-    // parsing function stacks
-    std::vector<JrFunction*> functions;
-    
-    // parsing class/struct/enum stacks
-    std::vector<JrType*> types;
-    
+
     // parsing scope's descriptor stacks
     std::stack<Descriptor::Ptr> descriptors;
-    
-    std::unordered_map<JrInt, SymbolTable::Ptr> mapOfTypeAndSymbolTable;
     
     CommandLineArguments::Ptr options;
     

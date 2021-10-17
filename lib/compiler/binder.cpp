@@ -2,8 +2,6 @@
 #include "joyeer/compiler/diagnostic.h"
 #include "joyeer/compiler/sourcefile.h"
 #include "joyeer/compiler/compiler+service.h"
-#include "joyeer/runtime/buildin.h"
-#include "joyeer/runtime/sys/module.h"
 
 #include <cassert>
 #include <utility>
@@ -14,8 +12,8 @@
 /////////////////////////////////////////////////////////////////
 
 Binder::Binder(CompileContext::Ptr context):
-NodeVisitor(),
-context(std::move(context)) {
+        NodeVisitor(),
+        context(std::move(context)) {
 }
 
 Node::Ptr Binder::visit(const Node::Ptr& node) {
@@ -85,46 +83,18 @@ Node::Ptr Binder::visit(ClassDecl::Ptr decl) {
         .name = name
     });
     symtable->insert(symbol);
+
+    auto objectType = JrClassTypeDef::create(name);
     
-    auto objectType = new JrObjectType(name);
-    
-    Global::registerObjectType(objectType);
-    symbol->addressOfType = objectType->addressOfType;
+    symbol->type = objectType;
     decl->symbol = symbol;
     
     decl->symtable = context->curSymTable();
-    context->entry(objectType);
     bool hasCustomizedConstructor = false;
     context->visit(CompileStage::visitClassDecl, decl, [this, decl, symtable, &hasCustomizedConstructor]() {
         decl->members = std::static_pointer_cast<StmtsBlock>(visit(decl->members));
     });
-    
-    if(!hasCustomizedConstructor) {
-        // if has no customize constructors , we will bind an default constructor
-        auto defaultConstructor = new JrFunction();
-        defaultConstructor->name = name + "()";
-        defaultConstructor->kind = jrFuncVM;
-        defaultConstructor->returnType = objectType;
-        defaultConstructor->kind = jrFuncConstructor;
-        defaultConstructor->paramTypes.push_back(objectType);
-        defaultConstructor->instructions.push_back(Instruction {
-            .opcode = OP_RETURN
-        });
-        Global::registerFunction(defaultConstructor, objectType);
-        
-        auto symbol = Symbol::Ptr(new Symbol{
-            .name = defaultConstructor->name,
-            .flag = SymbolFlag::funcSymbol,
-            .addressOfFunc = defaultConstructor->addressOfFunc
-        });
-        symtable->insert(symbol);
-        objectType->constructors.push_back(defaultConstructor->addressOfFunc);
-    }
-    
-    // assocated type with type's symbol
-    context->associate(objectType, context->curSymTable());
-    context->leave(objectType);
-    
+
     return decl;
 }
 
@@ -138,7 +108,8 @@ Node::Ptr Binder::visit(FuncDecl::Ptr decl) {
     
     // check if the function name duplicated
     if(symtable->find(funcSimpleName) != nullptr) {
-        Diagnostics::reportError("[Error] Dupliate function name");
+        Diagnostics::reportError("[Error] Duplicate function name");
+        return nullptr;
     }
 
     // prepare the symbol, register the symbol into parent

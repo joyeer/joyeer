@@ -1,6 +1,5 @@
 #include "joyeer/compiler/symtable.h"
 #include "joyeer/compiler/diagnostic.h"
-#include "joyeer/runtime/buildin.h"
 
 std::string debugStringOfSymbolFlag(SymbolFlag flag) {
     switch (flag) {
