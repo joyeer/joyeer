@@ -82,7 +82,7 @@ struct Node : std::enable_shared_from_this<Node> {
     SymbolTable::Ptr symtable = nullptr;
     Node::Ptr parent = nullptr;
 
-    JrTypeDef::Ptr type = nullptr;
+    JrTypeDef::Ptr typeDef = nullptr;
 
     // return the name of Node, it will be used as symbol in some cases
     virtual std::string getSimpleName();

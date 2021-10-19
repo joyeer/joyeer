@@ -95,7 +95,7 @@ JrModuleTypeDef::Ptr IRGen::emit(const FileModuleDecl::Ptr& decl) {
         emit(decl->staticConstructor);
     });
 
-    return std::static_pointer_cast<JrModuleTypeDef>(decl->type);
+    return std::static_pointer_cast<JrModuleTypeDef>(decl->typeDef);
 }
 
 void IRGen::emit(const FuncCallExpr::Ptr& funcCallExpr) {

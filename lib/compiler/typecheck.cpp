@@ -110,7 +110,7 @@ Node::Ptr TypeChecker::visit(MemberFuncCallExpr::Ptr node) {
     
     auto type = node->callee->symbol->type;
     assert(type != nullptr);
-    node->callee->type = type;
+    node->callee->typeDef = type;
 
     auto name = node->getSimpleName();
     auto symbol = context->lookup(name);
@@ -286,7 +286,7 @@ Node::Ptr TypeChecker::visit(Expr::Ptr node) {
             nodes.push_back(visit(n));
         }
         node->nodes = nodes;
-        node->type = typeOf(node);
+        node->typeDef = typeOf(node);
     });
     
     return node;
@@ -484,8 +484,8 @@ JrTypeDef::Ptr TypeChecker::typeOf(const Expr::Ptr& node) {
     assert(node->binaries.empty());
     assert(node->prefix == nullptr);
     
-    if(node->type != nullptr) {
-        return node->type;
+    if(node->typeDef != nullptr) {
+        return node->typeDef;
     }
     
     std::stack<JrTypeDef::Ptr> stack;
@@ -647,7 +647,7 @@ JrTypeDef::Ptr TypeChecker::returnTypeOf(const WhileStmt::Ptr& node) {
 }
 
 JrTypeDef::Ptr TypeChecker::returnTypeOf(const FuncCallExpr::Ptr& node) {
-    return node->type;
+    return node->typeDef;
 }
 
 JrTypeDef::Ptr TypeChecker::returnTypeOf(const Node::Ptr& node) {
