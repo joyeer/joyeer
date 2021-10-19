@@ -3,7 +3,6 @@
 
 #include "joyeer/driver/arguments.h"
 #include "joyeer/compiler/compiler+service.h"
-#include "joyeer/runtime/interpreter.h"
 
 
 class Driver {
@@ -14,9 +13,9 @@ public:
 private:
     CompilerService* compiler;
 
-    JrRuntimeContext* runtimeContext;
-    JrInterpreter * interpreter;
-    
+//    JrRuntimeContext* runtimeContext;
+//    JrInterpreter * interpreter;
+
     CommandLineArguments::Ptr arguments;
 };
 

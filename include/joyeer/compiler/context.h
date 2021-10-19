@@ -41,10 +41,10 @@ public:
     void entry(const SymbolTable::Ptr& table);
     void leave(const SymbolTable::Ptr& table);
 
-    // return the current FuncDef in the parsing stack
+    // return the current FuncDef in the stack
     JrFuncTypeDef::Ptr curFuncDef() const;
 
-    // return
+    // return the current JrModuelTypeDef in the stack
     JrModuleTypeDef::Ptr curModuleDef() const;
 
     // the current parsing source file
@@ -54,6 +54,10 @@ public:
     CompilerService* compiler{};
     
 protected:
+
+    // the parsing stack
+    std::vector<Node::Ptr> parsingStack;
+
     std::vector<SymbolTable::Ptr> symbols;
     
     // stage of compiling status, the last element of stages present the current stage

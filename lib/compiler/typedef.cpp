@@ -11,7 +11,11 @@ JrVoidTypeDef::JrVoidTypeDef() :
         JrTypeDef("void", JrTypeType::Void) {}
 
 JrFuncTypeDef::JrFuncTypeDef(const std::string &name) :
-        JrTypeDef(name, JrTypeType::Function) {}
+        JrTypeDef(name, JrTypeType::Function),
+        funcType(JrFuncTypeType::VM_Func),
+        localVars(),
+        paramTypes(),
+        returnType(nullptr) {}
 
 JrClassTypeDef::JrClassTypeDef(const std::string &name) :
         JrTypeDef(name, JrTypeType::Function) {}

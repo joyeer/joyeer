@@ -4,7 +4,6 @@
 #include <stack>
 #include <string>
 #include "object.h"
-#include "instruction.h"
 
 
 typedef std::function<JrObject*(JrPtr)> JrObjectInitializer;

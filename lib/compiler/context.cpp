@@ -78,3 +78,18 @@ Symbol::Ptr CompileContext::lookup(const std::string &name) {
     
     return nullptr;
 }
+
+JrFuncTypeDef::Ptr CompileContext::curFuncDef() const {
+    for (auto iterator = parsingStack.rbegin(); iterator != parsingStack.rend(); iterator ++) {
+        auto node = *iterator;
+        if(node->type->type == JrTypeType::Function) {
+            return std::static_pointer_cast<JrFuncTypeDef>(node->type);
+        }
+    }
+
+    return nullptr;
+}
+
+JrModuleTypeDef::Ptr CompileContext::curModuleDef() const {
+    return JrModuleTypeDef::Ptr();
+}

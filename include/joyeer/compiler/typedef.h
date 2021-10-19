@@ -5,8 +5,11 @@
 #ifndef __joyeer_compiler_typedef_h__
 #define __joyeer_compiler_typedef_h__
 
+#include "joyeer/compiler/opcode.h"
+
 #include <string>
 #include <utility>
+#include <vector>
 
 enum JrTypeType : uint8_t {
     Void = 0x00,
@@ -26,10 +29,13 @@ struct JrTypeDef {
     using Ptr = std::shared_ptr<JrTypeDef>;
     const std::string name;
     JrTypeType type;
+    int32_t  address;
 
+protected:
     JrTypeDef(std::string  name, JrTypeType type):
         name(std::move(name)),
-        type(type) {
+        type(type),
+        address(-1) {
     }
 };
 
@@ -45,9 +51,26 @@ struct JrVoidTypeDef : JrTypeDef {
     JrVoidTypeDef();
 };
 
+// represent Any type
+struct JrAnyTypeDef : JrTypeDef {
+    using Ptr = std::shared_ptr<JrAnyTypeDef>;
+    JrAnyTypeDef(): JrTypeDef("Any", JrTypeType::Any) {}
+};
+
 enum JrFuncTypeType : uint8_t {
     C_Func,
     VM_Func
+};
+
+struct JrVariable {
+    using Ptr = std::shared_ptr<JrVariable>;
+
+    JrTypeDef::Ptr type;
+    const std::string name;
+
+    JrVariable(JrTypeDef::Ptr type, std::string  name):
+            type(std::move(type)),
+            name(std::move(name)) {}
 };
 
 // Represent Function type (include class's function type)
@@ -55,6 +78,10 @@ struct JrFuncTypeDef : JrTypeDef {
     using Ptr = std::shared_ptr<JrFuncTypeDef>;
 
     JrFuncTypeType funcType;
+    std::vector<JrVariable::Ptr> localVars;
+    std::vector<JrTypeDef::Ptr> paramTypes;
+    JrTypeDef::Ptr returnType;
+    std::vector<Instruction> instructions;
 
     explicit JrFuncTypeDef(const std::string& name);
 };
@@ -71,8 +98,9 @@ struct JrBoolTypeDef : JrTypeDef {
     JrBoolTypeDef();
 };
 
-struct JrClassTypeDef: JrTypeDef {
+struct JrClassTypeDef : JrTypeDef {
     using Ptr = std::shared_ptr<JrClassTypeDef>;
+
     explicit JrClassTypeDef(const std::string& name);
 
     static JrClassTypeDef::Ptr create(const std::string& name) {
@@ -80,18 +108,25 @@ struct JrClassTypeDef: JrTypeDef {
     }
 };
 
+struct JrStringTypeDef : JrClassTypeDef {
+    using Ptr = std::shared_ptr<JrStringTypeDef>;
+
+    JrStringTypeDef(): JrClassTypeDef("String") { }
+};
+
 struct JrModuleTypeDef : JrClassTypeDef {
     using Ptr = std::shared_ptr<JrModuleTypeDef>;
+
     explicit JrModuleTypeDef(const std::string& name);
 };
 
 namespace BuildIn::TypeDef {
     [[maybe_unused]] static const JrVoidTypeDef::Ptr Void = std::make_shared<JrVoidTypeDef>();
+    [[maybe_unused]] static const JrAnyTypeDef::Ptr Any = std::make_shared<JrAnyTypeDef>();
     [[maybe_unused]] static const JrNilTypeDef::Ptr Nil = std::make_shared<JrNilTypeDef>();
     [[maybe_unused]] static const JrIntTypeDef::Ptr Int = std::make_shared<JrIntTypeDef>();
     [[maybe_unused]] static const JrBoolTypeDef::Ptr Bool = std::make_shared<JrBoolTypeDef>();
-
-
+    [[maybe_unused]] static const JrStringTypeDef::Ptr String = std::make_shared<JrStringTypeDef>();
 };
 
 #endif //__joyeer_compiler_typedef_h__

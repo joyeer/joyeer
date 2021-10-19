@@ -90,45 +90,32 @@ JrModuleTypeDef::Ptr IRGen::emit(const FileModuleDecl::Ptr& decl) {
     assert( decl->symbol->flag == SymbolFlag::fileModuleSymbol);
     assert(decl->members == nullptr);
     assert(decl->staticConstructor != nullptr);
-    auto func = Global::functions[moduleType->constructors.back()];
 
-    context->entry(func);
-    context->visit(CompileStage::visitFileModule, [this,  decl]() {
-        for(auto& statement:  decl->members->statements) {
-            emit(statement);
-        }
+    context->visit(CompileStage::visitFileModule, [this, decl]() {
+        emit(decl->staticConstructor);
     });
-    context->leave(func);
 
-    func->instructions = writer.instructions;
-    return moduleType;
+    return std::static_pointer_cast<JrModuleTypeDef>(decl->type);
 }
 
 void IRGen::emit(const FuncCallExpr::Ptr& funcCallExpr) {
+    assert(funcCallExpr->symbol->type != nullptr);
     context->visit(CompileStage::visitFuncCall, [this, funcCallExpr](){
         
         for(const auto& argument : funcCallExpr->arguments) {
             emit(argument);
         }
-        
-        auto function = Global::functions[funcCallExpr->symbol->addressOfFunc];
-        assert(function != nullptr);
-        if((function->kind & jrFuncConstructor) == jrFuncConstructor) {
-            writer.write({
-                .opcode = OP_NEW,
-                .value = (int32_t)function->addressOfFunc
-            });
-        } else {
-            if(funcCallExpr->identifier->kind == SyntaxKind::memberAccessExpr) {
-                emit(funcCallExpr->identifier);
-            }
-            
-            writer.write({
-                .opcode = OP_INVOKE,
-                .value = (int32_t)function->addressOfFunc
-            });
-            
+
+        auto funcDef = std::static_pointer_cast<JrFuncTypeDef>(funcCallExpr->symbol->type);
+        if(funcCallExpr->identifier->kind == SyntaxKind::memberAccessExpr) {
+            emit(funcCallExpr->identifier);
         }
+
+        writer.write({
+            .opcode = OP_INVOKE,
+            .value = funcDef->address
+        });
+
     });
 }
 
@@ -140,11 +127,11 @@ void IRGen::emit(const MemberFuncCallExpr::Ptr& memberFuncCallExpr) {
         
         emit(memberFuncCallExpr->callee);
         
-        auto function = Global::functions[memberFuncCallExpr->symbol->addressOfFunc];
-        assert(function != nullptr);
+        auto funcDef = memberFuncCallExpr->symbol->type;
+        assert(funcDef != nullptr);
         writer.write({
             .opcode = OP_INVOKE,
-            .value = (int32_t)function->addressOfFunc
+            .value = funcDef->address
         });
     });
 }
@@ -186,7 +173,7 @@ void IRGen::emit(const LiteralExpr::Ptr& node) {
 void IRGen::emit(const VarDecl::Ptr& node) {
     emit(node->initializer);
     
-    auto function = context->curFunction();
+    auto function = context->curFuncDef();
     switch (node->symbol->flag) {
         case SymbolFlag::varSymbol:
             writer.write({
@@ -231,19 +218,19 @@ void IRGen::emit(const IdentifierExpr::Ptr& node) {
     }
     
     if(symbol->flag  == SymbolFlag::varSymbol) {
-        auto type = Global::types[symbol->addressOfType];
+        auto type = symbol->type;
         
-        if(type == JrPrimaryType::Int) {
+        if(type->type == BuildIn::TypeDef::Int->type) {
             writer.write({
                 .opcode = OP_ILOAD,
                 .value = symbol->addressOfVariable
             });
-        } else if(type->kind == typeObject || type->kind == typeAny ){
+        } else if(type->type == JrTypeType::Class || type->type == JrTypeType::Any ) {
             writer.write({
                 .opcode = OP_OLOAD,
                 .value = symbol->addressOfVariable
             });
-        } else if(type->kind == typeNil) {
+        } else if(type->type == JrTypeType::Nil) {
             writer.write({
                 .opcode = OP_OCONST_NIL,
             });
@@ -254,7 +241,7 @@ void IRGen::emit(const IdentifierExpr::Ptr& node) {
         return;
     } else if(symbol->flag == SymbolFlag::fieldSymbol) {
         
-        auto function = context->curFunction();
+        auto function = context->curFuncDef();
         writer.write({
             .opcode = OP_OLOAD,
             .value = (int32_t)(function->paramTypes.size() - 1)
@@ -278,10 +265,10 @@ void IRGen::emit(const AssignmentExpr::Ptr& node) {
         auto identifierExpr = std::static_pointer_cast<IdentifierExpr>(node->left);
         if(identifierExpr->symbol->flag == SymbolFlag::fieldSymbol) {
             // If the identifier is a field
-            auto function = context->curFunction();
+            auto function = context->curFuncDef();
             writer.write({
                 .opcode = OP_OLOAD,
-                .value = (JrInt)(function->paramTypes.size() - 1)      // last parameter is the self object
+                .value = (int32_t)(function->paramTypes.size() - 1)      // last parameter is the self object
             });
             writer.write({
                 .opcode = OP_PUTFIELD,
@@ -298,7 +285,7 @@ void IRGen::emit(const AssignmentExpr::Ptr& node) {
         emit(node->expr);
         auto selfExpr = std::static_pointer_cast<SelfExpr>(node->left);
         
-        auto function = context->curFunction();
+        auto function = context->curFuncDef();
         
         writer.write({
             .opcode = OP_OLOAD,
@@ -325,19 +312,20 @@ void IRGen::emit(const AssignmentExpr::Ptr& node) {
         emit(subscriptExpr->indexExpr);
         emit(node->expr);
         // check identifier's symbol's type
-        if(subscriptExpr->identifier->symbol->addressOfType == JrObjectArray::Type->addressOfType) {
-            writer.write({
-                .opcode = OP_INVOKE,
-                .value = JrObjectArray_Set::Func->addressOfFunc
-            });
-        } else if(subscriptExpr->identifier->symbol->addressOfType == JrObjectMap::Type->addressOfType) {
-            writer.write({
-                .opcode = OP_INVOKE,
-                .value = JrObjectMap_Insert::Func->addressOfFunc
-            });
-        } else {
-            assert(false);
-        }
+//        if(subscriptExpr->identifier->symbol->addressOfType == JrObjectArray::Type->addressOfType) {
+//            writer.write({
+//                .opcode = OP_INVOKE,
+//                .value = JrObjectArray_Set::Func->addressOfFunc
+//            });
+//        } else if(subscriptExpr->identifier->symbol->addressOfType == JrObjectMap::Type->addressOfType) {
+//            writer.write({
+//                .opcode = OP_INVOKE,
+//                .value = JrObjectMap_Insert::Func->addressOfFunc
+//            });
+//        } else {
+//            assert(false);
+//        }
+        assert(false);
     } else {
         assert(false);
     }
@@ -347,44 +335,44 @@ void IRGen::emit(const AssignmentExpr::Ptr& node) {
 void IRGen::emit(const Expr::Ptr& node) {
     assert(node->prefix == nullptr);
     assert(node->binaries.empty());
-    if(node->type == JrObjectString::Type) {
-        
-        writer.write({
-            .opcode = OP_NEW,
-            .value = JrObjectStringBuilder::Type->addressOfType
-        });
-        
-        // Use the StringBuilder to append the string content
-        for(std::vector<Node::Ptr>::const_reverse_iterator iterator = node->nodes.rbegin(); iterator != node->nodes.rend(); iterator ++ ) {
-            auto n = *iterator;
-            if(n->kind == SyntaxKind::operatorExpr) {
-                auto operatorExpr = std::static_pointer_cast<OperatorExpr>(n);
-                assert(operatorExpr->token->rawValue == "+");
-            } else {
-                writer.write({
-                    .opcode = OP_DUP
-                });
-                
-                emit(n);
-                
-                writer.write({
-                    .opcode = OP_INVOKE,
-                    .value = JrObjectStringBuilder_Append::Func->addressOfFunc
-                });
-            }
-        }
-        
-        writer.write({
-            .opcode = OP_INVOKE,
-            .value = JrObjectStringBuilder_toString::Func->addressOfFunc
-        });
-        
-    } else {
+//    if(node->type == JrObjectString::Type) {
+//
+//        writer.write({
+//            .opcode = OP_NEW,
+//            .value = JrObjectStringBuilder::Type->addressOfType
+//        });
+//
+//        // Use the StringBuilder to append the string content
+//        for(std::vector<Node::Ptr>::const_reverse_iterator iterator = node->nodes.rbegin(); iterator != node->nodes.rend(); iterator ++ ) {
+//            auto n = *iterator;
+//            if(n->kind == SyntaxKind::operatorExpr) {
+//                auto operatorExpr = std::static_pointer_cast<OperatorExpr>(n);
+//                assert(operatorExpr->token->rawValue == "+");
+//            } else {
+//                writer.write({
+//                    .opcode = OP_DUP
+//                });
+//
+//                emit(n);
+//
+//                writer.write({
+//                    .opcode = OP_INVOKE,
+//                    .value = JrObjectStringBuilder_Append::Func->addressOfFunc
+//                });
+//            }
+//        }
+//
+//        writer.write({
+//            .opcode = OP_INVOKE,
+//            .value = JrObjectStringBuilder_toString::Func->addressOfFunc
+//        });
+//
+//
+//    } else {
         for(const auto& n: node->nodes) {
             emit(n);
         }
-    }
-    
+//    }
 }
 
 void IRGen::emit(const OperatorExpr::Ptr& node) {
@@ -431,14 +419,14 @@ void IRGen::emit(const IfStmt::Ptr& node) {
         // insert an goto instruction in ifInstructions;
         instructions.push_back({
             .opcode = OP_GOTO,
-            .value = static_cast<JrInt>(elseInstructions.size())
+            .value = static_cast<int32_t>(elseInstructions.size())
         });
     }
     
     emit(node->condition);
     writer.write({
         .opcode = OP_IFLE,
-        .value = static_cast<JrInt>(instructions.size())
+        .value = static_cast<int32_t>(instructions.size())
     });
     writer.write(instructions);
     writer.write(elseInstructions);
@@ -456,12 +444,12 @@ void IRGen::emit(const WhileStmt::Ptr& node) {
     writer.write(conditionGen.writer.instructions);
     writer.write({
         .opcode = OP_IFLE,
-        .value = static_cast<JrInt>(gen.writer.instructions.size() + 1)
+        .value = static_cast<int32_t>(gen.writer.instructions.size() + 1)
     });
     writer.write(gen.writer.instructions);
     writer.write({
         .opcode = OP_GOTO,
-        .value = static_cast<JrInt>(position - writer.instructions.size() - 1)
+        .value = static_cast<int32_t>(position - writer.instructions.size() - 1)
     });
     
 }
@@ -476,16 +464,14 @@ void IRGen::emit(const StmtsBlock::Ptr& node) {
 
 void IRGen::emit(const FuncDecl::Ptr& node) {
     assert(node->symbol->flag == SymbolFlag::funcSymbol);
-    auto function = Global::functions[node->symbol->addressOfFunc];
-    
-    context->entry(function);
+    auto function = std::static_pointer_cast<JrFuncTypeDef>(node->symbol->type);
+
     IRGen generator(context);
     generator.emit(node->codeBlock);
     auto instructions = generator.writer.instructions;
     
     assert(function != nullptr && function->instructions.empty());
     function->instructions = instructions;
-    context->leave(function);
 }
 
 void IRGen::emit(const ReturnStmt::Ptr& node) {
@@ -507,34 +493,37 @@ void IRGen::emit(const ArrayLiteralExpr::Ptr& node) {
     
     writer.write({
         .opcode = OP_ICONST,
-        .value = static_cast<JrInt>(node->items.size())
+        .value = static_cast<int32_t>(node->items.size())
     });
     
-    writer.write({
-        .opcode = OP_ONEWARRAY,
-        .value = JrType::Any->addressOfType
-    });
+//    writer.write({
+//        .opcode = OP_ONEWARRAY,
+//        .value = JrType::Any->addressOfType
+//    });
+
+    assert(false);
 }
 
 void IRGen::emit(const DictLiteralExpr::Ptr& node) {
-    writer.write({
-        .opcode = OP_NEW,
-        .value = JrObjectMap::Constructor->addressOfFunc
-    });
-    
-    for(auto item: node->items) {
-        writer.write({
-           .opcode = OP_DUP
-        });
-        
-        emit(std::get<0>(item));
-        emit(std::get<1>(item));
-        
-        writer.write({
-            .opcode = OP_INVOKE,
-            .value = JrObjectMap_Insert::Func->addressOfFunc
-        });
-    }
+//    writer.write({
+//        .opcode = OP_NEW,
+//        .value = JrObjectMap::Constructor->addressOfFunc
+//    });
+//
+//    for(auto item: node->items) {
+//        writer.write({
+//           .opcode = OP_DUP
+//        });
+//
+//        emit(std::get<0>(item));
+//        emit(std::get<1>(item));
+//
+//        writer.write({
+//            .opcode = OP_INVOKE,
+//            .value = JrObjectMap_Insert::Func->addressOfFunc
+//        });
+//    }
+    assert(false);
 }
 
 void IRGen::emit(const ClassDecl::Ptr& node) {
@@ -561,19 +550,21 @@ void IRGen::emit(const SubscriptExpr::Ptr& node) {
     emit(node->identifier);
     assert(node->identifier->symbol != nullptr);
     
-    if (node->identifier->symbol->addressOfType == JrObjectMap::Type->addressOfType) {
-        writer.write({
-            .opcode = OP_INVOKE,
-            .value = JrObjectMap_Get::Func->addressOfFunc
-        });
-    } else if(node->identifier->symbol->addressOfType == JrObjectArray::Type->addressOfType) {
-        writer.write({
-            .opcode = OP_INVOKE,
-            .value = JrObjectArray_Get::Func->addressOfFunc
-        });
-    } else {
-        assert(false);
-    }
+//    if (node->identifier->symbol->addressOfType == JrObjectMap::Type->addressOfType) {
+//        writer.write({
+//            .opcode = OP_INVOKE,
+//            .value = JrObjectMap_Get::Func->addressOfFunc
+//        });
+//    } else if(node->identifier->symbol->addressOfType == JrObjectArray::Type->addressOfType) {
+//        writer.write({
+//            .opcode = OP_INVOKE,
+//            .value = JrObjectArray_Get::Func->addressOfFunc
+//        });
+//    } else {
+//        assert(false);
+//    }
+
+    assert(false);
 }
 
 void IRGen::emit(const FileImportStmt::Ptr& node) {

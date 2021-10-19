@@ -1,11 +1,9 @@
 #ifndef __joyeer_compiler_irgen_h__
 #define __joyeer_compiler_irgen_h__
 
-#include <joyeer/runtime/instruction.h>
 #include "joyeer/compiler/context.h"
 #include "joyeer/compiler/typedef.h"
-
-class JrCodeWriter;
+#include "joyeer/compiler/opcode.h"
 
 class IRGen {
 public:

@@ -28,27 +28,27 @@ parameters(std::move(parameters)) {
 
 Pattern::Pattern(IdentifierExpr::Ptr identifier, Node::Ptr type):
 Node(SyntaxKind::pattern),
-identifier(identifier),
-type(type) {
+identifier(std::move(identifier)),
+type(std::move(type)) {
 }
 
-const std::string& Pattern::getIdentifierName() {
+const std::string& Pattern::getIdentifierName() const {
     return identifier->token->rawValue;
 }
 
 Type::Type(Node::Ptr identifier):
 Node(SyntaxKind::type),
-identifier(identifier) {
+identifier(std::move(identifier)) {
 }
 
 ArrayType::ArrayType(Node::Ptr type):
 Node(SyntaxKind::arrayType),
-type(type) {
+type(std::move(type)) {
 }
 
 
 DictType::DictType(Node::Ptr keyType, Node::Ptr valueType):
 Node(SyntaxKind::dictType),
-keyType(keyType),
-valueType(valueType) {
+keyType(std::move(keyType)),
+valueType(std::move(valueType)) {
 }

@@ -10,7 +10,7 @@ TARGET_LINK_LIBRARIES(UnitTests
     joyeerCommon
     joyeerCompiler
     joyeerDriver
-    joyeerRuntime
+#    joyeerRuntime
 )
 
 add_test(NAME UnitTests COMMAND UnitTests)

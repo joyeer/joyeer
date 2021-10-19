@@ -198,7 +198,7 @@ struct Pattern : public Node {
 
     Pattern(IdentifierExpr::Ptr identifier, Node::Ptr type);
 
-    const std::string &getIdentifierName();
+    const std::string &getIdentifierName() const;
 
     std::string getSimpleName() override {
         return getIdentifierName();
@@ -596,9 +596,9 @@ struct ForInStmt : Node {
 
     ForInStmt(Node::Ptr pattern, Node::Ptr inExpr, Node::Ptr codeBlock) :
             Node(SyntaxKind::forInStmt),
-            pattern(pattern),
-            inExpr(inExpr),
-            codeBlock(codeBlock) {
+            pattern(std::move(pattern)),
+            inExpr(std::move(inExpr)),
+            codeBlock(std::move(codeBlock)) {
     }
 
     void recursiveUpdate() override {
@@ -616,8 +616,8 @@ struct WhileStmt : Node {
 
     WhileStmt(Node::Ptr expr, Node::Ptr codeBlock) :
             Node(SyntaxKind::whileStmt),
-            expr(expr),
-            codeBlock(codeBlock) {
+            expr(std::move(expr)),
+            codeBlock(std::move(codeBlock)) {
     }
 
 
@@ -636,9 +636,9 @@ struct IfStmt : Node {
 
     IfStmt(Node::Ptr condition, Node::Ptr ifCodeBlock, Node::Ptr elseCodeBlock) :
             Node(SyntaxKind::ifStmt),
-            condition(condition),
-            ifCodeBlock(ifCodeBlock),
-            elseCodeBlock(elseCodeBlock) {
+            condition(std::move(condition)),
+            ifCodeBlock(std::move(ifCodeBlock)),
+            elseCodeBlock(std::move(elseCodeBlock)) {
     }
 
     void recursiveUpdate() override {
@@ -655,7 +655,7 @@ struct ReturnStmt : Node {
 
     explicit ReturnStmt(Node::Ptr expr) :
             Node(SyntaxKind::returnStmt),
-            expr(expr) {
+            expr(std::move(expr)) {
     }
 
 
@@ -676,30 +676,11 @@ public:
     explicit DeclNode(SyntaxKind kind) : Node(kind) {}
 };
 
-enum class FuncType {
-    staticInitializer = 1,  // class's static initializer
-    constructor = 2,        // class constructor
-    function = 3            // function
-};
-
-// Helper FuncType to SymbolFlag
-static SymbolFlag funcTypeToSymbolFlag(FuncType type) {
-    switch (type) {
-        case FuncType::staticInitializer:
-            return SymbolFlag::staticInitializer;
-        case FuncType::constructor:
-            return SymbolFlag::constructor;
-        case FuncType::function:
-            return SymbolFlag::funcSymbol;
-    }
-}
-
 // Represent a Function in Ast tree.
 struct FuncDecl : public DeclNode {
 public:
     using Ptr = std::shared_ptr<FuncDecl>;
 
-    FuncType type;
     Node::Ptr identifier = nullptr;               //IdentifierExpr
     Node::Ptr parameterClause;
     Node::Ptr codeBlock;
@@ -711,23 +692,22 @@ public:
 
     FuncDecl(Node::Ptr identifier, Node::Ptr parameterClause, Node::Ptr returnType, Node::Ptr codeBlock) :
             DeclNode(SyntaxKind::funcDecl),
-            identifier(identifier),
-            parameterClause(parameterClause),
-            returnType(returnType),
-            codeBlock(codeBlock) {
+            identifier(std::move(identifier)),
+            parameterClause(std::move(parameterClause)),
+            returnType(std::move(returnType)),
+            codeBlock(std::move(codeBlock)) {
         symtable = std::make_shared<SymbolTable>();
     }
 
     // make FuncDecl as Static initializer
-    static Ptr makeStaticInitializer(StmtsBlock::Ptr stmts) {
+    static Ptr makeStaticInitializer(const StmtsBlock::Ptr& stmts) {
         auto decl = std::make_shared<FuncDecl>(nullptr, nullptr, nullptr, stmts);
-        decl->type = FuncType::staticInitializer;
         return decl;
     }
 
-    static Ptr makeConstructor(Node::Ptr parameterClause, StmtsBlock::Ptr stmts) {
+    // create a Constructor FuncDecl
+    static Ptr makeConstructor(const Node::Ptr& parameterClause, const StmtsBlock::Ptr& stmts) {
         auto decl = std::make_shared<FuncDecl>(nullptr, parameterClause, nullptr, stmts);
-        decl->type = FuncType::constructor;
         return decl;
     }
 
@@ -738,9 +718,6 @@ public:
         // basis name
         if (identifier != nullptr) {
             ss << identifier->getSimpleName();
-        } else if (type == FuncType::constructor || type == FuncType::staticInitializer) {
-            auto declaringClassDecl = getDeclaringClassDecl();
-            ss << declaringClassDecl->getSimpleName();
         }
 
         // parameters
@@ -780,15 +757,14 @@ struct ClassDecl : public DeclNode {
 
     ClassDecl(Token::Ptr name, StmtsBlock::Ptr members) :
             DeclNode(SyntaxKind::classDecl),
-            name(name),
-            members(members),
+            name(std::move(name)),
+            members(std::move(members)),
             staticFields(),
             staticMethods(),
             instanceMethods(),
             instanceFields() {
         symtable = std::make_shared<SymbolTable>();
     }
-
 
     std::string getSimpleName() override {
         return name->rawValue;
@@ -853,10 +829,10 @@ struct VarDecl : public DeclNode {
     Node::Ptr initializer;
     Descriptor::Ptr parentDescriptor;
 
-    VarDecl(Pattern::Ptr pattern, std::shared_ptr<Node> initializer) :
+    VarDecl(Pattern::Ptr pattern, Node::Ptr initializer) :
             DeclNode(SyntaxKind::varDecl),
-            pattern(pattern),
-            initializer(initializer) {
+            pattern(std::move(pattern)),
+            initializer(std::move(initializer)) {
     }
 
     std::string getSimpleName() override {

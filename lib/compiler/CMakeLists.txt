@@ -1,15 +1,15 @@
 
 add_joyeer_library(joyeerCompiler STATIC
-        lexparser.cpp
         binder.cpp
+        compiler+service.cpp
         context.cpp
+        lexparser.cpp
         diagnostic.cpp
         IRGen.cpp
-        lexparser.cpp
         node.cpp
         node+visitor.cpp
         debugprinter.cpp
-        compiler+service.cpp
+        opcode.cpp
         sourcefile.cpp
         symtable.cpp
         syntaxparser.cpp

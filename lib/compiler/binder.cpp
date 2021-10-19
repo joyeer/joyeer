@@ -113,10 +113,10 @@ Node::Ptr Binder::visit(FuncDecl::Ptr decl) {
     }
 
     // prepare the symbol, register the symbol into parent
-    decl->symbol = Symbol::make(funcTypeToSymbolFlag(decl->type), funcSimpleName);
+    decl->symbol = Symbol::make(SymbolFlag::funcSymbol, funcSimpleName);
     symtable->insert(decl->symbol);
     
-    // visit func decleration
+    // visit func declaration
     context->visit(CompileStage::visitFuncDecl, decl, [this, decl]() {
         // start to process function name
         context->visit(CompileStage::visitFuncNameDecl, [this, decl]() {
@@ -137,7 +137,7 @@ Node::Ptr Binder::visit(FuncDecl::Ptr decl) {
         }
         
         decl->codeBlock = visit(decl->codeBlock);
-        
+
     });
     
     return decl;
@@ -154,13 +154,13 @@ Node::Ptr Binder::visit(VarDecl::Ptr decl) {
         Diagnostics::reportError("[Error] duplicate variable name");
     }
     
-    // double check the domplciate
+    // double-check the complicate
     auto stage = context->curStage();
     auto symbolFlag = (stage == CompileStage::visitClassDecl || stage == CompileStage::visitFileModule) ? SymbolFlag::fieldSymbol : SymbolFlag::varSymbol;
     
     auto symbol = std::shared_ptr<Symbol>(new Symbol{
+        .flag = symbolFlag,
         .name = name,
-        .flag = symbolFlag
     });
     symtable->insert(symbol);
     decl->symbol = symbol;
@@ -287,17 +287,17 @@ Node::Ptr Binder::visit(Expr::Ptr decl) {
     }
     
     std::vector<Node::Ptr> binaries;
-    for(auto n: decl->binaries) {
+    for(const auto& n: decl->binaries) {
         binaries.push_back(visit(n));
     }
     decl->binaries = binaries;
     
     
-    // Flat the expr subnodes
+    // Flat the expr sub-nodes
     std::vector<Node::Ptr> nodes;
     nodes.push_back(decl->prefix);
     
-    for(auto node: decl->binaries) {
+    for(const auto& node: decl->binaries) {
         if(node->kind != SyntaxKind::binaryExpr) {
             Diagnostics::reportError("[Error] Except an binary expression");
             return decl;

@@ -10,8 +10,6 @@ int main(int argc, char** argv) {
         return -1;
     }
 
-    Global::initGlobalTables();
-    
     Driver driver(options);
     driver.run();
     

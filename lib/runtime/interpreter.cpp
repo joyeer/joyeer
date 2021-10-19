@@ -4,7 +4,6 @@
 #include "joyeer/runtime/sys/array.h"
 #include "joyeer/runtime/sys/string.h"
 #include <cassert>
-#include <iostream>
 
 JrInterpreter::JrInterpreter(JrRuntimeContext* context):
 context(context) {
@@ -29,7 +28,6 @@ void JrInterpreter::run(JrFunction* function, int objectRef) {
     
     pointer = function->instructions.begin();
     end = function->instructions.end();
-    JrInstructionDebugPrinter printer;
     while(pointer != end) {
         auto instruction = *pointer;
 #ifdef INTERPRETER_DEBUG

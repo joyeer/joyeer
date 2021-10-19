@@ -1,5 +1,6 @@
 #include "joyeer/compiler/typecheck.h"
 #include "joyeer/compiler/diagnostic.h"
+#include "joyeer/compiler/typedef.h"
 #include <cassert>
 #include <utility>
 
@@ -23,49 +24,37 @@ Node::Ptr TypeChecker::visit(FileModuleDecl::Ptr node) {
 }
 
 Node::Ptr TypeChecker::visit(FuncDecl::Ptr node) {
-    context->entry(node->symtable);
-    
-    auto function = Global::functions[node->symbol->addressOfFunc];
-    context->entry(function);
 
-    context->visit(CompileStage::visitFuncParamDecl, [this, node]() {
-        node->parameterClause = visit(node->parameterClause);
-    });
-    
-    assert(function->paramTypes.empty());
-    if(node->returnType != nullptr) {
-        node->returnType = visit(node->returnType);
-        function->returnType = typeOf(node->returnType);
-    }
-    
-    // Binding function's type
-    auto parameterClause = std::static_pointer_cast<ParameterClause>(node->parameterClause);
-    for(const auto& parameter: parameterClause->parameters) {
-        auto symbol = parameter->type->symbol;
-        
-        assert(symbol->flag == SymbolFlag::typeSymbol);
-        auto type = Global::types[symbol->addressOfType];
-        function->paramTypes.push_back(type);
-        
-        // register function's parameter as variable in function
-        auto addressOfVariable = (int)function->localVars.size();
-        parameter->identifier->symbol->addressOfVariable = addressOfVariable;
-
-        assert(type != nullptr);
-        function->localVars.push_back(JrVar{
-            .type = type,
-            .name = parameter->getIdentifierName(),
-            .addressOfVariable = addressOfVariable
+    context->visit(CompileStage::visitFuncDecl, node, [this, node]() {
+        auto funcDef = context->curFuncDef();
+        context->visit(CompileStage::visitFuncParamDecl, [this, node]() {
+            node->parameterClause = visit(node->parameterClause);
         });
-    }
-    
-    node->codeBlock = visit(node->codeBlock);
-    
-    // verify return statement
-    verifyReturnStatement(std::static_pointer_cast<StmtsBlock>(node->codeBlock));
-    
-    context->leave(function);
-    context->leave(node->symtable);
+
+        assert(funcDef->paramTypes.empty());
+        if(node->returnType != nullptr) {
+            node->returnType = visit(node->returnType);
+            funcDef->returnType = typeOf(node->returnType);
+        }
+
+        // Binding function's type
+        auto parameterClause = std::static_pointer_cast<ParameterClause>(node->parameterClause);
+        for(const auto& parameter: parameterClause->parameters) {
+            auto symbol = parameter->type->symbol;
+
+            assert(symbol->flag == SymbolFlag::typeSymbol);
+            funcDef->paramTypes.push_back(symbol->type);
+
+            assert(symbol->type != nullptr);
+            funcDef->localVars.push_back( std::make_shared<JrVariable>(symbol->type, parameter->getIdentifierName()));
+        }
+
+        node->codeBlock = visit(node->codeBlock);
+
+        // verify return statement
+        verifyReturnStatement(std::static_pointer_cast<StmtsBlock>(node->codeBlock));
+    });
+
     return node;
 }
 
@@ -119,12 +108,10 @@ Node::Ptr TypeChecker::visit(FuncCallExpr::Ptr node) {
 Node::Ptr TypeChecker::visit(MemberFuncCallExpr::Ptr node) {
     visit(node->callee);
     
-    auto type = Global::types[node->callee->symbol->addressOfType];
+    auto type = node->callee->symbol->type;
     assert(type != nullptr);
     node->callee->type = type;
-    auto symtable = context->symtableOfType(type);
-    node->callee->symtable = symtable;
-    
+
     auto name = node->getSimpleName();
     auto symbol = context->lookup(name);
     
@@ -148,7 +135,7 @@ Node::Ptr TypeChecker::visit(VarDecl::Ptr node) {
     
     if(node->pattern->type == nullptr) {
         // change the symbol to unfixed symbol
-        node->symbol->addressOfType = JrType::Any->addressOfType;
+//        node->symbol->addressOfType = JrType::Any->addressOfType;
     }
     
     if(node->initializer != nullptr) {
@@ -159,10 +146,10 @@ Node::Ptr TypeChecker::visit(VarDecl::Ptr node) {
     if(node->initializer != nullptr) {
         auto rightType = typeOf(node->initializer);
         auto leftType = typeOf(node->pattern);
-        // the node doesn't use
-        if(node->pattern->type == nullptr && rightType != JrType::Nil) {
-            node->symbol->addressOfType = rightType->addressOfType;
-        }
+//        // the node doesn't use
+//        if(node->pattern->type == nullptr && rightType != JrType::Nil) {
+//            node->symbol->addressOfType = rightType->addressOfType;
+//        }
     }
     
     return node;
@@ -187,10 +174,10 @@ Node::Ptr TypeChecker::visit(Pattern::Ptr node) {
         if(node->type->symbol == nullptr) {
             node->type->symbol = std::shared_ptr<Symbol>(new Symbol{
                 .flag = SymbolFlag::typeSymbol,
-                .addressOfType = type->addressOfType,
+                .type = type
             });
         }
-        node->identifier->symbol->addressOfType = type->addressOfType;
+//        node->identifier->symbol->addressOfType = type->addressOfType;
     }
     
     return node;
@@ -353,14 +340,9 @@ Node::Ptr TypeChecker::visit(ArguCallExpr::Ptr node) {
 
 Node::Ptr TypeChecker::visit(ClassDecl::Ptr node) {
     context->entry(node->symtable);
-    auto type = Global::types[node->symbol->addressOfType];
-    context->entry(type);
     context->visit(CompileStage::visitClassDecl, [this, node]() {
-        //
         node->members = std::static_pointer_cast<StmtsBlock>(visit(node->members));
     });
-    
-    context->leave(type);
     context->leave(node->symtable);
     return node;
 }
@@ -396,19 +378,19 @@ Node::Ptr TypeChecker::visit(DictLiteralExpr::Ptr node) {
 Node::Ptr TypeChecker::visit(MemberAccessExpr::Ptr node) {
     node->callee = visit(node->callee);
     
-    auto type = Global::types[node->callee->symbol->addressOfType];
-    auto symtable = context->symtableOfType(type);
-    
-    context->visit(CompileStage::visitMemberAccess, [this, node, symtable](){
-        if(symtable != nullptr) {
-            // We will push access flags' symbols
-            context->entry(symtable);
-        }
+//    auto type = Global::types[node->callee->symbol->addressOfType];
+//    auto symtable = context->symtableOfType(type);
+
+    context->visit(CompileStage::visitMemberAccess, [this, node](){
+//        if(symtable != nullptr) {
+//            // We will push access flags' symbols
+//            context->entry(symtable);
+//        }
         
         node->member = visit(node->member);
-        if(symtable != nullptr) {
-            context->leave(symtable);
-        }
+//        if(symtable != nullptr) {
+//            context->leave(symtable);
+//        }
     });
     return node;
 }
@@ -486,11 +468,12 @@ JrTypeDef::Ptr TypeChecker::typeOf(const IdentifierExpr::Ptr& node) {
     
     switch(node->symbol->flag) {
         case SymbolFlag::varSymbol:
-            return Global::types[node->symbol->addressOfType];
+            return node->symbol->type;
         case SymbolFlag::fieldSymbol: {
-            auto type = (JrObjectType*)(context->curType());
-            auto field = type->virtualFields[node->symbol->addressOfField];
-            return Global::types[field->addressOfField];
+//            auto type = (JrObjectType*)(context->curType());
+//            auto field = type->virtualFields[node->symbol->addressOfField];
+//            return Global::types[field->addressOfField];
+            assert(false);
         }
         default:
             assert(false);
@@ -512,7 +495,7 @@ JrTypeDef::Ptr TypeChecker::typeOf(const Expr::Ptr& node) {
             stack.pop();
             auto rightType = stack.top();
             stack.pop();
-            if (leftType->kind == rightType->kind) {
+            if (leftType->type == rightType->type) {
                 stack.push(leftType);
             } else {
                 stack.push(leftType);
@@ -530,13 +513,13 @@ JrTypeDef::Ptr TypeChecker::typeOf(const Expr::Ptr& node) {
 JrTypeDef::Ptr TypeChecker::typeOf(const LiteralExpr::Ptr& node) {
     switch(node->literal->kind) {
         case booleanLiteral:
-            return JrPrimaryType::Boolean;
+            return BuildIn::TypeDef::Bool;
         case decimalLiteral:
             return BuildIn::TypeDef::Int;
         case nilLiteral:
-            return JrPrimaryType::Nil;
+            return BuildIn::TypeDef::Nil;
         case stringLiteral:
-            return JrObjectString::Type;
+            return BuildIn::TypeDef::String;
         default:
             assert(false);
     }
@@ -545,15 +528,14 @@ JrTypeDef::Ptr TypeChecker::typeOf(const LiteralExpr::Ptr& node) {
 JrTypeDef::Ptr TypeChecker::typeOf(const FuncCallExpr::Ptr& node) {
     auto funcName = node->getSimpleName();
     auto symbol = context->lookup(funcName);
-    auto function = Global::functions[node->symbol->addressOfFunc];
-    return function->returnType;
+    return symbol->type;
 }
 
 JrTypeDef::Ptr TypeChecker::typeOf(const MemberFuncCallExpr::Ptr& node) {
     auto funcName = node->getSimpleName();
-    auto symmbol = context->lookup(funcName);
-    auto function = Global::functions[node->symbol->addressOfFunc];
-    return function->returnType;
+    auto symbol = context->lookup(funcName);
+    auto funcDef = std::static_pointer_cast<JrFuncTypeDef>(symbol->type);
+    return funcDef->returnType;
 }
 
 JrTypeDef::Ptr TypeChecker::typeOf(const ParenthesizedExpr::Ptr& node) {
@@ -566,36 +548,37 @@ JrTypeDef::Ptr TypeChecker::typeOf(const SelfExpr::Ptr& node) {
 
 JrTypeDef::Ptr TypeChecker::typeOf(const Pattern::Ptr& node) {
     if(node->type == nullptr) {
-        return JrType::Any;
+        return BuildIn::TypeDef::Any;
     }
     return typeOf(node->type);
 }
 
 JrTypeDef::Ptr TypeChecker::typeOf(const Type::Ptr& node) {
     assert(node->symbol->flag == SymbolFlag::typeSymbol);
-    return Global::types[node->symbol->addressOfType];
+    return node->symbol->type;
 }
 
 JrTypeDef::Ptr TypeChecker::typeOf(const DictLiteralExpr::Ptr& node) {
-    return JrObjectMap::Type;
+    assert(false);
+//    return JrObjectMap::Type;
 }
 
 JrTypeDef::Ptr TypeChecker::typeOf(const ArrayLiteralExpr::Ptr& node) {
-    JrType* previousType = nullptr;
+    JrTypeDef::Ptr previousType = nullptr;
     for(const auto& item: node->items) {
         auto type = typeOf(item);
         if(previousType != nullptr) {
-            if(type->kind != previousType->kind) {
-                return JrType::Any;
+            if(type->type != previousType->type) {
+                return BuildIn::TypeDef::Any;
             }
         }
-        
+
         previousType = type;
     }
     
-    if(previousType->kind == typeInt) {
-        return JrObjectArray::Type;
-    }
+//    if(previousType->type == typeInt) {
+//        return JrObjectArray::Type;
+//    }
     assert(false);
     return previousType;
 }
@@ -609,10 +592,10 @@ JrTypeDef::Ptr TypeChecker::typeOf(const SubscriptExpr::Ptr& node) {
 }
 
 JrTypeDef::Ptr TypeChecker::typeOf(const ArrayType::Ptr& node) {
-    auto type = typeOf(node->type);
-    if(type == JrPrimaryType::Int) {
-        return JrObjectArray::Type;
-    }
+//    auto type = typeOf(node->type);
+//    if(type == JrPrimaryType::Int) {
+//        return JrObjectArray::Type;
+//    }
     
     assert(false);
 }
@@ -655,7 +638,7 @@ JrTypeDef::Ptr TypeChecker::returnTypeOf(const IfStmt::Ptr& node) {
     if(elseBlock == nullptr) {
         return nullptr; // else block don't have return statement
     }
-    assert(ifBlock->kind == elseBlock->kind);
+    assert(ifBlock->type == elseBlock->type);
     return ifBlock;
 }
 
@@ -664,9 +647,7 @@ JrTypeDef::Ptr TypeChecker::returnTypeOf(const WhileStmt::Ptr& node) {
 }
 
 JrTypeDef::Ptr TypeChecker::returnTypeOf(const FuncCallExpr::Ptr& node) {
-    auto function = Global::functions[node->symbol->addressOfFunc];
-    assert(function != nullptr);
-    return function->returnType;
+    return node->type;
 }
 
 JrTypeDef::Ptr TypeChecker::returnTypeOf(const Node::Ptr& node) {
@@ -676,7 +657,7 @@ JrTypeDef::Ptr TypeChecker::returnTypeOf(const Node::Ptr& node) {
         case SyntaxKind::returnStmt: {
             auto returnStatement = std::static_pointer_cast<ReturnStmt>(node);
             if(returnStatement->expr == nullptr) {
-                return JrType::Void;
+                return BuildIn::TypeDef::Void;
             } else {
                 return typeOf(returnStatement->expr);
             }
