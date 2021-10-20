@@ -3,6 +3,7 @@ build/
 .idea/
 xcode/
 *.debug.txt
+*.debug.yml
 *.pyc
 xcode-build
 cmake-build-debug

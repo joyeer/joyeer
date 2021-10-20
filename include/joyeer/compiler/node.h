@@ -699,8 +699,10 @@ public:
     }
 
     // make FuncDecl as Static initializer
-    static Ptr makeStaticInitializer(const StmtsBlock::Ptr& stmts) {
-        auto decl = std::make_shared<FuncDecl>(nullptr, nullptr, nullptr, stmts);
+    static Ptr makeStaticInitializer(const std::string& initializerName, const StmtsBlock::Ptr& stmts) {
+        auto token = std::make_shared<Token>(TokenKind::identifier, initializerName, -1, -1);
+        auto identifierExpr = std::make_shared<IdentifierExpr>(token);
+        auto decl = std::make_shared<FuncDecl>(identifierExpr, nullptr, nullptr, stmts);
         return decl;
     }
 

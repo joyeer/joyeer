@@ -64,7 +64,7 @@ void CompilerService::compile(const SourceFile::Ptr& sourcefile) {
     SyntaxParser syntaxParser(sourcefile);
     auto block = syntaxParser.parse();
     block->filename = sourcefile->getAbstractLocation();
-    debugPrint(block, block->filename + ".parser.debug.txt");
+    debugPrint(block, block->filename + ".parser.debug.yml");
     CHECK_ERROR_CONTINUE
     
     // Detect for type creating
@@ -72,13 +72,13 @@ void CompilerService::compile(const SourceFile::Ptr& sourcefile) {
     binder.importDelegate = std::bind(&CompilerService::tryImport, this, std::placeholders::_1, std::placeholders::_2);
     
     binder.visit(block);
-    debugPrint(block, block->filename + ".binder.debug.txt");
+    debugPrint(block, block->filename + ".binder.debug.yml");
     CHECK_ERROR_CONTINUE
     
     // verify the types
     TypeChecker typeChecker(context);
     typeChecker.visit(std::static_pointer_cast<Node>(block));
-    debugPrint(block, sourcefile->getAbstractLocation() + ".typechecker.debug.txt");
+    debugPrint(block, sourcefile->getAbstractLocation() + ".typechecker.debug.yml");
     CHECK_ERROR_CONTINUE
 
     // generate IR code
