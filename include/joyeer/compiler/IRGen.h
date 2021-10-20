@@ -20,7 +20,7 @@ protected:
     void emit(const VarDecl::Ptr& node);
     void emit(const PrefixExpr::Ptr& node);
     void emit(const IdentifierExpr::Ptr& node);
-    void emit(const AssignmentExpr::Ptr& node);
+    void emit(const AssignExpr::Ptr& node);
     void emit(const Expr::Ptr& node);
     void emit(const OperatorExpr::Ptr& node);
     void emit(const ParenthesizedExpr::Ptr& node);

@@ -30,7 +30,7 @@ protected:
     Node::Ptr visit(PrefixExpr::Ptr decl) override;
     Node::Ptr visit(IdentifierExpr::Ptr decl) override;
     Node::Ptr visit(Expr::Ptr decl) override;
-    Node::Ptr visit(AssignmentExpr::Ptr decl) override;
+    Node::Ptr visit(AssignExpr::Ptr decl) override;
     Node::Ptr visit(BinaryExpr::Ptr decl) override;
     Node::Ptr visit(OperatorExpr::Ptr decl) override;
     Node::Ptr visit(ParenthesizedExpr::Ptr decl) override;

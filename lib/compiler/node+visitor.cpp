@@ -33,7 +33,7 @@ Node::Ptr NodeVisitor::visit(const Node::Ptr& node) {
         NODE_VISITOR(SyntaxKind::literalExpr,           LiteralExpr)
         NODE_VISITOR(SyntaxKind::arrayLiteralExpr,      ArrayLiteralExpr)
         NODE_VISITOR(SyntaxKind::dictLiteralExpr,       DictLiteralExpr)
-        NODE_VISITOR(SyntaxKind::assignmentExpr,        AssignmentExpr)
+        NODE_VISITOR(SyntaxKind::assignExpr, AssignExpr)
         NODE_VISITOR(SyntaxKind::binaryExpr,            BinaryExpr)
         NODE_VISITOR(SyntaxKind::operatorExpr,          OperatorExpr)
         NODE_VISITOR(SyntaxKind::subscriptExpr,         SubscriptExpr)

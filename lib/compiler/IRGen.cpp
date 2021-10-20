@@ -62,8 +62,8 @@ void IRGen::emit(const Node::Ptr& node) {
         case SyntaxKind::dictLiteralExpr:
             emit(std::static_pointer_cast<DictLiteralExpr>(node));
             break;
-        case SyntaxKind::assignmentExpr:
-            emit(std::static_pointer_cast<AssignmentExpr>(node));
+        case SyntaxKind::assignExpr:
+            emit(std::static_pointer_cast<AssignExpr>(node));
             break;
         case SyntaxKind::operatorExpr:
             emit(std::static_pointer_cast<OperatorExpr>(node));
@@ -86,8 +86,7 @@ void IRGen::emit(const Node::Ptr& node) {
 }
 
 JrModuleTypeDef::Ptr IRGen::emit(const FileModuleDecl::Ptr& decl) {
-    
-    assert( decl->symbol->flag == SymbolFlag::fileModuleSymbol);
+
     assert(decl->members == nullptr);
     assert(decl->staticConstructor != nullptr);
 
@@ -99,14 +98,14 @@ JrModuleTypeDef::Ptr IRGen::emit(const FileModuleDecl::Ptr& decl) {
 }
 
 void IRGen::emit(const FuncCallExpr::Ptr& funcCallExpr) {
-    assert(funcCallExpr->symbol->type != nullptr);
+
     context->visit(CompileStage::visitFuncCall, [this, funcCallExpr](){
         
         for(const auto& argument : funcCallExpr->arguments) {
             emit(argument);
         }
 
-        auto funcDef = std::static_pointer_cast<JrFuncTypeDef>(funcCallExpr->symbol->type);
+        auto funcDef = std::static_pointer_cast<JrFuncTypeDef>(funcCallExpr->typeDef);
         if(funcCallExpr->identifier->kind == SyntaxKind::memberAccessExpr) {
             emit(funcCallExpr->identifier);
         }
@@ -127,7 +126,7 @@ void IRGen::emit(const MemberFuncCallExpr::Ptr& memberFuncCallExpr) {
         
         emit(memberFuncCallExpr->callee);
         
-        auto funcDef = memberFuncCallExpr->symbol->type;
+        auto funcDef = memberFuncCallExpr->typeDef;
         assert(funcDef != nullptr);
         writer.write({
             .opcode = OP_INVOKE,
@@ -174,28 +173,29 @@ void IRGen::emit(const VarDecl::Ptr& node) {
     emit(node->initializer);
     
     auto function = context->curFuncDef();
-    switch (node->symbol->flag) {
-        case SymbolFlag::varSymbol:
-            writer.write({
-                .opcode = OP_ISTORE,
-                .value = node->symbol->addressOfVariable
-            });
-            break;
-        case SymbolFlag::fieldSymbol:
-            writer.write({
-                .opcode = OP_OLOAD,
-                .value = (int32_t)(function->paramTypes.size() - 1)      // last parameter is the self object
-            });
+//    switch (node->symbol->flag) {
+//        case SymbolFlag::varSymbol:
+//            writer.write({
+//                .opcode = OP_ISTORE,
+//                .value = node->symbol->addressOfVariable
+//            });
+//            break;
+//        case SymbolFlag::fieldSymbol:
+//            writer.write({
+//                .opcode = OP_OLOAD,
+//                .value = (int32_t)(function->paramTypes.size() - 1)      // last parameter is the self object
+//            });
+//
+//            writer.write({
+//                .opcode = OP_PUTFIELD,
+//                .value = node->symbol->addressOfField
+//            });
+//            break;
+//        default:
+//            assert(false);
+//    }
 
-            writer.write({
-                .opcode = OP_PUTFIELD,
-                .value = node->symbol->addressOfField
-            });
-            break;
-        default:
-            assert(false);
-    }
-
+    assert(false);
 }
 
 void IRGen::emit(const PrefixExpr::Ptr& node) {
@@ -211,7 +211,7 @@ void IRGen::emit(const PrefixExpr::Ptr& node) {
 }
 
 void IRGen::emit(const IdentifierExpr::Ptr& node) {
-    auto symbol = node->symbol;
+    auto symbol = context->lookup(node->getSimpleName());
     if(symbol == nullptr) {
         Diagnostics::reportError("[Error][GenCode]");
         return;
@@ -258,29 +258,31 @@ void IRGen::emit(const IdentifierExpr::Ptr& node) {
     // Step2: try to find the symbol in symbols
 }
 
-void IRGen::emit(const AssignmentExpr::Ptr& node) {
+void IRGen::emit(const AssignExpr::Ptr& node) {
 
     if(node->left->kind == SyntaxKind::identifierExpr) {
         emit(node->expr);
         auto identifierExpr = std::static_pointer_cast<IdentifierExpr>(node->left);
-        if(identifierExpr->symbol->flag == SymbolFlag::fieldSymbol) {
-            // If the identifier is a field
-            auto function = context->curFuncDef();
-            writer.write({
-                .opcode = OP_OLOAD,
-                .value = (int32_t)(function->paramTypes.size() - 1)      // last parameter is the self object
-            });
-            writer.write({
-                .opcode = OP_PUTFIELD,
-                .value = identifierExpr->symbol->addressOfField
-            });
-        } else {
-            writer.write({
-                .opcode = OP_ISTORE,
-                .value = identifierExpr->symbol->addressOfVariable
-            });
-        }
-        
+//        if(identifierExpr->symbol->flag == SymbolFlag::fieldSymbol) {
+//            // If the identifier is a field
+//            auto function = context->curFuncDef();
+//            writer.write({
+//                .opcode = OP_OLOAD,
+//                .value = (int32_t)(function->paramTypes.size() - 1)      // last parameter is the self object
+//            });
+//            writer.write({
+//                .opcode = OP_PUTFIELD,
+//                .value = identifierExpr->symbol->addressOfField
+//            });
+//        } else {
+//            writer.write({
+//                .opcode = OP_ISTORE,
+//                .value = identifierExpr->symbol->addressOfVariable
+//            });
+//        }
+//
+
+        assert(false);
     } else if( node->left->kind == SyntaxKind::selfExpr ) {
         emit(node->expr);
         auto selfExpr = std::static_pointer_cast<SelfExpr>(node->left);
@@ -292,19 +294,21 @@ void IRGen::emit(const AssignmentExpr::Ptr& node) {
             .value = (int32_t)(function->paramTypes.size() - 1)      // last parameter is the self object
         });
         
-        auto addressOfField = selfExpr->identifier->symbol->addressOfField;
-        writer.write({
-            .opcode = OP_PUTFIELD,
-            .value = addressOfField
-        });
+//        auto addressOfField = selfExpr->identifier->symbol->addressOfField;
+//        writer.write({
+//            .opcode = OP_PUTFIELD,
+//            .value = addressOfField
+//        });
+        assert(false);
     } else if( node->left->kind == SyntaxKind::memberAccessExpr) {
         emit(node->expr);
         auto memberAccessExpr = std::static_pointer_cast<MemberAccessExpr>(node->left);
         auto identifierExpr = std::static_pointer_cast<IdentifierExpr>(memberAccessExpr->callee);
-        writer.write({
-            .opcode = OP_ISTORE,
-            .value = identifierExpr->symbol->addressOfVariable
-        });
+//        writer.write({
+//            .opcode = OP_ISTORE,
+//            .value = identifierExpr->symbol->addressOfVariable
+//        });
+        assert(false);
     } else if(node->left->kind == SyntaxKind::subscriptExpr) {
         
         auto subscriptExpr = std::static_pointer_cast<SubscriptExpr>(node->left);
@@ -463,8 +467,8 @@ void IRGen::emit(const StmtsBlock::Ptr& node) {
 }
 
 void IRGen::emit(const FuncDecl::Ptr& node) {
-    assert(node->symbol->flag == SymbolFlag::funcSymbol);
-    auto function = std::static_pointer_cast<JrFuncTypeDef>(node->symbol->type);
+//    assert(node->symbol->flag == SymbolFlag::funcSymbol);
+    auto function = std::static_pointer_cast<JrFuncTypeDef>(node->typeDef);
 
     IRGen generator(context);
     generator.emit(node->codeBlock);
@@ -537,10 +541,11 @@ void IRGen::emit(const ClassDecl::Ptr& node) {
 void IRGen::emit(const MemberAccessExpr::Ptr& node) {
     emit(node->callee);
     
-    writer.write({
-        .opcode = OP_GETFIELD,
-        .value = node->member->symbol->addressOfField
-    });
+//    writer.write({
+//        .opcode = OP_GETFIELD,
+//        .value = node->member->symbol->addressOfField
+//    });
+    assert(false);
 }
 
 void IRGen::emit(const SubscriptExpr::Ptr& node) {
@@ -548,7 +553,7 @@ void IRGen::emit(const SubscriptExpr::Ptr& node) {
     // handle the index expr of array access
     emit(node->indexExpr);
     emit(node->identifier);
-    assert(node->identifier->symbol != nullptr);
+//    assert(node->identifier->symbol != nullptr);
     
 //    if (node->identifier->symbol->addressOfType == JrObjectMap::Type->addressOfType) {
 //        writer.write({

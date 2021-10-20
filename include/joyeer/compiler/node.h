@@ -33,7 +33,7 @@ enum class SyntaxKind {
     fileimportStmt,
 
     expr,
-    assignmentExpr,
+    assignExpr,
     binaryExpr,
     selfExpr,
     postfixExpr,
@@ -78,7 +78,6 @@ struct Node : std::enable_shared_from_this<Node> {
     using VID = int;
 
     SyntaxKind kind;
-    Symbol::Ptr symbol = nullptr;
     SymbolTable::Ptr symtable = nullptr;
     Node::Ptr parent = nullptr;
 
@@ -318,16 +317,16 @@ struct BinaryExpr : Node {
     }
 };
 
-struct AssignmentExpr : Node {
-    using Ptr = std::shared_ptr<AssignmentExpr>;
+struct AssignExpr : Node {
+    using Ptr = std::shared_ptr<AssignExpr>;
 
     Node::Ptr expr;
 
     // After binded, the identifier will be binded
     Node::Ptr left;
 
-    explicit AssignmentExpr(Node::Ptr expr) :
-            Node(SyntaxKind::assignmentExpr),
+    explicit AssignExpr(Node::Ptr expr) :
+            Node(SyntaxKind::assignExpr),
             expr(std::move(expr)) {
     }
 

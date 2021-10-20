@@ -197,7 +197,7 @@ protected:
         return decl;
     }
 
-    Node::Ptr visit(AssignmentExpr::Ptr decl) override {
+    Node::Ptr visit(AssignExpr::Ptr decl) override {
         return decl;
     }
 

@@ -14,8 +14,6 @@ Node::Ptr TypeChecker::visit(const Node::Ptr& node) {
 
 Node::Ptr TypeChecker::visit(FileModuleDecl::Ptr node) {
     
-    assert(node->symbol->flag == SymbolFlag::fileModuleSymbol);
-    
     context->visit(CompileStage::visitFileModule, node, [this, node](){
         processClassDecl(node);
     });
@@ -40,13 +38,8 @@ Node::Ptr TypeChecker::visit(FuncDecl::Ptr node) {
         // Binding function's type
         auto parameterClause = std::static_pointer_cast<ParameterClause>(node->parameterClause);
         for(const auto& parameter: parameterClause->parameters) {
-            auto symbol = parameter->type->symbol;
-
-            assert(symbol->flag == SymbolFlag::typeSymbol);
-            funcDef->paramTypes.push_back(symbol->type);
-
-            assert(symbol->type != nullptr);
-            funcDef->localVars.push_back( std::make_shared<JrVariable>(symbol->type, parameter->getIdentifierName()));
+            funcDef->paramTypes.push_back(parameter->typeDef);
+            funcDef->localVars.push_back( std::make_shared<JrVariable>(parameter->typeDef, parameter->getIdentifierName()));
         }
 
         node->codeBlock = visit(node->codeBlock);
@@ -69,10 +62,11 @@ Node::Ptr TypeChecker::visit(FuncCallExpr::Ptr node) {
             auto item = dictLiteral->items[0];
             auto key = std::get<0>(item);
             auto value = std::get<1>(item);
-            if(key->symbol->flag == SymbolFlag::typeSymbol && key->symbol->flag == SymbolFlag::typeSymbol) {
-                auto dictType = std::make_shared<DictType>(key, value);
-                node->identifier = dictType;
-            }
+//            if(key->symbol->flag == SymbolFlag::typeSymbol && key->symbol->flag == SymbolFlag::typeSymbol) {
+//                auto dictType = std::make_shared<DictType>(key, value);
+//                node->identifier = dictType;
+//            }
+            assert(false);
         }
     }
     
@@ -81,10 +75,12 @@ Node::Ptr TypeChecker::visit(FuncCallExpr::Ptr node) {
         auto arrayLiteral = std::static_pointer_cast<ArrayLiteralExpr>(node->identifier);
         if(arrayLiteral->items.size() == 1) {
             auto type = arrayLiteral->items[0];
-            if(type->symbol->flag == SymbolFlag::typeSymbol) {
-                auto arrayType = std::make_shared<ArrayType>(type);
-                node->identifier = arrayType;
-            }
+//            if(type->symbol->flag == SymbolFlag::typeSymbol) {
+//                auto arrayType = std::make_shared<ArrayType>(type);
+//                node->identifier = arrayType;
+//            }
+
+            assert(false);
         }
     }
     
@@ -95,7 +91,7 @@ Node::Ptr TypeChecker::visit(FuncCallExpr::Ptr node) {
         Diagnostics::reportError("[Error]Cannot find the function");
     }
     
-    node->symbol = symbol;
+//    node->symbol = symbol;
     for(const auto& argument: node->arguments) {
         visit(argument);
     }
@@ -108,7 +104,7 @@ Node::Ptr TypeChecker::visit(FuncCallExpr::Ptr node) {
 Node::Ptr TypeChecker::visit(MemberFuncCallExpr::Ptr node) {
     visit(node->callee);
     
-    auto type = node->callee->symbol->type;
+    auto type = node->callee->typeDef;
     assert(type != nullptr);
     node->callee->typeDef = type;
 
@@ -119,7 +115,7 @@ Node::Ptr TypeChecker::visit(MemberFuncCallExpr::Ptr node) {
         Diagnostics::reportError("[Error]Cannot find the function");
     }
     
-    node->symbol = symbol;
+//    node->symbol = symbol;
     for(const auto& argument: node->arguments) {
         visit(argument);
     }
@@ -171,12 +167,13 @@ Node::Ptr TypeChecker::visit(Pattern::Ptr node) {
         node->type = visit(node->type);
         // binding the identifier symbol's type to Pattern type's symbols' type
         auto type = typeOf(node->type);
-        if(node->type->symbol == nullptr) {
-            node->type->symbol = std::shared_ptr<Symbol>(new Symbol{
-                .flag = SymbolFlag::typeSymbol,
-                .type = type
-            });
-        }
+//        if(node->type->symbol == nullptr) {
+//            node->type->symbol = std::shared_ptr<Symbol>(new Symbol{
+//                .flag = SymbolFlag::typeSymbol,
+//                .type = type
+//            });
+//        }
+
 //        node->identifier->symbol->addressOfType = type->addressOfType;
     }
     
@@ -195,8 +192,8 @@ Node::Ptr TypeChecker::visit(IdentifierExpr::Ptr node) {
                 Diagnostics::reportError("[Error] Cannot find variable");
             }
             assert(symbol != nullptr);
-            assert(node->symbol == nullptr);
-            node->symbol = symbol;
+//            assert(node->symbol == nullptr);
+//            node->symbol = symbol;
         }
             break;
         case CompileStage::visitAssignExpr:
@@ -255,7 +252,7 @@ Node::Ptr TypeChecker::visit(Type::Ptr node) {
     if(symbol == nullptr) {
         Diagnostics::reportError("[Error]Cannot find type");
     }
-    node->symbol = symbol;
+//    node->symbol = symbol;
     
     return node;
 }
@@ -297,7 +294,7 @@ Node::Ptr TypeChecker::visit(LiteralExpr::Ptr node) {
     return node;
 }
 
-Node::Ptr TypeChecker::visit(AssignmentExpr::Ptr node) {
+Node::Ptr TypeChecker::visit(AssignExpr::Ptr node) {
     node->left = visit(node->left);
     node->expr = visit(node->expr);
     return node;
@@ -465,10 +462,11 @@ JrTypeDef::Ptr TypeChecker::typeOf(const Node::Ptr& node) {
 }
 
 JrTypeDef::Ptr TypeChecker::typeOf(const IdentifierExpr::Ptr& node) {
-    
-    switch(node->symbol->flag) {
+
+    auto symbol = context->lookup(node->getSimpleName());
+    switch(symbol->flag) {
         case SymbolFlag::varSymbol:
-            return node->symbol->type;
+            return symbol->type;
         case SymbolFlag::fieldSymbol: {
 //            auto type = (JrObjectType*)(context->curType());
 //            auto field = type->virtualFields[node->symbol->addressOfField];
@@ -554,8 +552,8 @@ JrTypeDef::Ptr TypeChecker::typeOf(const Pattern::Ptr& node) {
 }
 
 JrTypeDef::Ptr TypeChecker::typeOf(const Type::Ptr& node) {
-    assert(node->symbol->flag == SymbolFlag::typeSymbol);
-    return node->symbol->type;
+//    assert(node->symbol->flag == SymbolFlag::typeSymbol);
+    return node->typeDef;
 }
 
 JrTypeDef::Ptr TypeChecker::typeOf(const DictLiteralExpr::Ptr& node) {
@@ -668,7 +666,7 @@ JrTypeDef::Ptr TypeChecker::returnTypeOf(const Node::Ptr& node) {
             return returnTypeOf(std::static_pointer_cast<FuncCallExpr>(node));
         case SyntaxKind::whileStmt:
             return returnTypeOf(std::static_pointer_cast<WhileStmt>(node));
-        case SyntaxKind::assignmentExpr:
+        case SyntaxKind::assignExpr:
         case SyntaxKind::identifierExpr:
         case SyntaxKind::arrayLiteralExpr:
         case SyntaxKind::varDecl:

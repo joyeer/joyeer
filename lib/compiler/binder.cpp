@@ -26,9 +26,7 @@ Node::Ptr Binder::visit(FileModuleDecl::Ptr filemodule) {
     
     filemodule = normalizeAndPrepareDefaultStaticConstructorForFileModule(filemodule);
     filemodule->recursiveUpdate();
-    
-    filemodule->symbol = Symbol::make(SymbolFlag::fileModuleSymbol, filemodule->getSimpleName());
-    
+
     context->visit(CompileStage::visitFileModule, filemodule, [filemodule, this]() {
         // visit static fields
         auto staticFields = std::vector<DeclNode::Ptr>();
@@ -87,7 +85,6 @@ Node::Ptr Binder::visit(ClassDecl::Ptr decl) {
     auto objectType = JrClassTypeDef::create(name);
     
     symbol->type = objectType;
-    decl->symbol = symbol;
     
     decl->symtable = context->curSymTable();
     bool hasCustomizedConstructor = false;
@@ -113,8 +110,8 @@ Node::Ptr Binder::visit(FuncDecl::Ptr decl) {
     }
 
     // prepare the symbol, register the symbol into parent
-    decl->symbol = Symbol::make(SymbolFlag::funcSymbol, funcSimpleName);
-    symtable->insert(decl->symbol);
+    auto symbol = Symbol::make(SymbolFlag::funcSymbol, funcSimpleName);
+    symtable->insert(symbol);
     
     // visit func declaration
     context->visit(CompileStage::visitFuncDecl, decl, [this, decl]() {
@@ -154,7 +151,7 @@ Node::Ptr Binder::visit(VarDecl::Ptr decl) {
         Diagnostics::reportError("[Error] duplicate variable name");
     }
     
-    // double-check the complicate
+    // double-check to complicate
     auto stage = context->curStage();
     auto symbolFlag = (stage == CompileStage::visitClassDecl || stage == CompileStage::visitFileModule) ? SymbolFlag::fieldSymbol : SymbolFlag::varSymbol;
     
@@ -163,8 +160,7 @@ Node::Ptr Binder::visit(VarDecl::Ptr decl) {
         .name = name,
     });
     symtable->insert(symbol);
-    decl->symbol = symbol;
-    decl->pattern->identifier->symbol = symbol;
+//    decl->pattern->identifier->symbol = symbol;
     
     if(decl->initializer != nullptr) {
         decl->initializer = visit(decl->initializer);
@@ -235,7 +231,7 @@ Node::Ptr Binder::visit(IdentifierExpr::Ptr decl) {
                 .name = name
             });
             table->insert(symbol);
-            decl->symbol = symbol;
+//            decl->symbol = symbol;
             return decl;
         }
         default: {
@@ -247,31 +243,31 @@ Node::Ptr Binder::visit(IdentifierExpr::Ptr decl) {
 Node::Ptr Binder::visit(Expr::Ptr decl) {
     
     // If binary is assignment
-    if(decl->binaries.size() == 1 && decl->binaries[0]->kind == SyntaxKind::assignmentExpr) {
+    if(decl->binaries.size() == 1 && decl->binaries[0]->kind == SyntaxKind::assignExpr) {
         if(decl->prefix->kind == SyntaxKind::identifierExpr) {
             auto identifier = std::static_pointer_cast<IdentifierExpr>(visit(decl->prefix));
-            auto assignmentExpr = std::static_pointer_cast<AssignmentExpr>(visit(decl->binaries[0]));
+            auto assignmentExpr = std::static_pointer_cast<AssignExpr>(visit(decl->binaries[0]));
             assignmentExpr->left = identifier;
             return assignmentExpr;
         }
         
         if(decl->prefix->kind == SyntaxKind::selfExpr) {
             auto selfExpr = std::static_pointer_cast<SelfExpr>(visit(decl->prefix));
-            auto assignmentExpr = std::static_pointer_cast<AssignmentExpr>(visit(decl->binaries[0]));
+            auto assignmentExpr = std::static_pointer_cast<AssignExpr>(visit(decl->binaries[0]));
             assignmentExpr->left = selfExpr;
             return assignmentExpr;
         }
         
         if(decl->prefix->kind == SyntaxKind::memberAccessExpr) {
             auto memberAccessExpr = std::static_pointer_cast<MemberAccessExpr>(visit(decl->prefix));
-            auto assignmentExpr = std::static_pointer_cast<AssignmentExpr>(visit(decl->binaries[0]));
+            auto assignmentExpr = std::static_pointer_cast<AssignExpr>(visit(decl->binaries[0]));
             assignmentExpr->left = memberAccessExpr;
             return assignmentExpr;
         }
         
         if(decl->prefix->kind == SyntaxKind::subscriptExpr) {
             auto subscriptExpr = std::static_pointer_cast<SubscriptExpr>(visit(decl->prefix));
-            auto assignmentExpr = std::static_pointer_cast<AssignmentExpr>(visit(decl->binaries[0]));
+            auto assignmentExpr = std::static_pointer_cast<AssignExpr>(visit(decl->binaries[0]));
             assignmentExpr->left = subscriptExpr;
             return assignmentExpr;
         }
@@ -369,7 +365,7 @@ Node::Ptr Binder::visit(Expr::Ptr decl) {
     return decl;
 }
 
-Node::Ptr Binder::visit(AssignmentExpr::Ptr decl) {
+Node::Ptr Binder::visit(AssignExpr::Ptr decl) {
     decl->expr = visit(decl->expr);
     return decl;
 }

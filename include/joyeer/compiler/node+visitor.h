@@ -17,7 +17,7 @@ protected:
     virtual Node::Ptr visit(PrefixExpr::Ptr decl) = 0;
     virtual Node::Ptr visit(IdentifierExpr::Ptr decl) = 0;
     virtual Node::Ptr visit(Expr::Ptr decl) = 0;
-    virtual Node::Ptr visit(AssignmentExpr::Ptr decl) = 0;
+    virtual Node::Ptr visit(AssignExpr::Ptr decl) = 0;
     virtual Node::Ptr visit(BinaryExpr::Ptr decl) = 0;
     virtual Node::Ptr visit(OperatorExpr::Ptr decl) = 0;
     virtual Node::Ptr visit(ParenthesizedExpr::Ptr decl) = 0;

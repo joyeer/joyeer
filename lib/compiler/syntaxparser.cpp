@@ -488,7 +488,7 @@ std::shared_ptr<Node> SyntaxParser::tryParseBinaryExpr() {
             Diagnostics::reportError("Error");
             return nullptr;
         }
-        return std::make_shared<AssignmentExpr>(prefixExpr);
+        return std::make_shared<AssignExpr>(prefixExpr);
     }
     
     auto binaryOperator = tryParseOperatorExpr();
