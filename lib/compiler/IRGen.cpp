@@ -111,8 +111,7 @@ void IRGen::emit(const FuncCallExpr::Ptr& funcCallExpr) {
         }
 
         writer.write({
-            .opcode = OP_INVOKE,
-            .value = funcDef->address
+            .opcode = OP_INVOKE,.value = funcDef->address
         });
 
     });
@@ -174,13 +173,13 @@ void IRGen::emit(const VarDecl::Ptr& node) {
     
     auto function = context->curFuncDef();
 //    switch (node->symbol->flag) {
-//        case SymbolFlag::varSymbol:
+//        case SymbolFlag::var:
 //            writer.write({
 //                .opcode = OP_ISTORE,
 //                .value = node->symbol->addressOfVariable
 //            });
 //            break;
-//        case SymbolFlag::fieldSymbol:
+//        case SymbolFlag::field:
 //            writer.write({
 //                .opcode = OP_OLOAD,
 //                .value = (int32_t)(function->paramTypes.size() - 1)      // last parameter is the self object
@@ -217,39 +216,40 @@ void IRGen::emit(const IdentifierExpr::Ptr& node) {
         return;
     }
     
-    if(symbol->flag  == SymbolFlag::varSymbol) {
-        auto type = symbol->type;
+    if(symbol->flag  == SymbolFlag::var) {
+//        auto type = symbol->type;
         
-        if(type->type == BuildIn::TypeDef::Int->type) {
-            writer.write({
-                .opcode = OP_ILOAD,
-                .value = symbol->addressOfVariable
-            });
-        } else if(type->type == JrTypeType::Class || type->type == JrTypeType::Any ) {
-            writer.write({
-                .opcode = OP_OLOAD,
-                .value = symbol->addressOfVariable
-            });
-        } else if(type->type == JrTypeType::Nil) {
-            writer.write({
-                .opcode = OP_OCONST_NIL,
-            });
-        } else {
-            assert(false);
-        }
-        
+//        if(type->type == BuildIn::TypeDef::Int->type) {
+//            writer.write({
+//                .opcode = OP_ILOAD,
+//                .value = symbol->addressOfVariable
+//            });
+//        } else if(type->type == JrTypeType::Class || type->type == JrTypeType::Any ) {
+//            writer.write({
+//                .opcode = OP_OLOAD,
+//                .value = symbol->addressOfVariable
+//            });
+//        } else if(type->type == JrTypeType::Nil) {
+//            writer.write({
+//                .opcode = OP_OCONST_NIL,
+//            });
+//        } else {
+//            assert(false);
+//        }
+        assert(false);
         return;
-    } else if(symbol->flag == SymbolFlag::fieldSymbol) {
+    } else if(symbol->flag == SymbolFlag::field) {
         
         auto function = context->curFuncDef();
         writer.write({
             .opcode = OP_OLOAD,
             .value = (int32_t)(function->paramTypes.size() - 1)
         });
-        writer.write({
-            .opcode = OP_GETFIELD,
-            .value = symbol->addressOfField
-        });
+//        writer.write({
+//            .opcode = OP_GETFIELD,
+//            .value = symbol->addressOfField
+//        });
+        assert(false);
         
         return;
     }
@@ -263,7 +263,7 @@ void IRGen::emit(const AssignExpr::Ptr& node) {
     if(node->left->kind == SyntaxKind::identifierExpr) {
         emit(node->expr);
         auto identifierExpr = std::static_pointer_cast<IdentifierExpr>(node->left);
-//        if(identifierExpr->symbol->flag == SymbolFlag::fieldSymbol) {
+//        if(identifierExpr->symbol->flag == SymbolFlag::field) {
 //            // If the identifier is a field
 //            auto function = context->curFuncDef();
 //            writer.write({
@@ -467,7 +467,7 @@ void IRGen::emit(const StmtsBlock::Ptr& node) {
 }
 
 void IRGen::emit(const FuncDecl::Ptr& node) {
-//    assert(node->symbol->flag == SymbolFlag::funcSymbol);
+//    assert(node->symbol->flag == SymbolFlag::func);
     auto function = std::static_pointer_cast<JrFuncTypeDef>(node->typeDef);
 
     IRGen generator(context);

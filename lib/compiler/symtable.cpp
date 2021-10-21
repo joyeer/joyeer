@@ -3,20 +3,20 @@
 
 std::string debugStringOfSymbolFlag(SymbolFlag flag) {
     switch (flag) {
-        case SymbolFlag::varSymbol:
-            return "varSymbol";
-        case SymbolFlag::funcSymbol:
-            return "funcSymbol";
-        case SymbolFlag::fieldSymbol:
-            return "fieldSymbol";
-        case SymbolFlag::typeSymbol:
-            return "type";
-        case SymbolFlag::fileModuleSymbol:
-            return "module";
+        case SymbolFlag::var:
+            return "var";
+        case SymbolFlag::func:
+            return "func";
+        case SymbolFlag::field:
+            return "field";
+        case SymbolFlag::class_:
+            return "class";
+        case SymbolFlag::fileModule:
+            return "fileModule";
         case SymbolFlag::staticInitializer:
             return "static-initializer";
-        case SymbolFlag::constructor:
-            return "constructor";
+        case SymbolFlag::initializer:
+            return "initializer";
     }
 }
 

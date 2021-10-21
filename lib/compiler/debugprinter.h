@@ -65,7 +65,10 @@ protected:
             if(index > 0) {
                 newline();
             }
-            output << "- " << symbol.second->name;
+            output << "- " << symbol.second->name <<":";
+            DEBUG_BLOCK_START
+                output << "flag: " << debugStringOfSymbolFlag(symbol.second->flag);
+            DEBUG_BLOCK_END
             index ++;
         }
         DEBUG_BLOCK_END
@@ -112,10 +115,10 @@ protected:
             decTab();
         }
 
-        // print static constructor
+        // print static initializer
         if(decl->staticConstructor != nullptr) {
             newline();
-            output << "static-constructor:";
+            output << "static-initializer:";
             incTab();
             newline();
             visit(decl->staticConstructor);

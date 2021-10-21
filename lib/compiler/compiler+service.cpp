@@ -118,6 +118,6 @@ void CompilerService::debugPrint(const Node::Ptr& node, const std::string &debug
 
 void CompilerService::initializeGlobalSymbolTable() {
     globalSymbols = std::make_shared<SymbolTable>();
-    auto symbolPrint = Symbol::make(SymbolFlag::funcSymbol, "&print(message:);");
+    auto symbolPrint = Symbol::make(SymbolFlag::func, "&print(message:);");
     globalSymbols->insert(symbolPrint);
 }

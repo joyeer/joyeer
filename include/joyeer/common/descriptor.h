@@ -40,7 +40,7 @@ struct DescriptorConstants {
     
     // constants
     static constexpr std::string_view FileModuleInitializer = "fileModule-initializer";
-    static constexpr std::string_view Constructor = "constructor";
+    static constexpr std::string_view Constructor = "initializer";
     
     static constexpr char END = ';' ;
 };

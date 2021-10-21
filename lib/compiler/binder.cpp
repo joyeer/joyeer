@@ -77,15 +77,13 @@ Node::Ptr Binder::visit(ClassDecl::Ptr decl) {
     }
     
     auto symbol = Symbol::Ptr(new Symbol {
-        .flag = SymbolFlag::typeSymbol,
+        .flag = SymbolFlag::class_,
         .name = name
     });
     symtable->insert(symbol);
 
     auto objectType = JrClassTypeDef::create(name);
-    
-    symbol->type = objectType;
-    
+
     decl->symtable = context->curSymTable();
     bool hasCustomizedConstructor = false;
     context->visit(CompileStage::visitClassDecl, decl, [this, decl, symtable, &hasCustomizedConstructor]() {
@@ -110,7 +108,7 @@ Node::Ptr Binder::visit(FuncDecl::Ptr decl) {
     }
 
     // prepare the symbol, register the symbol into parent
-    auto symbol = Symbol::make(SymbolFlag::funcSymbol, funcSimpleName);
+    auto symbol = Symbol::make(SymbolFlag::func, funcSimpleName);
     symtable->insert(symbol);
     
     // visit func declaration
@@ -153,7 +151,7 @@ Node::Ptr Binder::visit(VarDecl::Ptr decl) {
     
     // double-check to complicate
     auto stage = context->curStage();
-    auto symbolFlag = (stage == CompileStage::visitClassDecl || stage == CompileStage::visitFileModule) ? SymbolFlag::fieldSymbol : SymbolFlag::varSymbol;
+    auto symbolFlag = (stage == CompileStage::visitClassDecl || stage == CompileStage::visitFileModule) ? SymbolFlag::field : SymbolFlag::var;
     
     auto symbol = std::shared_ptr<Symbol>(new Symbol{
         .flag = symbolFlag,
@@ -226,7 +224,7 @@ Node::Ptr Binder::visit(IdentifierExpr::Ptr decl) {
             }
             
             auto symbol = std::shared_ptr<Symbol>(new Symbol {
-                .flag = SymbolFlag::varSymbol,
+                .flag = SymbolFlag::var,
                 .name = name
             });
             table->insert(symbol);

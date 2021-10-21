@@ -465,9 +465,9 @@ JrTypeDef::Ptr TypeChecker::typeOf(const IdentifierExpr::Ptr& node) {
 
     auto symbol = context->lookup(node->getSimpleName());
     switch(symbol->flag) {
-        case SymbolFlag::varSymbol:
-            return symbol->type;
-        case SymbolFlag::fieldSymbol: {
+        case SymbolFlag::var:
+            return node->typeDef;
+        case SymbolFlag::field: {
 //            auto type = (JrObjectType*)(context->curType());
 //            auto field = type->virtualFields[node->symbol->addressOfField];
 //            return Global::types[field->addressOfField];

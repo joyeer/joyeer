@@ -9,40 +9,39 @@
 #include "joyeer/compiler/typedef.h"
 
 enum class SymbolFlag {
-    varSymbol =             1,
-    funcSymbol =            2,
-    fieldSymbol =           3,
-    // this is a type symbol
-    typeSymbol =            5,
-    fileModuleSymbol =      6,
-    staticInitializer =     7,
-    constructor =           8
+    var                     = 1,
+    func                    = 2,
+    field                   = 3,
+    class_                  = 5,
+    fileModule              = 6,
+    staticInitializer       = 7,
+    initializer             = 8
 };
 
 std::string debugStringOfSymbolFlag(SymbolFlag flag);
 
+/**
+ * Symbol contains information about
+ * 1. name
+ * 2. kind, which kind of symbol, and declared in SymbolFlag
+ * 3. Type
+ * 4. Address
+ */
 struct Symbol {
     using Ptr = std::shared_ptr<Symbol>;
 public:
     SymbolFlag flag;
     std::string name;
-    
+
+    JrTypeDef::Ptr type;
+    int address = -1;
+
     static Symbol::Ptr make(SymbolFlag flag, const std::string& name) {
-        return std::make_shared<Symbol>(Symbol{
+        return std::make_shared<Symbol>( Symbol {
             .flag = flag,
             .name =name
         });
     }
-
-    JrTypeDef::Ptr type = nullptr;
-
-    // locate the var symbol's variable position in function
-    union {
-        int addressOfVariable = -1;
-        // the address of the field in Object
-        int addressOfField;
-    };
-
 };
 
 
