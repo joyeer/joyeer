@@ -69,13 +69,13 @@ Node::Ptr SyntaxParser::tryParseFuncDecl() {
 
     auto identifier = tryParseIdentifierExpr();
     if(identifier == nullptr) {
-        Diagnostics::reportError("[Error] Function execpt a name");
+        Diagnostics::reportError("[Error] Function except a name");
         return nullptr;
     }
 
     auto parameterClause = tryParseParameterClause();
     if(parameterClause == nullptr) {
-        Diagnostics::reportError("[Error] Function execpt a parameters");
+        Diagnostics::reportError("[Error] Function except a parameters");
         return nullptr;
     }
 
@@ -83,7 +83,7 @@ Node::Ptr SyntaxParser::tryParseFuncDecl() {
     
     auto codeBlock = tryParseStmtsBlock();
     if(codeBlock == nullptr) {
-        Diagnostics::reportError("[Error] Function execpt code block");
+        Diagnostics::reportError("[Error] Function except code block");
         return nullptr;
     }
     

@@ -368,6 +368,17 @@ struct FuncCallExpr : Node {
             arguments(std::move(arguments)) {
     }
 
+    /// get callee FuncDecl 's simple-name
+    std::string getCalleeFuncSimpleName() const {
+        auto ss = std::stringstream();
+        ss << identifier->getSimpleName();
+        ss << "(";
+        for(auto& argument: arguments) {
+            ss << argument->label->getSimpleName() << ":";
+        }
+        ss << ")";
+        return ss.str();
+    }
 
     void recursiveUpdate() override {
         NODE_RECURSIVE_UPDATE(identifier, NODE_UPDATE_ACTION_SET_PARENT_THIS(identifier))

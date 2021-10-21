@@ -160,7 +160,6 @@ Node::Ptr Binder::visit(VarDecl::Ptr decl) {
         .name = name,
     });
     symtable->insert(symbol);
-//    decl->pattern->identifier->symbol = symbol;
     
     if(decl->initializer != nullptr) {
         decl->initializer = visit(decl->initializer);
@@ -424,7 +423,7 @@ Node::Ptr Binder::visit(StmtsBlock::Ptr decl) {
 
 Node::Ptr Binder::visit(ParameterClause::Ptr decl) {
     std::vector<Pattern::Ptr> parameters;
-    for(auto parameter: decl->parameters) {
+    for(const auto& parameter: decl->parameters) {
         parameters.push_back(std::static_pointer_cast<Pattern>(visit(parameter)));
     }
     
@@ -458,7 +457,7 @@ Node::Ptr Binder::visit(SelfExpr::Ptr decl) {
 
 Node::Ptr Binder::visit(ArrayLiteralExpr::Ptr decl) {
     std::vector<Node::Ptr> result;
-    for(auto item: decl->items) {
+    for(const auto& item: decl->items) {
         result.push_back(visit(item));
     }
     decl->items = result;

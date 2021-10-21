@@ -57,6 +57,19 @@ protected:
         return "\"" + o.str() + "\"";
     }
 
+    void print(const SymbolTable::Ptr& symtable) {
+        output << "symbol-table:";
+        DEBUG_BLOCK_START
+        int index = 0;
+        for(auto &symbol : symtable->symbols) {
+            if(index > 0) {
+                newline();
+            }
+            output << "- " << symbol.second->name;
+            index ++;
+        }
+        DEBUG_BLOCK_END
+    }
 
 protected:
 
@@ -64,7 +77,8 @@ protected:
         output << "fileModule:";
         DEBUG_BLOCK_START
         output << "simple-name: " << escapeString(decl->getSimpleName());
-
+        newline();
+        print(decl->symtable);
         if(decl->members != nullptr) {
             newline();
             output << "members:";
@@ -140,6 +154,8 @@ protected:
     Node::Ptr visit(FuncCallExpr::Ptr decl) override {
         output << "funcCallExpr:";
         DEBUG_BLOCK_START
+            output << "callee-func-simple-name: " << decl->getCalleeFuncSimpleName();
+            newline();
             output << "identifier:";
             DEBUG_BLOCK_START
                 NodeVisitor::visit(decl->identifier);
