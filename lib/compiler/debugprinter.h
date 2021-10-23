@@ -136,12 +136,15 @@ protected:
 
     Node::Ptr visit(VarDecl::Ptr decl) override {
         output << "varDecl:";
-        incTab();
-        newline();
+        DEBUG_BLOCK_START
         output << "simple-name: " << escapeString(decl->getSimpleName());
         newline();
         visit(decl->pattern);
-        decTab();
+        if(decl->initializer != nullptr) {
+            newline();
+            NodeVisitor::visit(decl->initializer);
+        }
+        DEBUG_BLOCK_END
         return decl;
     }
 

@@ -18,12 +18,12 @@ public:
     }
     
     // get .joyeer file's abstract location
-    [[nodiscard]] const std::string getAbstractLocation() const {
+    [[nodiscard]] std::string getAbstractLocation() const {
         return location.string();
     }
     
     // get .joyeer's parent folder
-    [[nodiscard]] const std::string getParentFolder() const {
+    [[nodiscard]] std::string getParentFolder() const {
         return location.parent_path().string();
     }
     
@@ -32,10 +32,6 @@ public:
     
     // lexer parsing result: token list
     std::vector<Token::Ptr> tokens;
-
-    // grammar parsing result,
-    // fileModule is the root node of AST
-    FileModuleDecl::Ptr filemodule;
 
     JrFileModuleTypeDef::Ptr moduleClass;
     

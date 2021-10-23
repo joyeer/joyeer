@@ -209,42 +209,8 @@ Node::Ptr TypeChecker::visit(IdentifierExpr::Ptr node) {
 }
 
 ClassDecl::Ptr TypeChecker::processClassDecl(ClassDecl::Ptr decl) {
-    assert(decl->members == nullptr);
     // visit static fields
-    auto staticFields = std::vector<DeclNode::Ptr>();
-    for(auto& fieldStatement : decl->staticFields) {
-        staticFields.push_back(std::static_pointer_cast<DeclNode>(visit(fieldStatement)));
-    }
-    decl->staticFields = staticFields;
-    
-    // visit instance fields
-    auto instanceFields = std::vector<DeclNode::Ptr>();
-    for(auto& instanceField : decl->instanceFields) {
-        instanceFields.push_back(std::static_pointer_cast<DeclNode>(visit(instanceField)));
-    }
-    decl->instanceFields = instanceFields;
-    
-    // visit constructors
-    auto constructors = std::vector<FuncDecl::Ptr>();
-    for(auto& constructor: decl->constructors) {
-        constructors.push_back(std::static_pointer_cast<FuncDecl>(visit(constructor)));
-    }
-    decl->constructors = constructors;
-    
-    // visit static methods
-    auto staticMethods = std::vector<FuncDecl::Ptr>();
-    for(auto& method: decl->staticMethods) {
-        staticMethods.push_back(std::static_pointer_cast<FuncDecl>(visit(method)));
-    }
-    decl->staticMethods = staticMethods;
-    
-    // visit instance methods
-    auto instanceMethods = std::vector<FuncDecl::Ptr>();
-    for(auto& method: decl->instanceMethods) {
-        instanceMethods.push_back(std::static_pointer_cast<FuncDecl>(visit(method)));
-    }
-    decl->instanceMethods = instanceMethods;
-    
+    visit(decl->members);
     return decl;
 }
 

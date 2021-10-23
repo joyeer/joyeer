@@ -104,10 +104,16 @@ struct Node : std::enable_shared_from_this<Node> {
             case SyntaxKind::varDecl:
             case SyntaxKind::funcDecl:
             case SyntaxKind::classDecl:
+            case SyntaxKind::fileModule:
                 return true;
             default:
                 return false;
         }
+    }
+
+    // return TypeDef underlay, for non-expr, it returns nullptr;
+    JrTypeDef::Ptr getTypeDef() const {
+        return typeDef;
     }
 
     // recursive update the children node

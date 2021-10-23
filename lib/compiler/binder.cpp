@@ -23,12 +23,13 @@ Node::Ptr Binder::visit(const Node::Ptr& node) {
 Node::Ptr Binder::visit(FileModuleDecl::Ptr fileModule) {
     // register FileModule
 
-    auto fileModuleDef =
-    fileModule = normalizeAndPrepareDefaultStaticConstructorForFileModule(fileModule);
+    auto fileModuleDef = std::make_shared<JrFileModuleTypeDef>(fileModule->getSimpleName());
+    context->compiler->declare(fileModuleDef);
+
     fileModule->recursiveUpdate();
 
     context->visit(CompileStage::visitFileModule, fileModule, [fileModule, this]() {
-
+        visit(fileModule->members);
     });
     
     return fileModule;
@@ -145,7 +146,15 @@ Node::Ptr Binder::visit(FuncCallExpr::Ptr decl) {
         auto memberFuncCallExpr = std::make_shared<MemberFuncCallExpr>(memberAccessExpr->callee, memberAccessExpr->member, decl->arguments);
         return visit(memberFuncCallExpr);
     }
-    
+
+    auto callleeSimpleName = decl->getCalleeFuncSimpleName();
+    auto symbol = context->lookup(callleeSimpleName);
+    if(symbol == nullptr) {
+        Diagnostics::reportError(ErrorLevel::failure, "[TODO] cannot find func");
+        return decl;
+    }
+    decl->typeDef = context->compiler->getTypeDefBy(symbol->address);
+
     // go down to bind argument
     std::vector<ArguCallExpr::Ptr> argus;
     for(auto& paramter: decl->arguments) {
