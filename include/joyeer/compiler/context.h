@@ -42,16 +42,16 @@ public:
     void leave(const SymbolTable::Ptr& table);
 
     // return the current FuncDef in the stack
-    JrFuncTypeDef::Ptr curFuncDef() const;
+    [[nodiscard]] JrFuncTypeDef::Ptr curFuncDef() const;
 
-    // return the current JrModuelTypeDef in the stack
-    JrModuleTypeDef::Ptr curModuleDef() const;
+    // return the current JrModuleTypeDef in the stack
+    [[nodiscard]] JrModuleTypeDef::Ptr curModuleDef() const;
 
     // the current parsing source file
     SourceFile::Ptr sourcefile = nullptr;
     
     // The global compiler service
-    CompilerService* compiler{};
+    CompilerService* compiler;
     
 protected:
 

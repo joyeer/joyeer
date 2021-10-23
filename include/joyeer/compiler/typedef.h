@@ -9,7 +9,6 @@
 
 #include <string>
 #include <utility>
-#include <vector>
 
 enum JrTypeType : uint8_t {
     Void = 0x00,
@@ -121,12 +120,15 @@ struct JrModuleTypeDef : JrClassTypeDef {
 };
 
 namespace BuildIn::TypeDef {
+    // call CompilerService to register the following TypeDef
     [[maybe_unused]] static const JrVoidTypeDef::Ptr Void = std::make_shared<JrVoidTypeDef>();
     [[maybe_unused]] static const JrAnyTypeDef::Ptr Any = std::make_shared<JrAnyTypeDef>();
     [[maybe_unused]] static const JrNilTypeDef::Ptr Nil = std::make_shared<JrNilTypeDef>();
     [[maybe_unused]] static const JrIntTypeDef::Ptr Int = std::make_shared<JrIntTypeDef>();
     [[maybe_unused]] static const JrBoolTypeDef::Ptr Bool = std::make_shared<JrBoolTypeDef>();
     [[maybe_unused]] static const JrStringTypeDef::Ptr String = std::make_shared<JrStringTypeDef>();
+
+    static const JrFuncTypeDef::Ptr print = std::make_shared<JrFuncTypeDef>("print(message:)");
 };
 
 #endif //__joyeer_compiler_typedef_h__

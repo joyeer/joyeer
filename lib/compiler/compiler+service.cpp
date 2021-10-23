@@ -20,6 +20,7 @@
 
 CompilerService::CompilerService(CommandLineArguments::Ptr opts):
 options(std::move(opts)) {
+    initializeTypeDefs();
     initializeGlobalSymbolTable();
 }
 
@@ -91,7 +92,16 @@ void CompilerService::compile(const SourceFile::Ptr& sourcefile) {
     context->leave(globalSymbols);
 }
 
-void CompilerService::declare(DeclNode::Ptr decl) {
+void CompilerService::declare(const DeclNode::Ptr& decl) {
+}
+
+void CompilerService::declare(const JrTypeDef::Ptr& type) {
+    type->address = static_cast<int32_t>(types.size());
+    types.push_back(type);
+}
+
+JrTypeDef::Ptr CompilerService::getTypeDefBy(int address) {
+    return types[address];
 }
 
 SourceFile::Ptr CompilerService::tryImport(const CompileContext::Ptr& context, const std::string &moduleName) {
@@ -118,6 +128,16 @@ void CompilerService::debugPrint(const Node::Ptr& node, const std::string &debug
 
 void CompilerService::initializeGlobalSymbolTable() {
     globalSymbols = std::make_shared<SymbolTable>();
-    auto symbolPrint = Symbol::make(SymbolFlag::func, "&print(message:);");
-    globalSymbols->insert(symbolPrint);
+    globalSymbols->insert(Symbol::make(SymbolFlag::func, BuildIn::TypeDef::print->name, BuildIn::TypeDef::print->address));
+}
+
+void CompilerService::initializeTypeDefs() {
+    declare(BuildIn::TypeDef::Void);
+    declare(BuildIn::TypeDef::Any);
+    declare(BuildIn::TypeDef::Nil);
+    declare(BuildIn::TypeDef::Int);
+    declare(BuildIn::TypeDef::Bool);
+    declare(BuildIn::TypeDef::String);
+
+    declare(BuildIn::TypeDef::print);
 }

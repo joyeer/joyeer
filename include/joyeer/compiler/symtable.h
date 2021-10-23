@@ -2,15 +2,12 @@
 #define __joyeer_compiler_syntax_symtable_h__
 
 #include <unordered_map>
-#include <string>
-#include <stack>
-#include <vector>
 
 #include "joyeer/compiler/typedef.h"
 
-enum class SymbolFlag {
-    var                     = 1,
-    func                    = 2,
+enum class SymbolFlag : uint16_t {
+    func = 1,
+    var,
     field                   = 3,
     class_                  = 5,
     fileModule              = 6,
@@ -33,13 +30,19 @@ public:
     SymbolFlag flag;
     std::string name;
 
-    JrTypeDef::Ptr type;
-    int address = -1;
+    // address of JrFileModuleTypeDef/JrFuncTypeDef/Jr
+    int32_t address = -1;
 
-    static Symbol::Ptr make(SymbolFlag flag, const std::string& name) {
-        return std::make_shared<Symbol>( Symbol {
+    // location of field-variable/local-variable inside of Class/FileModule/Func
+    int16_t location = -1;
+
+    // create a new symbol
+    static Symbol::Ptr make(SymbolFlag flag, const std::string& name, int32_t address, int16_t location = -1) {
+        return Symbol::Ptr(new Symbol {
             .flag = flag,
-            .name =name
+            .name =name,
+            .address = address,
+            .location = location
         });
     }
 };

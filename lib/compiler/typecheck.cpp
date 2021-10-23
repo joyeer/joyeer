@@ -1,6 +1,7 @@
 #include "joyeer/compiler/typecheck.h"
 #include "joyeer/compiler/diagnostic.h"
 #include "joyeer/compiler/typedef.h"
+#include "joyeer/compiler/compiler+service.h"
 #include <cassert>
 #include <utility>
 
@@ -526,13 +527,14 @@ JrTypeDef::Ptr TypeChecker::typeOf(const LiteralExpr::Ptr& node) {
 JrTypeDef::Ptr TypeChecker::typeOf(const FuncCallExpr::Ptr& node) {
     auto funcName = node->getSimpleName();
     auto symbol = context->lookup(funcName);
-    return symbol->type;
+    assert(symbol->flag == SymbolFlag::func);
+    return context->compiler->getTypeDefBy(symbol->address);
 }
 
 JrTypeDef::Ptr TypeChecker::typeOf(const MemberFuncCallExpr::Ptr& node) {
     auto funcName = node->getSimpleName();
     auto symbol = context->lookup(funcName);
-    auto funcDef = std::static_pointer_cast<JrFuncTypeDef>(symbol->type);
+    auto funcDef = std::static_pointer_cast<JrFuncTypeDef> (context->compiler->getTypeDefBy(symbol->address));
     return funcDef->returnType;
 }
 

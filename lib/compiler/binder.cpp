@@ -107,8 +107,12 @@ Node::Ptr Binder::visit(FuncDecl::Ptr decl) {
         return nullptr;
     }
 
+    // define FuncTypeDef
+    auto funcDef = std::make_shared<JrFuncTypeDef>(funcSimpleName);
+    context->compiler->declare(funcDef);
+
     // prepare the symbol, register the symbol into parent
-    auto symbol = Symbol::make(SymbolFlag::func, funcSimpleName);
+    auto symbol = Symbol::make(SymbolFlag::func, funcSimpleName, funcDef->address);
     symtable->insert(symbol);
     
     // visit func declaration

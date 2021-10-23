@@ -3,17 +3,21 @@
 
 #include "joyeer/compiler/context.h"
 
-#include <unordered_map>
-
-
 class CompilerService : public std::enable_shared_from_this<CompilerService> {
 public:
+    using Ptr = std::shared_ptr<CompilerService>;
+
     explicit CompilerService(CommandLineArguments::Ptr options);
     void run(const std::string& inputFile);
     
     // declare a DeclNode
-    void declare(DeclNode::Ptr decl);
+    void declare(const DeclNode::Ptr& decl);
 
+    // register a type
+    void declare(const JrTypeDef::Ptr& type);
+
+    // get a TypeDef from an address
+    JrTypeDef::Ptr getTypeDefBy(int address);
 private:
     
     // Compile an SourceFile
@@ -27,6 +31,9 @@ private:
     
     // initialize the global symbol table
     void initializeGlobalSymbolTable();
+
+    // initialize the pre-define TypeDefs
+    void initializeTypeDefs();
     
     CommandLineArguments::Ptr options;
     std::unordered_map<std::string, SourceFile::Ptr> sourceFiles;
@@ -34,5 +41,7 @@ private:
     // global symbols
     SymbolTable::Ptr globalSymbols;
 
+    // Type tables include
+    std::vector<JrTypeDef::Ptr> types;
 };
 #endif
