@@ -86,13 +86,8 @@ void CompilerService::compile(const SourceFile::Ptr& sourcefile) {
     IRGen irGen(context);
     sourcefile->moduleClass = irGen.emit(block);
     CHECK_ERROR_CONTINUE
-    
-    // delcare the FileModuleNode in repos
-    declare(block);
-    context->leave(globalSymbols);
-}
 
-void CompilerService::declare(const DeclNode::Ptr& decl) {
+    context->leave(globalSymbols);
 }
 
 void CompilerService::declare(const JrTypeDef::Ptr& type) {

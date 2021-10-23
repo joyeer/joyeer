@@ -9,9 +9,6 @@ public:
 
     explicit CompilerService(CommandLineArguments::Ptr options);
     void run(const std::string& inputFile);
-    
-    // declare a DeclNode
-    void declare(const DeclNode::Ptr& decl);
 
     // register a type
     void declare(const JrTypeDef::Ptr& type);

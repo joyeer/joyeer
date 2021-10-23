@@ -20,51 +20,50 @@ Node::Ptr Binder::visit(const Node::Ptr& node) {
     return NodeVisitor::visit(node);
 }
 
-Node::Ptr Binder::visit(FileModuleDecl::Ptr filemodule) {
+Node::Ptr Binder::visit(FileModuleDecl::Ptr fileModule) {
     // register FileModule
-    context->compiler->declare(filemodule);
-    
-    filemodule = normalizeAndPrepareDefaultStaticConstructorForFileModule(filemodule);
-    filemodule->recursiveUpdate();
 
-    context->visit(CompileStage::visitFileModule, filemodule, [filemodule, this]() {
+    fileModule = normalizeAndPrepareDefaultStaticConstructorForFileModule(fileModule);
+    fileModule->recursiveUpdate();
+
+    context->visit(CompileStage::visitFileModule, fileModule, [fileModule, this]() {
         // visit static fields
         auto staticFields = std::vector<DeclNode::Ptr>();
-        for(auto& fieldStatement : filemodule->staticFields) {
+        for(auto& fieldStatement : fileModule->staticFields) {
             staticFields.push_back(std::static_pointer_cast<DeclNode>(visit(fieldStatement)));
         }
-        filemodule->staticFields = staticFields;
+        fileModule->staticFields = staticFields;
         
         // visit instance fields
         auto instanceFields = std::vector<DeclNode::Ptr>();
-        for(auto& instanceField : filemodule->instanceFields) {
+        for(auto& instanceField : fileModule->instanceFields) {
             instanceFields.push_back(std::static_pointer_cast<DeclNode>(visit(instanceField)));
         }
-        filemodule->instanceFields = instanceFields;
+        fileModule->instanceFields = instanceFields;
         
         // visit constructors
         auto constructors = std::vector<FuncDecl::Ptr>();
-        for(auto& constructor: filemodule->constructors) {
+        for(auto& constructor: fileModule->constructors) {
             constructors.push_back(std::static_pointer_cast<FuncDecl>(visit(constructor)));
         }
-        filemodule->constructors = constructors;
+        fileModule->constructors = constructors;
         
         // visit static methods
         auto staticMethods = std::vector<FuncDecl::Ptr>();
-        for(auto& method: filemodule->staticMethods) {
+        for(auto& method: fileModule->staticMethods) {
             staticMethods.push_back(std::static_pointer_cast<FuncDecl>(visit(method)));
         }
-        filemodule->staticMethods = staticMethods;
+        fileModule->staticMethods = staticMethods;
         
         // visit instance methods
         auto instanceMethods = std::vector<FuncDecl::Ptr>();
-        for(auto& method: filemodule->instanceMethods) {
+        for(auto& method: fileModule->instanceMethods) {
             instanceMethods.push_back(std::static_pointer_cast<FuncDecl>(visit(method)));
         }
-        filemodule->instanceMethods = instanceMethods;
+        fileModule->instanceMethods = instanceMethods;
     });
     
-    return filemodule;
+    return fileModule;
 }
 
 Node::Ptr Binder::visit(ClassDecl::Ptr decl) {
@@ -220,7 +219,7 @@ Node::Ptr Binder::visit(IdentifierExpr::Ptr decl) {
     
     switch (context->curStage()) {
         case CompileStage::visitFuncParamDecl: {
-            // verify the func delcaration's parameter duplicate name
+            // verify the func declaration's parameter duplicate name
             auto table = context->curSymTable();
             if(table->find(name) != nullptr) {
                 Diagnostics::reportError("[Error] duplicate variable declaration in fucntion");
@@ -232,7 +231,6 @@ Node::Ptr Binder::visit(IdentifierExpr::Ptr decl) {
                 .name = name
             });
             table->insert(symbol);
-//            decl->symbol = symbol;
             return decl;
         }
         default: {
@@ -552,8 +550,6 @@ FileModuleDecl::Ptr  Binder::normalizeAndPrepareDefaultStaticConstructorForFileM
     // clear the code block
     fileModule->members = nullptr;
     fileModule->staticFields = declarations;
-    
-    // register fileModule initializer in compile service
-    context->compiler->declare(moduleStaticInitializer);
+
     return fileModule;
 }
