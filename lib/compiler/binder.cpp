@@ -23,44 +23,12 @@ Node::Ptr Binder::visit(const Node::Ptr& node) {
 Node::Ptr Binder::visit(FileModuleDecl::Ptr fileModule) {
     // register FileModule
 
+    auto fileModuleDef =
     fileModule = normalizeAndPrepareDefaultStaticConstructorForFileModule(fileModule);
     fileModule->recursiveUpdate();
 
     context->visit(CompileStage::visitFileModule, fileModule, [fileModule, this]() {
-        // visit static fields
-        auto staticFields = std::vector<DeclNode::Ptr>();
-        for(auto& fieldStatement : fileModule->staticFields) {
-            staticFields.push_back(std::static_pointer_cast<DeclNode>(visit(fieldStatement)));
-        }
-        fileModule->staticFields = staticFields;
-        
-        // visit instance fields
-        auto instanceFields = std::vector<DeclNode::Ptr>();
-        for(auto& instanceField : fileModule->instanceFields) {
-            instanceFields.push_back(std::static_pointer_cast<DeclNode>(visit(instanceField)));
-        }
-        fileModule->instanceFields = instanceFields;
-        
-        // visit constructors
-        auto constructors = std::vector<FuncDecl::Ptr>();
-        for(auto& constructor: fileModule->constructors) {
-            constructors.push_back(std::static_pointer_cast<FuncDecl>(visit(constructor)));
-        }
-        fileModule->constructors = constructors;
-        
-        // visit static methods
-        auto staticMethods = std::vector<FuncDecl::Ptr>();
-        for(auto& method: fileModule->staticMethods) {
-            staticMethods.push_back(std::static_pointer_cast<FuncDecl>(visit(method)));
-        }
-        fileModule->staticMethods = staticMethods;
-        
-        // visit instance methods
-        auto instanceMethods = std::vector<FuncDecl::Ptr>();
-        for(auto& method: fileModule->instanceMethods) {
-            instanceMethods.push_back(std::static_pointer_cast<FuncDecl>(visit(method)));
-        }
-        fileModule->instanceMethods = instanceMethods;
+
     });
     
     return fileModule;

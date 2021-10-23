@@ -37,7 +37,7 @@ public:
     // fileModule is the root node of AST
     FileModuleDecl::Ptr filemodule;
 
-    JrModuleTypeDef::Ptr moduleClass;
+    JrFileModuleTypeDef::Ptr moduleClass;
     
 protected:
     // the path relative to the working directory

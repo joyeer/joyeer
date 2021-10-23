@@ -554,13 +554,11 @@ JrTypeDef::Ptr TypeChecker::typeOf(const Pattern::Ptr& node) {
 }
 
 JrTypeDef::Ptr TypeChecker::typeOf(const Type::Ptr& node) {
-//    assert(node->symbol->flag == SymbolFlag::typeSymbol);
     return node->typeDef;
 }
 
 JrTypeDef::Ptr TypeChecker::typeOf(const DictLiteralExpr::Ptr& node) {
     assert(false);
-//    return JrObjectMap::Type;
 }
 
 JrTypeDef::Ptr TypeChecker::typeOf(const ArrayLiteralExpr::Ptr& node) {

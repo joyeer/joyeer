@@ -20,7 +20,7 @@ JrFuncTypeDef::JrFuncTypeDef(const std::string &name) :
 JrClassTypeDef::JrClassTypeDef(const std::string &name) :
         JrTypeDef(name, JrTypeType::Function) {}
 
-JrModuleTypeDef::JrModuleTypeDef(const std::string &name) :
+JrFileModuleTypeDef::JrFileModuleTypeDef(const std::string &name) :
         JrClassTypeDef(name) {
     type = JrTypeType::Module;
 }

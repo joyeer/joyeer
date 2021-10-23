@@ -113,10 +113,10 @@ struct JrStringTypeDef : JrClassTypeDef {
     JrStringTypeDef(): JrClassTypeDef("String") { }
 };
 
-struct JrModuleTypeDef : JrClassTypeDef {
-    using Ptr = std::shared_ptr<JrModuleTypeDef>;
+struct JrFileModuleTypeDef : JrClassTypeDef {
+    using Ptr = std::shared_ptr<JrFileModuleTypeDef>;
 
-    explicit JrModuleTypeDef(const std::string& name);
+    explicit JrFileModuleTypeDef(const std::string& name);
 };
 
 namespace BuildIn::TypeDef {

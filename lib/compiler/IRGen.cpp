@@ -85,7 +85,7 @@ void IRGen::emit(const Node::Ptr& node) {
     }
 }
 
-JrModuleTypeDef::Ptr IRGen::emit(const FileModuleDecl::Ptr& decl) {
+JrFileModuleTypeDef::Ptr IRGen::emit(const FileModuleDecl::Ptr& decl) {
 
     assert(decl->members == nullptr);
     assert(decl->staticConstructor != nullptr);
@@ -94,7 +94,7 @@ JrModuleTypeDef::Ptr IRGen::emit(const FileModuleDecl::Ptr& decl) {
         emit(decl->staticConstructor);
     });
 
-    return std::static_pointer_cast<JrModuleTypeDef>(decl->typeDef);
+    return std::static_pointer_cast<JrFileModuleTypeDef>(decl->typeDef);
 }
 
 void IRGen::emit(const FuncCallExpr::Ptr& funcCallExpr) {

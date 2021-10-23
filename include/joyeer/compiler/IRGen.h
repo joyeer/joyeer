@@ -9,7 +9,7 @@ class IRGen {
 public:
     explicit IRGen(CompileContext::Ptr context);
 
-    JrModuleTypeDef::Ptr emit(const FileModuleDecl::Ptr& block);
+    JrFileModuleTypeDef::Ptr emit(const FileModuleDecl::Ptr& block);
     
 protected:
     void emit(const Node::Ptr& node);

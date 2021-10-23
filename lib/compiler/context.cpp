@@ -14,11 +14,11 @@ SymbolTable::Ptr CompileContext::curSymTable() {
     return symbols.back();
 }
 
-void CompileContext::visit(CompileStage stage, std::function<void ()> visitor) {
+void CompileContext::visit(CompileStage stage, const std::function<void ()>& visitor) {
     visit(stage, nullptr, visitor);
 }
 
-void CompileContext::visit(CompileStage stage, Node::Ptr node, std::function<void()> visit) {
+void CompileContext::visit(CompileStage stage, const Node::Ptr& node, const std::function<void()>& visit) {
     stages.push_back(stage);
     auto isDeclNode = node != nullptr && node->isDeclNode();
     Descriptor::Ptr descriptor = nullptr;
@@ -90,6 +90,6 @@ JrFuncTypeDef::Ptr CompileContext::curFuncDef() const {
     return nullptr;
 }
 
-JrModuleTypeDef::Ptr CompileContext::curModuleDef() const {
-    return JrModuleTypeDef::Ptr();
+JrFileModuleTypeDef::Ptr CompileContext::curModuleDef() const {
+    return JrFileModuleTypeDef::Ptr();
 }

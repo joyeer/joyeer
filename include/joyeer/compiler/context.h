@@ -6,8 +6,8 @@
 
 class CompilerService;
 
-enum class CompileStage {
-    visitFileModule,
+enum class CompileStage : uint64_t {
+    visitFileModule  = 1,
     visitCodeBlock,
     visitClassDecl,
     visitVarDecl,
@@ -15,7 +15,6 @@ enum class CompileStage {
     visitFuncDecl,          // process func declaration
     visitFuncNameDecl,      // process func name
     visitFuncParamDecl,
-    
     visitFuncCall,
     visitMemberFuncCall,
     visitMemberAccess,
@@ -29,8 +28,8 @@ public:
     
     explicit CompileContext(CommandLineArguments::Ptr options);
     
-    void visit(CompileStage stage, std::function<void(void)> visit);
-    void visit(CompileStage stage, Node::Ptr node, std::function<void(void)> visit);
+    void visit(CompileStage stage, const std::function<void(void)>& visit);
+    void visit(CompileStage stage, const Node::Ptr& node, const std::function<void(void)>& visit);
 
     [[nodiscard]] CompileStage curStage() const;
     
@@ -45,13 +44,13 @@ public:
     [[nodiscard]] JrFuncTypeDef::Ptr curFuncDef() const;
 
     // return the current JrModuleTypeDef in the stack
-    [[nodiscard]] JrModuleTypeDef::Ptr curModuleDef() const;
+    [[nodiscard]] JrFileModuleTypeDef::Ptr curModuleDef() const;
 
     // the current parsing source file
     SourceFile::Ptr sourcefile = nullptr;
     
     // The global compiler service
-    CompilerService* compiler;
+    CompilerService* compiler{};
     
 protected:
 
