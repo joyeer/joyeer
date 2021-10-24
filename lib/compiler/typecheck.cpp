@@ -114,8 +114,7 @@ Node::Ptr TypeChecker::visit(const MemberFuncCallExpr::Ptr& node) {
     if(symbol == nullptr) {
         Diagnostics::reportError("[Error]Cannot find the function");
     }
-    
-//    node->symbol = symbol;
+
     for(const auto& argument: node->arguments) {
         visit(argument);
     }
@@ -123,32 +122,26 @@ Node::Ptr TypeChecker::visit(const MemberFuncCallExpr::Ptr& node) {
     return node;
 }
 
+Node::Ptr TypeChecker::visit(const VarDecl::Ptr& decl) {
+    assert(decl->getTypeDef() == nullptr);
+    if(decl->initializer != nullptr) {
+        decl->initializer = visit(decl->initializer);
+    }
 
-Node::Ptr TypeChecker::visit(const VarDecl::Ptr& node) {
-    context->visit(CompileStage::visitVarDecl, node, [this, node]() {
-        visit(node->pattern);
+    context->visit(CompileStage::visitVarDecl, decl, [this, decl]() {
+        visit(decl->pattern);
     });
-    
-    if(node->pattern->type == nullptr) {
-        // change the symbol to unfixed symbol
-//        node->symbol->addressOfType = JrType::Any->addressOfType;
+
+    // if the pattern specify the TypeDef, VarDecl will follow the pattern
+    if(decl->pattern->getTypeDef() != nullptr) {
+        decl->typeDef = decl->pattern->getTypeDef();
+    } else {
+        // follow the initializer expression's typedef
+        decl->typeDef = decl->initializer->getTypeDef();
     }
-    
-    if(node->initializer != nullptr) {
-        node->initializer = visit(node->initializer);
-    }
-    
-    // Verify the type of expression
-    if(node->initializer != nullptr) {
-        auto rightType = typeOf(node->initializer);
-        auto leftType = typeOf(node->pattern);
-//        // the node doesn't use
-//        if(node->pattern->type == nullptr && rightType != JrType::Nil) {
-//            node->symbol->addressOfType = rightType->addressOfType;
-//        }
-    }
-    
-    return node;
+
+    assert(decl->getTypeDef() != nullptr);
+    return decl;
 }
 
 Node::Ptr TypeChecker::visit(const ParameterClause::Ptr& node) {
@@ -165,18 +158,8 @@ Node::Ptr TypeChecker::visit(const Pattern::Ptr& node) {
     node->identifier = std::static_pointer_cast<IdentifierExpr>(visit(node->identifier));
     if(node->type != nullptr) {
         node->type = visit(node->type);
-        // binding the identifier symbol's type to Pattern type's symbols' type
-        auto type = typeOf(node->type);
-//        if(node->type->symbol == nullptr) {
-//            node->type->symbol = std::shared_ptr<Symbol>(new Symbol{
-//                .flag = SymbolFlag::typeSymbol,
-//                .type = type
-//            });
-//        }
-
-//        node->identifier->symbol->addressOfType = type->addressOfType;
+        assert(false);
     }
-    
     return node;
 }
 
@@ -253,6 +236,16 @@ Node::Ptr TypeChecker::visit(const Expr::Ptr& node) {
 
 
 Node::Ptr TypeChecker::visit(const LiteralExpr::Ptr& node) {
+    switch(node->literal->kind) {
+        case TokenKind::decimalLiteral:
+            node->typeDef = BuildIn::TypeDef::Int;
+            break;
+        case TokenKind::stringLiteral:
+            node->typeDef = BuildIn::TypeDef::String;
+            break;
+        default:
+            assert(false);
+    }
     return node;
 }
 

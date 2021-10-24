@@ -58,11 +58,6 @@ struct JrAnyTypeDef : JrTypeDef {
     JrAnyTypeDef(): JrTypeDef("Any", JrTypeType::Any) {}
 };
 
-enum JrFuncTypeType : uint8_t {
-    C_Func,
-    VM_Func
-};
-
 struct JrVarTypeDef: JrTypeDef {
     using Ptr = std::shared_ptr<JrVarTypeDef>;
 
@@ -92,6 +87,11 @@ struct JrBlockTypeDef : JrTypeDef {
     std::vector<JrVarTypeDef::Ptr> localVars; // local-variables
 
     explicit JrBlockTypeDef();
+};
+
+enum JrFuncTypeType : uint8_t {
+    C_Func,
+    VM_Func
 };
 
 // Represent Function type (include class's function type)

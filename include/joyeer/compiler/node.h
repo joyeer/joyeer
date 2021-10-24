@@ -838,7 +838,6 @@ struct VarDecl : public DeclNode {
 
     Pattern::Ptr pattern;
     Node::Ptr initializer;
-    Descriptor::Ptr parentDescriptor;
 
     VarDecl(Pattern::Ptr pattern, Node::Ptr initializer) :
             DeclNode(SyntaxKind::varDecl),
