@@ -200,7 +200,7 @@ struct Pattern : public Node {
     using Ptr = std::shared_ptr<Pattern>;
 
     IdentifierExpr::Ptr identifier; // the name of pattern
-    Node::Ptr type; // the type of pattern, optional nullptr
+    Node::Ptr type; // the kind of pattern, optional nullptr
 
     Pattern(IdentifierExpr::Ptr identifier, Node::Ptr type);
 

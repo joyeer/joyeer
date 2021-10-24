@@ -6,8 +6,6 @@
 struct NodeVisitor {
 protected:
     virtual Node::Ptr visit(const Node::Ptr& node);
-    virtual Node::Ptr visit(const Type::Ptr& decl) = 0;
-    virtual Node::Ptr visit(const ParameterClause::Ptr& decl) = 0;
 
     // Expression
     virtual Node::Ptr visit(const Expr::Ptr& decl) = 0;
@@ -31,7 +29,6 @@ protected:
     // Statements
     virtual Node::Ptr visit(const IfStmt::Ptr& decl) = 0;
     virtual Node::Ptr visit(const WhileStmt::Ptr& decl) = 0;
-    virtual Node::Ptr visit(const Pattern::Ptr& decl) = 0;
     virtual Node::Ptr visit(const ReturnStmt::Ptr& decl) = 0;
     virtual Node::Ptr visit(const ArrayType::Ptr& decl) = 0;
     virtual Node::Ptr visit(const FileImportStmt::Ptr& decl) = 0;
@@ -42,6 +39,11 @@ protected:
     virtual Node::Ptr visit(const FileModuleDecl::Ptr& decl) = 0;
     virtual Node::Ptr visit(const ClassDecl::Ptr& classDecl) = 0;
     virtual Node::Ptr visit(const VarDecl::Ptr& varDecl) = 0;
+
+    // Misc
+    virtual Node::Ptr visit(const Pattern::Ptr& decl) = 0;
+    virtual Node::Ptr visit(const Type::Ptr& decl) = 0;
+    virtual Node::Ptr visit(const ParameterClause::Ptr& decl) = 0;
 
 };
 

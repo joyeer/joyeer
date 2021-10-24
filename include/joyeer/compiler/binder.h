@@ -49,32 +49,7 @@ protected:
     Node::Ptr visit(const SubscriptExpr::Ptr& decl) override;
     Node::Ptr visit(const ArrayType::Ptr& decl) override;
     Node::Ptr visit(const FileImportStmt::Ptr& decl) override;
-    
-private:
-    /**
-     Normalize the FileModule's statements & declarations, group into an ConstructorDecl
-     FileModuleNode
-        + FileImportStatement
-        + statement1
-        + statement2
-        + declaration1
-        + declaration2
-        + statement3
-    after normalized --->
-     FileModuleNode
-        + FileImportStatement
-        + ConstructorDecl
-            + statement1
-            + statement2
-            + statement3
-        + declaration1
-        + declaration2
-    */
-    FileModuleDecl::Ptr normalizeAndPrepareDefaultStaticConstructorForFileModule(FileModuleDecl::Ptr filemodule);
-    
-    // process the ClassDecl & FileModuleNode
-    void processClassDecl(ClassDecl::Ptr decl);
-    
+
 private:
     CompileContext::Ptr context;
 };

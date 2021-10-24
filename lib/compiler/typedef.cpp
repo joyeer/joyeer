@@ -5,32 +5,32 @@
 #include "joyeer/compiler/typedef.h"
 
 JrNilTypeDef::JrNilTypeDef():
-        JrTypeDef("nil", JrTypeType::Nil){}
+        JrTypeDef("nil", JrTypeKind::Nil){}
 
 JrVoidTypeDef::JrVoidTypeDef() :
-        JrTypeDef("void", JrTypeType::Void) {}
+        JrTypeDef("void", JrTypeKind::Void) {}
 
 JrIntTypeDef::JrIntTypeDef() :
-        JrTypeDef("Int", JrTypeType::Integer) {}
+        JrTypeDef("Int", JrTypeKind::Integer) {}
 
 JrBoolTypeDef::JrBoolTypeDef() :
-        JrTypeDef("Bool", JrTypeType::Integer) {}
+        JrTypeDef("Bool", JrTypeKind::Integer) {}
 
 JrBlockTypeDef::JrBlockTypeDef() :
-        JrTypeDef("Block", JrTypeType::Block),
+        JrTypeDef("Block", JrTypeKind::Block),
         localVars() {}
 
 JrFuncTypeDef::JrFuncTypeDef(const std::string &name) :
-        JrTypeDef(name, JrTypeType::Function),
-        funcType(JrFuncTypeType::VM_Func),
+        JrTypeDef(name, JrTypeKind::Function),
+        funcKind(JrFuncTypeKind::VM_Func),
         paramTypes(),
         returnType(nullptr) {}
 
 JrClassTypeDef::JrClassTypeDef(const std::string &name) :
-        JrTypeDef(name, JrTypeType::Function) {}
+        JrTypeDef(name, JrTypeKind::Function) {}
 
 JrFileModuleTypeDef::JrFileModuleTypeDef(const std::string &name) :
         JrClassTypeDef(name) {
-    type = JrTypeType::Module;
+    kind = JrTypeKind::Module;
 }
 

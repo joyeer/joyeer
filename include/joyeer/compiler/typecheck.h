@@ -62,7 +62,7 @@ protected:
     JrTypeDef::Ptr typeOf(const ArrayType::Ptr& node);
     JrTypeDef::Ptr typeOf(const PrefixExpr::Ptr& node);
     
-    // Get Code-Block's return type
+    // Get Code-Block's return kind
     void verifyReturnStatement(const StmtsBlock::Ptr& node);
     void verifyReturnStatement(std::vector<Node::Ptr>& statements);
     JrTypeDef::Ptr returnTypeOf(const Node::Ptr& node);

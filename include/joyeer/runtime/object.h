@@ -14,7 +14,7 @@ typedef JrInt       JrObjectRef;
 struct JrValueHold;
 struct JrObjectType;
 
-enum JrTypeKind: JrByte {
+enum JrTypeKind_: JrByte {
     typeVoid            = 0x01,
     typeInt             = 0x02,
     typeFloat           = 0x03,

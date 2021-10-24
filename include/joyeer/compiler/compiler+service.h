@@ -10,7 +10,7 @@ public:
     explicit CompilerService(CommandLineArguments::Ptr options);
     void run(const std::string& inputFile);
 
-    // register a type
+    // register a kind
     void declare(const JrTypeDef::Ptr& type);
 
     // get a TypeDef from an address

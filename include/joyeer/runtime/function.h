@@ -26,7 +26,7 @@ public:
     // all types for param, for object class, the last param is self
     std::vector<JrType*> paramTypes;
     
-    // Function's return type
+    // Function's return kind
     JrType*  returnType;
     
     // Local Variables
@@ -40,7 +40,7 @@ public:
     
     // address index of this function in function table
     int addressOfFunc;
-    // address index of owner type in global type table
+    // address index of owner kind in global kind table
     int addressOfOwnerType;
 };
 

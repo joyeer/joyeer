@@ -67,7 +67,7 @@ void CompilerService::compile(const SourceFile::Ptr& sourcefile) {
     debugPrint(block, block->filename + ".parser.debug.yml");
     CHECK_ERROR_CONTINUE
     
-    // Detect for type creating
+    // Detect for kind creating
     Binder binder(context);
     binder.importDelegate = std::bind(&CompilerService::tryImport, this, std::placeholders::_1, std::placeholders::_2);
     

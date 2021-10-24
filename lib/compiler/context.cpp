@@ -61,7 +61,7 @@ Symbol::Ptr CompileContext::lookup(const std::string &name) {
 JrBlockTypeDef::Ptr CompileContext::curBlockDef() const {
     for (auto iterator = types.rbegin(); iterator != types.rend(); iterator ++) {
         auto typeDef = *iterator;
-        if(typeDef->type == JrTypeType::Block) {
+        if(typeDef->kind == JrTypeKind::Block) {
             return std::static_pointer_cast<JrBlockTypeDef>(typeDef);
         }
     }
@@ -71,7 +71,7 @@ JrBlockTypeDef::Ptr CompileContext::curBlockDef() const {
 JrFuncTypeDef::Ptr CompileContext::curFuncDef() const {
     for (auto iterator = types.rbegin(); iterator != types.rend(); iterator ++) {
         auto typeDef = *iterator;
-        if(typeDef->type == JrTypeType::Function) {
+        if(typeDef->kind == JrTypeKind::Function) {
             return std::static_pointer_cast<JrFuncTypeDef>(typeDef);
         }
     }

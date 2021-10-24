@@ -218,19 +218,19 @@ void IRGen::emit(const IdentifierExpr::Ptr& node) {
     }
     
     if(symbol->flag  == SymbolFlag::var) {
-//        auto type = symbol->type;
+//        auto kind = symbol->kind;
         
-//        if(type->type == BuildIn::TypeDef::Int->type) {
+//        if(kind->kind == BuildIn::TypeDef::Int->kind) {
 //            writer.write({
 //                .opcode = OP_ILOAD,
 //                .value = symbol->addressOfVariable
 //            });
-//        } else if(type->type == JrTypeType::Class || type->type == JrTypeType::Any ) {
+//        } else if(kind->kind == JrTypeKind::Class || kind->kind == JrTypeKind::Any ) {
 //            writer.write({
 //                .opcode = OP_OLOAD,
 //                .value = symbol->addressOfVariable
 //            });
-//        } else if(type->type == JrTypeType::Nil) {
+//        } else if(kind->kind == JrTypeKind::Nil) {
 //            writer.write({
 //                .opcode = OP_OCONST_NIL,
 //            });
@@ -316,7 +316,7 @@ void IRGen::emit(const AssignExpr::Ptr& node) {
         emit(subscriptExpr->identifier);
         emit(subscriptExpr->indexExpr);
         emit(node->expr);
-        // check identifier's symbol's type
+        // check identifier's symbol's kind
 //        if(subscriptExpr->identifier->symbol->addressOfType == JrObjectArray::Type->addressOfType) {
 //            writer.write({
 //                .opcode = OP_INVOKE,
@@ -340,7 +340,7 @@ void IRGen::emit(const AssignExpr::Ptr& node) {
 void IRGen::emit(const Expr::Ptr& node) {
     assert(node->prefix == nullptr);
     assert(node->binaries.empty());
-//    if(node->type == JrObjectString::Type) {
+//    if(node->kind == JrObjectString::Type) {
 //
 //        writer.write({
 //            .opcode = OP_NEW,

@@ -149,7 +149,7 @@ protected:
     }
 
     Node::Ptr visit(const Type::Ptr& decl) override {
-        output << "type:";
+        output << "kind:";
         incTab();
         newline();
         NodeVisitor::visit(decl->identifier);
@@ -272,7 +272,7 @@ protected:
 
         if(decl->returnType != nullptr) {
             newline();
-            output << "return-type:";
+            output << "return-kind:";
             incTab();
             newline();
             NodeVisitor::visit(decl->returnType);

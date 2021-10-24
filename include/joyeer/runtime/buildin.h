@@ -26,7 +26,7 @@ struct Global {
     /// register an new function in global function table
     static void registerFunction(JrFunction* func, JrType* ownerType);
     
-    /// register an new object type in global table
+    /// register an new object kind in global table
     static void registerObjectType(JrType* type);
 
     /// initialize all global tables

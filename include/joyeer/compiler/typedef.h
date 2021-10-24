@@ -10,7 +10,7 @@
 #include <string>
 #include <utility>
 
-enum JrTypeType : uint8_t {
+enum JrTypeKind : uint8_t {
     Void = 0x00,
     Nil,
     Boolean,
@@ -29,33 +29,33 @@ enum JrTypeType : uint8_t {
 struct JrTypeDef {
     using Ptr = std::shared_ptr<JrTypeDef>;
     const std::string name;
-    JrTypeType type;
+    JrTypeKind kind;
     int32_t  address;
 
 protected:
-    JrTypeDef(std::string  name, JrTypeType type):
-        name(std::move(name)),
-        type(type),
-        address(-1) {
+    JrTypeDef(std::string  name, JrTypeKind kind):
+            name(std::move(name)),
+            kind(kind),
+            address(-1) {
     }
 };
 
-// represent Nil type
+// represent Nil kind
 struct JrNilTypeDef : JrTypeDef {
     using Ptr = std::shared_ptr<JrNilTypeDef>;
     JrNilTypeDef();
 };
 
-// represent Void type
+// represent Void kind
 struct JrVoidTypeDef : JrTypeDef {
     using Ptr = std::shared_ptr<JrVoidTypeDef>;
     JrVoidTypeDef();
 };
 
-// represent Any type
+// represent Any kind
 struct JrAnyTypeDef : JrTypeDef {
     using Ptr = std::shared_ptr<JrAnyTypeDef>;
-    JrAnyTypeDef(): JrTypeDef("Any", JrTypeType::Any) {}
+    JrAnyTypeDef(): JrTypeDef("Any", JrTypeKind::Any) {}
 };
 
 struct JrVarTypeDef: JrTypeDef {
@@ -64,17 +64,17 @@ struct JrVarTypeDef: JrTypeDef {
     int position = -1;
 
     explicit JrVarTypeDef(std::string  name):
-            JrTypeDef(name, JrTypeType::Variable) {}
+            JrTypeDef(name, JrTypeKind::Variable) {}
 };
 
 
-// Represent Int type
+// Represent Int kind
 struct JrIntTypeDef : JrTypeDef {
     using Ptr = std::shared_ptr<JrIntTypeDef>;
     JrIntTypeDef();
 };
 
-// Represent Bool type
+// Represent Bool kind
 struct JrBoolTypeDef : JrTypeDef {
     using Ptr = std::shared_ptr<JrBoolTypeDef>;
     JrBoolTypeDef();
@@ -89,16 +89,16 @@ struct JrBlockTypeDef : JrTypeDef {
     explicit JrBlockTypeDef();
 };
 
-enum JrFuncTypeType : uint8_t {
+enum JrFuncTypeKind : uint8_t {
     C_Func,
     VM_Func
 };
 
-// Represent Function type (include class's function type)
+// Represent Function kind (include class's function kind)
 struct JrFuncTypeDef : JrTypeDef {
     using Ptr = std::shared_ptr<JrFuncTypeDef>;
 
-    JrFuncTypeType funcType;
+    JrFuncTypeKind funcKind;
     JrBlockTypeDef::Ptr block;
     std::vector<JrTypeDef::Ptr> paramTypes;
     JrTypeDef::Ptr returnType;

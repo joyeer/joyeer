@@ -17,7 +17,7 @@ struct JrType {
     JrTypeKind kind;
     std::string name;
     
-    // index to the type tables
+    // index to the kind tables
     int addressOfType;
     
     JrType(JrTypeKind kind, const std::string& name);
@@ -67,7 +67,7 @@ struct JrObjectType: public JrType {
                  JrObjectFinalizer finalizer = nullptr);
 };
 
-// Speical type for module class
+// Speical kind for module class
 struct JrModuleClass: public JrObjectType {
     JrModuleClass(const std::string& name);
     
