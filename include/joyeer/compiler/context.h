@@ -27,8 +27,7 @@ public:
     typedef std::shared_ptr<CompileContext> Ptr;
     
     CompileContext(CommandLineArguments::Ptr options, const SymbolTable::Ptr& globalSymTable);
-    
-    void visit(CompileStage stage, const std::function<void(void)>& visit);
+
     void visit(CompileStage stage, const Node::Ptr& node, const std::function<void(void)>& visit);
 
     [[nodiscard]] CompileStage curStage() const;
@@ -44,11 +43,14 @@ public:
     // return the current JrModuleTypeDef in the stack
     [[nodiscard]] JrFileModuleTypeDef::Ptr curModuleDef() const;
 
+    // return the current BlockDef in stack
+    JrBlockTypeDef::Ptr curBlockDef() const;
+
     // the current parsing source file
     SourceFile::Ptr sourcefile = nullptr;
     
     // The global compiler service
-    CompilerService* compiler{};
+    CompilerService* compiler;
     
 protected:
 

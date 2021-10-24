@@ -26,7 +26,7 @@ Node::Ptr TypeChecker::visit(FuncDecl::Ptr node) {
 
     context->visit(CompileStage::visitFuncDecl, node, [this, node]() {
         auto funcDef = context->curFuncDef();
-        context->visit(CompileStage::visitFuncParamDecl, [this, node]() {
+        context->visit(CompileStage::visitFuncParamDecl, node->parameterClause, [this, node]() {
             node->parameterClause = visit(node->parameterClause);
         });
 
@@ -84,7 +84,7 @@ Node::Ptr TypeChecker::visit(FuncCallExpr::Ptr node) {
         }
     }
     
-    auto name = node->getSimpleName();
+    auto name = node->getCalleeFuncSimpleName();
     symbol = context->lookup(name);
     
     if(symbol == nullptr) {
@@ -125,7 +125,7 @@ Node::Ptr TypeChecker::visit(MemberFuncCallExpr::Ptr node) {
 
 
 Node::Ptr TypeChecker::visit(VarDecl::Ptr node) {
-    context->visit(CompileStage::visitVarDecl, [this, node]() {
+    context->visit(CompileStage::visitVarDecl, node, [this, node]() {
         visit(node->pattern);
     });
     
@@ -189,11 +189,9 @@ Node::Ptr TypeChecker::visit(IdentifierExpr::Ptr node) {
         case CompileStage::visitMemberAccess: {
             auto symbol = context->lookup(name);
             if(symbol == nullptr) {
-                Diagnostics::reportError("[Error] Cannot find variable");
+                Diagnostics::reportError(ErrorLevel::failure, "[TODO][Error] Cannot find variable");
             }
             assert(symbol != nullptr);
-//            assert(node->symbol == nullptr);
-//            node->symbol = symbol;
         }
             break;
         case CompileStage::visitAssignExpr:
@@ -225,7 +223,7 @@ Node::Ptr TypeChecker::visit(Type::Ptr node) {
 
 Node::Ptr TypeChecker::visit(StmtsBlock::Ptr node) {
     assert(node->symtable != nullptr);
-    context->visit(CompileStage::visitCodeBlock, [this, node]() {
+    context->visit(CompileStage::visitCodeBlock, node, [this, node]() {
         auto statements = std::vector<Node::Ptr>();
         for(const auto& statement: node->statements) {
             statements.push_back(visit(statement));
@@ -241,7 +239,7 @@ Node::Ptr TypeChecker::visit(ReturnStmt::Ptr node) {
 }
 
 Node::Ptr TypeChecker::visit(Expr::Ptr node) {
-    context->visit(CompileStage::visitExpr, [this, node]() {
+    context->visit(CompileStage::visitExpr, node, [this, node]() {
         auto nodes = std::vector<Node::Ptr>();
         for(const auto& n: node->nodes) {
             nodes.push_back(visit(n));
@@ -272,12 +270,12 @@ Node::Ptr TypeChecker::visit(ParenthesizedExpr::Ptr node) {
 Node::Ptr TypeChecker::visit(IfStmt::Ptr node) {
     node->condition = visit(node->condition);
     
-    context->visit(CompileStage::visitCodeBlock, [this, node](){
+    context->visit(CompileStage::visitCodeBlock, node->ifCodeBlock, [this, node](){
         node->ifCodeBlock = visit(node->ifCodeBlock);
     });
     
     if(node->elseCodeBlock != nullptr) {
-        context->visit(CompileStage::visitCodeBlock, [this, node](){
+        context->visit(CompileStage::visitCodeBlock, node->elseCodeBlock, [this, node](){
             node->elseCodeBlock = visit(node->elseCodeBlock);
         });
     }
@@ -288,7 +286,7 @@ Node::Ptr TypeChecker::visit(IfStmt::Ptr node) {
 Node::Ptr TypeChecker::visit(WhileStmt::Ptr node) {
     node->expr = visit(node->expr);
     
-    context->visit(CompileStage::visitCodeBlock, [this, node]() {
+    context->visit(CompileStage::visitCodeBlock, node->codeBlock, [this, node]() {
         node->codeBlock = visit(node->codeBlock);
     });
     return node;
@@ -300,7 +298,7 @@ Node::Ptr TypeChecker::visit(ArguCallExpr::Ptr node) {
 }
 
 Node::Ptr TypeChecker::visit(ClassDecl::Ptr node) {
-    context->visit(CompileStage::visitClassDecl, [this, node]() {
+    context->visit(CompileStage::visitClassDecl, node->members, [this, node]() {
         node->members = std::static_pointer_cast<StmtsBlock>(visit(node->members));
     });
     return node;
@@ -340,7 +338,7 @@ Node::Ptr TypeChecker::visit(MemberAccessExpr::Ptr node) {
 //    auto type = Global::types[node->callee->symbol->addressOfType];
 //    auto symtable = context->symtableOfType(type);
 
-    context->visit(CompileStage::visitMemberAccess, [this, node](){
+    context->visit(CompileStage::visitMemberAccess, node->member, [this, node](){
 //        if(symtable != nullptr) {
 //            // We will push access flags' symbols
 //            context->entry(symtable);

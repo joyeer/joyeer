@@ -90,7 +90,7 @@ JrFileModuleTypeDef::Ptr IRGen::emit(const FileModuleDecl::Ptr& decl) {
     assert(decl->members == nullptr);
     assert(decl->staticConstructor != nullptr);
 
-    context->visit(CompileStage::visitFileModule, [this, decl]() {
+    context->visit(CompileStage::visitFileModule, decl, [this, decl]() {
         emit(decl->staticConstructor);
     });
 
@@ -99,7 +99,7 @@ JrFileModuleTypeDef::Ptr IRGen::emit(const FileModuleDecl::Ptr& decl) {
 
 void IRGen::emit(const FuncCallExpr::Ptr& funcCallExpr) {
 
-    context->visit(CompileStage::visitFuncCall, [this, funcCallExpr](){
+    context->visit(CompileStage::visitFuncCall, funcCallExpr, [this, funcCallExpr](){
         
         for(const auto& argument : funcCallExpr->arguments) {
             emit(argument);
@@ -118,7 +118,7 @@ void IRGen::emit(const FuncCallExpr::Ptr& funcCallExpr) {
 }
 
 void IRGen::emit(const MemberFuncCallExpr::Ptr& memberFuncCallExpr) {
-    context->visit(CompileStage::visitFuncCall, [this, memberFuncCallExpr](){
+    context->visit(CompileStage::visitFuncCall, memberFuncCallExpr, [this, memberFuncCallExpr](){
         for(const auto& argument : memberFuncCallExpr->arguments) {
             emit(argument);
         }
@@ -459,7 +459,7 @@ void IRGen::emit(const WhileStmt::Ptr& node) {
 }
 
 void IRGen::emit(const StmtsBlock::Ptr& node) {
-    context->visit(CompileStage::visitCodeBlock, [this, node]() {
+    context->visit(CompileStage::visitCodeBlock, node, [this, node]() {
         for(const auto& statement: node->statements) {
             emit(statement);
         }

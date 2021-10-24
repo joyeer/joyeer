@@ -105,6 +105,7 @@ struct Node : std::enable_shared_from_this<Node> {
             case SyntaxKind::funcDecl:
             case SyntaxKind::classDecl:
             case SyntaxKind::fileModule:
+            case SyntaxKind::stmtsBlock:
                 return true;
             default:
                 return false;

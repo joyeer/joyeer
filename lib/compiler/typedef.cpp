@@ -17,7 +17,8 @@ JrBoolTypeDef::JrBoolTypeDef() :
         JrTypeDef("Bool", JrTypeType::Integer) {}
 
 JrBlockTypeDef::JrBlockTypeDef() :
-        JrTypeDef("Block", JrTypeType::Block) {}
+        JrTypeDef("Block", JrTypeType::Block),
+        localVars() {}
 
 JrFuncTypeDef::JrFuncTypeDef(const std::string &name) :
         JrTypeDef(name, JrTypeType::Function),

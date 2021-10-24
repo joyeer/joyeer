@@ -15,10 +15,6 @@ SymbolTable::Ptr CompileContext::curSymTable() {
     return symbols.back();
 }
 
-void CompileContext::visit(CompileStage stage, const std::function<void ()>& visitor) {
-    visit(stage, nullptr, visitor);
-}
-
 void CompileContext::visit(CompileStage stage, const Node::Ptr& node, const std::function<void()>& visit) {
     stages.push_back(stage);
 
@@ -26,18 +22,18 @@ void CompileContext::visit(CompileStage stage, const Node::Ptr& node, const std:
         symbols.push_back(node->symtable);
     }
 
-    if(node != nullptr && node->getTypeDef()) {
+    if(node != nullptr && node->getTypeDef() && node->isDeclNode()) {
         types.push_back(node->getTypeDef());
     }
 
     // visit
     visit();
-    
+
     if(node != nullptr && node->symtable) {
         symbols.pop_back();
     }
 
-    if(node != nullptr && node->getTypeDef()) {
+    if(node != nullptr && node->getTypeDef() && node->isDeclNode()) {
         types.pop_back();
     }
 
@@ -58,7 +54,17 @@ Symbol::Ptr CompileContext::lookup(const std::string &name) {
             return symbol;
         }
     }
-    
+
+    return nullptr;
+}
+
+JrBlockTypeDef::Ptr CompileContext::curBlockDef() const {
+    for (auto iterator = types.rbegin(); iterator != types.rend(); iterator ++) {
+        auto typeDef = *iterator;
+        if(typeDef->type == JrTypeType::Block) {
+            return std::static_pointer_cast<JrBlockTypeDef>(typeDef);
+        }
+    }
     return nullptr;
 }
 

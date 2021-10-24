@@ -86,14 +86,14 @@ Node::Ptr Binder::visit(FuncDecl::Ptr decl) {
     // visit func declaration
     context->visit(CompileStage::visitFuncDecl, decl, [this, decl]() {
         // start to process function name
-        context->visit(CompileStage::visitFuncNameDecl, [this, decl]() {
+        context->visit(CompileStage::visitFuncNameDecl, decl->identifier, [this, decl]() {
             if(decl->identifier != nullptr) {
                 decl->identifier = visit(decl->identifier);
             }
         });
         
         // start to process function parameters
-        context->visit(CompileStage::visitFuncParamDecl, [this, decl]() {
+        context->visit(CompileStage::visitFuncParamDecl, decl->parameterClause, [this, decl]() {
             if(decl->parameterClause != nullptr) {
                 decl->parameterClause = visit(decl->parameterClause);
             }
@@ -121,16 +121,25 @@ Node::Ptr Binder::visit(VarDecl::Ptr decl) {
         Diagnostics::reportError("[Error] duplicate variable name");
     }
 
-    // double-check to complicate
-    auto stage = context->curStage();
-    auto symbolFlag = stage == CompileStage::visitClassDecl ? SymbolFlag::field : SymbolFlag::var;
-
     auto varDef = std::make_shared<JrVarTypeDef>(name);
     context->compiler->declare(varDef);
 
     auto symbol = Symbol::make(SymbolFlag::var, name, varDef->address);
     symtable->insert(symbol);
-    
+
+    // double-check to complicate
+    auto stage = context->curStage();
+    switch (stage) {
+        case CompileStage::visitCodeBlock: {
+            auto blockDef = context->curBlockDef();
+            assert(blockDef);
+            blockDef->localVars.push_back(varDef);
+        }
+            break;
+        default:
+            assert(false);
+    }
+
     if(decl->initializer != nullptr) {
         decl->initializer = visit(decl->initializer);
     }
@@ -388,7 +397,7 @@ Node::Ptr Binder::visit(StmtsBlock::Ptr decl) {
     decl->typeDef = blockDef;
 
     // start to process code block
-    context->visit(CompileStage::visitCodeBlock, [decl, this]() {
+    context->visit(CompileStage::visitCodeBlock, decl,[decl, this]() {
         std::vector<Node::Ptr> statements;
         for(const auto& s: decl->statements) {
             statements.push_back(visit(s));
