@@ -80,5 +80,6 @@ JrFuncTypeDef::Ptr CompileContext::curFuncDef() const {
 }
 
 JrFileModuleTypeDef::Ptr CompileContext::curModuleDef() const {
-    return JrFileModuleTypeDef::Ptr();
+    // The top one must be the FileModuleTypeDef
+    return std::static_pointer_cast<JrFileModuleTypeDef>(types[0]);
 }

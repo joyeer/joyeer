@@ -90,41 +90,6 @@ protected:
             DEBUG_BLOCK_END
         }
 
-        if(!decl->staticFields.empty()) {
-            newline();
-            output << "static-fields:";
-            incTab();
-            for(const auto& var: decl->staticFields) {
-                newline();
-                output << "- ";
-                NodeVisitor::visit(var);
-            }
-            decTab();
-        }
-
-        // print instance fields
-        if(!decl->instanceFields.empty() ) {
-            newline();
-            output << "instance-fields:";
-            incTab();
-            for(const auto& var: decl->instanceFields) {
-                newline();
-                output << "- ";
-                NodeVisitor::visit(var);
-            }
-            decTab();
-        }
-
-        // print static initializer
-        if(decl->staticConstructor != nullptr) {
-            newline();
-            output << "static-initializer:";
-            incTab();
-            newline();
-            visit(decl->staticConstructor);
-            decTab();
-        }
-
         DEBUG_BLOCK_END
         
         return decl;

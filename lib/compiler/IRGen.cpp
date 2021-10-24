@@ -42,12 +42,8 @@ void IRGen::emit(const Node::Ptr& node) {
 }
 
 JrFileModuleTypeDef::Ptr IRGen::emit(const FileModuleDecl::Ptr& decl) {
-
-    assert(decl->members == nullptr);
-    assert(decl->staticConstructor != nullptr);
-
     context->visit(CompileStage::visitFileModule, decl, [this, decl]() {
-        emit(decl->staticConstructor);
+        emit(decl->members);
     });
 
     return std::static_pointer_cast<JrFileModuleTypeDef>(decl->typeDef);
@@ -127,7 +123,13 @@ void IRGen::emit(const LiteralExpr::Ptr& node) {
 
 void IRGen::emit(const VarDecl::Ptr& node) {
     emit(node->initializer);
-    
+
+    auto stage = context->curStage();
+    switch(stage) {
+        case CompileStage::visitCodeBlock:
+            break;
+
+    }
     auto function = context->curFuncDef();
 //    switch (node->symbol->flag) {
 //        case SymbolFlag::var:

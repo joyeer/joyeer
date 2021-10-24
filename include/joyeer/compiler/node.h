@@ -759,22 +759,10 @@ struct ClassDecl : public DeclNode {
     Token::Ptr name = nullptr;
     StmtsBlock::Ptr members;
 
-    std::vector<DeclNode::Ptr> staticFields;
-    std::vector<DeclNode::Ptr> instanceFields;
-    std::vector<FuncDecl::Ptr> staticMethods;
-    std::vector<FuncDecl::Ptr> instanceMethods;
-    std::vector<FuncDecl::Ptr> constructors;
-
-    FuncDecl::Ptr staticConstructor;
-
     ClassDecl(Token::Ptr name, StmtsBlock::Ptr members) :
             DeclNode(SyntaxKind::classDecl),
             name(std::move(name)),
-            members(std::move(members)),
-            staticFields(),
-            staticMethods(),
-            instanceMethods(),
-            instanceFields() {
+            members(std::move(members)) {
         symtable = std::make_shared<SymbolTable>();
     }
 
@@ -784,23 +772,6 @@ struct ClassDecl : public DeclNode {
 
     void recursiveUpdate() override {
         NODE_RECURSIVE_UPDATE(members, NODE_UPDATE_ACTION_SET_PARENT_THIS(members))
-
-        for (auto &field: staticFields) {
-            NODE_RECURSIVE_UPDATE(field, NODE_UPDATE_ACTION_SET_PARENT_THIS_2(field))
-        }
-        for (auto &field: instanceFields) {
-            NODE_RECURSIVE_UPDATE(field, NODE_UPDATE_ACTION_SET_PARENT_THIS_2(field))
-        }
-        for (auto &method: staticMethods) {
-            NODE_RECURSIVE_UPDATE(method, NODE_UPDATE_ACTION_SET_PARENT_THIS_2(method))
-        }
-        for (auto &method: instanceMethods) {
-            NODE_RECURSIVE_UPDATE(method, NODE_UPDATE_ACTION_SET_PARENT_THIS_2(method))
-        }
-        for (auto &constructor: constructors) {
-            NODE_RECURSIVE_UPDATE(constructor, NODE_UPDATE_ACTION_SET_PARENT_THIS_2(constructor))
-        }
-        NODE_RECURSIVE_UPDATE(staticConstructor, NODE_UPDATE_ACTION_SET_PARENT_THIS(staticConstructor))
     }
 };
 
