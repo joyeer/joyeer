@@ -1,85 +1,41 @@
 #include "joyeer/compiler/IRGen.h"
 #include "joyeer/compiler/diagnostic.h"
-#include <cassert>
-#include <unordered_map>
-#include <utility>
-
 
 IRGen::IRGen(CompileContext::Ptr context):
 context(std::move(context)) {
 }
 
 void IRGen::emit(const Node::Ptr& node) {
+
+#define NODE_EMIT(flag, type) \
+    case flag: \
+        emit(std::static_pointer_cast< type >(node)); \
+        break;
+
     switch (node->kind) {
-        case SyntaxKind::fileModule:
-            emit(std::static_pointer_cast<FileModuleDecl>(node));
-            break;
-        case SyntaxKind::varDecl:
-            emit(std::static_pointer_cast<VarDecl>(node));
-            break;
-        case SyntaxKind::funcDecl:
-            emit(std::static_pointer_cast<FuncDecl>(node));
-            break;
-        case SyntaxKind::memberFuncCallExpr:
-            emit(std::static_pointer_cast<MemberFuncCallExpr>(node));
-            break;
-        case SyntaxKind::classDecl:
-            emit(std::static_pointer_cast<ClassDecl>(node));
-            break;
-        case SyntaxKind::stmtsBlock:
-            emit(std::static_pointer_cast<StmtsBlock>(node));
-            break;
-        case SyntaxKind::ifStmt:
-            emit(std::static_pointer_cast<IfStmt>(node));
-            break;
-        case SyntaxKind::expr:
-            emit(std::static_pointer_cast<Expr>(node));
-            break;
-        case SyntaxKind::prefixExpr:
-            emit(std::static_pointer_cast<PrefixExpr>(node));
-            break;
-        case SyntaxKind::identifierExpr:
-            emit(std::static_pointer_cast<IdentifierExpr>(node));
-            break;
-        case SyntaxKind::parenthesizedExpr:
-            emit(std::static_pointer_cast<ParenthesizedExpr>(node));
-            break;
-        case SyntaxKind::arguCallExpr:
-            emit(std::static_pointer_cast<ArguCallExpr>(node));
-            break;
-        case SyntaxKind::funcCallExpr:
-            emit(std::static_pointer_cast<FuncCallExpr>(node));
-            break;
-        case SyntaxKind::memberAccessExpr:
-            emit(std::static_pointer_cast<MemberAccessExpr>(node));
-            break;
-        case SyntaxKind::literalExpr:
-            emit(std::static_pointer_cast<LiteralExpr>(node));
-            break;
-        case SyntaxKind::arrayLiteralExpr:
-            emit(std::static_pointer_cast<ArrayLiteralExpr>(node));
-            break;
-        case SyntaxKind::dictLiteralExpr:
-            emit(std::static_pointer_cast<DictLiteralExpr>(node));
-            break;
-        case SyntaxKind::assignExpr:
-            emit(std::static_pointer_cast<AssignExpr>(node));
-            break;
-        case SyntaxKind::operatorExpr:
-            emit(std::static_pointer_cast<OperatorExpr>(node));
-            break;
-        case SyntaxKind::returnStmt:
-            emit(std::static_pointer_cast<ReturnStmt>(node));
-            break;
-        case SyntaxKind::subscriptExpr:
-            emit(std::static_pointer_cast<SubscriptExpr>(node));
-            break;
-        case SyntaxKind::whileStmt:
-            emit(std::static_pointer_cast<WhileStmt>(node));
-            break;
-        case SyntaxKind::fileimportStmt:
-            emit(std::static_pointer_cast<FileImportStmt>(node));
-            break;
+        NODE_EMIT(SyntaxKind::fileModule, FileModuleDecl)
+        NODE_EMIT(SyntaxKind::varDecl, VarDecl)
+        NODE_EMIT(SyntaxKind::funcDecl, FuncDecl)
+        NODE_EMIT(SyntaxKind::memberFuncCallExpr, MemberFuncCallExpr)
+        NODE_EMIT(SyntaxKind::classDecl, ClassDecl)
+        NODE_EMIT(SyntaxKind::stmtsBlock, StmtsBlock)
+        NODE_EMIT(SyntaxKind::ifStmt, IfStmt)
+        NODE_EMIT(SyntaxKind::expr, Expr)
+        NODE_EMIT(SyntaxKind::prefixExpr, PrefixExpr)
+        NODE_EMIT(SyntaxKind::identifierExpr, IdentifierExpr)
+        NODE_EMIT(SyntaxKind::parenthesizedExpr, ParenthesizedExpr)
+        NODE_EMIT(SyntaxKind::arguCallExpr, ArguCallExpr)
+        NODE_EMIT(SyntaxKind::funcCallExpr, FuncCallExpr)
+        NODE_EMIT(SyntaxKind::memberAccessExpr, MemberAccessExpr)
+        NODE_EMIT(SyntaxKind::literalExpr, LiteralExpr)
+        NODE_EMIT(SyntaxKind::arrayLiteralExpr, ArrayLiteralExpr)
+        NODE_EMIT(SyntaxKind::dictLiteralExpr, DictLiteralExpr)
+        NODE_EMIT(SyntaxKind::assignExpr, AssignExpr)
+        NODE_EMIT(SyntaxKind::operatorExpr, OperatorExpr)
+        NODE_EMIT(SyntaxKind::returnStmt, ReturnStmt)
+        NODE_EMIT(SyntaxKind::subscriptExpr, SubscriptExpr)
+        NODE_EMIT(SyntaxKind::whileStmt, WhileStmt)
+        NODE_EMIT(SyntaxKind::fileimportStmt, FileImportStmt)
         default:
             assert(false);
     }

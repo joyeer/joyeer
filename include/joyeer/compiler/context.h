@@ -44,7 +44,7 @@ public:
     [[nodiscard]] JrFileModuleTypeDef::Ptr curModuleDef() const;
 
     // return the current BlockDef in stack
-    JrBlockTypeDef::Ptr curBlockDef() const;
+    [[nodiscard]] JrBlockTypeDef::Ptr curBlockDef() const;
 
     // the current parsing source file
     SourceFile::Ptr sourcefile = nullptr;
@@ -53,7 +53,7 @@ public:
     CompilerService* compiler;
     
 protected:
-
+    // Symbol Tables in parsing stack, basics, once dive into next AST, will push symbol table into stack
     std::vector<SymbolTable::Ptr> symbols;
 
     // the parsing stack
@@ -61,8 +61,6 @@ protected:
     
     // stage of compiling status, the last element of stages present the current stage
     std::vector<CompileStage> stages;
-
-
 
     CommandLineArguments::Ptr options;
     
