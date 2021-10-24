@@ -62,7 +62,6 @@ Node::Ptr Binder::visit(ClassDecl::Ptr decl) {
 }
 
 Node::Ptr Binder::visit(FuncDecl::Ptr decl) {
-    assert(decl->descriptor != nullptr);
     auto symtable = context->curSymTable();
 
     auto funcSimpleName = decl->getSimpleName();
@@ -532,7 +531,6 @@ FileModuleDecl::Ptr  Binder::normalizeAndPrepareDefaultStaticConstructorForFileM
     auto moduleStaticInitializer = FuncDecl::makeStaticInitializer(fileModule->getSimpleName(), std::make_shared<StmtsBlock>(statements));
     
     // prepare for fileModule initializer's descriptor
-    moduleStaticInitializer->descriptor = std::make_shared<FileModuleInitializerDescriptor>(std::static_pointer_cast<FileModuleDescriptor>(fileModule->descriptor));
     fileModule->staticConstructor = moduleStaticInitializer;
     
     // clear the code block

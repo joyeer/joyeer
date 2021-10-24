@@ -686,7 +686,6 @@ struct ReturnStmt : Node {
 struct DeclNode : public Node {
     using Ptr = std::shared_ptr<DeclNode>;
 public:
-    Descriptor::Ptr descriptor = nullptr;
 
     explicit DeclNode(SyntaxKind kind) : Node(kind) {}
 };
@@ -700,10 +699,6 @@ public:
     Node::Ptr parameterClause;
     Node::Ptr codeBlock;
     Node::Ptr returnType = nullptr;
-
-    struct {
-        Descriptor::Ptr returnDescriptor = nullptr;
-    };
 
     FuncDecl(Node::Ptr identifier, Node::Ptr parameterClause, Node::Ptr returnType, Node::Ptr codeBlock) :
             DeclNode(SyntaxKind::funcDecl),
@@ -819,7 +814,6 @@ public:
             ClassDecl(nullptr, block) {
         this->members = block;
         kind = SyntaxKind::fileModule;
-        this->descriptor = descriptor;
         assert(symtable != nullptr);
     }
 
