@@ -26,7 +26,7 @@ class CompileContext {
 public:
     typedef std::shared_ptr<CompileContext> Ptr;
     
-    explicit CompileContext(CommandLineArguments::Ptr options);
+    CompileContext(CommandLineArguments::Ptr options, const SymbolTable::Ptr& globalSymTable);
     
     void visit(CompileStage stage, const std::function<void(void)>& visit);
     void visit(CompileStage stage, const Node::Ptr& node, const std::function<void(void)>& visit);
@@ -37,8 +37,6 @@ public:
     Symbol::Ptr lookup(const std::string& name);
     
     SymbolTable::Ptr curSymTable() ;
-    void entry(const SymbolTable::Ptr& table);
-    void leave(const SymbolTable::Ptr& table);
 
     // return the current FuncDef in the stack
     [[nodiscard]] JrFuncTypeDef::Ptr curFuncDef() const;
@@ -54,17 +52,16 @@ public:
     
 protected:
 
-    // the parsing stack
-    std::vector<Node::Ptr> parsingStack;
-
     std::vector<SymbolTable::Ptr> symbols;
+
+    // the parsing stack
+    std::vector<JrTypeDef::Ptr> types;
     
     // stage of compiling status, the last element of stages present the current stage
     std::vector<CompileStage> stages;
 
-    // parsing scope's descriptor stacks
-    std::stack<Descriptor::Ptr> descriptors;
-    
+
+
     CommandLineArguments::Ptr options;
     
 };

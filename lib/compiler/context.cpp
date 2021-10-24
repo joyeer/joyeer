@@ -5,8 +5,9 @@
 #include <memory>
 #include <utility>
 
-CompileContext::CompileContext(CommandLineArguments::Ptr options):
+CompileContext::CompileContext(CommandLineArguments::Ptr options, const SymbolTable::Ptr& globalSymTable):
 options(std::move(options)) {
+    symbols.push_back(globalSymTable);
 }
 
 SymbolTable::Ptr CompileContext::curSymTable() {
@@ -20,47 +21,29 @@ void CompileContext::visit(CompileStage stage, const std::function<void ()>& vis
 
 void CompileContext::visit(CompileStage stage, const Node::Ptr& node, const std::function<void()>& visit) {
     stages.push_back(stage);
-    auto isDeclNode = node != nullptr && node->isDeclNode();
-    Descriptor::Ptr descriptor = nullptr;
-    
-    if(isDeclNode) {
-        auto declNode = std::static_pointer_cast<DeclNode>(node);
-        descriptor = declNode->descriptor;
-        descriptors.push(descriptor);
-    }
-    
+
     if(node != nullptr && node->symtable) {
         symbols.push_back(node->symtable);
     }
-    
+
+    if(node != nullptr && node->getTypeDef()) {
+        types.push_back(node->getTypeDef());
+    }
+
     // visit
     visit();
     
     if(node != nullptr && node->symtable) {
         symbols.pop_back();
     }
-    
-    if(isDeclNode) {
-        assert(descriptor != nullptr);
-        assert(descriptors.top() == descriptor);
-        descriptors.pop();
+
+    if(node != nullptr && node->getTypeDef()) {
+        types.pop_back();
     }
-    
+
     assert(stage == stages.back());
     stages.pop_back();
 }
-
-void CompileContext::entry(const SymbolTable::Ptr& table) {
-    assert(table != nullptr);
-    symbols.push_back(table);
-}
-
-void CompileContext::leave(const SymbolTable::Ptr& table) {
-    assert(table != nullptr);
-    assert(symbols.back() == table);
-    symbols.pop_back();
-}
-
 
 CompileStage CompileContext::curStage() const {
     assert(!stages.empty());
@@ -80,10 +63,10 @@ Symbol::Ptr CompileContext::lookup(const std::string &name) {
 }
 
 JrFuncTypeDef::Ptr CompileContext::curFuncDef() const {
-    for (auto iterator = parsingStack.rbegin(); iterator != parsingStack.rend(); iterator ++) {
-        auto node = *iterator;
-        if(node->typeDef->type == JrTypeType::Function) {
-            return std::static_pointer_cast<JrFuncTypeDef>(node->typeDef);
+    for (auto iterator = types.rbegin(); iterator != types.rend(); iterator ++) {
+        auto typeDef = *iterator;
+        if(typeDef->type == JrTypeType::Function) {
+            return std::static_pointer_cast<JrFuncTypeDef>(typeDef);
         }
     }
 

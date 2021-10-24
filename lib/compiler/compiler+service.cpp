@@ -51,10 +51,9 @@ SourceFile::Ptr CompilerService::findSourceFile(const std::string &path, const s
 
 void CompilerService::compile(const SourceFile::Ptr& sourcefile) {
     
-    auto context= std::make_shared<CompileContext>(options);
+    auto context= std::make_shared<CompileContext>(options, globalSymbols);
     context->sourcefile = sourcefile;
     context->compiler = this;
-    context->entry(globalSymbols);
     
     // lex structure analyze
     LexParser lexParser;
@@ -87,7 +86,6 @@ void CompilerService::compile(const SourceFile::Ptr& sourcefile) {
     sourcefile->moduleClass = irGen.emit(block);
     CHECK_ERROR_CONTINUE
 
-    context->leave(globalSymbols);
 }
 
 void CompilerService::declare(const JrTypeDef::Ptr& type) {
@@ -132,7 +130,6 @@ void CompilerService::initializeTypeDefs() {
     declare(BuildIn::TypeDef::Nil);
     declare(BuildIn::TypeDef::Int);
     declare(BuildIn::TypeDef::Bool);
-    declare(BuildIn::TypeDef::String);
 
     declare(BuildIn::TypeDef::print);
 }

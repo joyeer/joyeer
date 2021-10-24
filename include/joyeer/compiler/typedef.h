@@ -17,7 +17,9 @@ enum JrTypeType : uint8_t {
     Integer,
     Long,
     Any,
-    String,
+
+    Variable,
+    Block,
     Class,
     Module,
     Function,
@@ -61,29 +63,15 @@ enum JrFuncTypeType : uint8_t {
     VM_Func
 };
 
-struct JrVariable {
-    using Ptr = std::shared_ptr<JrVariable>;
+struct JrVarTypeDef: JrTypeDef {
+    using Ptr = std::shared_ptr<JrVarTypeDef>;
 
-    JrTypeDef::Ptr type;
-    const std::string name;
+    int position = -1;
 
-    JrVariable(JrTypeDef::Ptr type, std::string  name):
-            type(std::move(type)),
-            name(std::move(name)) {}
+    explicit JrVarTypeDef(std::string  name):
+            JrTypeDef(name, JrTypeType::Variable) {}
 };
 
-// Represent Function type (include class's function type)
-struct JrFuncTypeDef : JrTypeDef {
-    using Ptr = std::shared_ptr<JrFuncTypeDef>;
-
-    JrFuncTypeType funcType;
-    std::vector<JrVariable::Ptr> localVars;
-    std::vector<JrTypeDef::Ptr> paramTypes;
-    JrTypeDef::Ptr returnType;
-    std::vector<Instruction> instructions;
-
-    explicit JrFuncTypeDef(const std::string& name);
-};
 
 // Represent Int type
 struct JrIntTypeDef : JrTypeDef {
@@ -97,6 +85,28 @@ struct JrBoolTypeDef : JrTypeDef {
     JrBoolTypeDef();
 };
 
+// Represent Statement Block Type
+struct JrBlockTypeDef : JrTypeDef {
+    using Ptr = std::shared_ptr<JrBlockTypeDef>;
+
+    std::vector<JrVarTypeDef::Ptr> localVars; // local-variables
+
+    explicit JrBlockTypeDef();
+};
+
+// Represent Function type (include class's function type)
+struct JrFuncTypeDef : JrTypeDef {
+    using Ptr = std::shared_ptr<JrFuncTypeDef>;
+
+    JrFuncTypeType funcType;
+    JrBlockTypeDef::Ptr block;
+    std::vector<JrTypeDef::Ptr> paramTypes;
+    JrTypeDef::Ptr returnType;
+    std::vector<Instruction> instructions;
+
+    explicit JrFuncTypeDef(const std::string& name);
+};
+
 struct JrClassTypeDef : JrTypeDef {
     using Ptr = std::shared_ptr<JrClassTypeDef>;
 
@@ -105,12 +115,6 @@ struct JrClassTypeDef : JrTypeDef {
     static JrClassTypeDef::Ptr create(const std::string& name) {
         return std::make_shared<JrClassTypeDef>(name);
     }
-};
-
-struct JrStringTypeDef : JrClassTypeDef {
-    using Ptr = std::shared_ptr<JrStringTypeDef>;
-
-    JrStringTypeDef(): JrClassTypeDef("String") { }
 };
 
 struct JrFileModuleTypeDef : JrClassTypeDef {
@@ -126,7 +130,8 @@ namespace BuildIn::TypeDef {
     [[maybe_unused]] static const JrNilTypeDef::Ptr Nil = std::make_shared<JrNilTypeDef>();
     [[maybe_unused]] static const JrIntTypeDef::Ptr Int = std::make_shared<JrIntTypeDef>();
     [[maybe_unused]] static const JrBoolTypeDef::Ptr Bool = std::make_shared<JrBoolTypeDef>();
-    [[maybe_unused]] static const JrStringTypeDef::Ptr String = std::make_shared<JrStringTypeDef>();
+
+    static const JrClassTypeDef::Ptr String = std::make_shared<JrClassTypeDef>("String");
 
     static const JrFuncTypeDef::Ptr print = std::make_shared<JrFuncTypeDef>("print(message:)");
 };

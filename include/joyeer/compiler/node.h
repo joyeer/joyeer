@@ -483,13 +483,11 @@ struct ArrayLiteralExpr : Node {
             items(std::move(items)) {
     }
 
-
     void recursiveUpdate() override {
         for (auto &item: items) {
             NODE_RECURSIVE_UPDATE(item, NODE_UPDATE_ACTION_SET_PARENT_THIS_2(item))
         }
     }
-
 };
 
 struct DictLiteralExpr : Node {

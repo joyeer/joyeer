@@ -120,15 +120,15 @@ Node::Ptr Binder::visit(VarDecl::Ptr decl) {
     if(symtable->find(name) != nullptr) {
         Diagnostics::reportError("[Error] duplicate variable name");
     }
-    
+
     // double-check to complicate
     auto stage = context->curStage();
-    auto symbolFlag = (stage == CompileStage::visitClassDecl || stage == CompileStage::visitFileModule) ? SymbolFlag::field : SymbolFlag::var;
-    
-    auto symbol = std::shared_ptr<Symbol>(new Symbol{
-        .flag = symbolFlag,
-        .name = name,
-    });
+    auto symbolFlag = stage == CompileStage::visitClassDecl ? SymbolFlag::field : SymbolFlag::var;
+
+    auto varDef = std::make_shared<JrVarTypeDef>(name);
+    context->compiler->declare(varDef);
+
+    auto symbol = Symbol::make(SymbolFlag::var, name, varDef->address);
     symtable->insert(symbol);
     
     if(decl->initializer != nullptr) {
@@ -381,10 +381,12 @@ Node::Ptr Binder::visit(WhileStmt::Ptr decl) {
 }
 
 Node::Ptr Binder::visit(StmtsBlock::Ptr decl) {
-    
-    auto table = context->curSymTable();
-    decl->symtable = table;
-    
+
+    // generate a JrBlockTypeDef
+    auto blockDef = std::make_shared<JrBlockTypeDef>();
+    context->compiler->declare(blockDef);
+    decl->typeDef = blockDef;
+
     // start to process code block
     context->visit(CompileStage::visitCodeBlock, [decl, this]() {
         std::vector<Node::Ptr> statements;

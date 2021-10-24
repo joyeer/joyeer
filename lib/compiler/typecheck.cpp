@@ -40,7 +40,6 @@ Node::Ptr TypeChecker::visit(FuncDecl::Ptr node) {
         auto parameterClause = std::static_pointer_cast<ParameterClause>(node->parameterClause);
         for(const auto& parameter: parameterClause->parameters) {
             funcDef->paramTypes.push_back(parameter->typeDef);
-            funcDef->localVars.push_back( std::make_shared<JrVariable>(parameter->typeDef, parameter->getIdentifierName()));
         }
 
         node->codeBlock = visit(node->codeBlock);
@@ -226,7 +225,6 @@ Node::Ptr TypeChecker::visit(Type::Ptr node) {
 
 Node::Ptr TypeChecker::visit(StmtsBlock::Ptr node) {
     assert(node->symtable != nullptr);
-    context->entry(node->symtable);
     context->visit(CompileStage::visitCodeBlock, [this, node]() {
         auto statements = std::vector<Node::Ptr>();
         for(const auto& statement: node->statements) {
@@ -234,7 +232,6 @@ Node::Ptr TypeChecker::visit(StmtsBlock::Ptr node) {
         }
         node->statements = statements;
     });
-    context->leave(node->symtable);
     return node;
 }
 
@@ -303,11 +300,9 @@ Node::Ptr TypeChecker::visit(ArguCallExpr::Ptr node) {
 }
 
 Node::Ptr TypeChecker::visit(ClassDecl::Ptr node) {
-    context->entry(node->symtable);
     context->visit(CompileStage::visitClassDecl, [this, node]() {
         node->members = std::static_pointer_cast<StmtsBlock>(visit(node->members));
     });
-    context->leave(node->symtable);
     return node;
 }
 
