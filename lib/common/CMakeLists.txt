@@ -1,5 +1,5 @@
 
-add_joyeer_library(joyeerCommon STATIC
+add_joyeer_library(JoyeerCommon STATIC
     descriptor.cpp
 )
 

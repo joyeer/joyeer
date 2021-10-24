@@ -1,5 +1,5 @@
 
-add_joyeer_library(joyeerRuntime STATIC
+add_joyeer_library(JoyeerRuntime STATIC
     buildin.cpp
     function.cpp
     gc.cpp

@@ -1,5 +1,5 @@
 
-add_joyeer_library(joyeerCompiler STATIC
+add_joyeer_library(JoyeerCompiler STATIC
         binder.cpp
         compiler+service.cpp
         context.cpp

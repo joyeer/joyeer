@@ -111,7 +111,8 @@ void IRGen::emit(const FuncCallExpr::Ptr& funcCallExpr) {
         }
 
         writer.write({
-            .opcode = OP_INVOKE,.value = funcDef->address
+            .opcode = OP_INVOKE,
+            .value = funcDef->address
         });
 
     });
