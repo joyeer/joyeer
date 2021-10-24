@@ -20,7 +20,7 @@ Node::Ptr Binder::visit(const Node::Ptr& node) {
     return NodeVisitor::visit(node);
 }
 
-Node::Ptr Binder::visit(FileModuleDecl::Ptr fileModule) {
+Node::Ptr Binder::visit(const FileModuleDecl::Ptr& fileModule) {
     // register FileModule
 
     auto fileModuleDef = std::make_shared<JrFileModuleTypeDef>(fileModule->getSimpleName());
@@ -35,7 +35,7 @@ Node::Ptr Binder::visit(FileModuleDecl::Ptr fileModule) {
     return fileModule;
 }
 
-Node::Ptr Binder::visit(ClassDecl::Ptr decl) {
+Node::Ptr Binder::visit(const ClassDecl::Ptr& decl) {
     
     auto symtable = context->curSymTable();
     auto name = decl->getSimpleName();
@@ -61,7 +61,7 @@ Node::Ptr Binder::visit(ClassDecl::Ptr decl) {
     return decl;
 }
 
-Node::Ptr Binder::visit(FuncDecl::Ptr decl) {
+Node::Ptr Binder::visit(const FuncDecl::Ptr& decl) {
     auto symtable = context->curSymTable();
 
     auto funcSimpleName = decl->getSimpleName();
@@ -110,7 +110,7 @@ Node::Ptr Binder::visit(FuncDecl::Ptr decl) {
 }
 
 
-Node::Ptr Binder::visit(VarDecl::Ptr decl) {
+Node::Ptr Binder::visit(const VarDecl::Ptr& decl) {
     
     auto pattern = decl->pattern;
     auto symtable = context->curSymTable();
@@ -146,7 +146,7 @@ Node::Ptr Binder::visit(VarDecl::Ptr decl) {
     return decl;
 }
 
-Node::Ptr Binder::visit(FuncCallExpr::Ptr decl) {
+Node::Ptr Binder::visit(const FuncCallExpr::Ptr& decl) {
     
     if(decl->identifier->kind == SyntaxKind::memberAccessExpr) {
         // Transfer to MemberF
@@ -173,7 +173,7 @@ Node::Ptr Binder::visit(FuncCallExpr::Ptr decl) {
     return decl;
 }
 
-Node::Ptr Binder::visit(MemberFuncCallExpr::Ptr decl) {
+Node::Ptr Binder::visit(const MemberFuncCallExpr::Ptr& decl) {
     decl->callee = visit(decl->callee);
     
     std::vector<ArguCallExpr::Ptr> argus;
@@ -184,22 +184,22 @@ Node::Ptr Binder::visit(MemberFuncCallExpr::Ptr decl) {
     return decl;
 }
 
-Node::Ptr Binder::visit(ArguCallExpr::Ptr decl) {
+Node::Ptr Binder::visit(const ArguCallExpr::Ptr& decl) {
     decl->expr = visit(decl->expr);
     
     return decl;
 }
 
-Node::Ptr Binder::visit(LiteralExpr::Ptr decl) {
+Node::Ptr Binder::visit(const LiteralExpr::Ptr& decl) {
     return decl;
 }
 
-Node::Ptr Binder::visit(PrefixExpr::Ptr decl) {
+Node::Ptr Binder::visit(const PrefixExpr::Ptr& decl) {
     decl->expr = visit(decl->expr);
     return decl;
 }
 
-Node::Ptr Binder::visit(IdentifierExpr::Ptr decl) {
+Node::Ptr Binder::visit(const IdentifierExpr::Ptr& decl) {
     auto name = decl->getSimpleName();
     
     switch (context->curStage()) {
@@ -224,7 +224,7 @@ Node::Ptr Binder::visit(IdentifierExpr::Ptr decl) {
     }
 }
 
-Node::Ptr Binder::visit(Expr::Ptr decl) {
+Node::Ptr Binder::visit(const Expr::Ptr& decl) {
     
     // If binary is assignment
     if(decl->binaries.size() == 1 && decl->binaries[0]->kind == SyntaxKind::assignExpr) {
@@ -349,21 +349,21 @@ Node::Ptr Binder::visit(Expr::Ptr decl) {
     return decl;
 }
 
-Node::Ptr Binder::visit(AssignExpr::Ptr decl) {
+Node::Ptr Binder::visit(const AssignExpr::Ptr& decl) {
     decl->expr = visit(decl->expr);
     return decl;
 }
 
-Node::Ptr Binder::visit(BinaryExpr::Ptr decl) {
+Node::Ptr Binder::visit(const BinaryExpr::Ptr& decl) {
     decl->expr = visit(decl->expr);
     return decl;
 }
 
-Node::Ptr Binder::visit(OperatorExpr::Ptr decl) {
+Node::Ptr Binder::visit(const OperatorExpr::Ptr& decl) {
     return decl;
 }
 
-Node::Ptr Binder::visit(ParenthesizedExpr::Ptr decl) {
+Node::Ptr Binder::visit(const ParenthesizedExpr::Ptr& decl) {
     if(decl->expr->kind == SyntaxKind::parenthesizedExpr) {
         auto n = std::static_pointer_cast<ParenthesizedExpr>(decl->expr);
         return visit(n);
@@ -373,7 +373,7 @@ Node::Ptr Binder::visit(ParenthesizedExpr::Ptr decl) {
     return decl;
 }
 
-Node::Ptr Binder::visit(IfStmt::Ptr decl) {
+Node::Ptr Binder::visit(const IfStmt::Ptr& decl) {
     decl->condition = visit(decl->condition);
     decl->ifCodeBlock = visit(decl->ifCodeBlock);
     if(decl->elseCodeBlock != nullptr) {
@@ -382,13 +382,13 @@ Node::Ptr Binder::visit(IfStmt::Ptr decl) {
     return decl;
 }
 
-Node::Ptr Binder::visit(WhileStmt::Ptr decl) {
+Node::Ptr Binder::visit(const WhileStmt::Ptr& decl) {
     decl->expr = visit(decl->expr);
     decl->codeBlock = visit(decl->codeBlock);
     return decl;
 }
 
-Node::Ptr Binder::visit(StmtsBlock::Ptr decl) {
+Node::Ptr Binder::visit(const StmtsBlock::Ptr& decl) {
 
     // generate a JrBlockTypeDef
     auto blockDef = std::make_shared<JrBlockTypeDef>();
@@ -408,7 +408,7 @@ Node::Ptr Binder::visit(StmtsBlock::Ptr decl) {
 }
 
 
-Node::Ptr Binder::visit(ParameterClause::Ptr decl) {
+Node::Ptr Binder::visit(const ParameterClause::Ptr& decl) {
     std::vector<Pattern::Ptr> parameters;
     for(const auto& parameter: decl->parameters) {
         parameters.push_back(std::static_pointer_cast<Pattern>(visit(parameter)));
@@ -418,31 +418,31 @@ Node::Ptr Binder::visit(ParameterClause::Ptr decl) {
     return decl;
 }
 
-Node::Ptr Binder::visit(Pattern::Ptr decl) {
+Node::Ptr Binder::visit(const Pattern::Ptr& decl) {
     decl->identifier = std::static_pointer_cast<IdentifierExpr>(visit(decl->identifier));
     decl->type = std::static_pointer_cast<Type>(visit(decl->type));
     return decl;
 }
 
-Node::Ptr Binder::visit(Type::Ptr decl) {
+Node::Ptr Binder::visit(const Type::Ptr& decl) {
     return decl;
 }
 
-Node::Ptr Binder::visit(ReturnStmt::Ptr decl) {
+Node::Ptr Binder::visit(const ReturnStmt::Ptr& decl) {
     if(decl->expr != nullptr) {
         decl->expr = visit(decl->expr);
     }
     return decl;
 }
 
-Node::Ptr Binder::visit(SelfExpr::Ptr decl) {
+Node::Ptr Binder::visit(const SelfExpr::Ptr& decl) {
     assert(decl->identifier != nullptr);
     
     decl->identifier = std::static_pointer_cast<IdentifierExpr>(visit(decl->identifier));
     return decl;
 }
 
-Node::Ptr Binder::visit(ArrayLiteralExpr::Ptr decl) {
+Node::Ptr Binder::visit(const ArrayLiteralExpr::Ptr& decl) {
     std::vector<Node::Ptr> result;
     for(const auto& item: decl->items) {
         result.push_back(visit(item));
@@ -451,7 +451,7 @@ Node::Ptr Binder::visit(ArrayLiteralExpr::Ptr decl) {
     return decl;
 }
 
-Node::Ptr Binder::visit(DictLiteralExpr::Ptr decl) {
+Node::Ptr Binder::visit(const DictLiteralExpr::Ptr& decl) {
     std::vector<std::tuple<Node::Ptr, Node::Ptr>> result;
     for(auto item: decl->items) {
         auto keyItem = visit(std::get<0>(item));
@@ -462,29 +462,29 @@ Node::Ptr Binder::visit(DictLiteralExpr::Ptr decl) {
     return decl;
 }
 
-Node::Ptr Binder::visit(MemberAccessExpr::Ptr decl) {
+Node::Ptr Binder::visit(const MemberAccessExpr::Ptr& decl) {
     decl->callee = visit(decl->callee);
     decl->member = visit(decl->member);
     return decl;
 }
 
-Node::Ptr Binder::visit(MemberAssignExpr::Ptr decl) {
+Node::Ptr Binder::visit(const MemberAssignExpr::Ptr& decl) {
     return decl;
 }
 
-Node::Ptr Binder::visit(SubscriptExpr::Ptr decl) {
+Node::Ptr Binder::visit(const SubscriptExpr::Ptr& decl) {
     decl->identifier = visit(decl->identifier);
     decl->indexExpr = visit(decl->indexExpr);
     
     return decl;
 }
 
-Node::Ptr Binder::visit(ArrayType::Ptr decl) {
+Node::Ptr Binder::visit(const ArrayType::Ptr& decl) {
     decl->type = visit(decl->type);
     return decl;
 }
 
-Node::Ptr Binder::visit(FileImportStmt::Ptr decl) {
+Node::Ptr Binder::visit(const FileImportStmt::Ptr& decl) {
     if(context->curStage() != CompileStage::visitFileModule) {
         Diagnostics::reportError(Diagnostics::errorFileImportShouldAtTopOfSourceFile);
         return nullptr;

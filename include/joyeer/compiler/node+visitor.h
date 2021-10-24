@@ -6,42 +6,42 @@
 struct NodeVisitor {
 protected:
     virtual Node::Ptr visit(const Node::Ptr& node);
-    virtual Node::Ptr visit(Type::Ptr decl) = 0;
-    virtual Node::Ptr visit(ParameterClause::Ptr decl) = 0;
+    virtual Node::Ptr visit(const Type::Ptr& decl) = 0;
+    virtual Node::Ptr visit(const ParameterClause::Ptr& decl) = 0;
 
     // Expression
-    virtual Node::Ptr visit(Expr::Ptr decl) = 0;
-    virtual Node::Ptr visit(FuncCallExpr::Ptr decl) = 0;
-    virtual Node::Ptr visit(MemberFuncCallExpr::Ptr decl) = 0;
-    virtual Node::Ptr visit(ArguCallExpr::Ptr decl) = 0;
-    virtual Node::Ptr visit(LiteralExpr::Ptr decl) = 0;
-    virtual Node::Ptr visit(PrefixExpr::Ptr decl) = 0;
-    virtual Node::Ptr visit(IdentifierExpr::Ptr decl) = 0;
-    virtual Node::Ptr visit(AssignExpr::Ptr decl) = 0;
-    virtual Node::Ptr visit(BinaryExpr::Ptr decl) = 0;
-    virtual Node::Ptr visit(OperatorExpr::Ptr decl) = 0;
-    virtual Node::Ptr visit(ParenthesizedExpr::Ptr decl) = 0;
-    virtual Node::Ptr visit(SelfExpr::Ptr decl) = 0;
-    virtual Node::Ptr visit(ArrayLiteralExpr::Ptr decl) = 0;
-    virtual Node::Ptr visit(DictLiteralExpr::Ptr decl) = 0;
-    virtual Node::Ptr visit(MemberAccessExpr::Ptr decl) = 0;
-    virtual Node::Ptr visit(MemberAssignExpr::Ptr decl) = 0;
-    virtual Node::Ptr visit(SubscriptExpr::Ptr decl) = 0;
+    virtual Node::Ptr visit(const Expr::Ptr& decl) = 0;
+    virtual Node::Ptr visit(const FuncCallExpr::Ptr& decl) = 0;
+    virtual Node::Ptr visit(const MemberFuncCallExpr::Ptr& decl) = 0;
+    virtual Node::Ptr visit(const ArguCallExpr::Ptr& decl) = 0;
+    virtual Node::Ptr visit(const LiteralExpr::Ptr& decl) = 0;
+    virtual Node::Ptr visit(const PrefixExpr::Ptr& decl) = 0;
+    virtual Node::Ptr visit(const IdentifierExpr::Ptr& decl) = 0;
+    virtual Node::Ptr visit(const AssignExpr::Ptr& decl) = 0;
+    virtual Node::Ptr visit(const BinaryExpr::Ptr& decl) = 0;
+    virtual Node::Ptr visit(const OperatorExpr::Ptr& decl) = 0;
+    virtual Node::Ptr visit(const ParenthesizedExpr::Ptr& decl) = 0;
+    virtual Node::Ptr visit(const SelfExpr::Ptr& decl) = 0;
+    virtual Node::Ptr visit(const ArrayLiteralExpr::Ptr& decl) = 0;
+    virtual Node::Ptr visit(const DictLiteralExpr::Ptr& decl) = 0;
+    virtual Node::Ptr visit(const MemberAccessExpr::Ptr& decl) = 0;
+    virtual Node::Ptr visit(const MemberAssignExpr::Ptr& decl) = 0;
+    virtual Node::Ptr visit(const SubscriptExpr::Ptr& decl) = 0;
 
     // Statements
-    virtual Node::Ptr visit(IfStmt::Ptr decl) = 0;
-    virtual Node::Ptr visit(WhileStmt::Ptr decl) = 0;
-    virtual Node::Ptr visit(Pattern::Ptr decl) = 0;
-    virtual Node::Ptr visit(ReturnStmt::Ptr decl) = 0;
-    virtual Node::Ptr visit(ArrayType::Ptr decl) = 0;
-    virtual Node::Ptr visit(FileImportStmt::Ptr decl) = 0;
+    virtual Node::Ptr visit(const IfStmt::Ptr& decl) = 0;
+    virtual Node::Ptr visit(const WhileStmt::Ptr& decl) = 0;
+    virtual Node::Ptr visit(const Pattern::Ptr& decl) = 0;
+    virtual Node::Ptr visit(const ReturnStmt::Ptr& decl) = 0;
+    virtual Node::Ptr visit(const ArrayType::Ptr& decl) = 0;
+    virtual Node::Ptr visit(const FileImportStmt::Ptr& decl) = 0;
 
     // Declarations
-    virtual Node::Ptr visit(StmtsBlock::Ptr decl) = 0;
-    virtual Node::Ptr visit(FuncDecl::Ptr decl) = 0;
-    virtual Node::Ptr visit(FileModuleDecl::Ptr decl) = 0;
-    virtual Node::Ptr visit(ClassDecl::Ptr classDecl) = 0;
-    virtual Node::Ptr visit(VarDecl::Ptr varDecl) = 0;
+    virtual Node::Ptr visit(const StmtsBlock::Ptr& decl) = 0;
+    virtual Node::Ptr visit(const FuncDecl::Ptr& decl) = 0;
+    virtual Node::Ptr visit(const FileModuleDecl::Ptr& decl) = 0;
+    virtual Node::Ptr visit(const ClassDecl::Ptr& classDecl) = 0;
+    virtual Node::Ptr visit(const VarDecl::Ptr& varDecl) = 0;
 
 };
 

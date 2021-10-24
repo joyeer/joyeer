@@ -13,7 +13,7 @@ Node::Ptr TypeChecker::visit(const Node::Ptr& node) {
     return NodeVisitor::visit(node);
 }
 
-Node::Ptr TypeChecker::visit(FileModuleDecl::Ptr node) {
+Node::Ptr TypeChecker::visit(const FileModuleDecl::Ptr& node) {
     
     context->visit(CompileStage::visitFileModule, node, [this, node](){
         processClassDecl(node);
@@ -22,7 +22,7 @@ Node::Ptr TypeChecker::visit(FileModuleDecl::Ptr node) {
     return node;
 }
 
-Node::Ptr TypeChecker::visit(FuncDecl::Ptr node) {
+Node::Ptr TypeChecker::visit(const FuncDecl::Ptr& node) {
 
     context->visit(CompileStage::visitFuncDecl, node, [this, node]() {
         auto funcDef = context->curFuncDef();
@@ -51,7 +51,7 @@ Node::Ptr TypeChecker::visit(FuncDecl::Ptr node) {
     return node;
 }
 
-Node::Ptr TypeChecker::visit(FuncCallExpr::Ptr node) {
+Node::Ptr TypeChecker::visit(const FuncCallExpr::Ptr& node) {
     
     Symbol::Ptr symbol = nullptr;
     
@@ -101,7 +101,7 @@ Node::Ptr TypeChecker::visit(FuncCallExpr::Ptr node) {
 
 
 
-Node::Ptr TypeChecker::visit(MemberFuncCallExpr::Ptr node) {
+Node::Ptr TypeChecker::visit(const MemberFuncCallExpr::Ptr& node) {
     visit(node->callee);
     
     auto type = node->callee->typeDef;
@@ -124,7 +124,7 @@ Node::Ptr TypeChecker::visit(MemberFuncCallExpr::Ptr node) {
 }
 
 
-Node::Ptr TypeChecker::visit(VarDecl::Ptr node) {
+Node::Ptr TypeChecker::visit(const VarDecl::Ptr& node) {
     context->visit(CompileStage::visitVarDecl, node, [this, node]() {
         visit(node->pattern);
     });
@@ -151,7 +151,7 @@ Node::Ptr TypeChecker::visit(VarDecl::Ptr node) {
     return node;
 }
 
-Node::Ptr TypeChecker::visit(ParameterClause::Ptr node) {
+Node::Ptr TypeChecker::visit(const ParameterClause::Ptr& node) {
     auto symtable = context->curSymTable();
     auto parameters = std::vector<Pattern::Ptr>();
     for(const auto& param: node->parameters) {
@@ -161,7 +161,7 @@ Node::Ptr TypeChecker::visit(ParameterClause::Ptr node) {
     return node;
 }
 
-Node::Ptr TypeChecker::visit(Pattern::Ptr node) {
+Node::Ptr TypeChecker::visit(const Pattern::Ptr& node) {
     node->identifier = std::static_pointer_cast<IdentifierExpr>(visit(node->identifier));
     if(node->type != nullptr) {
         node->type = visit(node->type);
@@ -180,7 +180,7 @@ Node::Ptr TypeChecker::visit(Pattern::Ptr node) {
     return node;
 }
 
-Node::Ptr TypeChecker::visit(IdentifierExpr::Ptr node) {
+Node::Ptr TypeChecker::visit(const IdentifierExpr::Ptr& node) {
     auto name = node->getSimpleName();
     switch (context->curStage()) {
         case CompileStage::visitFileModule:
@@ -211,7 +211,7 @@ ClassDecl::Ptr TypeChecker::processClassDecl(ClassDecl::Ptr decl) {
     return decl;
 }
 
-Node::Ptr TypeChecker::visit(Type::Ptr node) {
+Node::Ptr TypeChecker::visit(const Type::Ptr& node) {
     auto symbol = context->lookup(node->identifier->getSimpleName());
     if(symbol == nullptr) {
         Diagnostics::reportError("[Error]Cannot find type");
@@ -221,7 +221,7 @@ Node::Ptr TypeChecker::visit(Type::Ptr node) {
     return node;
 }
 
-Node::Ptr TypeChecker::visit(StmtsBlock::Ptr node) {
+Node::Ptr TypeChecker::visit(const StmtsBlock::Ptr& node) {
     assert(node->symtable != nullptr);
     context->visit(CompileStage::visitCodeBlock, node, [this, node]() {
         auto statements = std::vector<Node::Ptr>();
@@ -233,12 +233,12 @@ Node::Ptr TypeChecker::visit(StmtsBlock::Ptr node) {
     return node;
 }
 
-Node::Ptr TypeChecker::visit(ReturnStmt::Ptr node) {
+Node::Ptr TypeChecker::visit(const ReturnStmt::Ptr& node) {
     node->expr = visit(node->expr);
     return node;
 }
 
-Node::Ptr TypeChecker::visit(Expr::Ptr node) {
+Node::Ptr TypeChecker::visit(const Expr::Ptr& node) {
     context->visit(CompileStage::visitExpr, node, [this, node]() {
         auto nodes = std::vector<Node::Ptr>();
         for(const auto& n: node->nodes) {
@@ -252,22 +252,22 @@ Node::Ptr TypeChecker::visit(Expr::Ptr node) {
 }
 
 
-Node::Ptr TypeChecker::visit(LiteralExpr::Ptr node) {
+Node::Ptr TypeChecker::visit(const LiteralExpr::Ptr& node) {
     return node;
 }
 
-Node::Ptr TypeChecker::visit(AssignExpr::Ptr node) {
+Node::Ptr TypeChecker::visit(const AssignExpr::Ptr& node) {
     node->left = visit(node->left);
     node->expr = visit(node->expr);
     return node;
 }
 
-Node::Ptr TypeChecker::visit(ParenthesizedExpr::Ptr node) {
+Node::Ptr TypeChecker::visit(const ParenthesizedExpr::Ptr& node) {
     node->expr = visit(node->expr);
     return node;
 }
 
-Node::Ptr TypeChecker::visit(IfStmt::Ptr node) {
+Node::Ptr TypeChecker::visit(const IfStmt::Ptr& node) {
     node->condition = visit(node->condition);
     
     context->visit(CompileStage::visitCodeBlock, node->ifCodeBlock, [this, node](){
@@ -283,7 +283,7 @@ Node::Ptr TypeChecker::visit(IfStmt::Ptr node) {
     return node;
 }
 
-Node::Ptr TypeChecker::visit(WhileStmt::Ptr node) {
+Node::Ptr TypeChecker::visit(const WhileStmt::Ptr& node) {
     node->expr = visit(node->expr);
     
     context->visit(CompileStage::visitCodeBlock, node->codeBlock, [this, node]() {
@@ -292,26 +292,26 @@ Node::Ptr TypeChecker::visit(WhileStmt::Ptr node) {
     return node;
 }
 
-Node::Ptr TypeChecker::visit(ArguCallExpr::Ptr node) {
+Node::Ptr TypeChecker::visit(const ArguCallExpr::Ptr& node) {
     node->expr = visit(node->expr);
     return node;
 }
 
-Node::Ptr TypeChecker::visit(ClassDecl::Ptr node) {
+Node::Ptr TypeChecker::visit(const ClassDecl::Ptr& node) {
     context->visit(CompileStage::visitClassDecl, node->members, [this, node]() {
         node->members = std::static_pointer_cast<StmtsBlock>(visit(node->members));
     });
     return node;
 }
 
-Node::Ptr TypeChecker::visit(SelfExpr::Ptr node) {
+Node::Ptr TypeChecker::visit(const SelfExpr::Ptr& node) {
     if(node->identifier != nullptr) {
         node->identifier = std::static_pointer_cast<IdentifierExpr>(visit(node->identifier));
     }
     return node;
 }
 
-Node::Ptr TypeChecker::visit(ArrayLiteralExpr::Ptr node) {
+Node::Ptr TypeChecker::visit(const ArrayLiteralExpr::Ptr& node) {
     auto items = std::vector<Node::Ptr>();
     for(const auto& item: node->items) {
         items.push_back(visit(item));
@@ -320,7 +320,7 @@ Node::Ptr TypeChecker::visit(ArrayLiteralExpr::Ptr node) {
     return node;
 }
 
-Node::Ptr TypeChecker::visit(DictLiteralExpr::Ptr node) {
+Node::Ptr TypeChecker::visit(const DictLiteralExpr::Ptr& node) {
     auto items = std::vector<std::tuple<Node::Ptr, Node::Ptr>>();
     for(auto item: node->items) {
         items.emplace_back(
@@ -332,7 +332,7 @@ Node::Ptr TypeChecker::visit(DictLiteralExpr::Ptr node) {
     return node;
 }
 
-Node::Ptr TypeChecker::visit(MemberAccessExpr::Ptr node) {
+Node::Ptr TypeChecker::visit(const MemberAccessExpr::Ptr& node) {
     node->callee = visit(node->callee);
     
 //    auto type = Global::types[node->callee->symbol->addressOfType];
@@ -352,35 +352,35 @@ Node::Ptr TypeChecker::visit(MemberAccessExpr::Ptr node) {
     return node;
 }
 
-Node::Ptr TypeChecker::visit(MemberAssignExpr::Ptr node) {
+Node::Ptr TypeChecker::visit(const MemberAssignExpr::Ptr& node) {
     return node;
 }
 
-Node::Ptr TypeChecker::visit(SubscriptExpr::Ptr node) {
+Node::Ptr TypeChecker::visit(const SubscriptExpr::Ptr& node) {
     node->identifier = visit(node->identifier);
     node->indexExpr = visit(node->indexExpr);
     return node;
 }
 
-Node::Ptr TypeChecker::visit(ArrayType::Ptr node) {
+Node::Ptr TypeChecker::visit(const ArrayType::Ptr& node) {
     node->type = visit(node->type);
     return node;
 }
 
-Node::Ptr TypeChecker::visit(PrefixExpr::Ptr node) {
+Node::Ptr TypeChecker::visit(const PrefixExpr::Ptr& node) {
     node->expr = visit(node->expr);
     return node;
 }
 
-Node::Ptr TypeChecker::visit(FileImportStmt::Ptr node) {
+Node::Ptr TypeChecker::visit(const FileImportStmt::Ptr& node) {
     return node;
 }
 
-Node::Ptr TypeChecker::visit(BinaryExpr::Ptr decl) {
+Node::Ptr TypeChecker::visit(const  BinaryExpr::Ptr& decl) {
     assert(false);
 }
 
-Node::Ptr TypeChecker::visit(OperatorExpr::Ptr decl) {
+Node::Ptr TypeChecker::visit(const OperatorExpr::Ptr& decl) {
     return decl;
 }
 

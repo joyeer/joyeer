@@ -76,7 +76,7 @@ protected:
 
 protected:
 
-    Node::Ptr visit(FileModuleDecl::Ptr decl) override {
+    Node::Ptr visit(const FileModuleDecl::Ptr& decl) override {
         output << "fileModule:";
         DEBUG_BLOCK_START
         output << "simple-name: " << escapeString(decl->getSimpleName());
@@ -130,11 +130,11 @@ protected:
         return decl;
     }
 
-    Node::Ptr visit(ClassDecl::Ptr decl) override {
+    Node::Ptr visit(const ClassDecl::Ptr& decl) override {
         return decl;
     }
 
-    Node::Ptr visit(VarDecl::Ptr decl) override {
+    Node::Ptr visit(const VarDecl::Ptr& decl) override {
         output << "varDecl:";
         DEBUG_BLOCK_START
         output << "simple-name: " << escapeString(decl->getSimpleName());
@@ -148,7 +148,7 @@ protected:
         return decl;
     }
 
-    Node::Ptr visit(Type::Ptr decl) override {
+    Node::Ptr visit(const Type::Ptr& decl) override {
         output << "type:";
         incTab();
         newline();
@@ -157,7 +157,7 @@ protected:
         return decl;
     }
 
-    Node::Ptr visit(FuncCallExpr::Ptr decl) override {
+    Node::Ptr visit(const FuncCallExpr::Ptr& decl) override {
         output << "funcCallExpr:";
         DEBUG_BLOCK_START
             output << "callee-func-simple-name: " << decl->getCalleeFuncSimpleName();
@@ -178,11 +178,11 @@ protected:
         return decl;
     }
 
-    Node::Ptr visit(MemberFuncCallExpr::Ptr decl) override {
+    Node::Ptr visit(const MemberFuncCallExpr::Ptr& decl) override {
         return decl;
     }
 
-    Node::Ptr visit(ArguCallExpr::Ptr decl) override {
+    Node::Ptr visit(const ArguCallExpr::Ptr& decl) override {
         output << "arguCallExpr:";
         DEBUG_BLOCK_START
             output << "label:";
@@ -198,16 +198,16 @@ protected:
         return decl;
     }
 
-    Node::Ptr visit(LiteralExpr::Ptr decl) override {
+    Node::Ptr visit(const LiteralExpr::Ptr& decl) override {
         output << "literal: " << decl->literal->rawValue;
         return decl;
     }
 
-    Node::Ptr visit(PrefixExpr::Ptr decl) override {
+    Node::Ptr visit(const PrefixExpr::Ptr& decl) override {
         return decl;
     }
 
-    Node::Ptr visit(IdentifierExpr::Ptr decl) override {
+    Node::Ptr visit(const IdentifierExpr::Ptr& decl) override {
         output << "identifierExpr:";
         DEBUG_BLOCK_START
         output << "simple-name: " << escapeString(decl->getSimpleName());
@@ -215,35 +215,35 @@ protected:
         return decl;
     }
 
-    Node::Ptr visit(Expr::Ptr decl) override {
+    Node::Ptr visit(const Expr::Ptr& decl) override {
         return decl;
     }
 
-    Node::Ptr visit(AssignExpr::Ptr decl) override {
+    Node::Ptr visit(const AssignExpr::Ptr& decl) override {
         return decl;
     }
 
-    Node::Ptr visit(BinaryExpr::Ptr decl) override {
+    Node::Ptr visit(const BinaryExpr::Ptr& decl) override {
         return decl;
     }
 
-    Node::Ptr visit(OperatorExpr::Ptr decl) override {
+    Node::Ptr visit(const OperatorExpr::Ptr& decl) override {
         return decl;
     }
 
-    Node::Ptr visit(ParenthesizedExpr::Ptr decl) override {
+    Node::Ptr visit(const ParenthesizedExpr::Ptr& decl) override {
         return decl;
     }
 
-    Node::Ptr visit(IfStmt::Ptr decl) override {
+    Node::Ptr visit(const IfStmt::Ptr& decl) override {
         return decl;
     }
 
-    Node::Ptr visit(WhileStmt::Ptr decl) override {
+    Node::Ptr visit(const WhileStmt::Ptr& decl) override {
         return decl;
     }
 
-    Node::Ptr visit(StmtsBlock::Ptr decl) override {
+    Node::Ptr visit(const StmtsBlock::Ptr& decl) override {
         output << "statements:";
         incTab();
         for(const auto& statement: decl->statements) {
@@ -255,7 +255,7 @@ protected:
         return decl;
     }
 
-    Node::Ptr visit(FuncDecl::Ptr decl) override {
+    Node::Ptr visit(const FuncDecl::Ptr& decl) override {
         output << "funcDecl:";
         incTab();
         newline();
@@ -286,7 +286,7 @@ protected:
         return decl;
     }
 
-    Node::Ptr visit(ParameterClause::Ptr decl) override {
+    Node::Ptr visit(const ParameterClause::Ptr& decl) override {
         output << "paramClause:";
         incTab();
         newline();
@@ -303,7 +303,7 @@ protected:
         return decl;
     }
 
-    Node::Ptr visit(Pattern::Ptr decl) override {
+    Node::Ptr visit(const Pattern::Ptr& decl) override {
         output << "patten:";
         incTab();
         newline();
@@ -316,27 +316,27 @@ protected:
         return  decl;
     }
 
-    Node::Ptr visit(ReturnStmt::Ptr decl) override {
+    Node::Ptr visit(const ReturnStmt::Ptr& decl) override {
         return decl;
     }
 
-    Node::Ptr visit(SelfExpr::Ptr decl) override {
+    Node::Ptr visit(const SelfExpr::Ptr& decl) override {
         return decl;
     }
 
-    Node::Ptr visit(ArrayLiteralExpr::Ptr decl) override {
+    Node::Ptr visit(const ArrayLiteralExpr::Ptr& decl) override {
         return decl;
     }
 
-    Node::Ptr visit(DictLiteralExpr::Ptr decl) override {
+    Node::Ptr visit(const DictLiteralExpr::Ptr& decl) override {
         return decl;
     }
 
-    Node::Ptr visit(MemberAccessExpr::Ptr decl) override {
+    Node::Ptr visit(const MemberAccessExpr::Ptr& decl) override {
         return decl;
     }
 
-    Node::Ptr visit(MemberAssignExpr::Ptr decl) override {
+    Node::Ptr visit(const MemberAssignExpr::Ptr& decl) override {
         output << "memberAssignExpr:";
         DEBUG_BLOCK_START
             output << "member:";
@@ -352,15 +352,15 @@ protected:
         return decl;
     }
 
-    Node::Ptr visit(SubscriptExpr::Ptr decl) override {
+    Node::Ptr visit(const SubscriptExpr::Ptr& decl) override {
         return decl;
     }
 
-    Node::Ptr visit(ArrayType::Ptr decl) override {
+    Node::Ptr visit(const ArrayType::Ptr& decl) override {
         return decl;
     }
 
-    Node::Ptr visit(FileImportStmt::Ptr decl) override {
+    Node::Ptr visit(const FileImportStmt::Ptr& decl) override {
         return decl;
     }
     
