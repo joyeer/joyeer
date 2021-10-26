@@ -102,7 +102,7 @@ SourceFile::Ptr CompilerService::tryImport(const CompileContext::Ptr& context, c
     auto relativedFolder = sourcefile->getParentFolder();
     auto importfile = findSourceFile(moduleName, relativedFolder);
     if(importfile == nullptr) {
-        Diagnostics::reportError("Error: Module cannot be found");
+        Diagnostics::reportError("Error: FileModule cannot be found");
         return nullptr;
     }
     compile(importfile);

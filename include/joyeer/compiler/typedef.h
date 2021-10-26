@@ -21,7 +21,7 @@ enum JrTypeKind : uint8_t {
     Variable,
     Block,
     Class,
-    Module,
+    FileModule,
     Function,
 };
 
@@ -30,7 +30,7 @@ struct JrTypeDef {
     using Ptr = std::shared_ptr<JrTypeDef>;
     const std::string name;
     JrTypeKind kind;
-    int32_t  address;
+    int32_t address;
 
 protected:
     JrTypeDef(std::string  name, JrTypeKind kind):
@@ -84,6 +84,7 @@ struct JrBoolTypeDef : JrTypeDef {
 struct JrBlockTypeDef : JrTypeDef {
     using Ptr = std::shared_ptr<JrBlockTypeDef>;
 
+    int32_t baseAddress; // re-located address for block variables
     std::vector<JrVarTypeDef::Ptr> localVars; // local-variables
 
     explicit JrBlockTypeDef();
@@ -119,6 +120,11 @@ struct JrClassTypeDef : JrTypeDef {
 
 struct JrFileModuleTypeDef : JrClassTypeDef {
     using Ptr = std::shared_ptr<JrFileModuleTypeDef>;
+
+    JrBlockTypeDef  moduleInitializeBlock;
+
+    // include ClassDef/FuncDef
+    std::vector<JrTypeDef::Ptr> decls;
 
     explicit JrFileModuleTypeDef(const std::string& name);
 };

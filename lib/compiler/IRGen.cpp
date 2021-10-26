@@ -128,14 +128,17 @@ void IRGen::emit(const VarDecl::Ptr& node) {
     switch(stage) {
         case CompileStage::visitCodeBlock:
             break;
-
+        default:
+            assert(false);
     }
-    auto function = context->curFuncDef();
-//    switch (node->symbol->flag) {
+    auto typeDef = context->curDeclTypeDef();
+
+    auto symbol = context->lookup(node->getSimpleName());
+//    switch (symbol->flag) {
 //        case SymbolFlag::var:
 //            writer.write({
 //                .opcode = OP_ISTORE,
-//                .value = node->symbol->addressOfVariable
+//                .value = symbol->addressOfVariable
 //            });
 //            break;
 //        case SymbolFlag::field:
@@ -152,8 +155,8 @@ void IRGen::emit(const VarDecl::Ptr& node) {
 //        default:
 //            assert(false);
 //    }
-
     assert(false);
+
 }
 
 void IRGen::emit(const PrefixExpr::Ptr& node) {

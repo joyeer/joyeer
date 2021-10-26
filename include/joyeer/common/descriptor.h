@@ -110,7 +110,7 @@ class ClassDescriptor: public Descriptor {
 
 };
 
-// File Module descriptor, e.g.
+// File FileModule descriptor, e.g.
 // foo.joyeer, descriptor: #foo;
 // bar/foo.joyeer, descriptor: #bar/foo;
 class FileModuleDescriptor: public Descriptor {

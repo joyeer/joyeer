@@ -25,6 +25,7 @@ Node::Ptr Binder::visit(const FileModuleDecl::Ptr& fileModule) {
 
     auto fileModuleDef = std::make_shared<JrFileModuleTypeDef>(fileModule->getSimpleName());
     context->compiler->declare(fileModuleDef);
+    fileModule->typeDef = fileModuleDef;
 
     fileModule->recursiveUpdate();
 
@@ -111,7 +112,11 @@ Node::Ptr Binder::visit(const FuncDecl::Ptr& decl) {
 
 
 Node::Ptr Binder::visit(const VarDecl::Ptr& decl) {
-    
+
+    if(decl->initializer != nullptr) {
+        decl->initializer = visit(decl->initializer);
+    }
+
     auto pattern = decl->pattern;
     auto symtable = context->curSymTable();
     auto name = pattern->identifier->getSimpleName();
@@ -120,10 +125,23 @@ Node::Ptr Binder::visit(const VarDecl::Ptr& decl) {
         Diagnostics::reportError("[Error] duplicate variable name");
     }
 
+    // declare the JrVarTypeDef
     auto varDef = std::make_shared<JrVarTypeDef>(name);
     context->compiler->declare(varDef);
 
-    auto symbol = Symbol::make(SymbolFlag::var, name, varDef->address);
+    // if the closest declaration type, is the FileModuleDef/ClassDef,
+    // the variable will be treated as field in Symbol
+    auto declType = context->curDeclTypeDef();
+    auto flag = SymbolFlag::var;
+    switch (declType->kind) {
+        case JrTypeKind::FileModule:
+            flag = SymbolFlag::field;
+            break;
+        default:
+            assert(false);
+    }
+
+    auto symbol = Symbol::make(flag, name, varDef->address);
     symtable->insert(symbol);
 
     // double-check to complicate
@@ -139,9 +157,7 @@ Node::Ptr Binder::visit(const VarDecl::Ptr& decl) {
             assert(false);
     }
 
-    if(decl->initializer != nullptr) {
-        decl->initializer = visit(decl->initializer);
-    }
+
     
     return decl;
 }

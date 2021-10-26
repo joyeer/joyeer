@@ -105,7 +105,6 @@ struct Node : std::enable_shared_from_this<Node> {
             case SyntaxKind::funcDecl:
             case SyntaxKind::classDecl:
             case SyntaxKind::fileModule:
-            case SyntaxKind::stmtsBlock:
                 return true;
             default:
                 return false;
@@ -735,7 +734,7 @@ public:
         // parameters
         ss << DescriptorConstants::ParenthesisOpen;
         if (parameterClause) {
-            for (auto p: std::static_pointer_cast<ParameterClause>(parameterClause)->parameters) {
+            for (const auto& p: std::static_pointer_cast<ParameterClause>(parameterClause)->parameters) {
                 ss << p->getSimpleName() << DescriptorConstants::Colon;
             }
         }

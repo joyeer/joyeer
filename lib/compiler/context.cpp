@@ -22,7 +22,7 @@ void CompileContext::visit(CompileStage stage, const Node::Ptr& node, const std:
         symbols.push_back(node->symtable);
     }
 
-    if(node != nullptr && node->getTypeDef() && node->isDeclNode()) {
+    if(node != nullptr && node->getTypeDef() != nullptr && (node->isDeclNode() || node->kind == SyntaxKind::stmtsBlock)) {
         types.push_back(node->getTypeDef());
     }
 
@@ -33,7 +33,7 @@ void CompileContext::visit(CompileStage stage, const Node::Ptr& node, const std:
         symbols.pop_back();
     }
 
-    if(node != nullptr && node->getTypeDef() && node->isDeclNode()) {
+    if(node != nullptr && node->getTypeDef() != nullptr && (node->isDeclNode() || node->kind == SyntaxKind::stmtsBlock)) {
         types.pop_back();
     }
 
@@ -55,6 +55,18 @@ Symbol::Ptr CompileContext::lookup(const std::string &name) {
         }
     }
 
+    return nullptr;
+}
+
+JrTypeDef::Ptr CompileContext::curDeclTypeDef() const {
+    for (auto iterator = types.rbegin(); iterator != types.rend(); iterator ++) {
+        auto typeDef = *iterator;
+        if(typeDef->kind == JrTypeKind::Function ||
+            typeDef->kind == JrTypeKind::Class ||
+            typeDef->kind == JrTypeKind::FileModule ) {
+            return std::static_pointer_cast<JrBlockTypeDef>(typeDef);
+        }
+    }
     return nullptr;
 }
 
