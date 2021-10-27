@@ -125,8 +125,8 @@ Node::Ptr Binder::visit(const VarDecl::Ptr& decl) {
         Diagnostics::reportError("[Error] duplicate variable name");
     }
 
-    // declare the JrVarTypeDef
-    auto varDef = std::make_shared<JrVarTypeDef>(name);
+    // declare the JrVariableTypeDef
+    auto varDef = std::make_shared<JrVariableTypeDef>(name);
     context->compiler->declare(varDef);
 
     // if the closest declaration type, is the FileModuleDef/ClassDef,
@@ -158,7 +158,7 @@ Node::Ptr Binder::visit(const VarDecl::Ptr& decl) {
     }
 
 
-    
+
     return decl;
 }
 

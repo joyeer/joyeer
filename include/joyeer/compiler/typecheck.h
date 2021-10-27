@@ -1,9 +1,8 @@
 #ifndef __joyeer_compiler_typecheck_h__
 #define __joyeer_compiler_typecheck_h__
 
-#include "joyeer/compiler/node+visitor.h"
-#include "joyeer/compiler/node.h"
 #include "joyeer/compiler/context.h"
+#include "joyeer/compiler/node+visitor.h"
 
 class TypeChecker : public NodeVisitor {
 public:

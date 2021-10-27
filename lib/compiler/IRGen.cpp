@@ -1,6 +1,35 @@
 #include "joyeer/compiler/IRGen.h"
 #include "joyeer/compiler/diagnostic.h"
 
+
+////////////////////////////////////////////////////////
+// FileModuleMemoryAlignment
+////////////////////////////////////////////////////////
+
+void FileModuleMemoryAlignment::align(const FileModuleDecl::Ptr& decl) {
+
+}
+
+void FileModuleMemoryAlignment::align(const Node::Ptr &decl) {
+
+}
+
+void FileModuleMemoryAlignment::align(const StmtsBlock::Ptr &decl) {
+    auto blockDef = std::static_pointer_cast<JrBlockTypeDef>(decl->getTypeDef());
+    blockDef->baseAddress = base;
+    base += blockDef->localVars.size();
+
+    for(const auto& member : decl->statements) {
+        if(member->kind == SyntaxKind::ifStmt) {
+            auto ifStmt = std::static_pointer_cast<IfStmt>(member);
+        }
+    }
+}
+
+////////////////////////////////////////////////////////
+// FileModuleMemoryAlignment
+////////////////////////////////////////////////////////
+
 IRGen::IRGen(CompileContext::Ptr context):
 context(std::move(context)) {
 }
