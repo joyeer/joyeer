@@ -23,6 +23,8 @@ enum Opcode : uint16_t {
     OP_NEW,
     OP_PUTFIELD,
     OP_GETFIELD,
+    OP_GETSTATIC,
+    OP_PUTSTATIC,
 
     OP_IAND,
     OP_ICMP_G,
@@ -59,9 +61,18 @@ enum Opcode : uint16_t {
 
 };
 
+//
 struct Instruction {
     Opcode opcode;
-    int32_t value = -1;
+    union {
+        int64_t value = -1;
+
+        struct {
+            uint32_t value1;
+            uint32_t value2;
+        };
+
+    };
 };
 
 struct JrCodeWriter {
@@ -73,4 +84,4 @@ struct JrCodeWriter {
 };
 
 
-#endif //JOYEER_OPCODE_H
+#endif //__joyeer_compiler_opcode_h__

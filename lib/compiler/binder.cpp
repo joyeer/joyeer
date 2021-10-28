@@ -136,6 +136,7 @@ Node::Ptr Binder::visit(const VarDecl::Ptr& decl) {
     switch (declType->kind) {
         case JrTypeKind::FileModule:
             flag = SymbolFlag::field;
+            varDef->markAsStatic();
             break;
         default:
             assert(false);
@@ -391,9 +392,9 @@ Node::Ptr Binder::visit(const ParenthesizedExpr::Ptr& decl) {
 
 Node::Ptr Binder::visit(const IfStmt::Ptr& decl) {
     decl->condition = visit(decl->condition);
-    decl->ifCodeBlock = visit(decl->ifCodeBlock);
+    decl->ifCodeBlock = std::static_pointer_cast<StmtsBlock>(visit(decl->ifCodeBlock));
     if(decl->elseCodeBlock != nullptr) {
-        decl->elseCodeBlock = visit(decl->elseCodeBlock);
+        decl->elseCodeBlock = std::static_pointer_cast<StmtsBlock>(visit(decl->elseCodeBlock));
     }
     return decl;
 }

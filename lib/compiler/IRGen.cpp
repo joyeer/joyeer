@@ -1,33 +1,10 @@
 #include "joyeer/compiler/IRGen.h"
 #include "joyeer/compiler/diagnostic.h"
+#include "joyeer/compiler/compiler+service.h"
 
 
 ////////////////////////////////////////////////////////
-// FileModuleMemoryAlignment
-////////////////////////////////////////////////////////
-
-void FileModuleMemoryAlignment::align(const FileModuleDecl::Ptr& decl) {
-
-}
-
-void FileModuleMemoryAlignment::align(const Node::Ptr &decl) {
-
-}
-
-void FileModuleMemoryAlignment::align(const StmtsBlock::Ptr &decl) {
-    auto blockDef = std::static_pointer_cast<JrBlockTypeDef>(decl->getTypeDef());
-    blockDef->baseAddress = base;
-    base += blockDef->localVars.size();
-
-    for(const auto& member : decl->statements) {
-        if(member->kind == SyntaxKind::ifStmt) {
-            auto ifStmt = std::static_pointer_cast<IfStmt>(member);
-        }
-    }
-}
-
-////////////////////////////////////////////////////////
-// FileModuleMemoryAlignment
+// IRGen
 ////////////////////////////////////////////////////////
 
 IRGen::IRGen(CompileContext::Ptr context):
@@ -153,38 +130,37 @@ void IRGen::emit(const LiteralExpr::Ptr& node) {
 void IRGen::emit(const VarDecl::Ptr& node) {
     emit(node->initializer);
 
-    auto stage = context->curStage();
-    switch(stage) {
-        case CompileStage::visitCodeBlock:
+    auto symbol = context->lookup(node->getSimpleName());
+    auto varDef = std::static_pointer_cast<JrVariableTypeDef>(context->compiler->getTypeDefBy(symbol->address));
+
+    switch (symbol->flag) {
+        case SymbolFlag::var:
+            assert(false);
+            writer.write({
+                .opcode = OP_ISTORE,
+                .value = symbol->address
+            });
+            break;
+        case SymbolFlag::field: {
+
+            if(varDef->isStatic()) {
+
+            }
+//            writer.write({
+//                                 .opcode = OP_OLOAD,
+//                                 .value = (int32_t)(function->paramTypes.size() - 1)      // last parameter is the self object
+//                         });
+//
+//            writer.write({
+//                                 .opcode = OP_PUTFIELD,
+//                                 .value = node->symbol->addressOfField
+//                         });
+        }
+
             break;
         default:
             assert(false);
     }
-    auto typeDef = context->curDeclTypeDef();
-
-    auto symbol = context->lookup(node->getSimpleName());
-//    switch (symbol->flag) {
-//        case SymbolFlag::var:
-//            writer.write({
-//                .opcode = OP_ISTORE,
-//                .value = symbol->addressOfVariable
-//            });
-//            break;
-//        case SymbolFlag::field:
-//            writer.write({
-//                .opcode = OP_OLOAD,
-//                .value = (int32_t)(function->paramTypes.size() - 1)      // last parameter is the self object
-//            });
-//
-//            writer.write({
-//                .opcode = OP_PUTFIELD,
-//                .value = node->symbol->addressOfField
-//            });
-//            break;
-//        default:
-//            assert(false);
-//    }
-    assert(false);
 
 }
 

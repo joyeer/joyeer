@@ -3,20 +3,6 @@
 
 #include "joyeer/compiler/context.h"
 
-// FileModule's variables will be stored in
-struct FileModuleMemoryAlignment {
-    using Ptr = std::shared_ptr<FileModuleMemoryAlignment>;
-
-    void align(const FileModuleDecl::Ptr& decl);
-
-private:
-    void align(const Node::Ptr& decl);
-    void align(const StmtsBlock::Ptr& decl);
-
-private:
-    int base = 0;
-};
-
 // Joyeer IR code generator
 class IRGen {
 public:

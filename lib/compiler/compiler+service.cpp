@@ -19,7 +19,8 @@
     }
 
 CompilerService::CompilerService(CommandLineArguments::Ptr opts):
-options(std::move(opts)) {
+options(std::move(opts)),
+fileModuleMemoryAlign(){
     initializeTypeDefs();
     initializeGlobalSymbolTable();
 }
@@ -80,6 +81,9 @@ void CompilerService::compile(const SourceFile::Ptr& sourcefile) {
     typeChecker.visit(std::static_pointer_cast<Node>(block));
     debugPrint(block, sourcefile->getAbstractLocation() + ".typechecker.debug.yml");
     CHECK_ERROR_CONTINUE
+
+    // alignment memory
+    fileModuleMemoryAlign.align(block);
 
     // generate IR code
     IRGen irGen(context);
