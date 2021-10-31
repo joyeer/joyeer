@@ -5,25 +5,16 @@
 #include <fstream>
 #include <sstream>
 
-// ASM node printer
-struct NodeDebugPrinter : public NodeVisitor {
-
 #define DEBUG_BLOCK_START \
     incTab();             \
     newline();
 
 #define DEBUG_BLOCK_END decTab();
 
-    explicit NodeDebugPrinter(const std::string& filename);
+struct YMLPrinter {
 
-    // print AST into debug file
-    void print(const Node::Ptr& node) {
-        NodeVisitor::visit(node);
-    }
+    explicit YMLPrinter(const std::string& filename);
 
-    void close();
-    
-protected:
     void printTab();
     void incTab();
     void decTab();
@@ -31,6 +22,23 @@ protected:
     void newline() {
         output << std::endl;
         printTab();
+    }
+
+    void close();
+
+    int size = 0;
+    std::ofstream output;
+};
+
+// ASM node printer
+struct NodeDebugPrinter : public NodeVisitor, public YMLPrinter {
+
+
+    explicit NodeDebugPrinter(const std::string& filename);
+
+    // print AST into debug file
+    void print(const Node::Ptr& node) {
+        NodeVisitor::visit(node);
     }
 
     /// escaping c string for debug display
@@ -96,6 +104,7 @@ protected:
     }
 
     Node::Ptr visit(const ClassDecl::Ptr& decl) override {
+        assert(false);
         return decl;
     }
 
@@ -144,6 +153,7 @@ protected:
     }
 
     Node::Ptr visit(const MemberFuncCallExpr::Ptr& decl) override {
+        assert(false);
         return decl;
     }
 
@@ -169,6 +179,7 @@ protected:
     }
 
     Node::Ptr visit(const PrefixExpr::Ptr& decl) override {
+        assert(false);
         return decl;
     }
 
@@ -181,30 +192,37 @@ protected:
     }
 
     Node::Ptr visit(const Expr::Ptr& decl) override {
+        assert(false);
         return decl;
     }
 
     Node::Ptr visit(const AssignExpr::Ptr& decl) override {
+        assert(false);
         return decl;
     }
 
     Node::Ptr visit(const BinaryExpr::Ptr& decl) override {
+        assert(false);
         return decl;
     }
 
     Node::Ptr visit(const OperatorExpr::Ptr& decl) override {
+        assert(false);
         return decl;
     }
 
     Node::Ptr visit(const ParenthesizedExpr::Ptr& decl) override {
+        assert(false);
         return decl;
     }
 
     Node::Ptr visit(const IfStmt::Ptr& decl) override {
+        assert(false);
         return decl;
     }
 
     Node::Ptr visit(const WhileStmt::Ptr& decl) override {
+        assert(false);
         return decl;
     }
 
@@ -282,22 +300,27 @@ protected:
     }
 
     Node::Ptr visit(const ReturnStmt::Ptr& decl) override {
+        assert(false);
         return decl;
     }
 
     Node::Ptr visit(const SelfExpr::Ptr& decl) override {
+        assert(false);
         return decl;
     }
 
     Node::Ptr visit(const ArrayLiteralExpr::Ptr& decl) override {
+        assert(false);
         return decl;
     }
 
     Node::Ptr visit(const DictLiteralExpr::Ptr& decl) override {
+        assert(false);
         return decl;
     }
 
     Node::Ptr visit(const MemberAccessExpr::Ptr& decl) override {
+        assert(false);
         return decl;
     }
 
@@ -318,20 +341,115 @@ protected:
     }
 
     Node::Ptr visit(const SubscriptExpr::Ptr& decl) override {
+        assert(false);
         return decl;
     }
 
     Node::Ptr visit(const ArrayType::Ptr& decl) override {
+        assert(false);
         return decl;
     }
 
     Node::Ptr visit(const FileImportStmt::Ptr& decl) override {
+        assert(false);
         return decl;
     }
-    
-private:
-    int size = 0;
-    std::ofstream output;
+};
+
+
+struct TypeDefDebugPrinter : YMLPrinter {
+
+    explicit TypeDefDebugPrinter(const std::string& filename):
+            YMLPrinter(filename) {}
+
+    void print(const std::vector<JrTypeDef::Ptr> typedefs) {
+        output << "typedefs:";
+        DEBUG_BLOCK_START
+        auto i = 0;
+        for(const auto& tf : typedefs) {
+            output << "- typedef:";
+            DEBUG_BLOCK_START
+                output << "index: " << i;
+                newline();
+            switch (tf->kind) {
+                case JrTypeKind::FileModule:
+                    output << "kind: FileModule" ;
+                    newline();
+                    print(std::static_pointer_cast<JrFileModuleTypeDef>(tf));
+                    break;
+                case JrTypeKind::Nil:
+                    output << "kind: Nil" ;
+                    break;
+                case JrTypeKind::Boolean:
+                    output << "kind: Boolean" ;
+                    break;
+                case JrTypeKind::Integer:
+                    output << "kind: Integer";
+                    break;
+                case JrTypeKind::Void:
+                    output << "kind: Void";
+                    break;
+                case JrTypeKind::Long:
+                    output << "kind: Long";
+                    break;
+                case JrTypeKind::Any:
+                    output << "kind: Any";
+                    break;
+                case JrTypeKind::Class:
+                    assert(false);
+                case JrTypeKind::Block:
+                    output << "kind: Block";
+                    newline();
+                    print(std::static_pointer_cast<JrBlockTypeDef>(tf));
+                    break;
+                case JrTypeKind::Function:
+                    output << "kind: Function";
+                    newline();
+                    print(std::static_pointer_cast<JrFuncTypeDef>(tf));
+                    break;
+                case JrTypeKind::Variable:
+                    output << "kind: Variable";
+                    newline();
+                    print(std::static_pointer_cast<JrVariableTypeDef>(tf));
+                    break;
+                default:
+                    assert(false);
+            }
+
+            DEBUG_BLOCK_END
+            newline();
+            i ++ ;
+        }
+        DEBUG_BLOCK_END
+    }
+
+    void print(const JrFuncTypeDef::Ptr& func) {
+        output<< "name: " << func->name;
+    }
+
+    void print(const JrFileModuleTypeDef::Ptr& fileModule) {
+        output << "name: " << fileModule->name;
+    }
+
+    void print(const JrBlockTypeDef::Ptr& block) {
+        output << "variables:";
+        DEBUG_BLOCK_START
+        auto i = 0;
+        for(const auto& variable : block->localVars) {
+            if (i > 0) {
+                newline();
+            }
+            output << "- variable: " << variable->address;
+            i ++;
+        }
+        DEBUG_BLOCK_END
+    }
+
+    void print(const JrVariableTypeDef::Ptr& variable) {
+        output << "name: " << variable->name;
+        newline();
+        output << "access-flag: " << debugAccessFlag(variable->accessFlags);
+    }
 };
 
 #endif

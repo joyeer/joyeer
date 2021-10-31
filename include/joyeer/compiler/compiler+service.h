@@ -25,8 +25,7 @@ private:
     SourceFile::Ptr findSourceFile(const std::string& path, const std::string& relativeFolder = "");
     
     void debugPrint(const Node::Ptr& node, const std::string& debugFilePath);
-    void debugPrint(const std::string& debugFilePath);
-    
+
     // initialize the global symbol table
     void initializeGlobalSymbolTable();
 

@@ -3,6 +3,37 @@
 //
 
 #include "joyeer/compiler/typedef.h"
+#include <sstream>
+
+std::string debugAccessFlag(JrAccessFlag flag) {
+    bool one = false;
+    std::stringstream  ss;
+
+#define ACCESS_FLAGS_PRINT(name) \
+    if(one) { \
+        ss << " "; \
+    } \
+    ss << (name); \
+    one = true;
+
+    if((flag & JrAccessFlag::Public) == JrAccessFlag::Public) {
+        ACCESS_FLAGS_PRINT("public")
+    }
+
+    if((flag & JrAccessFlag::Protected) == JrAccessFlag::Protected) {
+        ACCESS_FLAGS_PRINT("protected")
+    }
+
+    if((flag & JrAccessFlag::Private) == JrAccessFlag::Private) {
+        ACCESS_FLAGS_PRINT("private")
+    }
+
+    if((flag & JrAccessFlag::Static) == JrAccessFlag::Static) {
+        ACCESS_FLAGS_PRINT("static")
+    }
+
+    return ss.str();
+}
 
 JrNilTypeDef::JrNilTypeDef():
         JrTypeDef("nil", JrTypeKind::Nil){}

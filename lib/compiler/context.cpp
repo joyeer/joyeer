@@ -58,6 +58,10 @@ Symbol::Ptr CompileContext::lookup(const std::string &name) {
     return nullptr;
 }
 
+JrTypeDef::Ptr CompileContext::curTypeDef() const {
+    return types.back();
+}
+
 JrTypeDef::Ptr CompileContext::curDeclTypeDef() const {
     for (auto iterator = types.rbegin(); iterator != types.rend(); iterator ++) {
         auto typeDef = *iterator;

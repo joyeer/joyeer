@@ -137,6 +137,7 @@ Node::Ptr Binder::visit(const VarDecl::Ptr& decl) {
         case JrTypeKind::FileModule:
             flag = SymbolFlag::field;
             varDef->markAsStatic();
+            varDef->parent = declType->address; // parent address
             break;
         default:
             assert(false);
@@ -157,8 +158,6 @@ Node::Ptr Binder::visit(const VarDecl::Ptr& decl) {
         default:
             assert(false);
     }
-
-
 
     return decl;
 }
@@ -411,6 +410,18 @@ Node::Ptr Binder::visit(const StmtsBlock::Ptr& decl) {
     auto blockDef = std::make_shared<JrBlockTypeDef>();
     context->compiler->declare(blockDef);
     decl->typeDef = blockDef;
+
+    // check parent's type, assign the BlockTypeDef to Parent
+    auto typeDef = context->curTypeDef();
+    switch (typeDef->kind) {
+        case JrTypeKind::FileModule: {
+            auto moduleDef = std::static_pointer_cast<JrFileModuleTypeDef>(typeDef);
+            moduleDef->block = blockDef;
+        }
+            break;
+        default:
+            assert(false);
+    }
 
     // start to process code block
     context->visit(CompileStage::visitCodeBlock, decl,[decl, this]() {

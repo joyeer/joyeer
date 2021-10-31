@@ -142,19 +142,20 @@ void IRGen::emit(const VarDecl::Ptr& node) {
             });
             break;
         case SymbolFlag::field: {
-
+            // static field
             if(varDef->isStatic()) {
+                writer.write({
+                    .opcode = OP_OLOAD
+                });
 
+                writer.write({
+                    .opcode = OP_PUTSTATIC,
+                    .value1 = static_cast<uint32_t>(varDef->parent),
+                    .value2 = static_cast<uint32_t>(varDef->position)
+                });
+            } else {
+                assert(false);
             }
-//            writer.write({
-//                                 .opcode = OP_OLOAD,
-//                                 .value = (int32_t)(function->paramTypes.size() - 1)      // last parameter is the self object
-//                         });
-//
-//            writer.write({
-//                                 .opcode = OP_PUTFIELD,
-//                                 .value = node->symbol->addressOfField
-//                         });
         }
 
             break;
@@ -182,7 +183,9 @@ void IRGen::emit(const IdentifierExpr::Ptr& node) {
         Diagnostics::reportError("[Error][GenCode]");
         return;
     }
-    
+
+    auto varDef = std::static_pointer_cast<JrVariableTypeDef>(context->compiler->getTypeDefBy(symbol->address));
+
     if(symbol->flag  == SymbolFlag::var) {
 //        auto kind = symbol->kind;
         
@@ -193,7 +196,7 @@ void IRGen::emit(const IdentifierExpr::Ptr& node) {
 //            });
 //        } else if(kind->kind == JrTypeKind::Class || kind->kind == JrTypeKind::Any ) {
 //            writer.write({
-//                .opcode = OP_OLOAD,
+//                .opcode = OP_OLOAD,x`x`
 //                .value = symbol->addressOfVariable
 //            });
 //        } else if(kind->kind == JrTypeKind::Nil) {
@@ -206,16 +209,15 @@ void IRGen::emit(const IdentifierExpr::Ptr& node) {
         assert(false);
         return;
     } else if(symbol->flag == SymbolFlag::field) {
-        
-        auto function = context->curFuncDef();
-        writer.write({
-            .opcode = OP_OLOAD,
-            .value = (int32_t)(function->paramTypes.size() - 1)
-        });
-//        writer.write({
-//            .opcode = OP_GETFIELD,
-//            .value = symbol->addressOfField
-//        });
+        if(varDef->isStatic()) {
+            // static field
+            writer.write({
+                .opcode = OP_GETSTATIC,
+                .value = varDef->address
+            });
+            return;
+        }
+
         assert(false);
         
         return;

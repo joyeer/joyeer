@@ -37,8 +37,10 @@ public:
     
     SymbolTable::Ptr curSymTable() ;
 
+    [[nodiscard]] JrTypeDef::Ptr curTypeDef() const;
+
     // Return the Top declarations TypeDef - FileModuleDef/FuncDef/ClassDef
-    JrTypeDef::Ptr  curDeclTypeDef() const ;
+    [[nodiscard]] JrTypeDef::Ptr  curDeclTypeDef() const ;
 
     // return the current FuncDef in the stack
     [[nodiscard]] JrFuncTypeDef::Ptr curFuncDef() const;

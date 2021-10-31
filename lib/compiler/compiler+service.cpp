@@ -90,6 +90,10 @@ void CompilerService::compile(const SourceFile::Ptr& sourcefile) {
     sourcefile->moduleClass = irGen.emit(block);
     CHECK_ERROR_CONTINUE
 
+    // debug print the typedefs
+    TypeDefDebugPrinter typedefPrinter(sourcefile->getAbstractLocation() + ".typedef.debug.yml");
+    typedefPrinter.print(types);
+    typedefPrinter.close();
 }
 
 void CompilerService::declare(const JrTypeDef::Ptr& type) {

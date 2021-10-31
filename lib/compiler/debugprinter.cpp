@@ -1,25 +1,31 @@
 #include "debugprinter.h"
 #include <fstream>
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-NodeDebugPrinter::NodeDebugPrinter(const std::string& filename) {
+YMLPrinter::YMLPrinter(const std::string &filename) {
     output.open(filename);
 }
 
-void NodeDebugPrinter::printTab() {
+void YMLPrinter::printTab() {
     output << std::string(size*2, ' ') ;
 }
 
-void NodeDebugPrinter::incTab() {
+void YMLPrinter::incTab() {
     size ++;
 }
 
-void NodeDebugPrinter::decTab() {
+void YMLPrinter::decTab() {
     size --;
 }
 
-void NodeDebugPrinter::close() {
+void YMLPrinter::close() {
     output.flush();
     output.close();
 }
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+NodeDebugPrinter::NodeDebugPrinter(const std::string& filename):
+    YMLPrinter(filename) {
+}
+
