@@ -74,7 +74,8 @@ struct Node : std::enable_shared_from_this<Node> {
     SymbolTable::Ptr symtable = nullptr;
     Node::Ptr parent = nullptr;
 
-    JrTypeDef::Ptr typeDef = nullptr;
+    // represent the Node's Type, only available in Expr Node
+    JrTypeDef::Ptr type = nullptr;
 
     // return the name of Node, it will be used as symbol in some cases
     virtual std::string getSimpleName();
@@ -105,8 +106,8 @@ struct Node : std::enable_shared_from_this<Node> {
     }
 
     // return TypeDef underlay, for non-expr, it returns nullptr;
-    JrTypeDef::Ptr getTypeDef() const {
-        return typeDef;
+    JrTypeDef::Ptr getType() const {
+        return type;
     }
 
     // recursive update the children node
@@ -192,9 +193,9 @@ struct Pattern : public Node {
     using Ptr = std::shared_ptr<Pattern>;
 
     IdentifierExpr::Ptr identifier; // the name of pattern
-    Node::Ptr type; // the kind of pattern, optional nullptr
+    Node::Ptr typeNode; // the kind of pattern, optional nullptr
 
-    Pattern(IdentifierExpr::Ptr identifier, Node::Ptr type);
+    Pattern(IdentifierExpr::Ptr identifier, Node::Ptr typeNode);
 
     const std::string &getIdentifierName() const;
 
@@ -204,7 +205,7 @@ struct Pattern : public Node {
 
     void recursiveUpdate() override {
         NODE_RECURSIVE_UPDATE(identifier, NODE_UPDATE_ACTION_SET_PARENT_THIS(identifier))
-        NODE_RECURSIVE_UPDATE(type, NODE_UPDATE_ACTION_SET_PARENT_THIS(type))
+        NODE_RECURSIVE_UPDATE(typeNode, NODE_UPDATE_ACTION_SET_PARENT_THIS(typeNode))
     }
 
 };

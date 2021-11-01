@@ -293,7 +293,7 @@ protected:
         visit(decl->identifier);
         if(decl->type != nullptr) {
             newline();
-            NodeVisitor::visit(decl->type);
+            NodeVisitor::visit(decl->typeNode);
         }
         decTab();
         return  decl;

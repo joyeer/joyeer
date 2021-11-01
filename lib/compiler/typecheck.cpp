@@ -39,7 +39,7 @@ Node::Ptr TypeChecker::visit(const FuncDecl::Ptr& node) {
         // Binding function's kind
         auto parameterClause = std::static_pointer_cast<ParameterClause>(node->parameterClause);
         for(const auto& parameter: parameterClause->parameters) {
-            funcDef->paramTypes.push_back(parameter->typeDef);
+            funcDef->paramTypes.push_back(parameter->type);
         }
 
         node->codeBlock = visit(node->codeBlock);
@@ -104,9 +104,9 @@ Node::Ptr TypeChecker::visit(const FuncCallExpr::Ptr& node) {
 Node::Ptr TypeChecker::visit(const MemberFuncCallExpr::Ptr& node) {
     visit(node->callee);
     
-    auto type = node->callee->typeDef;
+    auto type = node->callee->type;
     assert(type != nullptr);
-    node->callee->typeDef = type;
+    node->callee->type = type;
 
     auto name = node->getSimpleName();
     auto symbol = context->lookup(name);
@@ -123,7 +123,11 @@ Node::Ptr TypeChecker::visit(const MemberFuncCallExpr::Ptr& node) {
 }
 
 Node::Ptr TypeChecker::visit(const VarDecl::Ptr& decl) {
-    assert(decl->getTypeDef() == nullptr);
+
+    auto symtable = context->curSymTable();
+    auto symbol = context->lookup(decl->getSimpleName());
+
+    assert(decl->getType() == nullptr);
     if(decl->initializer != nullptr) {
         decl->initializer = visit(decl->initializer);
     }
@@ -133,14 +137,14 @@ Node::Ptr TypeChecker::visit(const VarDecl::Ptr& decl) {
     });
 
     // if the pattern specify the TypeDef, VarDecl will follow the pattern
-    if(decl->pattern->getTypeDef() != nullptr) {
-        decl->typeDef = decl->pattern->getTypeDef();
+    if(decl->pattern->getType() != nullptr) {
+        decl->type = decl->pattern->getType();
     } else {
         // follow the initializer expression's typedef
-        decl->typeDef = decl->initializer->getTypeDef();
+        decl->type = decl->initializer->getType();
     }
 
-    assert(decl->getTypeDef() != nullptr);
+    assert(decl->getType() != nullptr);
     return decl;
 }
 
@@ -156,8 +160,8 @@ Node::Ptr TypeChecker::visit(const ParameterClause::Ptr& node) {
 
 Node::Ptr TypeChecker::visit(const Pattern::Ptr& node) {
     node->identifier = std::static_pointer_cast<IdentifierExpr>(visit(node->identifier));
-    if(node->type != nullptr) {
-        node->type = visit(node->type);
+    if(node->typeNode != nullptr) {
+        node->typeNode = visit(node->typeNode);
         assert(false);
     }
     return node;
@@ -228,7 +232,7 @@ Node::Ptr TypeChecker::visit(const Expr::Ptr& node) {
             nodes.push_back(visit(n));
         }
         node->nodes = nodes;
-        node->typeDef = typeOf(node);
+        node->type = typeOf(node);
     });
     
     return node;
@@ -238,10 +242,10 @@ Node::Ptr TypeChecker::visit(const Expr::Ptr& node) {
 Node::Ptr TypeChecker::visit(const LiteralExpr::Ptr& node) {
     switch(node->literal->kind) {
         case TokenKind::decimalLiteral:
-            node->typeDef = BuildIn::TypeDef::Int;
+            node->type = BuildIn::TypeDef::Int;
             break;
         case TokenKind::stringLiteral:
-            node->typeDef = BuildIn::TypeDef::String;
+            node->type = BuildIn::TypeDef::String;
             break;
         default:
             assert(false);
@@ -419,7 +423,7 @@ JrTypeDef::Ptr TypeChecker::typeOf(const IdentifierExpr::Ptr& node) {
     auto symbol = context->lookup(node->getSimpleName());
     switch(symbol->flag) {
         case SymbolFlag::var:
-            return node->typeDef;
+            return node->type;
         case SymbolFlag::field: {
 //            auto kind = (JrObjectType*)(context->curType());
 //            auto field = kind->virtualFields[node->symbol->addressOfField];
@@ -435,8 +439,8 @@ JrTypeDef::Ptr TypeChecker::typeOf(const Expr::Ptr& node) {
     assert(node->binaries.empty());
     assert(node->prefix == nullptr);
     
-    if(node->typeDef != nullptr) {
-        return node->typeDef;
+    if(node->type != nullptr) {
+        return node->type;
     }
     
     std::stack<JrTypeDef::Ptr> stack;
@@ -502,11 +506,11 @@ JrTypeDef::Ptr TypeChecker::typeOf(const Pattern::Ptr& node) {
     if(node->type == nullptr) {
         return BuildIn::TypeDef::Any;
     }
-    return typeOf(node->type);
+    return typeOf(node->typeNode);
 }
 
 JrTypeDef::Ptr TypeChecker::typeOf(const Type::Ptr& node) {
-    return node->typeDef;
+    return node->type;
 }
 
 JrTypeDef::Ptr TypeChecker::typeOf(const DictLiteralExpr::Ptr& node) {
@@ -597,7 +601,7 @@ JrTypeDef::Ptr TypeChecker::returnTypeOf(const WhileStmt::Ptr& node) {
 }
 
 JrTypeDef::Ptr TypeChecker::returnTypeOf(const FuncCallExpr::Ptr& node) {
-    return node->typeDef;
+    return node->type;
 }
 
 JrTypeDef::Ptr TypeChecker::returnTypeOf(const Node::Ptr& node) {

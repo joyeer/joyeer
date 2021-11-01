@@ -25,7 +25,7 @@ Node::Ptr Binder::visit(const FileModuleDecl::Ptr& fileModule) {
 
     auto fileModuleDef = std::make_shared<JrFileModuleTypeDef>(fileModule->getSimpleName());
     context->compiler->declare(fileModuleDef);
-    fileModule->typeDef = fileModuleDef;
+    fileModule->type = fileModuleDef;
 
     fileModule->recursiveUpdate();
 
@@ -177,7 +177,7 @@ Node::Ptr Binder::visit(const FuncCallExpr::Ptr& decl) {
         Diagnostics::reportError(ErrorLevel::failure, "[TODO] cannot find func");
         return decl;
     }
-    decl->typeDef = context->compiler->getTypeDefBy(symbol->address);
+    decl->type = context->compiler->getTypeDefBy(symbol->address);
 
     // go down to bind argument
     std::vector<ArguCallExpr::Ptr> argus;
@@ -409,7 +409,7 @@ Node::Ptr Binder::visit(const StmtsBlock::Ptr& decl) {
     // generate a JrBlockTypeDef
     auto blockDef = std::make_shared<JrBlockTypeDef>();
     context->compiler->declare(blockDef);
-    decl->typeDef = blockDef;
+    decl->type = blockDef;
 
     // check parent's type, assign the BlockTypeDef to Parent
     auto typeDef = context->curTypeDef();
@@ -448,7 +448,7 @@ Node::Ptr Binder::visit(const ParameterClause::Ptr& decl) {
 
 Node::Ptr Binder::visit(const Pattern::Ptr& decl) {
     decl->identifier = std::static_pointer_cast<IdentifierExpr>(visit(decl->identifier));
-    decl->type = std::static_pointer_cast<Type>(visit(decl->type));
+    decl->typeNode = std::static_pointer_cast<Type>(visit(decl->typeNode));
     return decl;
 }
 

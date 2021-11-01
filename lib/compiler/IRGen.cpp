@@ -48,7 +48,7 @@ void IRGen::emit(const Node::Ptr& node) {
 }
 
 JrFileModuleTypeDef::Ptr IRGen::emit(const FileModuleDecl::Ptr& decl) {
-    auto fileModuleDef = std::static_pointer_cast<JrFileModuleTypeDef>(decl->typeDef);
+    auto fileModuleDef = std::static_pointer_cast<JrFileModuleTypeDef>(decl->type);
     context->visit(CompileStage::visitFileModule, decl, [this, decl]() {
         emit(decl->members);
     });
@@ -65,7 +65,7 @@ void IRGen::emit(const FuncCallExpr::Ptr& funcCallExpr) {
             emit(argument);
         }
 
-        auto funcDef = std::static_pointer_cast<JrFuncTypeDef>(funcCallExpr->typeDef);
+        auto funcDef = std::static_pointer_cast<JrFuncTypeDef>(funcCallExpr->type);
         if(funcCallExpr->identifier->kind == SyntaxKind::memberAccessExpr) {
             emit(funcCallExpr->identifier);
         }
@@ -86,7 +86,7 @@ void IRGen::emit(const MemberFuncCallExpr::Ptr& memberFuncCallExpr) {
         
         emit(memberFuncCallExpr->callee);
         
-        auto funcDef = memberFuncCallExpr->typeDef;
+        auto funcDef = memberFuncCallExpr->type;
         assert(funcDef != nullptr);
         writer.write({
             .opcode = OP_INVOKE,
@@ -438,7 +438,7 @@ void IRGen::emit(const StmtsBlock::Ptr& node) {
 
 void IRGen::emit(const FuncDecl::Ptr& node) {
 //    assert(node->symbol->flag == SymbolFlag::func);
-    auto function = std::static_pointer_cast<JrFuncTypeDef>(node->typeDef);
+    auto function = std::static_pointer_cast<JrFuncTypeDef>(node->type);
 
     IRGen generator(context);
     generator.emit(node->codeBlock);
