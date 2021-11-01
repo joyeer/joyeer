@@ -429,6 +429,17 @@ struct TypeDefDebugPrinter : YMLPrinter {
 
     void print(const JrFileModuleTypeDef::Ptr& fileModule) {
         output << "name: " << fileModule->name;
+        newline();
+        output << "instructions:";
+        DEBUG_BLOCK_START
+        auto i = 0;
+        for(const auto& instruction: fileModule->instructions) {
+            if(i > 0){
+                newline();
+            }
+            output << "- " << i++ << ": " << debugPrint(instruction);
+        }
+        DEBUG_BLOCK_END
     }
 
     void print(const JrBlockTypeDef::Ptr& block) {

@@ -6,6 +6,7 @@
 #define __joyeer_compiler_opcode_h__
 
 #include <vector>
+#include <string>
 
 enum Opcode : uint16_t {
     OP_NOP = 0x00,
@@ -64,15 +65,7 @@ enum Opcode : uint16_t {
 //
 struct Instruction {
     Opcode opcode;
-    union {
-        int64_t value = -1;
-
-        struct {
-            uint32_t value1;
-            uint32_t value2;
-        };
-
-    };
+    int64_t value = -1;
 };
 
 struct JrCodeWriter {
@@ -82,6 +75,9 @@ struct JrCodeWriter {
 
     std::vector<Instruction> instructions;
 };
+
+// debug output the instruction
+std::string debugPrint(const Instruction& instruction);
 
 
 #endif //__joyeer_compiler_opcode_h__

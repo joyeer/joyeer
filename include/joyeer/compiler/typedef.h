@@ -145,6 +145,9 @@ struct JrFileModuleTypeDef : JrClassTypeDef {
     // include ClassDef/FuncDef
     JrBlockTypeDef::Ptr block;
 
+    // File initialize instructions
+    std::vector<Instruction> instructions;
+
     explicit JrFileModuleTypeDef(const std::string& name);
 };
 

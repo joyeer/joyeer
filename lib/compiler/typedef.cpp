@@ -61,7 +61,8 @@ JrClassTypeDef::JrClassTypeDef(const std::string &name) :
         JrTypeDef(name, JrTypeKind::Function) {}
 
 JrFileModuleTypeDef::JrFileModuleTypeDef(const std::string &name) :
-        JrClassTypeDef(name) {
+        JrClassTypeDef(name),
+        instructions() {
     kind = JrTypeKind::FileModule;
 }
 

@@ -48,11 +48,13 @@ void IRGen::emit(const Node::Ptr& node) {
 }
 
 JrFileModuleTypeDef::Ptr IRGen::emit(const FileModuleDecl::Ptr& decl) {
+    auto fileModuleDef = std::static_pointer_cast<JrFileModuleTypeDef>(decl->typeDef);
     context->visit(CompileStage::visitFileModule, decl, [this, decl]() {
         emit(decl->members);
     });
 
-    return std::static_pointer_cast<JrFileModuleTypeDef>(decl->typeDef);
+    fileModuleDef->instructions = writer.instructions;
+    return fileModuleDef;
 }
 
 void IRGen::emit(const FuncCallExpr::Ptr& funcCallExpr) {
@@ -150,8 +152,7 @@ void IRGen::emit(const VarDecl::Ptr& node) {
 
                 writer.write({
                     .opcode = OP_PUTSTATIC,
-                    .value1 = static_cast<uint32_t>(varDef->parent),
-                    .value2 = static_cast<uint32_t>(varDef->position)
+                    .value = varDef->address,
                 });
             } else {
                 assert(false);
