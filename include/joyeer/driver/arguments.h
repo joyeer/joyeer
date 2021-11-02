@@ -22,7 +22,7 @@ struct CommandLineArguments {
     CommandLineArguments(int argc, char** argv);
     
     // print compiler usage
-    void printUsage();
+    static void printUsage();
     
 private:
     void parse(std::vector<std::string>& arguments);

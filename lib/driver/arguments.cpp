@@ -1,19 +1,18 @@
 #include "joyeer/driver/arguments.h"
 #include "joyeer/compiler/diagnostic.h"
-#include <codecvt>
 #include <iostream>
 
 CommandLineArguments::CommandLineArguments(int argc, char** argv) {
     std::vector<std::string> arguments;
     for(int i = 0 ; i < argc; i ++) {
-        arguments.push_back(std::string(argv[i]));
+        arguments.emplace_back(argv[i]);
     }
     
     parse(arguments);
 }
 
 void CommandLineArguments::parse(std::vector<std::string>& arguments) {
-    std::vector<std::string>::const_iterator iterator = arguments.begin();
+    auto iterator = arguments.begin();
     vmLocation = *iterator;
     
     iterator ++;
@@ -30,7 +29,7 @@ void CommandLineArguments::parse(std::vector<std::string>& arguments) {
         inputfile = workingDirectory / inputfile;
     }
     
-    if(std::filesystem::exists(inputfile) == false) {
+    if(!std::filesystem::exists(inputfile)) {
         Diagnostics::reportError(failure, Diagnostics::errorNoSuchFileOrDirectory);
     }
     

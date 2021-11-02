@@ -33,25 +33,4 @@ struct Global {
     static void initGlobalTables();
 };
 
-class TypeTablePrinter {
-public:
-    TypeTablePrinter(const std::string filename);
-    void print();
-    void print(JrFieldType::Ptr field);
-    void print(int addressOfFunc);
-    void close();
-    
-private:
-    std::ofstream output;
-};
-
-class FunctionTablePrinter {
-public:
-    FunctionTablePrinter(const std::string filename);
-    void print();
-    void close();
-    
-private:
-    std::ofstream output;
-};
 #endif
