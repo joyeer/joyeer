@@ -1,5 +1,7 @@
 
 add_joyeer_library(JoyeerCommon STATIC
-    descriptor.cpp
+        arguments.cpp
+        descriptor.cpp
+        diagnostic.cpp
 )
 

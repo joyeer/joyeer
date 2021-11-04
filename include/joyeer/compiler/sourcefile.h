@@ -1,7 +1,7 @@
 #ifndef __joyeer_compiler_sourcefile_h__
 #define __joyeer_compiler_sourcefile_h__
 
-#include "joyeer/driver/arguments.h"
+#include "joyeer/common/arguments.h"
 #include "joyeer/compiler/node.h"
 
 // SourceFile contains all information of source file in disk

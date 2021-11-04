@@ -9,7 +9,6 @@ TARGET_LINK_LIBRARIES(UnitTests
     libgmock
     JoyeerCommon
     JoyeerCompiler
-    JoyeerDriver
 )
 
 add_test(NAME UnitTests COMMAND UnitTests)

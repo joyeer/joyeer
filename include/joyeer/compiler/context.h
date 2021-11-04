@@ -1,7 +1,7 @@
 #ifndef __joyeer_compiler_context_h__
 #define __joyeer_compiler_context_h__
 
-#include "joyeer/driver/arguments.h"
+#include "joyeer/common/arguments.h"
 #include "joyeer/compiler/sourcefile.h"
 
 class CompilerService;

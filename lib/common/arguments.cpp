@@ -1,5 +1,5 @@
-#include "joyeer/driver/arguments.h"
-#include "joyeer/compiler/diagnostic.h"
+#include "joyeer/common/arguments.h"
+#include "joyeer/common/diagnostic.h"
 #include <iostream>
 
 CommandLineArguments::CommandLineArguments(int argc, char** argv) {

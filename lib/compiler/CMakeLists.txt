@@ -4,7 +4,6 @@ add_joyeer_library(JoyeerCompiler STATIC
         compiler+service.cpp
         context.cpp
         lexparser.cpp
-        diagnostic.cpp
         IRGen.cpp
         node.cpp
         node+visitor.cpp

@@ -1,7 +1,7 @@
 #ifndef __joyeer_driver_driver_h__
 #define __joyeer_driver_driver_h__
 
-#include "joyeer/driver/arguments.h"
+#include "joyeer/common/arguments.h"
 #include "joyeer/compiler/compiler+service.h"
 
 
@@ -12,10 +12,6 @@ public:
 
 private:
     CompilerService* compiler;
-
-//    JrRuntimeContext* runtimeContext;
-//    JrInterpreter * interpreter;
-
     CommandLineArguments::Ptr arguments;
 };
 

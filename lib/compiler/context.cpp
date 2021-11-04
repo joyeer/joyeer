@@ -1,6 +1,6 @@
 #include "joyeer/compiler/context.h"
 #include "joyeer/compiler/symtable.h"
-#include "joyeer/compiler/diagnostic.h"
+#include "joyeer/common/diagnostic.h"
 #include <cassert>
 #include <memory>
 #include <utility>

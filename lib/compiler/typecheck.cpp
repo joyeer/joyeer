@@ -1,5 +1,5 @@
 #include "joyeer/compiler/typecheck.h"
-#include "joyeer/compiler/diagnostic.h"
+#include "joyeer/common/diagnostic.h"
 #include "joyeer/compiler/typedef.h"
 #include "joyeer/compiler/compiler+service.h"
 #include <cassert>

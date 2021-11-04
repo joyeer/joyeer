@@ -1,7 +1,7 @@
 #include "joyeer/compiler/binder.h"
-#include "joyeer/compiler/diagnostic.h"
 #include "joyeer/compiler/sourcefile.h"
 #include "joyeer/compiler/compiler+service.h"
+#include "joyeer/common/diagnostic.h"
 
 #include <cassert>
 #include <utility>
