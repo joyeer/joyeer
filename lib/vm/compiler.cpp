@@ -3,3 +3,11 @@
 //
 
 #include "joyeer/vm/compiler.h"
+
+
+void VCompiler::compile(JrFileModuleTypeDef::Ptr fileModule) {
+}
+
+void VCompiler::compile(const std::vector<Instruction> &instructions) {
+}
+

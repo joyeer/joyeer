@@ -6,8 +6,12 @@
 #define __joyeer_vm_metadata_h__
 
 #include <vector>
+#include <cstdlib>
+
 
 // Joyeer VM primary types
+typedef char            JrByte;
+typedef short           JrShort;
 typedef int64_t         JrInt;
 typedef bool            JrBool;
 typedef char*           JrObject;
@@ -20,9 +24,9 @@ union JrValue {
     JrObject    objValue;
 };
 
-
 // Constants
 constexpr int kSystemPointerSize = sizeof(void*);
+constexpr int kJrByteSize = sizeof(JrByte);
 constexpr int kJrIntSize = sizeof(JrInt);
 constexpr int kJrBoolSize = sizeof (JrBool);
 constexpr int kJrValueSize = sizeof(JrValue);

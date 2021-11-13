@@ -1,10 +1,9 @@
 
 add_joyeer_library(JoyeerVM STATIC
-        code.cpp
         compiler.cpp
-        context.cpp
         frame.cpp
         interpreter.cpp
+        isolate.cpp
         object.cpp
         stringtable.cpp
         types.cpp

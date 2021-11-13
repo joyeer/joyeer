@@ -11,13 +11,14 @@
 // all static strings resources
 class StringTable {
 public:
-
+    explicit StringTable() = default;
+    std::vector<const char*> strings {};
 };
 
 
 class FuncTable {
 public:
-    std::vector<JrFunc> functions;
+    std::vector<JrFunc> functions {};
 };
 
 #endif //__joyeer_vm_stringtable_h__
