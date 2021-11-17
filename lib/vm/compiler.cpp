@@ -6,6 +6,7 @@
 
 
 void VCompiler::compile(JrFileModuleTypeDef::Ptr fileModule) {
+    compile(fileModule->instructions);
 }
 
 void VCompiler::compile(const std::vector<Instruction> &instructions) {

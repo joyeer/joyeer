@@ -16,9 +16,4 @@ public:
 };
 
 
-class FuncTable {
-public:
-    std::vector<JrFunc> functions {};
-};
-
 #endif //__joyeer_vm_stringtable_h__

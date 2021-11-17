@@ -6,5 +6,11 @@
 #define __joyeer_vm_object_h__
 
 #include <cstdint>
+#include "joyeer/vm/types.h"
+
+struct JrObject {
+    JrClass* klass;
+    JrByte data[];
+};
 
 #endif //__joyeer_vm_object_h__

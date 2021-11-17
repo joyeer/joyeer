@@ -14,14 +14,14 @@ typedef char            JrByte;
 typedef short           JrShort;
 typedef int64_t         JrInt;
 typedef bool            JrBool;
-typedef char*           JrObject;
+typedef char*           JrObjectPtr;
 typedef uintptr_t       JrAddress;
 typedef const char*     JrString;
 
 union JrValue {
-    JrInt       intValue;
-    JrBool      boolValue;
-    JrObject    objValue;
+    JrInt           intValue;
+    JrBool          boolValue;
+    JrObjectPtr     objValue;
 };
 
 // Constants
@@ -38,17 +38,8 @@ enum class JrValueType : uint8_t {
     Object,
 };
 
-struct JrField {
-    JrValueType type;
-};
-
 struct JrClass {
-    std::vector<JrInt> fields;
-    std::vector<JrInt> methods;
-};
-
-
-struct JrFunc {
 
 };
+
 #endif //__joyeer_vm_metadata_h__

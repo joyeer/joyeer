@@ -3,15 +3,17 @@
 
 #include "joyeer/common/arguments.h"
 #include "joyeer/compiler/compiler+service.h"
+#include "joyeer/vm/isolate.h"
 
 
 class Driver {
 public:
-    Driver(CommandLineArguments::Ptr arguments);
+    explicit Driver(CommandLineArguments::Ptr arguments);
     void run();
 
 private:
     CompilerService* compiler;
+    IsolateVM* isolateVM;
     CommandLineArguments::Ptr arguments;
 };
 
