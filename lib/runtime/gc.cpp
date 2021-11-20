@@ -1,3 +1,6 @@
+
+#include <joyeer/vm/gc.h>
+
 #include "joyeer/runtime/gc.h"
 
 JrObject* JrObjectAlloc::alloc(JrObjectType* type) {
