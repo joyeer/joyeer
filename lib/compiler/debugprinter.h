@@ -362,7 +362,7 @@ struct TypeDefDebugPrinter : YMLPrinter {
     explicit TypeDefDebugPrinter(const std::string& filename):
             YMLPrinter(filename) {}
 
-    void print(const std::vector<JrTypeDef::Ptr> typedefs) {
+    void print(const std::vector<JrType::Ptr> typedefs) {
         output << "typedefs:";
         DEBUG_BLOCK_START
         auto i = 0;
@@ -375,7 +375,7 @@ struct TypeDefDebugPrinter : YMLPrinter {
                 case JrTypeKind::FileModule:
                     output << "kind: FileModule" ;
                     newline();
-                    print(std::static_pointer_cast<JrFileModuleTypeDef>(tf));
+                    print(std::static_pointer_cast<JrFileModuleType>(tf));
                     break;
                 case JrTypeKind::Nil:
                     output << "kind: Nil" ;
@@ -400,17 +400,17 @@ struct TypeDefDebugPrinter : YMLPrinter {
                 case JrTypeKind::Block:
                     output << "kind: Block";
                     newline();
-                    print(std::static_pointer_cast<JrBlockTypeDef>(tf));
+                    print(std::static_pointer_cast<JrBlockType>(tf));
                     break;
                 case JrTypeKind::Function:
                     output << "kind: Function";
                     newline();
-                    print(std::static_pointer_cast<JrFuncTypeDef>(tf));
+                    print(std::static_pointer_cast<JrFuncType>(tf));
                     break;
                 case JrTypeKind::Variable:
                     output << "kind: Variable";
                     newline();
-                    print(std::static_pointer_cast<JrVariableTypeDef>(tf));
+                    print(std::static_pointer_cast<JrVariableType>(tf));
                     break;
                 default:
                     assert(false);
@@ -423,11 +423,11 @@ struct TypeDefDebugPrinter : YMLPrinter {
         DEBUG_BLOCK_END
     }
 
-    void print(const JrFuncTypeDef::Ptr& func) {
+    void print(const JrFuncType::Ptr& func) {
         output<< "name: " << func->name;
     }
 
-    void print(const JrFileModuleTypeDef::Ptr& fileModule) {
+    void print(const JrFileModuleType::Ptr& fileModule) {
         output << "name: " << fileModule->name;
         newline();
         output << "instructions:";
@@ -442,7 +442,7 @@ struct TypeDefDebugPrinter : YMLPrinter {
         DEBUG_BLOCK_END
     }
 
-    void print(const JrBlockTypeDef::Ptr& block) {
+    void print(const JrBlockType::Ptr& block) {
         output << "variables:";
         DEBUG_BLOCK_START
         auto i = 0;
@@ -456,7 +456,7 @@ struct TypeDefDebugPrinter : YMLPrinter {
         DEBUG_BLOCK_END
     }
 
-    void print(const JrVariableTypeDef::Ptr& variable) {
+    void print(const JrVariableType::Ptr& variable) {
         output << "name: " << variable->name;
         newline();
         output << "access-flag: " << debugAccessFlag(variable->accessFlags);

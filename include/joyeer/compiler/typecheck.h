@@ -44,31 +44,31 @@ protected:
     
     ClassDecl::Ptr processClassDecl(ClassDecl::Ptr decl);
 
-    JrTypeDef::Ptr typeOf(const Node::Ptr& node);
-    JrTypeDef::Ptr typeOf(const IdentifierExpr::Ptr& node);
-    JrTypeDef::Ptr typeOf(const Expr::Ptr& node);
-    JrTypeDef::Ptr typeOf(const LiteralExpr::Ptr& node);
-    JrTypeDef::Ptr typeOf(const FuncCallExpr::Ptr& node);
-    JrTypeDef::Ptr typeOf(const ParenthesizedExpr::Ptr& node);
-    JrTypeDef::Ptr typeOf(const SelfExpr::Ptr& node);
-    JrTypeDef::Ptr typeOf(const Pattern::Ptr& node);
-    JrTypeDef::Ptr typeOf(const Type::Ptr& node);
-    JrTypeDef::Ptr typeOf(const ArrayLiteralExpr::Ptr& node);
-    JrTypeDef::Ptr typeOf(const DictLiteralExpr::Ptr& node);
-    JrTypeDef::Ptr typeOf(const MemberAccessExpr::Ptr& node);
-    JrTypeDef::Ptr typeOf(const MemberFuncCallExpr::Ptr& node);
-    JrTypeDef::Ptr typeOf(const SubscriptExpr::Ptr& node);
-    JrTypeDef::Ptr typeOf(const ArrayType::Ptr& node);
-    JrTypeDef::Ptr typeOf(const PrefixExpr::Ptr& node);
+    JrType::Ptr typeOf(const Node::Ptr& node);
+    JrType::Ptr typeOf(const IdentifierExpr::Ptr& node);
+    JrType::Ptr typeOf(const Expr::Ptr& node);
+    JrType::Ptr typeOf(const LiteralExpr::Ptr& node);
+    JrType::Ptr typeOf(const FuncCallExpr::Ptr& node);
+    JrType::Ptr typeOf(const ParenthesizedExpr::Ptr& node);
+    JrType::Ptr typeOf(const SelfExpr::Ptr& node);
+    JrType::Ptr typeOf(const Pattern::Ptr& node);
+    JrType::Ptr typeOf(const Type::Ptr& node);
+    JrType::Ptr typeOf(const ArrayLiteralExpr::Ptr& node);
+    JrType::Ptr typeOf(const DictLiteralExpr::Ptr& node);
+    JrType::Ptr typeOf(const MemberAccessExpr::Ptr& node);
+    JrType::Ptr typeOf(const MemberFuncCallExpr::Ptr& node);
+    JrType::Ptr typeOf(const SubscriptExpr::Ptr& node);
+    JrType::Ptr typeOf(const ArrayType::Ptr& node);
+    JrType::Ptr typeOf(const PrefixExpr::Ptr& node);
     
     // Get Code-Block's return kind
     void verifyReturnStatement(const StmtsBlock::Ptr& node);
     void verifyReturnStatement(std::vector<Node::Ptr>& statements);
-    JrTypeDef::Ptr returnTypeOf(const Node::Ptr& node);
-    JrTypeDef::Ptr returnTypeOf(const IfStmt::Ptr& node);
-    JrTypeDef::Ptr returnTypeOf(const StmtsBlock::Ptr& node);
-    JrTypeDef::Ptr returnTypeOf(const FuncCallExpr::Ptr& node);
-    JrTypeDef::Ptr returnTypeOf(const WhileStmt::Ptr& node);
+    JrType::Ptr returnTypeOf(const Node::Ptr& node);
+    JrType::Ptr returnTypeOf(const IfStmt::Ptr& node);
+    JrType::Ptr returnTypeOf(const StmtsBlock::Ptr& node);
+    JrType::Ptr returnTypeOf(const FuncCallExpr::Ptr& node);
+    JrType::Ptr returnTypeOf(const WhileStmt::Ptr& node);
     
     CompileContext::Ptr context;
 };

@@ -136,7 +136,7 @@ Node::Ptr TypeChecker::visit(const VarDecl::Ptr& decl) {
         visit(decl->pattern);
     });
 
-    // if the pattern specify the TypeDef, VarDecl will follow the pattern
+    // if the pattern specify the Types, VarDecl will follow the pattern
     if(decl->pattern->getType() != nullptr) {
         decl->type = decl->pattern->getType();
     } else {
@@ -242,10 +242,10 @@ Node::Ptr TypeChecker::visit(const Expr::Ptr& node) {
 Node::Ptr TypeChecker::visit(const LiteralExpr::Ptr& node) {
     switch(node->literal->kind) {
         case TokenKind::decimalLiteral:
-            node->type = BuildIn::TypeDef::Int;
+            node->type = BuildIn::Types::Int;
             break;
         case TokenKind::stringLiteral:
-            node->type = BuildIn::TypeDef::String;
+            node->type = BuildIn::Types::String;
             break;
         default:
             assert(false);
@@ -381,7 +381,7 @@ Node::Ptr TypeChecker::visit(const OperatorExpr::Ptr& decl) {
     return decl;
 }
 
-JrTypeDef::Ptr TypeChecker::typeOf(const Node::Ptr& node) {
+JrType::Ptr TypeChecker::typeOf(const Node::Ptr& node) {
     switch (node->kind) {
         case SyntaxKind::identifierExpr:
             return typeOf(std::static_pointer_cast<IdentifierExpr>(node));
@@ -418,7 +418,7 @@ JrTypeDef::Ptr TypeChecker::typeOf(const Node::Ptr& node) {
     }
 }
 
-JrTypeDef::Ptr TypeChecker::typeOf(const IdentifierExpr::Ptr& node) {
+JrType::Ptr TypeChecker::typeOf(const IdentifierExpr::Ptr& node) {
 
     auto symbol = context->lookup(node->getSimpleName());
     switch(symbol->flag) {
@@ -435,7 +435,7 @@ JrTypeDef::Ptr TypeChecker::typeOf(const IdentifierExpr::Ptr& node) {
     }
 }
 
-JrTypeDef::Ptr TypeChecker::typeOf(const Expr::Ptr& node) {
+JrType::Ptr TypeChecker::typeOf(const Expr::Ptr& node) {
     assert(node->binaries.empty());
     assert(node->prefix == nullptr);
     
@@ -443,7 +443,7 @@ JrTypeDef::Ptr TypeChecker::typeOf(const Expr::Ptr& node) {
         return node->type;
     }
     
-    std::stack<JrTypeDef::Ptr> stack;
+    std::stack<JrType::Ptr> stack;
     for (const auto &n: node->nodes)
         if (n->kind == SyntaxKind::operatorExpr) {
             auto leftType = stack.top();
@@ -465,65 +465,65 @@ JrTypeDef::Ptr TypeChecker::typeOf(const Expr::Ptr& node) {
     return stack.top();
 }
 
-JrTypeDef::Ptr TypeChecker::typeOf(const LiteralExpr::Ptr& node) {
+JrType::Ptr TypeChecker::typeOf(const LiteralExpr::Ptr& node) {
     switch(node->literal->kind) {
         case booleanLiteral:
-            return BuildIn::TypeDef::Bool;
+            return BuildIn::Types::Bool;
         case decimalLiteral:
-            return BuildIn::TypeDef::Int;
+            return BuildIn::Types::Int;
         case nilLiteral:
-            return BuildIn::TypeDef::Nil;
+            return BuildIn::Types::Nil;
         case stringLiteral:
-            return BuildIn::TypeDef::String;
+            return BuildIn::Types::String;
         default:
             assert(false);
     }
 }
 
-JrTypeDef::Ptr TypeChecker::typeOf(const FuncCallExpr::Ptr& node) {
+JrType::Ptr TypeChecker::typeOf(const FuncCallExpr::Ptr& node) {
     auto funcName = node->getSimpleName();
     auto symbol = context->lookup(funcName);
     assert(symbol->flag == SymbolFlag::func);
     return context->compiler->getTypeDefBy(symbol->address);
 }
 
-JrTypeDef::Ptr TypeChecker::typeOf(const MemberFuncCallExpr::Ptr& node) {
+JrType::Ptr TypeChecker::typeOf(const MemberFuncCallExpr::Ptr& node) {
     auto funcName = node->getSimpleName();
     auto symbol = context->lookup(funcName);
-    auto funcDef = std::static_pointer_cast<JrFuncTypeDef> (context->compiler->getTypeDefBy(symbol->address));
+    auto funcDef = std::static_pointer_cast<JrFuncType> (context->compiler->getTypeDefBy(symbol->address));
     return funcDef->returnType;
 }
 
-JrTypeDef::Ptr TypeChecker::typeOf(const ParenthesizedExpr::Ptr& node) {
+JrType::Ptr TypeChecker::typeOf(const ParenthesizedExpr::Ptr& node) {
     return typeOf(node->expr);
 }
 
-JrTypeDef::Ptr TypeChecker::typeOf(const SelfExpr::Ptr& node) {
+JrType::Ptr TypeChecker::typeOf(const SelfExpr::Ptr& node) {
     return typeOf(node->identifier);
 }
 
-JrTypeDef::Ptr TypeChecker::typeOf(const Pattern::Ptr& node) {
+JrType::Ptr TypeChecker::typeOf(const Pattern::Ptr& node) {
     if(node->type == nullptr) {
-        return BuildIn::TypeDef::Any;
+        return BuildIn::Types::Any;
     }
     return typeOf(node->typeNode);
 }
 
-JrTypeDef::Ptr TypeChecker::typeOf(const Type::Ptr& node) {
+JrType::Ptr TypeChecker::typeOf(const Type::Ptr& node) {
     return node->type;
 }
 
-JrTypeDef::Ptr TypeChecker::typeOf(const DictLiteralExpr::Ptr& node) {
+JrType::Ptr TypeChecker::typeOf(const DictLiteralExpr::Ptr& node) {
     assert(false);
 }
 
-JrTypeDef::Ptr TypeChecker::typeOf(const ArrayLiteralExpr::Ptr& node) {
-    JrTypeDef::Ptr previousType = nullptr;
+JrType::Ptr TypeChecker::typeOf(const ArrayLiteralExpr::Ptr& node) {
+    JrType::Ptr previousType = nullptr;
     for(const auto& item: node->items) {
         auto type = typeOf(item);
         if(previousType != nullptr) {
             if(type->kind != previousType->kind) {
-                return BuildIn::TypeDef::Any;
+                return BuildIn::Types::Any;
             }
         }
 
@@ -537,15 +537,15 @@ JrTypeDef::Ptr TypeChecker::typeOf(const ArrayLiteralExpr::Ptr& node) {
     return previousType;
 }
 
-JrTypeDef::Ptr TypeChecker::typeOf(const MemberAccessExpr::Ptr& node) {
+JrType::Ptr TypeChecker::typeOf(const MemberAccessExpr::Ptr& node) {
     return typeOf(node->member);
 }
 
-JrTypeDef::Ptr TypeChecker::typeOf(const SubscriptExpr::Ptr& node) {
+JrType::Ptr TypeChecker::typeOf(const SubscriptExpr::Ptr& node) {
     return typeOf(node->identifier);
 }
 
-JrTypeDef::Ptr TypeChecker::typeOf(const ArrayType::Ptr& node) {
+JrType::Ptr TypeChecker::typeOf(const ArrayType::Ptr& node) {
 //    auto kind = typeOf(node->kind);
 //    if(kind == JrPrimaryType::Int) {
 //        return JrObjectArray::Type;
@@ -554,7 +554,7 @@ JrTypeDef::Ptr TypeChecker::typeOf(const ArrayType::Ptr& node) {
     assert(false);
 }
 
-JrTypeDef::Ptr TypeChecker::typeOf(const PrefixExpr::Ptr& node) {
+JrType::Ptr TypeChecker::typeOf(const PrefixExpr::Ptr& node) {
     return typeOf(node->expr);
 }
 
@@ -573,7 +573,7 @@ void TypeChecker::verifyReturnStatement(std::vector<Node::Ptr>& statements) {
     }
 }
 
-JrTypeDef::Ptr TypeChecker::returnTypeOf(const StmtsBlock::Ptr& node) {
+JrType::Ptr TypeChecker::returnTypeOf(const StmtsBlock::Ptr& node) {
     if(node->statements.empty()) {
         return nullptr;
     }
@@ -582,7 +582,7 @@ JrTypeDef::Ptr TypeChecker::returnTypeOf(const StmtsBlock::Ptr& node) {
     return returnTypeOf(n);
 }
 
-JrTypeDef::Ptr TypeChecker::returnTypeOf(const IfStmt::Ptr& node) {
+JrType::Ptr TypeChecker::returnTypeOf(const IfStmt::Ptr& node) {
     auto ifBlock = returnTypeOf(node->ifCodeBlock);
     if(ifBlock == nullptr || node->elseCodeBlock == nullptr) {
         return ifBlock;
@@ -596,22 +596,22 @@ JrTypeDef::Ptr TypeChecker::returnTypeOf(const IfStmt::Ptr& node) {
     return ifBlock;
 }
 
-JrTypeDef::Ptr TypeChecker::returnTypeOf(const WhileStmt::Ptr& node) {
+JrType::Ptr TypeChecker::returnTypeOf(const WhileStmt::Ptr& node) {
     return returnTypeOf(node->codeBlock);
 }
 
-JrTypeDef::Ptr TypeChecker::returnTypeOf(const FuncCallExpr::Ptr& node) {
+JrType::Ptr TypeChecker::returnTypeOf(const FuncCallExpr::Ptr& node) {
     return node->type;
 }
 
-JrTypeDef::Ptr TypeChecker::returnTypeOf(const Node::Ptr& node) {
+JrType::Ptr TypeChecker::returnTypeOf(const Node::Ptr& node) {
     switch (node->kind) {
         case SyntaxKind::stmtsBlock:
             return returnTypeOf(std::static_pointer_cast<StmtsBlock>(node));
         case SyntaxKind::returnStmt: {
             auto returnStatement = std::static_pointer_cast<ReturnStmt>(node);
             if(returnStatement->expr == nullptr) {
-                return BuildIn::TypeDef::Void;
+                return BuildIn::Types::Void;
             } else {
                 return typeOf(returnStatement->expr);
             }

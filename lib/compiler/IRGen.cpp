@@ -47,8 +47,8 @@ void IRGen::emit(const Node::Ptr& node) {
     }
 }
 
-JrFileModuleTypeDef::Ptr IRGen::emit(const FileModuleDecl::Ptr& decl) {
-    auto fileModuleDef = std::static_pointer_cast<JrFileModuleTypeDef>(decl->type);
+JrFileModuleType::Ptr IRGen::emit(const FileModuleDecl::Ptr& decl) {
+    auto fileModuleDef = std::static_pointer_cast<JrFileModuleType>(decl->type);
     context->visit(CompileStage::visitFileModule, decl, [this, decl]() {
         emit(decl->members);
     });
@@ -65,7 +65,7 @@ void IRGen::emit(const FuncCallExpr::Ptr& funcCallExpr) {
             emit(argument);
         }
 
-        auto funcDef = std::static_pointer_cast<JrFuncTypeDef>(funcCallExpr->type);
+        auto funcDef = std::static_pointer_cast<JrFuncType>(funcCallExpr->type);
         if(funcCallExpr->identifier->kind == SyntaxKind::memberAccessExpr) {
             emit(funcCallExpr->identifier);
         }
@@ -133,7 +133,7 @@ void IRGen::emit(const VarDecl::Ptr& node) {
     emit(node->initializer);
 
     auto symbol = context->lookup(node->getSimpleName());
-    auto varDef = std::static_pointer_cast<JrVariableTypeDef>(context->compiler->getTypeDefBy(symbol->address));
+    auto varDef = std::static_pointer_cast<JrVariableType>(context->compiler->getTypeDefBy(symbol->address));
 
     switch (symbol->flag) {
         case SymbolFlag::var:
@@ -185,12 +185,12 @@ void IRGen::emit(const IdentifierExpr::Ptr& node) {
         return;
     }
 
-    auto varDef = std::static_pointer_cast<JrVariableTypeDef>(context->compiler->getTypeDefBy(symbol->address));
+    auto varDef = std::static_pointer_cast<JrVariableType>(context->compiler->getTypeDefBy(symbol->address));
 
     if(symbol->flag  == SymbolFlag::var) {
 //        auto kind = symbol->kind;
         
-//        if(kind->kind == BuildIn::TypeDef::Int->kind) {
+//        if(kind->kind == BuildIn::Types::Int->kind) {
 //            writer.write({
 //                .opcode = OP_ILOAD,
 //                .value = symbol->addressOfVariable
@@ -438,7 +438,7 @@ void IRGen::emit(const StmtsBlock::Ptr& node) {
 
 void IRGen::emit(const FuncDecl::Ptr& node) {
 //    assert(node->symbol->flag == SymbolFlag::func);
-    auto function = std::static_pointer_cast<JrFuncTypeDef>(node->type);
+    auto function = std::static_pointer_cast<JrFuncType>(node->type);
 
     IRGen generator(context);
     generator.emit(node->codeBlock);

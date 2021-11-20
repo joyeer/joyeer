@@ -58,44 +58,44 @@ Symbol::Ptr CompileContext::lookup(const std::string &name) {
     return nullptr;
 }
 
-JrTypeDef::Ptr CompileContext::curTypeDef() const {
+JrType::Ptr CompileContext::curTypeDef() const {
     return types.back();
 }
 
-JrTypeDef::Ptr CompileContext::curDeclTypeDef() const {
+JrType::Ptr CompileContext::curDeclTypeDef() const {
     for (auto iterator = types.rbegin(); iterator != types.rend(); iterator ++) {
         auto typeDef = *iterator;
         if(typeDef->kind == JrTypeKind::Function ||
             typeDef->kind == JrTypeKind::Class ||
             typeDef->kind == JrTypeKind::FileModule ) {
-            return std::static_pointer_cast<JrBlockTypeDef>(typeDef);
+            return std::static_pointer_cast<JrBlockType>(typeDef);
         }
     }
     return nullptr;
 }
 
-JrBlockTypeDef::Ptr CompileContext::curBlockDef() const {
+JrBlockType::Ptr CompileContext::curBlockDef() const {
     for (auto iterator = types.rbegin(); iterator != types.rend(); iterator ++) {
         auto typeDef = *iterator;
         if(typeDef->kind == JrTypeKind::Block) {
-            return std::static_pointer_cast<JrBlockTypeDef>(typeDef);
+            return std::static_pointer_cast<JrBlockType>(typeDef);
         }
     }
     return nullptr;
 }
 
-JrFuncTypeDef::Ptr CompileContext::curFuncDef() const {
+JrFuncType::Ptr CompileContext::curFuncDef() const {
     for (auto iterator = types.rbegin(); iterator != types.rend(); iterator ++) {
         auto typeDef = *iterator;
         if(typeDef->kind == JrTypeKind::Function) {
-            return std::static_pointer_cast<JrFuncTypeDef>(typeDef);
+            return std::static_pointer_cast<JrFuncType>(typeDef);
         }
     }
 
     return nullptr;
 }
 
-JrFileModuleTypeDef::Ptr CompileContext::curModuleDef() const {
+JrFileModuleType::Ptr CompileContext::curModuleDef() const {
     // The top one must be the FileModuleTypeDef
-    return std::static_pointer_cast<JrFileModuleTypeDef>(types[0]);
+    return std::static_pointer_cast<JrFileModuleType>(types[0]);
 }

@@ -35,33 +35,33 @@ std::string debugAccessFlag(JrAccessFlag flag) {
     return ss.str();
 }
 
-JrNilTypeDef::JrNilTypeDef():
-        JrTypeDef("nil", JrTypeKind::Nil){}
+JrNilType::JrNilType():
+        JrType("nil", JrTypeKind::Nil){}
 
-JrVoidTypeDef::JrVoidTypeDef() :
-        JrTypeDef("void", JrTypeKind::Void) {}
+JrVoidType::JrVoidType() :
+        JrType("void", JrTypeKind::Void) {}
 
-JrIntTypeDef::JrIntTypeDef() :
-        JrTypeDef("Int", JrTypeKind::Integer) {}
+JrIntType::JrIntType() :
+        JrType("Int", JrTypeKind::Integer) {}
 
-JrBoolTypeDef::JrBoolTypeDef() :
-        JrTypeDef("Bool", JrTypeKind::Integer) {}
+JrBoolType::JrBoolType() :
+        JrType("Bool", JrTypeKind::Integer) {}
 
-JrBlockTypeDef::JrBlockTypeDef() :
-        JrTypeDef("Block", JrTypeKind::Block),
+JrBlockType::JrBlockType() :
+        JrType("Block", JrTypeKind::Block),
         localVars() {}
 
-JrFuncTypeDef::JrFuncTypeDef(const std::string &name) :
-        JrTypeDef(name, JrTypeKind::Function),
+JrFuncType::JrFuncType(const std::string &name) :
+        JrType(name, JrTypeKind::Function),
         funcKind(JrFuncTypeKind::VM_Func),
         paramTypes(),
         returnType(nullptr) {}
 
-JrClassTypeDef::JrClassTypeDef(const std::string &name) :
-        JrTypeDef(name, JrTypeKind::Function) {}
+JrClassType::JrClassType(const std::string &name) :
+        JrType(name, JrTypeKind::Function) {}
 
-JrFileModuleTypeDef::JrFileModuleTypeDef(const std::string &name) :
-        JrClassTypeDef(name),
+JrFileModuleType::JrFileModuleType(const std::string &name) :
+        JrClassType(name),
         instructions() {
     kind = JrTypeKind::FileModule;
 }

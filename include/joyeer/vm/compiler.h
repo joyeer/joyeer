@@ -13,7 +13,7 @@
 
 class VCompiler {
 public:
-    void compile(JrFileModuleTypeDef::Ptr fileModule);
+    void compile(JrFileModuleType::Ptr fileModule);
     void compile(const std::vector<Instruction>& instructions);
 private:
 };

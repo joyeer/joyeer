@@ -37,19 +37,19 @@ public:
     
     SymbolTable::Ptr curSymTable() ;
 
-    [[nodiscard]] JrTypeDef::Ptr curTypeDef() const;
+    [[nodiscard]] JrType::Ptr curTypeDef() const;
 
-    // Return the Top declarations TypeDef - FileModuleDef/FuncDef/ClassDef
-    [[nodiscard]] JrTypeDef::Ptr  curDeclTypeDef() const ;
+    // Return the Top declarations Types - FileModuleDef/FuncDef/ClassDef
+    [[nodiscard]] JrType::Ptr  curDeclTypeDef() const ;
 
     // return the current FuncDef in the stack
-    [[nodiscard]] JrFuncTypeDef::Ptr curFuncDef() const;
+    [[nodiscard]] JrFuncType::Ptr curFuncDef() const;
 
     // return the current JrModuleTypeDef in the stack
-    [[nodiscard]] JrFileModuleTypeDef::Ptr curModuleDef() const;
+    [[nodiscard]] JrFileModuleType::Ptr curModuleDef() const;
 
     // return the current BlockDef in stack
-    [[nodiscard]] JrBlockTypeDef::Ptr curBlockDef() const;
+    [[nodiscard]] JrBlockType::Ptr curBlockDef() const;
 
     // the current parsing source file
     SourceFile::Ptr sourcefile = nullptr;
@@ -62,7 +62,7 @@ protected:
     std::vector<SymbolTable::Ptr> symbols;
 
     // the parsing stack
-    std::vector<JrTypeDef::Ptr> types;
+    std::vector<JrType::Ptr> types;
     
     // stage of compiling status, the last element of stages present the current stage
     std::vector<CompileStage> stages;

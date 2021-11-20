@@ -14,7 +14,7 @@ void FileModuleMemoryAlignment::align(const FileModuleDecl::Ptr& decl) {
 }
 
 void FileModuleMemoryAlignment::align(const StmtsBlock::Ptr &decl) {
-    auto blockDef = std::static_pointer_cast<JrBlockTypeDef>(decl->getType());
+    auto blockDef = std::static_pointer_cast<JrBlockType>(decl->getType());
     blockDef->base = base;
     auto startPosition = blockDef->base;
 

@@ -12,10 +12,10 @@ public:
     void run(const std::string& inputFile);
 
     // register a kind
-    void declare(const JrTypeDef::Ptr& type);
+    void declare(const JrType::Ptr& type);
 
-    // get a TypeDef from an address
-    JrTypeDef::Ptr getTypeDefBy(int address);
+    // get a Types from an address
+    JrType::Ptr getTypeDefBy(int address);
 private:
     
     // Compile an SourceFile
@@ -39,7 +39,7 @@ private:
     SymbolTable::Ptr globalSymbols;
 
     // Type tables include
-    std::vector<JrTypeDef::Ptr> types;
+    std::vector<JrType::Ptr> types;
 
     // FileModule static variable memory alignment
     FileModuleMemoryAlignment fileModuleMemoryAlign;

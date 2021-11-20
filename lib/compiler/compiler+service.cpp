@@ -96,12 +96,12 @@ void CompilerService::compile(const SourceFile::Ptr& sourcefile) {
     typedefPrinter.close();
 }
 
-void CompilerService::declare(const JrTypeDef::Ptr& type) {
+void CompilerService::declare(const JrType::Ptr& type) {
     type->address = static_cast<int32_t>(types.size());
     types.push_back(type);
 }
 
-JrTypeDef::Ptr CompilerService::getTypeDefBy(int address) {
+JrType::Ptr CompilerService::getTypeDefBy(int address) {
     return types[address];
 }
 
@@ -129,15 +129,15 @@ void CompilerService::debugPrint(const Node::Ptr& node, const std::string &debug
 
 void CompilerService::initializeGlobalSymbolTable() {
     globalSymbols = std::make_shared<SymbolTable>();
-    globalSymbols->insert(Symbol::make(SymbolFlag::func, BuildIn::TypeDef::print->name, BuildIn::TypeDef::print->address));
+    globalSymbols->insert(Symbol::make(SymbolFlag::func, BuildIn::Types::print->name, BuildIn::Types::print->address));
 }
 
 void CompilerService::initializeTypeDefs() {
-    declare(BuildIn::TypeDef::Void);
-    declare(BuildIn::TypeDef::Any);
-    declare(BuildIn::TypeDef::Nil);
-    declare(BuildIn::TypeDef::Int);
-    declare(BuildIn::TypeDef::Bool);
+    declare(BuildIn::Types::Void);
+    declare(BuildIn::Types::Any);
+    declare(BuildIn::Types::Nil);
+    declare(BuildIn::Types::Int);
+    declare(BuildIn::Types::Bool);
 
-    declare(BuildIn::TypeDef::print);
+    declare(BuildIn::Types::print);
 }
