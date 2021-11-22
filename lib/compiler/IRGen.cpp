@@ -47,8 +47,8 @@ void IRGen::emit(const Node::Ptr& node) {
     }
 }
 
-JrFileModuleType::Ptr IRGen::emit(const FileModuleDecl::Ptr& decl) {
-    auto fileModuleDef = std::static_pointer_cast<JrFileModuleType>(decl->type);
+FileModuleType::Ptr IRGen::emit(const FileModuleDecl::Ptr& decl) {
+    auto fileModuleDef = std::static_pointer_cast<FileModuleType>(decl->type);
     context->visit(CompileStage::visitFileModule, decl, [this, decl]() {
         emit(decl->members);
     });
@@ -65,7 +65,7 @@ void IRGen::emit(const FuncCallExpr::Ptr& funcCallExpr) {
             emit(argument);
         }
 
-        auto funcDef = std::static_pointer_cast<JrFuncType>(funcCallExpr->type);
+        auto funcDef = std::static_pointer_cast<FuncType>(funcCallExpr->type);
         if(funcCallExpr->identifier->kind == SyntaxKind::memberAccessExpr) {
             emit(funcCallExpr->identifier);
         }
@@ -133,7 +133,7 @@ void IRGen::emit(const VarDecl::Ptr& node) {
     emit(node->initializer);
 
     auto symbol = context->lookup(node->getSimpleName());
-    auto varDef = std::static_pointer_cast<JrVariableType>(context->compiler->getTypeDefBy(symbol->address));
+    auto varDef = std::static_pointer_cast<VariableType>(context->compiler->getTypeDefBy(symbol->address));
 
     switch (symbol->flag) {
         case SymbolFlag::var:
@@ -185,7 +185,7 @@ void IRGen::emit(const IdentifierExpr::Ptr& node) {
         return;
     }
 
-    auto varDef = std::static_pointer_cast<JrVariableType>(context->compiler->getTypeDefBy(symbol->address));
+    auto varDef = std::static_pointer_cast<VariableType>(context->compiler->getTypeDefBy(symbol->address));
 
     if(symbol->flag  == SymbolFlag::var) {
 //        auto kind = symbol->kind;
@@ -195,12 +195,12 @@ void IRGen::emit(const IdentifierExpr::Ptr& node) {
 //                .opcode = OP_ILOAD,
 //                .value = symbol->addressOfVariable
 //            });
-//        } else if(kind->kind == JrTypeKind::Class || kind->kind == JrTypeKind::Any ) {
+//        } else if(kind->kind == TypeKind::Class || kind->kind == TypeKind::Any ) {
 //            writer.write({
 //                .opcode = OP_OLOAD,x`x`
 //                .value = symbol->addressOfVariable
 //            });
-//        } else if(kind->kind == JrTypeKind::Nil) {
+//        } else if(kind->kind == TypeKind::Nil) {
 //            writer.write({
 //                .opcode = OP_OCONST_NIL,
 //            });
@@ -438,7 +438,7 @@ void IRGen::emit(const StmtsBlock::Ptr& node) {
 
 void IRGen::emit(const FuncDecl::Ptr& node) {
 //    assert(node->symbol->flag == SymbolFlag::func);
-    auto function = std::static_pointer_cast<JrFuncType>(node->type);
+    auto function = std::static_pointer_cast<FuncType>(node->type);
 
     IRGen generator(context);
     generator.emit(node->codeBlock);
@@ -472,7 +472,7 @@ void IRGen::emit(const ArrayLiteralExpr::Ptr& node) {
     
 //    writer.write({
 //        .opcode = OP_ONEWARRAY,
-//        .value = JrType::Any->addressOfType
+//        .value = Type::Any->addressOfType
 //    });
 
     assert(false);

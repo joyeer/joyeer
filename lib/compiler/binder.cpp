@@ -23,7 +23,7 @@ Node::Ptr Binder::visit(const Node::Ptr& node) {
 Node::Ptr Binder::visit(const FileModuleDecl::Ptr& fileModule) {
     // register FileModule
 
-    auto fileModuleDef = std::make_shared<JrFileModuleType>(fileModule->getSimpleName());
+    auto fileModuleDef = std::make_shared<FileModuleType>(fileModule->getSimpleName());
     context->compiler->declare(fileModuleDef);
     fileModule->type = fileModuleDef;
 
@@ -51,7 +51,7 @@ Node::Ptr Binder::visit(const ClassDecl::Ptr& decl) {
     });
     symtable->insert(symbol);
 
-    auto objectType = JrClassType::create(name);
+    auto objectType = ClassType::create(name);
 
     decl->symtable = context->curSymTable();
     bool hasCustomizedConstructor = false;
@@ -76,7 +76,7 @@ Node::Ptr Binder::visit(const FuncDecl::Ptr& decl) {
     }
 
     // define FuncTypeDef
-    auto funcDef = std::make_shared<JrFuncType>(funcSimpleName);
+    auto funcDef = std::make_shared<FuncType>(funcSimpleName);
     context->compiler->declare(funcDef);
 
     // prepare the symbol, register the symbol into parent
@@ -125,8 +125,8 @@ Node::Ptr Binder::visit(const VarDecl::Ptr& decl) {
         Diagnostics::reportError("[Error] duplicate variable name");
     }
 
-    // declare the JrVariableType
-    auto varDef = std::make_shared<JrVariableType>(name);
+    // declare the VariableType
+    auto varDef = std::make_shared<VariableType>(name);
     context->compiler->declare(varDef);
 
     // if the closest declaration type, is the FileModuleDef/ClassDef,
@@ -134,7 +134,7 @@ Node::Ptr Binder::visit(const VarDecl::Ptr& decl) {
     auto declType = context->curDeclTypeDef();
     auto flag = SymbolFlag::var;
     switch (declType->kind) {
-        case JrTypeKind::FileModule:
+        case TypeKind::FileModule:
             flag = SymbolFlag::field;
             varDef->markAsStatic();
             varDef->parent = declType->address; // parent address
@@ -406,16 +406,16 @@ Node::Ptr Binder::visit(const WhileStmt::Ptr& decl) {
 
 Node::Ptr Binder::visit(const StmtsBlock::Ptr& decl) {
 
-    // generate a JrBlockType
-    auto blockDef = std::make_shared<JrBlockType>();
+    // generate a BlockType
+    auto blockDef = std::make_shared<BlockType>();
     context->compiler->declare(blockDef);
     decl->type = blockDef;
 
     // check parent's type, assign the BlockTypeDef to Parent
     auto typeDef = context->curTypeDef();
     switch (typeDef->kind) {
-        case JrTypeKind::FileModule: {
-            auto moduleDef = std::static_pointer_cast<JrFileModuleType>(typeDef);
+        case TypeKind::FileModule: {
+            auto moduleDef = std::static_pointer_cast<FileModuleType>(typeDef);
             moduleDef->block = blockDef;
         }
             break;

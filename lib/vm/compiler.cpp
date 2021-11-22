@@ -5,7 +5,7 @@
 #include "joyeer/vm/compiler.h"
 
 
-void VCompiler::compile(JrFileModuleType::Ptr fileModule) {
+void VCompiler::compile(FileModuleType::Ptr fileModule) {
     auto fileModuleClass = new JrFileModuleClass();
     compile(fileModule->instructions);
 }

@@ -362,7 +362,7 @@ struct TypeDefDebugPrinter : YMLPrinter {
     explicit TypeDefDebugPrinter(const std::string& filename):
             YMLPrinter(filename) {}
 
-    void print(const std::vector<JrType::Ptr> typedefs) {
+    void print(const std::vector<Type::Ptr> typedefs) {
         output << "typedefs:";
         DEBUG_BLOCK_START
         auto i = 0;
@@ -372,45 +372,45 @@ struct TypeDefDebugPrinter : YMLPrinter {
                 output << "index: " << i;
                 newline();
             switch (tf->kind) {
-                case JrTypeKind::FileModule:
+                case TypeKind::FileModule:
                     output << "kind: FileModule" ;
                     newline();
-                    print(std::static_pointer_cast<JrFileModuleType>(tf));
+                    print(std::static_pointer_cast<FileModuleType>(tf));
                     break;
-                case JrTypeKind::Nil:
+                case TypeKind::Nil:
                     output << "kind: Nil" ;
                     break;
-                case JrTypeKind::Boolean:
+                case TypeKind::Boolean:
                     output << "kind: Boolean" ;
                     break;
-                case JrTypeKind::Integer:
+                case TypeKind::Integer:
                     output << "kind: Integer";
                     break;
-                case JrTypeKind::Void:
+                case TypeKind::Void:
                     output << "kind: Void";
                     break;
-                case JrTypeKind::Long:
+                case TypeKind::Long:
                     output << "kind: Long";
                     break;
-                case JrTypeKind::Any:
+                case TypeKind::Any:
                     output << "kind: Any";
                     break;
-                case JrTypeKind::Class:
+                case TypeKind::Class:
                     assert(false);
-                case JrTypeKind::Block:
+                case TypeKind::Block:
                     output << "kind: Block";
                     newline();
-                    print(std::static_pointer_cast<JrBlockType>(tf));
+                    print(std::static_pointer_cast<BlockType>(tf));
                     break;
-                case JrTypeKind::Function:
+                case TypeKind::Function:
                     output << "kind: Function";
                     newline();
-                    print(std::static_pointer_cast<JrFuncType>(tf));
+                    print(std::static_pointer_cast<FuncType>(tf));
                     break;
-                case JrTypeKind::Variable:
+                case TypeKind::Variable:
                     output << "kind: Variable";
                     newline();
-                    print(std::static_pointer_cast<JrVariableType>(tf));
+                    print(std::static_pointer_cast<VariableType>(tf));
                     break;
                 default:
                     assert(false);
@@ -423,11 +423,11 @@ struct TypeDefDebugPrinter : YMLPrinter {
         DEBUG_BLOCK_END
     }
 
-    void print(const JrFuncType::Ptr& func) {
+    void print(const FuncType::Ptr& func) {
         output<< "name: " << func->name;
     }
 
-    void print(const JrFileModuleType::Ptr& fileModule) {
+    void print(const FileModuleType::Ptr& fileModule) {
         output << "name: " << fileModule->name;
         newline();
         output << "instructions:";
@@ -442,7 +442,7 @@ struct TypeDefDebugPrinter : YMLPrinter {
         DEBUG_BLOCK_END
     }
 
-    void print(const JrBlockType::Ptr& block) {
+    void print(const BlockType::Ptr& block) {
         output << "variables:";
         DEBUG_BLOCK_START
         auto i = 0;
@@ -456,7 +456,7 @@ struct TypeDefDebugPrinter : YMLPrinter {
         DEBUG_BLOCK_END
     }
 
-    void print(const JrVariableType::Ptr& variable) {
+    void print(const VariableType::Ptr& variable) {
         output << "name: " << variable->name;
         newline();
         output << "access-flag: " << debugAccessFlag(variable->accessFlags);

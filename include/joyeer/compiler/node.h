@@ -75,7 +75,7 @@ struct Node : std::enable_shared_from_this<Node> {
     Node::Ptr parent = nullptr;
 
     // represent the Node's TypeIdentifier, only available in Expr Node
-    JrType::Ptr type = nullptr;
+    Type::Ptr type = nullptr;
 
     // return the name of Node, it will be used as symbol in some cases
     virtual std::string getSimpleName();
@@ -106,7 +106,7 @@ struct Node : std::enable_shared_from_this<Node> {
     }
 
     // return Types underlay, for non-expr, it returns nullptr;
-    JrType::Ptr getType() const {
+    Type::Ptr getType() const {
         return type;
     }
 
@@ -142,8 +142,8 @@ struct OperatorExpr : Node {
 
     Token::Ptr token;
     OperatorPriority priority;
-    JrType *leftType;
-    JrType *rightType;
+    Type *leftType;
+    Type *rightType;
 
     explicit OperatorExpr(Token::Ptr token);
 

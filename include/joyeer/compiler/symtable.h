@@ -30,7 +30,7 @@ public:
     SymbolFlag flag;
     std::string name;
 
-    // address of JrFileModuleType/JrFuncType/JrClassType
+    // address of FileModuleType/FuncType/ClassType
     int32_t address = -1;
 
     // location of field-variable/local-variable inside of Class/FileModule/Func

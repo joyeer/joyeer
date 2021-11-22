@@ -58,44 +58,44 @@ Symbol::Ptr CompileContext::lookup(const std::string &name) {
     return nullptr;
 }
 
-JrType::Ptr CompileContext::curTypeDef() const {
+Type::Ptr CompileContext::curTypeDef() const {
     return types.back();
 }
 
-JrType::Ptr CompileContext::curDeclTypeDef() const {
+Type::Ptr CompileContext::curDeclTypeDef() const {
     for (auto iterator = types.rbegin(); iterator != types.rend(); iterator ++) {
         auto typeDef = *iterator;
-        if(typeDef->kind == JrTypeKind::Function ||
-            typeDef->kind == JrTypeKind::Class ||
-            typeDef->kind == JrTypeKind::FileModule ) {
-            return std::static_pointer_cast<JrBlockType>(typeDef);
+        if(typeDef->kind == TypeKind::Function ||
+           typeDef->kind == TypeKind::Class ||
+           typeDef->kind == TypeKind::FileModule ) {
+            return std::static_pointer_cast<BlockType>(typeDef);
         }
     }
     return nullptr;
 }
 
-JrBlockType::Ptr CompileContext::curBlockDef() const {
+BlockType::Ptr CompileContext::curBlockDef() const {
     for (auto iterator = types.rbegin(); iterator != types.rend(); iterator ++) {
         auto typeDef = *iterator;
-        if(typeDef->kind == JrTypeKind::Block) {
-            return std::static_pointer_cast<JrBlockType>(typeDef);
+        if(typeDef->kind == TypeKind::Block) {
+            return std::static_pointer_cast<BlockType>(typeDef);
         }
     }
     return nullptr;
 }
 
-JrFuncType::Ptr CompileContext::curFuncDef() const {
+FuncType::Ptr CompileContext::curFuncDef() const {
     for (auto iterator = types.rbegin(); iterator != types.rend(); iterator ++) {
         auto typeDef = *iterator;
-        if(typeDef->kind == JrTypeKind::Function) {
-            return std::static_pointer_cast<JrFuncType>(typeDef);
+        if(typeDef->kind == TypeKind::Function) {
+            return std::static_pointer_cast<FuncType>(typeDef);
         }
     }
 
     return nullptr;
 }
 
-JrFileModuleType::Ptr CompileContext::curModuleDef() const {
+FileModuleType::Ptr CompileContext::curModuleDef() const {
     // The top one must be the FileModuleTypeDef
-    return std::static_pointer_cast<JrFileModuleType>(types[0]);
+    return std::static_pointer_cast<FileModuleType>(types[0]);
 }

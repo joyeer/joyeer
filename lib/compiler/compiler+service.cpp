@@ -25,7 +25,7 @@ fileModuleMemoryAlign(){
     initializeGlobalSymbolTable();
 }
 
-JrFileModuleType::Ptr CompilerService::run(const std::string& inputFile) {
+FileModuleType::Ptr CompilerService::run(const std::string& inputFile) {
     auto sourcefile = findSourceFile(inputFile);
     return compile(sourcefile);
 }
@@ -50,7 +50,7 @@ SourceFile::Ptr CompilerService::findSourceFile(const std::string &path, const s
 }
 
 
-JrFileModuleType::Ptr CompilerService::compile(const SourceFile::Ptr& sourcefile) {
+FileModuleType::Ptr CompilerService::compile(const SourceFile::Ptr& sourcefile) {
     
     auto context= std::make_shared<CompileContext>(options, globalSymbols);
     context->sourcefile = sourcefile;
@@ -98,12 +98,12 @@ JrFileModuleType::Ptr CompilerService::compile(const SourceFile::Ptr& sourcefile
     return sourcefile->moduleClass;
 }
 
-void CompilerService::declare(const JrType::Ptr& type) {
+void CompilerService::declare(const Type::Ptr& type) {
     type->address = static_cast<int32_t>(types.size());
     types.push_back(type);
 }
 
-JrType::Ptr CompilerService::getTypeDefBy(int address) {
+Type::Ptr CompilerService::getTypeDefBy(int address) {
     return types[address];
 }
 

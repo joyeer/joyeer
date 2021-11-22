@@ -5,7 +5,7 @@
 #include "joyeer/compiler/typedef.h"
 #include <sstream>
 
-std::string debugAccessFlag(JrAccessFlag flag) {
+std::string debugAccessFlag(AccessFlag flag) {
     bool one = false;
     std::stringstream  ss;
 
@@ -16,53 +16,53 @@ std::string debugAccessFlag(JrAccessFlag flag) {
     ss << (name); \
     one = true;
 
-    if((flag & JrAccessFlag::Public) == JrAccessFlag::Public) {
+    if((flag & AccessFlag::Public) == AccessFlag::Public) {
         ACCESS_FLAGS_PRINT("public")
     }
 
-    if((flag & JrAccessFlag::Protected) == JrAccessFlag::Protected) {
+    if((flag & AccessFlag::Protected) == AccessFlag::Protected) {
         ACCESS_FLAGS_PRINT("protected")
     }
 
-    if((flag & JrAccessFlag::Private) == JrAccessFlag::Private) {
+    if((flag & AccessFlag::Private) == AccessFlag::Private) {
         ACCESS_FLAGS_PRINT("private")
     }
 
-    if((flag & JrAccessFlag::Static) == JrAccessFlag::Static) {
+    if((flag & AccessFlag::Static) == AccessFlag::Static) {
         ACCESS_FLAGS_PRINT("static")
     }
 
     return ss.str();
 }
 
-JrNilType::JrNilType():
-        JrType("nil", JrTypeKind::Nil){}
+NilType::NilType():
+        Type("nil", TypeKind::Nil){}
 
-JrVoidType::JrVoidType() :
-        JrType("void", JrTypeKind::Void) {}
+VoidType::VoidType() :
+        Type("void", TypeKind::Void) {}
 
-JrIntType::JrIntType() :
-        JrType("Int", JrTypeKind::Integer) {}
+IntType::IntType() :
+        Type("Int", TypeKind::Integer) {}
 
-JrBoolType::JrBoolType() :
-        JrType("Bool", JrTypeKind::Integer) {}
+BoolType::BoolType() :
+        Type("Bool", TypeKind::Integer) {}
 
-JrBlockType::JrBlockType() :
-        JrType("Block", JrTypeKind::Block),
+BlockType::BlockType() :
+        Type("Block", TypeKind::Block),
         localVars() {}
 
-JrFuncType::JrFuncType(const std::string &name) :
-        JrType(name, JrTypeKind::Function),
-        funcKind(JrFuncTypeKind::VM_Func),
+FuncType::FuncType(const std::string &name) :
+        Type(name, TypeKind::Function),
+        funcKind(FuncTypeKind::VM_Func),
         paramTypes(),
         returnType(nullptr) {}
 
-JrClassType::JrClassType(const std::string &name) :
-        JrType(name, JrTypeKind::Function) {}
+ClassType::ClassType(const std::string &name) :
+        Type(name, TypeKind::Function) {}
 
-JrFileModuleType::JrFileModuleType(const std::string &name) :
-        JrClassType(name),
+FileModuleType::FileModuleType(const std::string &name) :
+        ClassType(name),
         instructions() {
-    kind = JrTypeKind::FileModule;
+    kind = TypeKind::FileModule;
 }
 

@@ -11,17 +11,17 @@ public:
     explicit CompilerService(CommandLineArguments::Ptr options);
 
     // return the entry file module
-    JrFileModuleType::Ptr run(const std::string& inputFile);
+    FileModuleType::Ptr run(const std::string& inputFile);
 
     // register a kind
-    void declare(const JrType::Ptr& type);
+    void declare(const Type::Ptr& type);
 
     // get a Types from an address
-    JrType::Ptr getTypeDefBy(int address);
+    Type::Ptr getTypeDefBy(int address);
 private:
     
     // Compile an SourceFile
-    JrFileModuleType::Ptr compile(const SourceFile::Ptr& sourcefile);
+    FileModuleType::Ptr compile(const SourceFile::Ptr& sourcefile);
     // try to import module, and return the exported symtable;
     SourceFile::Ptr tryImport(const CompileContext::Ptr& context, const std::string& moduleName);
     SourceFile::Ptr findSourceFile(const std::string& path, const std::string& relativeFolder = "");
@@ -41,7 +41,7 @@ private:
     SymbolTable::Ptr globalSymbols;
 
     // Type tables include
-    std::vector<JrType::Ptr> types;
+    std::vector<Type::Ptr> types;
 
     // FileModule static variable memory alignment
     FileModuleMemoryAlignment fileModuleMemoryAlign;
