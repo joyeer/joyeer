@@ -2,9 +2,18 @@
 // Created by Qing Xu on 2021/11/11.
 //
 
-#include "joyeer/compiler/node.h"
 #include "joyeer/vm/isolate.h"
 
-void IsolateVM::run(FileModuleDecl::Ptr decl) {
+IsolateVM::IsolateVM() {
+    vCompiler = new VCompiler(this);
+    gc = new GC();
+}
 
+IsolateVM::~IsolateVM() {
+    delete vCompiler;
+    delete gc;
+}
+
+void IsolateVM::run(JrFileModuleType::Ptr fileModule) {
+    vCompiler->compile(fileModule);
 }

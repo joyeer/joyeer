@@ -2,10 +2,10 @@
 
 Driver::Driver(CommandLineArguments::Ptr arguments):arguments(arguments) {
     compiler = new CompilerService(arguments);
-//    runtimeContext = new JrRuntimeContext();
-//    interpreter = new JrInterpreter(runtimeContext);
+    isolateVM = new IsolateVM();
 }
 
 void Driver::run() {
-    compiler->run(arguments->inputfile);
+    auto fileModule = compiler->run(arguments->inputfile);
+    isolateVM->run(fileModule);
 }

@@ -8,10 +8,14 @@
 #include "joyeer/vm/heaps.h"
 #include "joyeer/vm/object.h"
 
+enum MemoryArea : uint8_t {
+    Permanent,
+    Dynamic
+};
+
 class GC {
 public:
-    JrObject* allocate(JrClass* klass);
-
+    JrObject* allocate(MemoryArea area, JrClass* klass);
 private:
     Heap* heap { new Heap() };
 };

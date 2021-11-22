@@ -9,13 +9,19 @@
 #include "joyeer/vm/types.h"
 
 
+struct IsolateVM;
+
 // VM compiler, compiling the Joyeer Compiler's file into interpreter accepted binary code
 
 class VCompiler {
 public:
+    explicit VCompiler(IsolateVM* isolateVM): isolateVM(isolateVM) {}
+
     void compile(JrFileModuleType::Ptr fileModule);
     void compile(const std::vector<Instruction>& instructions);
+    
 private:
+    IsolateVM* isolateVM;
 };
 
 #endif //__joyeer_vm_compiler_h__

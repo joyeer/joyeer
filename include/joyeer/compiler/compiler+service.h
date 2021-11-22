@@ -9,7 +9,9 @@ public:
     using Ptr = std::shared_ptr<CompilerService>;
 
     explicit CompilerService(CommandLineArguments::Ptr options);
-    void run(const std::string& inputFile);
+
+    // return the entry file module
+    JrFileModuleType::Ptr run(const std::string& inputFile);
 
     // register a kind
     void declare(const JrType::Ptr& type);
@@ -19,7 +21,7 @@ public:
 private:
     
     // Compile an SourceFile
-    void compile(const SourceFile::Ptr& sourcefile);
+    JrFileModuleType::Ptr compile(const SourceFile::Ptr& sourcefile);
     // try to import module, and return the exported symtable;
     SourceFile::Ptr tryImport(const CompileContext::Ptr& context, const std::string& moduleName);
     SourceFile::Ptr findSourceFile(const std::string& path, const std::string& relativeFolder = "");

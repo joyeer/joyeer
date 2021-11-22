@@ -6,6 +6,7 @@
 
 
 void VCompiler::compile(JrFileModuleType::Ptr fileModule) {
+    auto fileModuleClass = new JrFileModuleClass();
     compile(fileModule->instructions);
 }
 

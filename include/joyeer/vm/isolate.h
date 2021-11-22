@@ -6,14 +6,26 @@
 #define __joyeer_vm_isolate_h__
 
 #include "joyeer/vm/compiler.h"
-#include "joyeer/vm/stringtable.h"
+#include "joyeer/vm/res+table.h"
+#include "joyeer/vm/gc.h"
 #include "joyeer/vm/types.h"
 
+struct IsolateVM {
 
-class IsolateVM {
-    StringTable* stringTable;
+    explicit IsolateVM() ;
+    ~IsolateVM();
 
-    void run(FileModuleDecl::Ptr fileModule);
+    void run(JrFileModuleType::Ptr fileModule);
+
+private:
+    friend class VCompiler;
+
+    VCompiler *vCompiler;
+    GC* gc;
+
+    StringTable* stringTable { new StringTable() };
+    ClassResTable* classTable { new ClassResTable() };
+    MethodResTable* funcTable { new MethodResTable() };
 };
 
 #endif //__joyeer_vm_isolate_h__

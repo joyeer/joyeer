@@ -25,9 +25,9 @@ fileModuleMemoryAlign(){
     initializeGlobalSymbolTable();
 }
 
-void CompilerService::run(const std::string& inputFile) {
+JrFileModuleType::Ptr CompilerService::run(const std::string& inputFile) {
     auto sourcefile = findSourceFile(inputFile);
-    compile(sourcefile);
+    return compile(sourcefile);
 }
 
 SourceFile::Ptr CompilerService::findSourceFile(const std::string &path, const std::string& relativeFolder) {
@@ -50,7 +50,7 @@ SourceFile::Ptr CompilerService::findSourceFile(const std::string &path, const s
 }
 
 
-void CompilerService::compile(const SourceFile::Ptr& sourcefile) {
+JrFileModuleType::Ptr CompilerService::compile(const SourceFile::Ptr& sourcefile) {
     
     auto context= std::make_shared<CompileContext>(options, globalSymbols);
     context->sourcefile = sourcefile;
@@ -59,14 +59,14 @@ void CompilerService::compile(const SourceFile::Ptr& sourcefile) {
     // lex structure analyze
     LexParser lexParser;
     lexParser.parse(sourcefile);
-    CHECK_ERROR_CONTINUE
+    CHECK_ERROR_RETURN_NULL
     
     // syntax analyze
     SyntaxParser syntaxParser(sourcefile);
     auto block = syntaxParser.parse();
     block->filename = sourcefile->getAbstractLocation();
     debugPrint(block, block->filename + ".parser.debug.yml");
-    CHECK_ERROR_CONTINUE
+    CHECK_ERROR_RETURN_NULL
     
     // Detect for kind creating
     Binder binder(context);
@@ -74,13 +74,13 @@ void CompilerService::compile(const SourceFile::Ptr& sourcefile) {
     
     binder.visit(block);
     debugPrint(block, block->filename + ".binder.debug.yml");
-    CHECK_ERROR_CONTINUE
+    CHECK_ERROR_RETURN_NULL
     
     // verify the types
     TypeChecker typeChecker(context);
     typeChecker.visit(std::static_pointer_cast<Node>(block));
     debugPrint(block, sourcefile->getAbstractLocation() + ".typechecker.debug.yml");
-    CHECK_ERROR_CONTINUE
+    CHECK_ERROR_RETURN_NULL
 
     // alignment memory
     fileModuleMemoryAlign.align(block);
@@ -88,12 +88,14 @@ void CompilerService::compile(const SourceFile::Ptr& sourcefile) {
     // generate IR code
     IRGen irGen(context);
     sourcefile->moduleClass = irGen.emit(block);
-    CHECK_ERROR_CONTINUE
+    CHECK_ERROR_RETURN_NULL
 
     // debug print the typedefs
     TypeDefDebugPrinter typedefPrinter(sourcefile->getAbstractLocation() + ".typedef.debug.yml");
     typedefPrinter.print(types);
     typedefPrinter.close();
+
+    return sourcefile->moduleClass;
 }
 
 void CompilerService::declare(const JrType::Ptr& type) {

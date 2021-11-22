@@ -6,6 +6,7 @@
 #define __joyeer_vm_metadata_h__
 
 struct IsolateVM;
+struct JrObject;
 
 #include <vector>
 #include <cstdlib>
@@ -79,6 +80,9 @@ struct JrMethod {
 
 // Class description
 struct JrClass {
+
+    int idx = -1;
+
     std::vector<JrField> instanceFields {};
     std::vector<JrField> staticFields {};
 
@@ -103,6 +107,7 @@ struct JrClass {
 };
 
 struct JrFileModuleClass : public JrClass {
+    JrObject* static_ = nullptr;
 };
 
 //
@@ -112,7 +117,6 @@ struct JrArrayClass : public JrClass {
 
     explicit JrArrayClass(): JrClass() {
     }
-
 };
 
 struct JrArrayClass_$$_size: public JrMethod {

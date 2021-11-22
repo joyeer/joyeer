@@ -15,5 +15,17 @@ public:
     std::vector<const char*> strings {};
 };
 
+// Store all JrClass in Class resource table
+struct ClassResTable {
+public:
+    explicit ClassResTable() = default;
+
+    std::vector<JrClass*> classes {};
+};
+
+class MethodResTable {
+
+};
+
 
 #endif //__joyeer_vm_stringtable_h__

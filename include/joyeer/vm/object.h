@@ -17,4 +17,9 @@ struct JrObject {
 // calculate a given JrClass size
 static size_t calculateClassSize(JrClass* klass);
 
+
+struct FileModuleLoader {
+    void load(IsolateVM* isolateVM, JrFileModuleClass* fileModule);
+};
+
 #endif //__joyeer_vm_object_h__

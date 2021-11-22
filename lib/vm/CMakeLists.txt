@@ -8,6 +8,6 @@ add_joyeer_library(JoyeerVM STATIC
         isolate.cpp
         memory.cpp
         object.cpp
-        stringtable.cpp
+        res+table.cpp
         types.cpp
         )
