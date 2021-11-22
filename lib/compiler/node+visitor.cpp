@@ -12,7 +12,7 @@ Node::Ptr NodeVisitor::visit(const Node::Ptr& node) {
         NODE_VISITOR(SyntaxKind::fileModule,            FileModuleDecl)
         NODE_VISITOR(SyntaxKind::funcDecl,              FuncDecl)
         NODE_VISITOR(SyntaxKind::classDecl,             ClassDecl)
-        NODE_VISITOR(SyntaxKind::type,                  Type)
+        NODE_VISITOR(SyntaxKind::type, TypeIdentifier)
         NODE_VISITOR(SyntaxKind::pattern,               Pattern)
         NODE_VISITOR(SyntaxKind::varDecl,               VarDecl)
         NODE_VISITOR(SyntaxKind::parameterClause,       ParameterClause)

@@ -435,7 +435,7 @@ Node::Ptr SyntaxParser::tryParseTypeIdentifier() {
     if(type == nullptr) {
         return nullptr;
     }
-    return std::make_shared<Type>(type);
+    return std::make_shared<TypeIdentifier>(type);
 }
 
 Node::Ptr SyntaxParser::tryParseTypeArray() {

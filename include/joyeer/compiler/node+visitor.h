@@ -42,7 +42,7 @@ protected:
 
     // Misc
     virtual Node::Ptr visit(const Pattern::Ptr& decl) = 0;
-    virtual Node::Ptr visit(const Type::Ptr& decl) = 0;
+    virtual Node::Ptr visit(const TypeIdentifier::Ptr& decl) = 0;
     virtual Node::Ptr visit(const ParameterClause::Ptr& decl) = 0;
 
 };

@@ -36,7 +36,7 @@ const std::string& Pattern::getIdentifierName() const {
     return identifier->token->rawValue;
 }
 
-Type::Type(Node::Ptr identifier):
+TypeIdentifier::TypeIdentifier(Node::Ptr identifier):
 Node(SyntaxKind::type),
 identifier(std::move(identifier)) {
 }

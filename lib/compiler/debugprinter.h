@@ -122,7 +122,7 @@ protected:
         return decl;
     }
 
-    Node::Ptr visit(const Type::Ptr& decl) override {
+    Node::Ptr visit(const TypeIdentifier::Ptr& decl) override {
         output << "kind:";
         incTab();
         newline();

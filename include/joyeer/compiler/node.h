@@ -74,7 +74,7 @@ struct Node : std::enable_shared_from_this<Node> {
     SymbolTable::Ptr symtable = nullptr;
     Node::Ptr parent = nullptr;
 
-    // represent the Node's Type, only available in Expr Node
+    // represent the Node's TypeIdentifier, only available in Expr Node
     JrType::Ptr type = nullptr;
 
     // return the name of Node, it will be used as symbol in some cases
@@ -150,12 +150,12 @@ struct OperatorExpr : Node {
     void recursiveUpdate() override { /* leave empty */ }
 };
 
-struct Type : Node {
-    using Ptr = std::shared_ptr<Type>;
+struct TypeIdentifier : Node {
+    using Ptr = std::shared_ptr<TypeIdentifier>;
 
     Node::Ptr identifier; // identifierExpr
 
-    explicit Type(Node::Ptr identifier);
+    explicit TypeIdentifier(Node::Ptr identifier);
 
     void recursiveUpdate() override {
         NODE_RECURSIVE_UPDATE(identifier, NODE_UPDATE_ACTION_SET_PARENT_THIS(identifier))

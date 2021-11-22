@@ -448,11 +448,11 @@ Node::Ptr Binder::visit(const ParameterClause::Ptr& decl) {
 
 Node::Ptr Binder::visit(const Pattern::Ptr& decl) {
     decl->identifier = std::static_pointer_cast<IdentifierExpr>(visit(decl->identifier));
-    decl->typeNode = std::static_pointer_cast<Type>(visit(decl->typeNode));
+    decl->typeNode = std::static_pointer_cast<TypeIdentifier>(visit(decl->typeNode));
     return decl;
 }
 
-Node::Ptr Binder::visit(const Type::Ptr& decl) {
+Node::Ptr Binder::visit(const TypeIdentifier::Ptr& decl) {
     return decl;
 }
 

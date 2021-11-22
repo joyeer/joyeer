@@ -198,7 +198,7 @@ ClassDecl::Ptr TypeChecker::processClassDecl(ClassDecl::Ptr decl) {
     return decl;
 }
 
-Node::Ptr TypeChecker::visit(const Type::Ptr& node) {
+Node::Ptr TypeChecker::visit(const TypeIdentifier::Ptr& node) {
     auto symbol = context->lookup(node->identifier->getSimpleName());
     if(symbol == nullptr) {
         Diagnostics::reportError("[Error]Cannot find kind");
@@ -398,7 +398,7 @@ JrType::Ptr TypeChecker::typeOf(const Node::Ptr& node) {
         case SyntaxKind::pattern:
             return typeOf(std::static_pointer_cast<Pattern>(node));
         case SyntaxKind::type:
-            return typeOf(std::static_pointer_cast<Type>(node));
+            return typeOf(std::static_pointer_cast<TypeIdentifier>(node));
         case SyntaxKind::arrayLiteralExpr:
             return typeOf(std::static_pointer_cast<ArrayLiteralExpr>(node));
         case SyntaxKind::dictLiteralExpr:
@@ -509,7 +509,7 @@ JrType::Ptr TypeChecker::typeOf(const Pattern::Ptr& node) {
     return typeOf(node->typeNode);
 }
 
-JrType::Ptr TypeChecker::typeOf(const Type::Ptr& node) {
+JrType::Ptr TypeChecker::typeOf(const TypeIdentifier::Ptr& node) {
     return node->type;
 }
 

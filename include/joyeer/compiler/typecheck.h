@@ -14,7 +14,7 @@ protected:
     Node::Ptr visit(const FileModuleDecl::Ptr& decl) override;
     Node::Ptr visit(const ClassDecl::Ptr& classDecl) override;
     Node::Ptr visit(const VarDecl::Ptr& varDecl) override;
-    Node::Ptr visit(const Type::Ptr& decl) override;
+    Node::Ptr visit(const TypeIdentifier::Ptr& decl) override;
     Node::Ptr visit(const FuncCallExpr::Ptr& decl) override;
     Node::Ptr visit(const MemberFuncCallExpr::Ptr& decl) override;
     Node::Ptr visit(const ArguCallExpr::Ptr& decl) override;
@@ -52,7 +52,7 @@ protected:
     JrType::Ptr typeOf(const ParenthesizedExpr::Ptr& node);
     JrType::Ptr typeOf(const SelfExpr::Ptr& node);
     JrType::Ptr typeOf(const Pattern::Ptr& node);
-    JrType::Ptr typeOf(const Type::Ptr& node);
+    JrType::Ptr typeOf(const TypeIdentifier::Ptr& node);
     JrType::Ptr typeOf(const ArrayLiteralExpr::Ptr& node);
     JrType::Ptr typeOf(const DictLiteralExpr::Ptr& node);
     JrType::Ptr typeOf(const MemberAccessExpr::Ptr& node);
