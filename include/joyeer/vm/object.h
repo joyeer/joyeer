@@ -9,17 +9,17 @@
 #include "joyeer/vm/types.h"
 
 
-struct JrObject {
-    JrClass* klass;
-    JrByte data[];
+struct Object {
+    Class* klass;
+    Byte data[];
 };
 
-// calculate a given JrClass size
-static size_t calculateClassSize(JrClass* klass);
+// calculate a given Class size
+static size_t calculateClassSize(Class* klass);
 
 
 struct FileModuleLoader {
-    void load(IsolateVM* isolateVM, JrFileModuleClass* fileModule);
+    void load(IsolateVM* isolateVM, ModuleClass* fileModule);
 };
 
 #endif //__joyeer_vm_object_h__

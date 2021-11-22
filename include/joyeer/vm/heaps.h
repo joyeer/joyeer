@@ -28,7 +28,7 @@ struct alignas(uintptr_t) SpaceAddress {
 // the default page size : 256k
 struct Page {
 
-    JrByte data[kPageSize]{};
+    Byte data[kPageSize]{};
     intptr_t used = 0;
 
     [[nodiscard]] intptr_t allocate(size_t size) {

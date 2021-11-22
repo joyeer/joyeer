@@ -10,8 +10,8 @@
 #include <stack>
 
 struct Bytecodes {
-    JrByte *bytecodes;
-    JrInt size;
+    Byte *bytecodes;
+    Int size;
 };
 
 #define FETCH_BYTECODE() \
@@ -23,7 +23,7 @@ struct BytecodeInterpreter {
 };
 
 struct Interpreter {
-    JrInt cp;
+    uint64_t cp;
     Stack stack;
     Bytecodes *bytecodes;
     IsolateVM *isolateVM;

@@ -15,7 +15,7 @@ enum MemoryArea : uint8_t {
 
 class GC {
 public:
-    JrObject* allocate(MemoryArea area, JrClass* klass);
+    Object* allocate(MemoryArea area, Class* klass);
 private:
     Heap* heap { new Heap() };
 };

@@ -15,12 +15,12 @@ public:
     std::vector<const char*> strings {};
 };
 
-// Store all JrClass in Class resource table
+// Store all Class in Class resource table
 struct ClassResTable {
 public:
     explicit ClassResTable() = default;
 
-    std::vector<JrClass*> classes {};
+    std::vector<Class*> classes {};
 };
 
 class MethodResTable {

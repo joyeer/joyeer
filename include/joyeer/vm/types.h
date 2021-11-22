@@ -6,39 +6,38 @@
 #define __joyeer_vm_metadata_h__
 
 struct IsolateVM;
-struct JrObject;
+struct Object;
 
 #include <vector>
 #include <cstdlib>
 
 // Joyeer VM primary types
-typedef char            JrByte;
-typedef short           JrShort;
-typedef int64_t         JrInt;
-typedef bool            JrBool;
-typedef uintptr_t       JrAddress;
-typedef const char*     JrString;
-typedef uintptr_t       JrObjectPtr;
-typedef uintptr_t       JrFuncPtr;
-typedef uintptr_t       JrAny;
-typedef uintptr_t       JrBlob;
+typedef char            Byte;
+typedef short           Short;
+typedef int64_t         Int;
+typedef bool            Bool;
+typedef uintptr_t       Address;
+typedef const char*     String;
+typedef uintptr_t       ObjectPtr;
+typedef uintptr_t       FuncPtr;
+typedef uintptr_t       Any;
+typedef uintptr_t       Blob;
 
-union JrValue {
-    JrInt           intValue;
-    JrBool          boolValue;
-    JrObjectPtr     objValue;
+union Value {
+    Int           intValue;
+    Bool          boolValue;
+    ObjectPtr     objValue;
 };
 
 // Constants
-constexpr int kJrByteSize = sizeof(JrByte);
-constexpr int kJrIntSize = sizeof(JrInt);
-constexpr int kJrBoolSize = sizeof (JrBool);
-constexpr int kJrValueSize = sizeof(JrValue);
-constexpr int kJrObjectSize = sizeof(JrObjectPtr);
-constexpr int KJrAnySize = sizeof(JrAny);
+constexpr int kValueSize = sizeof(Value);
+constexpr int kIntSize = sizeof(Int);
+constexpr int kBoolSize = sizeof (Bool);
+constexpr int kObjectSize = sizeof(ObjectPtr);
+constexpr int KAnySize = sizeof(Any);
 
 // Value Types
-enum class JrValueType : uintptr_t {
+enum class ValueType : uintptr_t {
     Any,
     Int,
     Bool,
@@ -48,19 +47,19 @@ enum class JrValueType : uintptr_t {
 
 
 // Class's field description
-struct JrField {
+struct Field {
 #define DECLARE_TYPE(type, size) size,
 
     constexpr static const size_t ValueTypes[] = {
-        DECLARE_TYPE(JrValueType::Any, KJrAnySize)
-        DECLARE_TYPE(JrValueType::Int, kJrIntSize)
-        DECLARE_TYPE(JrValueType::Bool, kJrBoolSize)
-        DECLARE_TYPE(JrValueType::Class, kJrObjectSize)
+        DECLARE_TYPE(ValueType::Any, KAnySize)
+        DECLARE_TYPE(ValueType::Int, kIntSize)
+        DECLARE_TYPE(ValueType::Bool, kBoolSize)
+        DECLARE_TYPE(ValueType::Class, kObjectSize)
     };
 
-    JrValueType type;
+    ValueType type;
 
-    explicit JrField(JrValueType type):type(type) {}
+    explicit Field(ValueType type): type(type) {}
 
     // get the size of the field
     [[nodiscard]] size_t getSize() const {
@@ -70,24 +69,24 @@ struct JrField {
 #undef DECLARE_TYPE
 };
 
-struct JrArguments {
+struct Arguments {
 
 };
 
-struct JrMethod {
-    virtual JrValue operator () (IsolateVM* vm, JrArguments* args) = 0;
+struct Method {
+    virtual Value operator () (IsolateVM* vm, Arguments* args) = 0;
 };
 
 // Class description
-struct JrClass {
+struct Class {
 
     int idx = -1;
 
-    std::vector<JrField> instanceFields {};
-    std::vector<JrField> staticFields {};
+    std::vector<Field> instanceFields {};
+    std::vector<Field> staticFields {};
 
-    std::vector<JrFuncPtr> instanceMethods {};
-    std::vector<JrFuncPtr> staticMethods {};
+    std::vector<FuncPtr> instanceMethods {};
+    std::vector<FuncPtr> staticMethods {};
 
     [[nodiscard]] size_t getSize() const {
         size_t size = 0;
@@ -106,28 +105,28 @@ struct JrClass {
     }
 };
 
-struct JrFileModuleClass : public JrClass {
-    JrObject* static_ = nullptr;
+struct ModuleClass : public Class {
+    Object* static_ = nullptr;
 };
 
 //
-struct JrArrayClass : public JrClass {
+struct ArrayClass : public Class {
     constexpr static int kArrayLengthOffset = 0;
-    constexpr static int kArrayDataOffset = kArrayLengthOffset + kJrIntSize;
+    constexpr static int kArrayDataOffset = kArrayLengthOffset + kIntSize;
 
-    explicit JrArrayClass(): JrClass() {
+    explicit ArrayClass(): Class() {
     }
 };
 
-struct JrArrayClass_$$_size: public JrMethod {
+struct ArrayClass_$$_size: public Method {
 
 };
 
 //
-struct JrIntClass : public JrClass {
+struct IntClass : public Class {
     constexpr static int kIntValueOffset = 0;
-    explicit JrIntClass(): JrClass() {
-        instanceFields.emplace_back(JrValueType::Int);
+    explicit IntClass(): Class() {
+        instanceFields.emplace_back(ValueType::Int);
     }
 };
 
