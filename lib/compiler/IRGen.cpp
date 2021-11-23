@@ -41,7 +41,7 @@ void IRGen::emit(const Node::Ptr& node) {
         NODE_EMIT(SyntaxKind::returnStmt, ReturnStmt)
         NODE_EMIT(SyntaxKind::subscriptExpr, SubscriptExpr)
         NODE_EMIT(SyntaxKind::whileStmt, WhileStmt)
-        NODE_EMIT(SyntaxKind::importStmt, FileImportStmt)
+        NODE_EMIT(SyntaxKind::importStmt, ImportStmt)
         default:
             assert(false);
     }
@@ -542,6 +542,6 @@ void IRGen::emit(const SubscriptExpr::Ptr& node) {
     assert(false);
 }
 
-void IRGen::emit(const FileImportStmt::Ptr& node) {
+void IRGen::emit(const ImportStmt::Ptr& node) {
     
 }

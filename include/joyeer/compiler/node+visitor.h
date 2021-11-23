@@ -31,7 +31,7 @@ protected:
     virtual Node::Ptr visit(const WhileStmt::Ptr& decl) = 0;
     virtual Node::Ptr visit(const ReturnStmt::Ptr& decl) = 0;
     virtual Node::Ptr visit(const ArrayType::Ptr& decl) = 0;
-    virtual Node::Ptr visit(const FileImportStmt::Ptr& decl) = 0;
+    virtual Node::Ptr visit(const ImportStmt::Ptr& decl) = 0;
 
     // Declarations
     virtual Node::Ptr visit(const StmtsBlock::Ptr& decl) = 0;

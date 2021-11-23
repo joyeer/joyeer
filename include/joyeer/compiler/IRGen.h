@@ -34,7 +34,7 @@ protected:
     void emit(const ArrayLiteralExpr::Ptr& node);
     void emit(const DictLiteralExpr::Ptr& node);
     void emit(const SubscriptExpr::Ptr& node);
-    void emit(const FileImportStmt::Ptr& node);
+    void emit(const ImportStmt::Ptr& node);
     
 private:
     JrCodeWriter writer;

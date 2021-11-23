@@ -350,7 +350,7 @@ protected:
         return decl;
     }
 
-    Node::Ptr visit(const FileImportStmt::Ptr& decl) override {
+    Node::Ptr visit(const ImportStmt::Ptr& decl) override {
         assert(false);
         return decl;
     }

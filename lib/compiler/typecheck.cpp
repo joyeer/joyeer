@@ -369,7 +369,7 @@ Node::Ptr TypeChecker::visit(const PrefixExpr::Ptr& node) {
     return node;
 }
 
-Node::Ptr TypeChecker::visit(const FileImportStmt::Ptr& node) {
+Node::Ptr TypeChecker::visit(const ImportStmt::Ptr& node) {
     return node;
 }
 

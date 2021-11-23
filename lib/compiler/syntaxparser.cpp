@@ -119,7 +119,7 @@ Node::Ptr SyntaxParser::tryParseFileImportStatement() {
         Diagnostics::reportError("Error");
     }
     
-    return std::make_shared<FileImportStmt>(literal);
+    return std::make_shared<ImportStmt>(literal);
 }
 
 Node::Ptr SyntaxParser::tryParseParameterClause() {

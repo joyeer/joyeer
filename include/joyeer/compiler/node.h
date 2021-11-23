@@ -557,12 +557,12 @@ struct SubscriptExpr : Node {
  *  Statement Section
  *********************************************************/
 
-struct FileImportStmt : Node {
-    using Ptr = std::shared_ptr<FileImportStmt>;
+struct ImportStmt : Node {
+    using Ptr = std::shared_ptr<ImportStmt>;
 
     Token::Ptr stringLiteral;
 
-    explicit FileImportStmt(Token::Ptr stringLiteral) :
+    explicit ImportStmt(Token::Ptr stringLiteral) :
             Node(SyntaxKind::importStmt),
             stringLiteral(std::move(stringLiteral)) {
     }

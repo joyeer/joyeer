@@ -48,7 +48,7 @@ protected:
     Node::Ptr visit(const MemberAssignExpr::Ptr& decl) override;
     Node::Ptr visit(const SubscriptExpr::Ptr& decl) override;
     Node::Ptr visit(const ArrayType::Ptr& decl) override;
-    Node::Ptr visit(const FileImportStmt::Ptr& decl) override;
+    Node::Ptr visit(const ImportStmt::Ptr& decl) override;
 
 private:
     CompileContext::Ptr context;

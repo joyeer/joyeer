@@ -38,7 +38,7 @@ Node::Ptr NodeVisitor::visit(const Node::Ptr& node) {
         NODE_VISITOR(SyntaxKind::operatorExpr,          OperatorExpr)
         NODE_VISITOR(SyntaxKind::subscriptExpr,         SubscriptExpr)
         NODE_VISITOR(SyntaxKind::arrayType,             ArrayType)
-        NODE_VISITOR(SyntaxKind::importStmt, FileImportStmt)
+        NODE_VISITOR(SyntaxKind::importStmt, ImportStmt)
         default:
             assert(false);
     }

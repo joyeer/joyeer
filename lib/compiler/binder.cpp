@@ -512,7 +512,7 @@ Node::Ptr Binder::visit(const ArrayType::Ptr& decl) {
     return decl;
 }
 
-Node::Ptr Binder::visit(const FileImportStmt::Ptr& decl) {
+Node::Ptr Binder::visit(const ImportStmt::Ptr& decl) {
     if(context->curStage() != CompileStage::visitFileModule) {
         Diagnostics::reportError(Diagnostics::errorFileImportShouldAtTopOfSourceFile);
         return nullptr;
