@@ -31,6 +31,7 @@ union Value {
 
 // Constants
 constexpr int kValueSize = sizeof(Value);
+constexpr int kByteSize = sizeof(Byte);
 constexpr int kIntSize = sizeof(Int);
 constexpr int kBoolSize = sizeof (Bool);
 constexpr int kObjectSize = sizeof(ObjectPtr);

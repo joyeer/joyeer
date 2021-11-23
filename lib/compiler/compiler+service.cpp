@@ -25,7 +25,7 @@ fileModuleMemoryAlign(){
     initializeGlobalSymbolTable();
 }
 
-FileModuleType::Ptr CompilerService::run(const std::string& inputFile) {
+ModuleType::Ptr CompilerService::run(const std::string& inputFile) {
     auto sourcefile = findSourceFile(inputFile);
     return compile(sourcefile);
 }
@@ -50,7 +50,7 @@ SourceFile::Ptr CompilerService::findSourceFile(const std::string &path, const s
 }
 
 
-FileModuleType::Ptr CompilerService::compile(const SourceFile::Ptr& sourcefile) {
+ModuleType::Ptr CompilerService::compile(const SourceFile::Ptr& sourcefile) {
     
     auto context= std::make_shared<CompileContext>(options, globalSymbols);
     context->sourcefile = sourcefile;

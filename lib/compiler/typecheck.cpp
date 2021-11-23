@@ -629,7 +629,7 @@ Type::Ptr TypeChecker::returnTypeOf(const Node::Ptr& node) {
         case SyntaxKind::memberAccessExpr:
         case SyntaxKind::memberFuncCallExpr:
         case SyntaxKind::funcDecl:
-        case SyntaxKind::fileimportStmt:
+        case SyntaxKind::importStmt:
             return nullptr;
         default:
             assert(false);

@@ -7,7 +7,7 @@
 
 #include "joyeer/vm/types.h"
 
-struct FileModuleEntryFrame;
+struct ModuleEntryFrame;
 
 
 // define the frame types
@@ -57,13 +57,13 @@ struct FuncCallFrame : public StackFrame {
 
 /**
  * slot +---------------------+
- *  0   | FileModule address  |
+ *  0   | module address      |
  * -----+---------------------+
  *  1   | frame ptr           |
  * -----+---------------------+
  */
 
-struct FileModuleEntryFrame : public StackFrame {
+struct ModuleEntryFrame : public StackFrame {
 
     [[nodiscard]] Type type() const override {
         return StackFrame::Type::FILE_MODULE;

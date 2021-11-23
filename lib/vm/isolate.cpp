@@ -14,6 +14,6 @@ IsolateVM::~IsolateVM() {
     delete gc;
 }
 
-void IsolateVM::run(FileModuleType::Ptr fileModule) {
+void IsolateVM::run(ModuleType::Ptr fileModule) {
     vCompiler->compile(fileModule);
 }

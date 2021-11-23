@@ -46,7 +46,7 @@ public:
     [[nodiscard]] FuncType::Ptr curFuncDef() const;
 
     // return the current JrModuleTypeDef in the stack
-    [[nodiscard]] FileModuleType::Ptr curModuleDef() const;
+    [[nodiscard]] ModuleType::Ptr curModuleDef() const;
 
     // return the current BlockDef in stack
     [[nodiscard]] BlockType::Ptr curBlockDef() const;

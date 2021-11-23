@@ -19,7 +19,7 @@ void IRGen::emit(const Node::Ptr& node) {
         break;
 
     switch (node->kind) {
-        NODE_EMIT(SyntaxKind::fileModule, FileModuleDecl)
+        NODE_EMIT(SyntaxKind::module, FileModuleDecl)
         NODE_EMIT(SyntaxKind::varDecl, VarDecl)
         NODE_EMIT(SyntaxKind::funcDecl, FuncDecl)
         NODE_EMIT(SyntaxKind::memberFuncCallExpr, MemberFuncCallExpr)
@@ -41,14 +41,14 @@ void IRGen::emit(const Node::Ptr& node) {
         NODE_EMIT(SyntaxKind::returnStmt, ReturnStmt)
         NODE_EMIT(SyntaxKind::subscriptExpr, SubscriptExpr)
         NODE_EMIT(SyntaxKind::whileStmt, WhileStmt)
-        NODE_EMIT(SyntaxKind::fileimportStmt, FileImportStmt)
+        NODE_EMIT(SyntaxKind::importStmt, FileImportStmt)
         default:
             assert(false);
     }
 }
 
-FileModuleType::Ptr IRGen::emit(const FileModuleDecl::Ptr& decl) {
-    auto fileModuleDef = std::static_pointer_cast<FileModuleType>(decl->type);
+ModuleType::Ptr IRGen::emit(const FileModuleDecl::Ptr& decl) {
+    auto fileModuleDef = std::static_pointer_cast<ModuleType>(decl->type);
     context->visit(CompileStage::visitFileModule, decl, [this, decl]() {
         emit(decl->members);
     });

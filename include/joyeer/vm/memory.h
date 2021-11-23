@@ -18,16 +18,16 @@ public:
         std::free(buffer);
     }
 
-    void write(JrByte byte) {
-        tryResizeIfNeed(pos + kJrByteSize);
-        *(JrByte*)(buffer + pos) = byte;
-        pos += kJrBoolSize;
+    void write(Byte byte) {
+        tryResizeIfNeed(pos + kByteSize);
+        *(Byte*)(buffer + pos) = byte;
+        pos += kBoolSize;
     }
 
-    void write(JrInt value) {
-        tryResizeIfNeed(pos + kJrIntSize);
-        *(JrInt*)(buffer + pos) = value;
-        pos += kJrIntSize;
+    void write(Int value) {
+        tryResizeIfNeed(pos + kIntSize);
+        *(Int*)(buffer + pos) = value;
+        pos += kIntSize;
     }
 
 protected:
@@ -45,7 +45,7 @@ protected:
             buffer = nullptr;
         } else {
             if(void* mem = std::realloc(buffer, newSize))
-                buffer = (JrByte *)mem;
+                buffer = (Byte *)mem;
             else
                 throw std::bad_alloc(); //TODO: runtime exception??
         }
@@ -54,13 +54,10 @@ protected:
     }
 
     // raw data
-    JrByte * buffer = nullptr;
+    Byte * buffer = nullptr;
     size_t pos = 0;
     size_t capacity = 0;
 };
 
-struct PermanentArea {
-    JrByte* memory = nullptr;
-};
 
 #endif //__joyeer_vm_memory_h__

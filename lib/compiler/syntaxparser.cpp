@@ -20,7 +20,7 @@ FileModuleDecl::Ptr SyntaxParser::parse() {
         decls.push_back(decl);
     }
     auto block =  std::make_shared<StmtsBlock>(decls);
-    auto descriptor = std::make_shared<FileModuleDescriptor>(sourcefile->getLocation());
+    auto descriptor = std::make_shared<ModuleDescriptor>(sourcefile->getLocation());
     return std::make_shared<FileModuleDecl>(descriptor, block);
 }
 

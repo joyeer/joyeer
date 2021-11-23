@@ -95,7 +95,7 @@ FuncType::Ptr CompileContext::curFuncDef() const {
     return nullptr;
 }
 
-FileModuleType::Ptr CompileContext::curModuleDef() const {
+ModuleType::Ptr CompileContext::curModuleDef() const {
     // The top one must be the FileModuleTypeDef
-    return std::static_pointer_cast<FileModuleType>(types[0]);
+    return std::static_pointer_cast<ModuleType>(types[0]);
 }

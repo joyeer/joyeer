@@ -9,7 +9,7 @@ Node::Ptr NodeVisitor::visit(const Node::Ptr& node) {
         return visit(std::static_pointer_cast< type >(node));
     
     switch (node->kind) {
-        NODE_VISITOR(SyntaxKind::fileModule,            FileModuleDecl)
+        NODE_VISITOR(SyntaxKind::module, FileModuleDecl)
         NODE_VISITOR(SyntaxKind::funcDecl,              FuncDecl)
         NODE_VISITOR(SyntaxKind::classDecl,             ClassDecl)
         NODE_VISITOR(SyntaxKind::type, TypeIdentifier)
@@ -38,7 +38,7 @@ Node::Ptr NodeVisitor::visit(const Node::Ptr& node) {
         NODE_VISITOR(SyntaxKind::operatorExpr,          OperatorExpr)
         NODE_VISITOR(SyntaxKind::subscriptExpr,         SubscriptExpr)
         NODE_VISITOR(SyntaxKind::arrayType,             ArrayType)
-        NODE_VISITOR(SyntaxKind::fileimportStmt,        FileImportStmt)
+        NODE_VISITOR(SyntaxKind::importStmt, FileImportStmt)
         default:
             assert(false);
     }

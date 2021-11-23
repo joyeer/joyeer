@@ -2,6 +2,6 @@
 // Created by Qing Xu on 2021/11/15.
 //
 
-#include "joyeer/vm/object.h"
+#include "joyeer/vm/memory.h"
 
 

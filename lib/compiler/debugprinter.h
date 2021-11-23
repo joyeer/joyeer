@@ -85,7 +85,7 @@ struct NodeDebugPrinter : public NodeVisitor, public YMLPrinter {
 protected:
 
     Node::Ptr visit(const FileModuleDecl::Ptr& decl) override {
-        output << "fileModule:";
+        output << "module:";
         DEBUG_BLOCK_START
         output << "simple-name: " << escapeString(decl->getSimpleName());
         newline();
@@ -375,7 +375,7 @@ struct TypeDefDebugPrinter : YMLPrinter {
                 case TypeKind::FileModule:
                     output << "kind: FileModule" ;
                     newline();
-                    print(std::static_pointer_cast<FileModuleType>(tf));
+                    print(std::static_pointer_cast<ModuleType>(tf));
                     break;
                 case TypeKind::Nil:
                     output << "kind: Nil" ;
@@ -427,7 +427,7 @@ struct TypeDefDebugPrinter : YMLPrinter {
         output<< "name: " << func->name;
     }
 
-    void print(const FileModuleType::Ptr& fileModule) {
+    void print(const ModuleType::Ptr& fileModule) {
         output << "name: " << fileModule->name;
         newline();
         output << "instructions:";

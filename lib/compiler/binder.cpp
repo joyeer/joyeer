@@ -23,7 +23,7 @@ Node::Ptr Binder::visit(const Node::Ptr& node) {
 Node::Ptr Binder::visit(const FileModuleDecl::Ptr& fileModule) {
     // register FileModule
 
-    auto fileModuleDef = std::make_shared<FileModuleType>(fileModule->getSimpleName());
+    auto fileModuleDef = std::make_shared<ModuleType>(fileModule->getSimpleName());
     context->compiler->declare(fileModuleDef);
     fileModule->type = fileModuleDef;
 
@@ -415,7 +415,7 @@ Node::Ptr Binder::visit(const StmtsBlock::Ptr& decl) {
     auto typeDef = context->curTypeDef();
     switch (typeDef->kind) {
         case TypeKind::FileModule: {
-            auto moduleDef = std::static_pointer_cast<FileModuleType>(typeDef);
+            auto moduleDef = std::static_pointer_cast<ModuleType>(typeDef);
             moduleDef->block = blockDef;
         }
             break;

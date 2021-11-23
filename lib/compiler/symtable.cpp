@@ -12,7 +12,7 @@ std::string debugStringOfSymbolFlag(SymbolFlag flag) {
         case SymbolFlag::class_:
             return "class";
         case SymbolFlag::fileModule:
-            return "fileModule";
+            return "module";
         case SymbolFlag::staticInitializer:
             return "static-initializer";
         case SymbolFlag::initializer:

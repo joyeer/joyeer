@@ -29,7 +29,7 @@ struct DescriptorConstants {
     static constexpr char InterfacePrefix = '~';
     static constexpr char FuncPrefix = '&';
     static constexpr char ArrayPrefix = '[';
-    static constexpr char FileModulePrefix = '#';
+    static constexpr char ModulePrefix = '#';
     static constexpr char VariablePrefix = '@';
 
     // punctuation
@@ -39,7 +39,7 @@ struct DescriptorConstants {
     static constexpr char Separator = '/';
     
     // constants
-    static constexpr std::string_view FileModuleInitializer = "fileModule-initializer";
+    static constexpr std::string_view ModuleInitializer = "module-initializer";
     static constexpr std::string_view Constructor = "initializer";
     
     static constexpr char END = ';' ;
@@ -48,7 +48,7 @@ struct DescriptorConstants {
 class Descriptor {
 public:
     using Ptr = std::shared_ptr<Descriptor>;
-    virtual const std::string getRawDescriptor() const { return rawDescriptor; }
+    [[nodiscard]] virtual const std::string getRawDescriptor() const { return rawDescriptor; }
 protected:
     std::string rawDescriptor;
 };
@@ -113,11 +113,11 @@ class ClassDescriptor: public Descriptor {
 // File FileModule descriptor, e.g.
 // foo.joyeer, descriptor: #foo;
 // bar/foo.joyeer, descriptor: #bar/foo;
-class FileModuleDescriptor: public Descriptor {
+class ModuleDescriptor: public Descriptor {
 public:
-    using Ptr = std::shared_ptr<FileModuleDescriptor>;
+    using Ptr = std::shared_ptr<ModuleDescriptor>;
 public:
-    FileModuleDescriptor(const std::string& filename);
+    explicit ModuleDescriptor(const std::string& filename);
     
     FunctionDescriptor::Ptr constructor;
     std::vector<VariableDescriptor::Ptr> variables;
@@ -126,14 +126,14 @@ public:
 };
 
 // FileModule initializer function descriptor
-// foo.joyeer, FileModuleInitializer
-class FileModuleInitializerDescriptor: public FunctionDescriptor {
+// foo.joyeer, ModuleInitializer
+class ModuleInitializerDescriptor: public FunctionDescriptor {
 public:
-    using Ptr = std::shared_ptr<FileModuleInitializerDescriptor>();
+    using Ptr = std::shared_ptr<ModuleInitializerDescriptor>();
 public:
-    FileModuleInitializerDescriptor(FileModuleDescriptor::Ptr parent);
+    explicit ModuleInitializerDescriptor(ModuleDescriptor::Ptr parent);
     
-    FileModuleDescriptor::Ptr filemodule;
+    ModuleDescriptor::Ptr module;
 };
 
 

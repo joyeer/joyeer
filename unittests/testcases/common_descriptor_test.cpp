@@ -3,22 +3,22 @@
 
 
 TEST(DescriptorTest, FileModileDescritpor) {
-    auto descriptor = FileModuleDescriptor(std::string("foo.joyeer"));
+    auto descriptor = ModuleDescriptor(std::string("foo.joyeer"));
     auto rawDescriptor = descriptor.getRawDescriptor();
     EXPECT_EQ(rawDescriptor, "#foo;");
 
-    auto descriptor2 = FileModuleDescriptor(std::string("bar/foo.joyeer"));
+    auto descriptor2 = ModuleDescriptor(std::string("bar/foo.joyeer"));
     auto rawDescriptor2 = descriptor2.getRawDescriptor();
     EXPECT_EQ(rawDescriptor2, "#bar/foo;");
     
 }
 
 TEST(DescriptorTest, FileModuleInitializerDescriptor) {
-    auto descriptor = std::make_shared<FileModuleDescriptor>(std::string("foo.joyeer"));
+    auto descriptor = std::make_shared<ModuleDescriptor>(std::string("foo.joyeer"));
     
-    auto fileModuleInitializerDescriptor = std::make_shared<FileModuleInitializerDescriptor>(descriptor);
+    auto fileModuleInitializerDescriptor = std::make_shared<ModuleInitializerDescriptor>(descriptor);
     auto rawDescriptor = fileModuleInitializerDescriptor->getRawDescriptor();
-    EXPECT_EQ(rawDescriptor, "#foo;/&fileModule-initializer();");
+    EXPECT_EQ(rawDescriptor, "#foo;/&module-initializer();");
 }
 
 TEST(DescriptorTest, PrimaryTypeChecker) {

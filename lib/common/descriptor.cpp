@@ -25,17 +25,17 @@ FunctionDescriptor::FunctionDescriptor(Descriptor::Ptr parent, const std::string
     rawDescriptor = ss.str();
 }
 
-FileModuleDescriptor::FileModuleDescriptor(const std::string& filename) {
+ModuleDescriptor::ModuleDescriptor(const std::string& filename) {
     std::stringstream ss;
     std::filesystem::path path = filename;
     path.replace_extension("");
-    ss << DescriptorConstants::FileModulePrefix << path << DescriptorConstants::END ;
+    ss << DescriptorConstants::ModulePrefix << path << DescriptorConstants::END ;
     
     rawDescriptor = ss.str();
 }
 
-FileModuleInitializerDescriptor::FileModuleInitializerDescriptor(FileModuleDescriptor::Ptr parent):
-filemodule(parent),
-FunctionDescriptor(parent, std::string { DescriptorConstants::FileModuleInitializer }, {}){
+ModuleInitializerDescriptor::ModuleInitializerDescriptor(ModuleDescriptor::Ptr parent):
+        module(parent),
+        FunctionDescriptor(parent, std::string { DescriptorConstants::ModuleInitializer }, {}){
     
 }

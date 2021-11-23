@@ -60,7 +60,7 @@ FuncType::FuncType(const std::string &name) :
 ClassType::ClassType(const std::string &name) :
         Type(name, TypeKind::Function) {}
 
-FileModuleType::FileModuleType(const std::string &name) :
+ModuleType::ModuleType(const std::string &name) :
         ClassType(name),
         instructions() {
     kind = TypeKind::FileModule;

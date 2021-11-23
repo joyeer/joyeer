@@ -13,11 +13,12 @@ constexpr intptr_t kInvalid = -1;
 
 
 // MemoryAddress to locate correct data in Heap
+// Each single Space contains max memory - 64Gb
 struct alignas(uintptr_t) MemoryAddress {
-    intptr_t space: 4 = 0;
-    intptr_t page: 16 = 0;
-    intptr_t position: 16 = 0;
-    intptr_t reserved: 28 = 0;
+    uintptr_t space: 4 = 0;         // max 16 space per heap
+    uintptr_t page: 18 = 0;         // max 256k page per space
+    uintptr_t position: 18 = 0;     // max 256k byte per page
+    uintptr_t reserved: 24 = 0;
 };
 
 struct alignas(uintptr_t) SpaceAddress {
@@ -28,7 +29,7 @@ struct alignas(uintptr_t) SpaceAddress {
 // the default page size : 256k
 struct Page {
 
-    Byte data[kPageSize]{};
+    char8_t data[kPageSize]{};
     intptr_t used = 0;
 
     [[nodiscard]] intptr_t allocate(size_t size) {
@@ -38,8 +39,13 @@ struct Page {
 
         intptr_t r = used;
         used += static_cast<intptr_t>(size);
-        return r;
+        return reinterpret_cast<intptr_t>(&data[r]);
     }
+};
+
+// Some memory allocation is larger than 16k
+struct LargeChunk {
+
 };
 
 // the space contains multi-pages

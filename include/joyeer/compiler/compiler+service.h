@@ -11,7 +11,7 @@ public:
     explicit CompilerService(CommandLineArguments::Ptr options);
 
     // return the entry file module
-    FileModuleType::Ptr run(const std::string& inputFile);
+    ModuleType::Ptr run(const std::string& inputFile);
 
     // register a kind
     void declare(const Type::Ptr& type);
@@ -21,7 +21,7 @@ public:
 private:
     
     // Compile an SourceFile
-    FileModuleType::Ptr compile(const SourceFile::Ptr& sourcefile);
+    ModuleType::Ptr compile(const SourceFile::Ptr& sourcefile);
     // try to import module, and return the exported symtable;
     SourceFile::Ptr tryImport(const CompileContext::Ptr& context, const std::string& moduleName);
     SourceFile::Ptr findSourceFile(const std::string& path, const std::string& relativeFolder = "");

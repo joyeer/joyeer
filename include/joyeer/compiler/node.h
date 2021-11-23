@@ -11,7 +11,7 @@
 #include "joyeer/compiler/typedef.h"
 
 enum class SyntaxKind {
-    fileModule = 1L,
+    module = 1L,
 
     type,
     arrayType,
@@ -30,7 +30,6 @@ enum class SyntaxKind {
     whileStmt,
     returnStmt,
     importStmt,
-    fileimportStmt,
 
     expr,
     assignExpr,
@@ -84,7 +83,7 @@ struct Node : std::enable_shared_from_this<Node> {
     Node::Ptr getDeclaringClassDecl() const {
         Node::Ptr current = parent;
         while (current != nullptr) {
-            if (current->kind == SyntaxKind::classDecl || current->kind == SyntaxKind::fileModule) {
+            if (current->kind == SyntaxKind::classDecl || current->kind == SyntaxKind::module) {
                 return current;
             }
             current = current->parent;
@@ -98,7 +97,7 @@ struct Node : std::enable_shared_from_this<Node> {
             case SyntaxKind::varDecl:
             case SyntaxKind::funcDecl:
             case SyntaxKind::classDecl:
-            case SyntaxKind::fileModule:
+            case SyntaxKind::module:
                 return true;
             default:
                 return false;
@@ -564,11 +563,11 @@ struct FileImportStmt : Node {
     Token::Ptr stringLiteral;
 
     explicit FileImportStmt(Token::Ptr stringLiteral) :
-            Node(SyntaxKind::fileimportStmt),
+            Node(SyntaxKind::importStmt),
             stringLiteral(std::move(stringLiteral)) {
     }
 
-    const std::string getImportedFilename() {
+    std::string getImportedFilename() const {
         return stringLiteral->rawValue;
     }
 
@@ -774,10 +773,10 @@ public:
     using Ptr = std::shared_ptr<FileModuleDecl>;
 
 public:
-    FileModuleDecl(const FileModuleDescriptor::Ptr& descriptor, const StmtsBlock::Ptr& block) :
+    FileModuleDecl(const ModuleDescriptor::Ptr& descriptor, const StmtsBlock::Ptr& block) :
             ClassDecl(nullptr, block) {
         this->members = block;
-        kind = SyntaxKind::fileModule;
+        kind = SyntaxKind::module;
         assert(symtable != nullptr);
     }
 

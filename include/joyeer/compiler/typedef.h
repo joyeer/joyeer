@@ -139,8 +139,8 @@ struct ClassType : Type {
     }
 };
 
-struct FileModuleType : ClassType {
-    using Ptr = std::shared_ptr<FileModuleType>;
+struct ModuleType : ClassType {
+    using Ptr = std::shared_ptr<ModuleType>;
 
     // include ClassDef/FuncDef
     BlockType::Ptr block;
@@ -148,7 +148,7 @@ struct FileModuleType : ClassType {
     // File initialize instructions
     std::vector<Instruction> instructions;
 
-    explicit FileModuleType(const std::string& name);
+    explicit ModuleType(const std::string& name);
 };
 
 namespace BuildIn::Types {
