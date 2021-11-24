@@ -7,5 +7,5 @@ Driver::Driver(CommandLineArguments::Ptr arguments):arguments(arguments) {
 
 void Driver::run() {
     auto fileModule = compiler->run(arguments->inputfile);
-    isolateVM->run(fileModule);
+    isolateVM->run(fileModule, compiler);
 }

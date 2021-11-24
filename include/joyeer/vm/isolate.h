@@ -15,7 +15,7 @@ struct IsolateVM {
     explicit IsolateVM() ;
     ~IsolateVM();
 
-    void run(ModuleType::Ptr fileModule);
+    void run(ModuleType::Ptr fileModule, CompilerService* compilerService);
 
 private:
     friend class VCompiler;

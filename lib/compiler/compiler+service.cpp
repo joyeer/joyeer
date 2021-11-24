@@ -103,7 +103,7 @@ void CompilerService::declare(const Type::Ptr& type) {
     types.push_back(type);
 }
 
-Type::Ptr CompilerService::getTypeDefBy(int address) {
+Type::Ptr CompilerService::getType(int address) {
     return types[address];
 }
 

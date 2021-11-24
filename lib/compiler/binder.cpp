@@ -171,13 +171,13 @@ Node::Ptr Binder::visit(const FuncCallExpr::Ptr& decl) {
         return visit(memberFuncCallExpr);
     }
 
-    auto callleeSimpleName = decl->getCalleeFuncSimpleName();
-    auto symbol = context->lookup(callleeSimpleName);
+    auto calleeSimpleName = decl->getCalleeFuncSimpleName();
+    auto symbol = context->lookup(calleeSimpleName);
     if(symbol == nullptr) {
         Diagnostics::reportError(ErrorLevel::failure, "[TODO] cannot find func");
         return decl;
     }
-    decl->type = context->compiler->getTypeDefBy(symbol->address);
+    decl->type = context->compiler->getType(symbol->address);
 
     // go down to bind argument
     std::vector<ArguCallExpr::Ptr> argus;

@@ -133,7 +133,7 @@ void IRGen::emit(const VarDecl::Ptr& node) {
     emit(node->initializer);
 
     auto symbol = context->lookup(node->getSimpleName());
-    auto varDef = std::static_pointer_cast<VariableType>(context->compiler->getTypeDefBy(symbol->address));
+    auto varDef = std::static_pointer_cast<VariableType>(context->compiler->getType(symbol->address));
 
     switch (symbol->flag) {
         case SymbolFlag::var:
@@ -185,7 +185,7 @@ void IRGen::emit(const IdentifierExpr::Ptr& node) {
         return;
     }
 
-    auto varDef = std::static_pointer_cast<VariableType>(context->compiler->getTypeDefBy(symbol->address));
+    auto varDef = std::static_pointer_cast<VariableType>(context->compiler->getType(symbol->address));
 
     if(symbol->flag  == SymbolFlag::var) {
 //        auto kind = symbol->kind;

@@ -16,8 +16,8 @@ public:
     // register a kind
     void declare(const Type::Ptr& type);
 
-    // get a Types from an address
-    Type::Ptr getTypeDefBy(int address);
+    // get a Types base on a given address/position
+    Type::Ptr getType(int address);
 private:
     
     // Compile an SourceFile

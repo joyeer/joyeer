@@ -484,13 +484,13 @@ Type::Ptr TypeChecker::typeOf(const FuncCallExpr::Ptr& node) {
     auto funcName = node->getSimpleName();
     auto symbol = context->lookup(funcName);
     assert(symbol->flag == SymbolFlag::func);
-    return context->compiler->getTypeDefBy(symbol->address);
+    return context->compiler->getType(symbol->address);
 }
 
 Type::Ptr TypeChecker::typeOf(const MemberFuncCallExpr::Ptr& node) {
     auto funcName = node->getSimpleName();
     auto symbol = context->lookup(funcName);
-    auto funcDef = std::static_pointer_cast<FuncType> (context->compiler->getTypeDefBy(symbol->address));
+    auto funcDef = std::static_pointer_cast<FuncType> (context->compiler->getType(symbol->address));
     return funcDef->returnType;
 }
 

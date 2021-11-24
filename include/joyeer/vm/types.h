@@ -107,7 +107,7 @@ struct Class {
 };
 
 struct ModuleClass : public Class {
-    Object* static_ = nullptr;
+
 };
 
 //

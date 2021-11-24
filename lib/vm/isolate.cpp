@@ -4,6 +4,7 @@
 
 #include "joyeer/vm/isolate.h"
 
+
 IsolateVM::IsolateVM() {
     vCompiler = new VCompiler(this);
     gc = new GC();
@@ -14,6 +15,6 @@ IsolateVM::~IsolateVM() {
     delete gc;
 }
 
-void IsolateVM::run(ModuleType::Ptr fileModule) {
-    vCompiler->compile(fileModule);
+void IsolateVM::run(ModuleType::Ptr module, CompilerService* compilerService) {
+    vCompiler->compile(module, compilerService);
 }
