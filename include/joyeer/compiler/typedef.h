@@ -148,6 +148,10 @@ struct ModuleType : ClassType {
     // File initialize instructions
     std::vector<Instruction> instructions;
 
+    std::vector<VariableType::Ptr> getVariables() {
+        return block->localVars;
+    }
+
     explicit ModuleType(const std::string& name);
 };
 

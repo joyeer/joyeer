@@ -5,9 +5,10 @@
 #include "joyeer/vm/compiler.h"
 
 
-void VCompiler::compile(ModuleType::Ptr fileModule) {
-    auto fileModuleClass = new ModuleClass();
-    compile(fileModule->instructions);
+void VCompiler::compile(const ModuleType::Ptr& module) {
+    auto moduleClass = new ModuleClass();
+    auto variables = module->getVariables();
+    compile(module->instructions);
 }
 
 void VCompiler::compile(const std::vector<Instruction> &instructions) {

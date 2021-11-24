@@ -17,7 +17,7 @@ class VCompiler {
 public:
     explicit VCompiler(IsolateVM* isolateVM): isolateVM(isolateVM) {}
 
-    void compile(ModuleType::Ptr fileModule);
+    void compile(const ModuleType::Ptr& module);
     void compile(const std::vector<Instruction>& instructions);
     
 private:
