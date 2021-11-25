@@ -98,8 +98,8 @@ ModuleType::Ptr CompilerService::compile(const SourceFile::Ptr& sourcefile) {
     return sourcefile->moduleClass;
 }
 
-void CompilerService::declare(const Type::Ptr& type) {
-    type->address = static_cast<int32_t>(types.size());
+void CompilerService::declare(Type::Ptr type) {
+    type.get()->address = static_cast<int32_t>(types.size());
     types.push_back(type);
 }
 
@@ -112,7 +112,7 @@ SourceFile::Ptr CompilerService::tryImport(const CompileContext::Ptr& context, c
     auto relativedFolder = sourcefile->getParentFolder();
     auto importfile = findSourceFile(moduleName, relativedFolder);
     if(importfile == nullptr) {
-        Diagnostics::reportError("Error: FileModule cannot be found");
+        Diagnostics::reportError("Error: Module cannot be found");
         return nullptr;
     }
     compile(importfile);
@@ -135,11 +135,11 @@ void CompilerService::initializeGlobalSymbolTable() {
 }
 
 void CompilerService::initializeTypeDefs() {
-    declare(BuildIn::Types::Void);
+
+    BuildIn::Types::initializeBuildIns();
     declare(BuildIn::Types::Any);
     declare(BuildIn::Types::Nil);
     declare(BuildIn::Types::Int);
     declare(BuildIn::Types::Bool);
-
     declare(BuildIn::Types::print);
 }

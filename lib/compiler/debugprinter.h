@@ -372,8 +372,8 @@ struct TypeDefDebugPrinter : YMLPrinter {
                 output << "index: " << i;
                 newline();
             switch (tf->kind) {
-                case TypeKind::FileModule:
-                    output << "kind: FileModule" ;
+                case TypeKind::Module:
+                    output << "kind: Module" ;
                     newline();
                     print(std::static_pointer_cast<ModuleType>(tf));
                     break;

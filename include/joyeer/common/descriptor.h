@@ -110,7 +110,7 @@ class ClassDescriptor: public Descriptor {
 
 };
 
-// File FileModule descriptor, e.g.
+// File Module descriptor, e.g.
 // foo.joyeer, descriptor: #foo;
 // bar/foo.joyeer, descriptor: #bar/foo;
 class ModuleDescriptor: public Descriptor {
@@ -125,7 +125,7 @@ public:
     std::vector<ClassDescriptor::Ptr> classes;
 };
 
-// FileModule initializer function descriptor
+// Module initializer function descriptor
 // foo.joyeer, ModuleInitializer
 class ModuleInitializerDescriptor: public FunctionDescriptor {
 public:

@@ -14,7 +14,7 @@ public:
     ModuleType::Ptr run(const std::string& inputFile);
 
     // register a kind
-    void declare(const Type::Ptr& type);
+    void declare(Type::Ptr type);
 
     // get a Types base on a given address/position
     Type::Ptr getType(int address);
@@ -43,7 +43,7 @@ private:
     // Type tables include
     std::vector<Type::Ptr> types;
 
-    // FileModule static variable memory alignment
+    // Module static variable memory alignment
     FileModuleMemoryAlignment fileModuleMemoryAlign;
 };
 #endif

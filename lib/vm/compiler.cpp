@@ -6,8 +6,8 @@
 
 
 
-void VCompiler::compile(const ModuleType::Ptr& module, CompilerService* compilerService) {
-    this->compilerService = compilerService;
+void VCompiler::compile(const ModuleType::Ptr& module, CompilerService* pService) {
+    this->compilerService = pService;
     auto moduleClass = new ModuleClass();
     auto variables = module->getVariables();
     for(auto const& variable: variables ) {
@@ -22,7 +22,8 @@ void VCompiler::compile(const std::vector<Instruction> &instructions) {
 }
 
 Field VCompiler::compile(const VariableType::Ptr& variableType) {
-    switch (variableType->kind) {
+    auto type = compilerService->getType(variableType->addressOfType);
+    switch (type->kind) {
         case TypeKind::Integer:
             return Field(ValueType::Int);
         default:

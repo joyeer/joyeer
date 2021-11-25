@@ -67,7 +67,7 @@ Type::Ptr CompileContext::curDeclTypeDef() const {
         auto typeDef = *iterator;
         if(typeDef->kind == TypeKind::Function ||
            typeDef->kind == TypeKind::Class ||
-           typeDef->kind == TypeKind::FileModule ) {
+           typeDef->kind == TypeKind::Module ) {
             return std::static_pointer_cast<BlockType>(typeDef);
         }
     }

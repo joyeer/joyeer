@@ -63,6 +63,7 @@ ClassType::ClassType(const std::string &name) :
 ModuleType::ModuleType(const std::string &name) :
         ClassType(name),
         instructions() {
-    kind = TypeKind::FileModule;
+    kind = TypeKind::Module;
 }
+
 

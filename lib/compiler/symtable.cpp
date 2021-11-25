@@ -9,14 +9,10 @@ std::string debugStringOfSymbolFlag(SymbolFlag flag) {
             return "func";
         case SymbolFlag::field:
             return "field";
-        case SymbolFlag::class_:
+        case SymbolFlag::klass:
             return "class";
-        case SymbolFlag::fileModule:
-            return "module";
-        case SymbolFlag::staticInitializer:
-            return "static-initializer";
-        case SymbolFlag::initializer:
-            return "initializer";
+        default:
+            assert(false);
     }
 }
 
@@ -27,7 +23,7 @@ SymbolTable::SymbolTable() :
 symbols() {
 }
 
-bool SymbolTable::insert(Symbol::Ptr symbol) {
+bool SymbolTable::insert(const Symbol::Ptr& symbol) {
     if(symbols.find(symbol->name) != symbols.end()) {
         return false;
     }

@@ -16,8 +16,7 @@ enum class TypeKind : uint8_t {
     Integer,
     Long,
     Any,
-
-    FileModule,
+    Module,
     Class,
     Block,
     Function,
@@ -73,7 +72,9 @@ struct VariableType: Type {
     using Ptr = std::shared_ptr<VariableType>;
 
     int position = -1;
-    int parent = -1;
+    int parent = -1; // Variable's parent Type, e.g. ClassType/ModuleType/FuncType
+    int addressOfType = -1; // Variable's type
+
     AccessFlag accessFlags = AccessFlag::Public;
 
     void markAsStatic() {
@@ -148,7 +149,7 @@ struct ModuleType : ClassType {
     // File initialize instructions
     std::vector<Instruction> instructions;
 
-    std::vector<VariableType::Ptr> getVariables() {
+    [[nodiscard]] std::vector<VariableType::Ptr> getVariables() const {
         return block->localVars;
     }
 
@@ -157,15 +158,16 @@ struct ModuleType : ClassType {
 
 namespace BuildIn::Types {
     // call CompilerService to register the following Types
-    [[maybe_unused]] static const VoidType::Ptr Void = std::make_shared<VoidType>();
-    [[maybe_unused]] static const AnyType::Ptr Any = std::make_shared<AnyType>();
-    [[maybe_unused]] static const NilType::Ptr Nil = std::make_shared<NilType>();
-    [[maybe_unused]] static const IntType::Ptr Int = std::make_shared<IntType>();
-    [[maybe_unused]] static const BoolType::Ptr Bool = std::make_shared<BoolType>();
+    static VoidType::Ptr Void ;
+    static AnyType::Ptr Any;
+    static NilType::Ptr Nil;
+    static IntType::Ptr Int;
+    static BoolType::Ptr Bool;
+    static ClassType::Ptr String;
+    static FuncType::Ptr print;
 
-    static const ClassType::Ptr String = std::make_shared<ClassType>("String");
+    void initializeBuildIns();
 
-    static const FuncType::Ptr print = std::make_shared<FuncType>("print(message:)");
 };
 
 #endif //__joyeer_compiler_typedef_h__

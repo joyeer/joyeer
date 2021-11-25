@@ -8,11 +8,8 @@
 enum class SymbolFlag : uint16_t {
     func = 1,
     var,
-    field                   = 3,
-    class_                  = 5,
-    fileModule              = 6,
-    staticInitializer       = 7,
-    initializer             = 8
+    field,
+    klass,d
 };
 
 std::string debugStringOfSymbolFlag(SymbolFlag flag);
@@ -33,16 +30,12 @@ public:
     // address of ModuleType/FuncType/ClassType
     int32_t address = -1;
 
-    // location of field-variable/local-variable inside of Class/FileModule/Func
-    int16_t location = -1;
-
     // create a new symbol
-    static Symbol::Ptr make(SymbolFlag flag, const std::string& name, int32_t address, int16_t location = -1) {
+    static Symbol::Ptr make(SymbolFlag flag, const std::string& name, int32_t address) {
         return Symbol::Ptr(new Symbol {
             .flag = flag,
             .name =name,
             .address = address,
-            .location = location
         });
     }
 };
@@ -56,7 +49,7 @@ public:
     SymbolTable();
     
     // insert an new Symbol
-    bool insert(Symbol::Ptr symbol);
+    bool insert(const Symbol::Ptr& symbol);
     
     // find symbol by a given name
     [[nodiscard]] Symbol::Ptr find(const std::string& name) const;

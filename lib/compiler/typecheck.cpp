@@ -145,6 +145,11 @@ Node::Ptr TypeChecker::visit(const VarDecl::Ptr& decl) {
     }
 
     assert(decl->getType() != nullptr);
+    // assign the decl for VariableType;
+    auto variableType = std::static_pointer_cast<VariableType>(context->compiler->getType(symbol->address));
+    assert(variableType->kind == TypeKind::Variable);
+    variableType->addressOfType = decl->getType()->address;
+
     return decl;
 }
 

@@ -767,7 +767,7 @@ struct ClassDecl : public DeclNode {
     }
 };
 
-// Represent an FileModule in Ast tree, each xxx.joyeer file is a file module
+// Represent an Module in Ast tree, each xxx.joyeer file is a file module
 class FileModuleDecl : public ClassDecl {
 public:
     using Ptr = std::shared_ptr<FileModuleDecl>;

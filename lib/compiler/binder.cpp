@@ -21,7 +21,7 @@ Node::Ptr Binder::visit(const Node::Ptr& node) {
 }
 
 Node::Ptr Binder::visit(const FileModuleDecl::Ptr& fileModule) {
-    // register FileModule
+    // register Module
 
     auto fileModuleDef = std::make_shared<ModuleType>(fileModule->getSimpleName());
     context->compiler->declare(fileModuleDef);
@@ -46,7 +46,7 @@ Node::Ptr Binder::visit(const ClassDecl::Ptr& decl) {
     }
     
     auto symbol = Symbol::Ptr(new Symbol {
-        .flag = SymbolFlag::class_,
+        .flag = SymbolFlag::klass,
         .name = name
     });
     symtable->insert(symbol);
@@ -134,7 +134,7 @@ Node::Ptr Binder::visit(const VarDecl::Ptr& decl) {
     auto declType = context->curDeclTypeDef();
     auto flag = SymbolFlag::var;
     switch (declType->kind) {
-        case TypeKind::FileModule:
+        case TypeKind::Module:
             flag = SymbolFlag::field;
             varDef->markAsStatic();
             varDef->parent = declType->address; // parent address
@@ -414,7 +414,7 @@ Node::Ptr Binder::visit(const StmtsBlock::Ptr& decl) {
     // check parent's type, assign the BlockTypeDef to Parent
     auto typeDef = context->curTypeDef();
     switch (typeDef->kind) {
-        case TypeKind::FileModule: {
+        case TypeKind::Module: {
             auto moduleDef = std::static_pointer_cast<ModuleType>(typeDef);
             moduleDef->block = blockDef;
         }
