@@ -36,34 +36,34 @@ std::string debugAccessFlag(AccessFlag flag) {
 }
 
 NilType::NilType():
-        Type("nil", TypeKind::Nil){}
+        Type("nil", ValueType::Nil){}
 
 VoidType::VoidType() :
-        Type("void", TypeKind::Void) {}
+        Type("void", ValueType::Void) {}
 
 IntType::IntType() :
-        Type("Int", TypeKind::Integer) {}
+        Type("Int", ValueType::Int) {}
 
 BoolType::BoolType() :
-        Type("Bool", TypeKind::Integer) {}
+        Type("Bool", ValueType::Bool) {}
 
 BlockType::BlockType() :
-        Type("Block", TypeKind::Block),
+        Type("Block", ValueType::Block),
         localVars() {}
 
 FuncType::FuncType(const std::string &name) :
-        Type(name, TypeKind::Function),
+        Type(name, ValueType::Function),
         funcKind(FuncTypeKind::VM_Func),
         paramTypes(),
         returnType(nullptr) {}
 
 ClassType::ClassType(const std::string &name) :
-        Type(name, TypeKind::Function) {}
+        Type(name, ValueType::Function) {}
 
 ModuleType::ModuleType(const std::string &name) :
         ClassType(name),
         instructions() {
-    kind = TypeKind::Module;
+    kind = ValueType::Module;
 }
 
 

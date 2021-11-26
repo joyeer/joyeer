@@ -9,43 +9,8 @@ struct IsolateVM;
 struct Object;
 
 #include <vector>
-#include <cstdlib>
 
-// Joyeer VM primary types
-typedef char            Byte;
-typedef short           Short;
-typedef int64_t         Int;
-typedef bool            Bool;
-typedef uintptr_t       Address;
-typedef const char*     String;
-typedef uintptr_t       ObjectPtr;
-typedef uintptr_t       FuncPtr;
-typedef uintptr_t       Any;
-typedef uintptr_t       Blob;
-
-union Value {
-    Int           intValue;
-    Bool          boolValue;
-    ObjectPtr     objValue;
-};
-
-// Constants
-constexpr int kValueSize = sizeof(Value);
-constexpr int kByteSize = sizeof(Byte);
-constexpr int kIntSize = sizeof(Int);
-constexpr int kBoolSize = sizeof (Bool);
-constexpr int kObjectSize = sizeof(ObjectPtr);
-constexpr int KAnySize = sizeof(Any);
-
-// Value Types
-enum class ValueType : uintptr_t {
-    Any,
-    Int,
-    Bool,
-    Object,
-    Blob,
-};
-
+#include "joyeer/common/types.h"
 
 // Class's field description
 struct Field {
@@ -55,7 +20,6 @@ struct Field {
         DECLARE_TYPE(ValueType::Any, KAnySize)
         DECLARE_TYPE(ValueType::Int, kIntSize)
         DECLARE_TYPE(ValueType::Bool, kBoolSize)
-        DECLARE_TYPE(ValueType::Class, kObjectSize)
     };
 
     ValueType type;

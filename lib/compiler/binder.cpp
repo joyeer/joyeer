@@ -134,7 +134,7 @@ Node::Ptr Binder::visit(const VarDecl::Ptr& decl) {
     auto declType = context->curDeclTypeDef();
     auto flag = SymbolFlag::var;
     switch (declType->kind) {
-        case TypeKind::Module:
+        case ValueType::Module:
             flag = SymbolFlag::field;
             varDef->markAsStatic();
             varDef->parent = declType->address; // parent address
@@ -414,7 +414,7 @@ Node::Ptr Binder::visit(const StmtsBlock::Ptr& decl) {
     // check parent's type, assign the BlockTypeDef to Parent
     auto typeDef = context->curTypeDef();
     switch (typeDef->kind) {
-        case TypeKind::Module: {
+        case ValueType::Module: {
             auto moduleDef = std::static_pointer_cast<ModuleType>(typeDef);
             moduleDef->block = blockDef;
         }

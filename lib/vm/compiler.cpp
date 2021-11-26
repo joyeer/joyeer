@@ -24,7 +24,7 @@ void VCompiler::compile(const std::vector<Instruction> &instructions) {
 Field VCompiler::compile(const VariableType::Ptr& variableType) {
     auto type = compilerService->getType(variableType->addressOfType);
     switch (type->kind) {
-        case TypeKind::Integer:
+        case ValueType::Int:
             return Field(ValueType::Int);
         default:
             assert(false);

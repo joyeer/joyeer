@@ -5,23 +5,10 @@
 #ifndef __joyeer_compiler_typedef_h__
 #define __joyeer_compiler_typedef_h__
 
+#include "joyeer/common/types.h"
 #include "joyeer/compiler/opcode.h"
 
 #include <string>
-
-enum class TypeKind : uint8_t {
-    Void = 0x00,
-    Nil,
-    Boolean,
-    Integer,
-    Long,
-    Any,
-    Module,
-    Class,
-    Block,
-    Function,
-    Variable
-};
 
 enum AccessFlag : uint32_t {
     Public = 0x0001,
@@ -37,11 +24,11 @@ struct Type {
     using Ptr = std::shared_ptr<Type>;
 
     const std::string name;
-    TypeKind kind;
+    ValueType kind;
     int32_t address;
 
 protected:
-    Type(std::string  name, TypeKind kind):
+    Type(std::string  name, ValueType kind):
             name(std::move(name)),
             kind(kind),
             address(-1) {
@@ -63,7 +50,7 @@ struct VoidType : Type {
 // represent Any kind
 struct AnyType : Type {
     using Ptr = std::shared_ptr<AnyType>;
-    AnyType(): Type("Any", TypeKind::Any) {}
+    AnyType(): Type("Any", ValueType::Any) {}
 };
 
 // Variable for Field/LocalVariable declarations
@@ -87,7 +74,7 @@ struct VariableType: Type {
     }
 
     explicit VariableType(std::string  name):
-            Type(name, TypeKind::Variable) {}
+            Type(name, ValueType::Variable) {}
 };
 
 // Represent Int kind

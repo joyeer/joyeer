@@ -372,42 +372,39 @@ struct TypeDefDebugPrinter : YMLPrinter {
                 output << "index: " << i;
                 newline();
             switch (tf->kind) {
-                case TypeKind::Module:
+                case ValueType::Module:
                     output << "kind: Module" ;
                     newline();
                     print(std::static_pointer_cast<ModuleType>(tf));
                     break;
-                case TypeKind::Nil:
+                case ValueType::Nil:
                     output << "kind: Nil" ;
                     break;
-                case TypeKind::Boolean:
+                case ValueType::Bool:
                     output << "kind: Boolean" ;
                     break;
-                case TypeKind::Integer:
+                case ValueType::Int:
                     output << "kind: Integer";
                     break;
-                case TypeKind::Void:
+                case ValueType::Void:
                     output << "kind: Void";
                     break;
-                case TypeKind::Long:
-                    output << "kind: Long";
-                    break;
-                case TypeKind::Any:
+                case ValueType::Any:
                     output << "kind: Any";
                     break;
-                case TypeKind::Class:
+                case ValueType::Class:
                     assert(false);
-                case TypeKind::Block:
+                case ValueType::Block:
                     output << "kind: Block";
                     newline();
                     print(std::static_pointer_cast<BlockType>(tf));
                     break;
-                case TypeKind::Function:
+                case ValueType::Function:
                     output << "kind: Function";
                     newline();
                     print(std::static_pointer_cast<FuncType>(tf));
                     break;
-                case TypeKind::Variable:
+                case ValueType::Variable:
                     output << "kind: Variable";
                     newline();
                     print(std::static_pointer_cast<VariableType>(tf));
