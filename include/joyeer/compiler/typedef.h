@@ -74,7 +74,7 @@ struct VariableType: Type {
     }
 
     explicit VariableType(std::string  name):
-            Type(name, ValueType::Variable) {}
+            Type(name, ValueType::Var) {}
 };
 
 // Represent Int kind
@@ -141,20 +141,6 @@ struct ModuleType : ClassType {
     }
 
     explicit ModuleType(const std::string& name);
-};
-
-namespace BuildIn::Types {
-    // call CompilerService to register the following Types
-    static VoidType::Ptr Void ;
-    static AnyType::Ptr Any;
-    static NilType::Ptr Nil;
-    static IntType::Ptr Int;
-    static BoolType::Ptr Bool;
-    static ClassType::Ptr String;
-    static FuncType::Ptr print;
-
-    void initializeBuildIns();
-
 };
 
 #endif //__joyeer_compiler_typedef_h__

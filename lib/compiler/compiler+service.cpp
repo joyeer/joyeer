@@ -8,10 +8,6 @@
 #include "debugprinter.h"
 #include <utility>
 
-#define CHECK_ERROR_CONTINUE \
-    if(Diagnostics::errorLevel != none) { \
-        return; \
-    }
 
 #define CHECK_ERROR_RETURN_NULL \
     if(Diagnostics::errorLevel != none) { \
@@ -21,7 +17,7 @@
 CompilerService::CompilerService(CommandLineArguments::Ptr opts):
 options(std::move(opts)),
 fileModuleMemoryAlign(){
-    initializeTypeDefs();
+    initializeTypes();
     initializeGlobalSymbolTable();
 }
 
@@ -98,13 +94,17 @@ ModuleType::Ptr CompilerService::compile(const SourceFile::Ptr& sourcefile) {
     return sourcefile->moduleClass;
 }
 
-void CompilerService::declare(Type::Ptr type) {
+void CompilerService::declare(const Type::Ptr& type) {
     type.get()->address = static_cast<int32_t>(types.size());
     types.push_back(type);
 }
 
 Type::Ptr CompilerService::getType(int address) {
     return types[address];
+}
+
+Type::Ptr CompilerService::getPrimaryType(ValueType valueType) {
+    return types[static_cast<int>(valueType)];
 }
 
 SourceFile::Ptr CompilerService::tryImport(const CompileContext::Ptr& context, const std::string &moduleName) {
@@ -131,15 +131,25 @@ void CompilerService::debugPrint(const Node::Ptr& node, const std::string &debug
 
 void CompilerService::initializeGlobalSymbolTable() {
     globalSymbols = std::make_shared<SymbolTable>();
-    globalSymbols->insert(Symbol::make(SymbolFlag::func, BuildIn::Types::print->name, BuildIn::Types::print->address));
+    auto print = getBuildInsType(BuildIns::Func_Print);
+    globalSymbols->insert(Symbol::make(SymbolFlag::func, print->name, print->address));
 }
 
-void CompilerService::initializeTypeDefs() {
+void CompilerService::initializeTypes() {
 
-    BuildIn::Types::initializeBuildIns();
-    declare(BuildIn::Types::Any);
-    declare(BuildIn::Types::Nil);
-    declare(BuildIn::Types::Int);
-    declare(BuildIn::Types::Bool);
-    declare(BuildIn::Types::print);
+#define DECLARE_TYPE(type, TypeClass) \
+    declare(std::make_shared<TypeClass>()); \
+    assert((type) == types.back()->kind);  \
+    assert((size_t)(type) == (types.size() - 1));
+
+#define DECLARE_TYPE_2(type, TypeClass, param) \
+    declare(std::make_shared<TypeClass>(param));
+
+    DECLARE_TYPE(ValueType::Void, VoidType)
+    DECLARE_TYPE(ValueType::Int, IntType)
+    DECLARE_TYPE(ValueType::Bool, BoolType)
+    DECLARE_TYPE(ValueType::Nil, NilType)
+    DECLARE_TYPE(ValueType::Any, AnyType)
+
+    DECLARE_TYPE_2(BuildIns::Func_Print, FuncType, "print(message:)")
 }

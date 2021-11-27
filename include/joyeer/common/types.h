@@ -29,19 +29,25 @@ constexpr int kBoolSize = sizeof (Bool);
 constexpr int KAnySize = sizeof(Any);
 
 // Value Types
-enum class ValueType : uintptr_t {
+enum class ValueType : size_t {
     Void = 0x00,
     Int,
     Bool,
     Nil,
     Any,
+    String,
+    RESOLVED_PRIMARY_TYPE_COUNT [[maybe_unused]],
     Module,
     Class,
     Block,
-    Function,
-    Variable,
+    Func,
+    Var,
     Object,
     Blob,
+};
+
+enum class BuildIns : size_t  {
+    Func_Print = static_cast<size_t>(ValueType::RESOLVED_PRIMARY_TYPE_COUNT) - 1,
 };
 
 #endif //__joyeer_common_types_h__

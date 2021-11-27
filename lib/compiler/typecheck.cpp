@@ -147,7 +147,7 @@ Node::Ptr TypeChecker::visit(const VarDecl::Ptr& decl) {
     assert(decl->getType() != nullptr);
     // assign the decl for VariableType;
     auto variableType = std::static_pointer_cast<VariableType>(context->compiler->getType(symbol->address));
-    assert(variableType->kind == ValueType::Variable);
+    assert(variableType->kind == ValueType::Var);
     variableType->addressOfType = decl->getType()->address;
 
     return decl;
@@ -247,10 +247,10 @@ Node::Ptr TypeChecker::visit(const Expr::Ptr& node) {
 Node::Ptr TypeChecker::visit(const LiteralExpr::Ptr& node) {
     switch(node->literal->kind) {
         case TokenKind::decimalLiteral:
-            node->type = BuildIn::Types::Int;
+            node->type = context->compiler->getPrimaryType(ValueType::Int);
             break;
         case TokenKind::stringLiteral:
-            node->type = BuildIn::Types::String;
+            node->type = context->compiler->getPrimaryType(ValueType::String);
             break;
         default:
             assert(false);
@@ -336,20 +336,10 @@ Node::Ptr TypeChecker::visit(const DictLiteralExpr::Ptr& node) {
 
 Node::Ptr TypeChecker::visit(const MemberAccessExpr::Ptr& node) {
     node->callee = visit(node->callee);
-    
-//    auto kind = Global::types[node->callee->symbol->addressOfType];
-//    auto symtable = context->symtableOfType(kind);
 
     context->visit(CompileStage::visitMemberAccess, node->member, [this, node](){
-//        if(symtable != nullptr) {
-//            // We will push access flags' symbols
-//            context->entry(symtable);
-//        }
-        
+
         node->member = visit(node->member);
-//        if(symtable != nullptr) {
-//            context->leave(symtable);
-//        }
     });
     return node;
 }
@@ -473,13 +463,13 @@ Type::Ptr TypeChecker::typeOf(const Expr::Ptr& node) {
 Type::Ptr TypeChecker::typeOf(const LiteralExpr::Ptr& node) {
     switch(node->literal->kind) {
         case booleanLiteral:
-            return BuildIn::Types::Bool;
+            return context->compiler->getPrimaryType(ValueType::Bool);
         case decimalLiteral:
-            return BuildIn::Types::Int;
+            return context->compiler->getPrimaryType(ValueType::Int);
         case nilLiteral:
-            return BuildIn::Types::Nil;
+            return context->compiler->getPrimaryType(ValueType::Nil);
         case stringLiteral:
-            return BuildIn::Types::String;
+            return context->compiler->getPrimaryType(ValueType::String);
         default:
             assert(false);
     }
@@ -509,7 +499,7 @@ Type::Ptr TypeChecker::typeOf(const SelfExpr::Ptr& node) {
 
 Type::Ptr TypeChecker::typeOf(const Pattern::Ptr& node) {
     if(node->type == nullptr) {
-        return BuildIn::Types::Any;
+        return context->compiler->getPrimaryType(ValueType::Any);
     }
     return typeOf(node->typeNode);
 }
@@ -528,16 +518,13 @@ Type::Ptr TypeChecker::typeOf(const ArrayLiteralExpr::Ptr& node) {
         auto type = typeOf(item);
         if(previousType != nullptr) {
             if(type->kind != previousType->kind) {
-                return BuildIn::Types::Any;
+                return context->compiler->getPrimaryType(ValueType::Any);
             }
         }
 
         previousType = type;
     }
-    
-//    if(previousType->kind == typeInt) {
-//        return JrObjectArray::Type;
-//    }
+
     assert(false);
     return previousType;
 }
@@ -616,7 +603,7 @@ Type::Ptr TypeChecker::returnTypeOf(const Node::Ptr& node) {
         case SyntaxKind::returnStmt: {
             auto returnStatement = std::static_pointer_cast<ReturnStmt>(node);
             if(returnStatement->expr == nullptr) {
-                return BuildIn::Types::Void;
+                return context->compiler->getPrimaryType(ValueType::Void);;
             } else {
                 return typeOf(returnStatement->expr);
             }

@@ -52,13 +52,13 @@ BlockType::BlockType() :
         localVars() {}
 
 FuncType::FuncType(const std::string &name) :
-        Type(name, ValueType::Function),
+        Type(name, ValueType::Func),
         funcKind(FuncTypeKind::VM_Func),
         paramTypes(),
         returnType(nullptr) {}
 
 ClassType::ClassType(const std::string &name) :
-        Type(name, ValueType::Function) {}
+        Type(name, ValueType::Func) {}
 
 ModuleType::ModuleType(const std::string &name) :
         ClassType(name),

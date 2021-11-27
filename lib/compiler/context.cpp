@@ -65,7 +65,7 @@ Type::Ptr CompileContext::curTypeDef() const {
 Type::Ptr CompileContext::curDeclTypeDef() const {
     for (auto iterator = types.rbegin(); iterator != types.rend(); iterator ++) {
         auto typeDef = *iterator;
-        if(typeDef->kind == ValueType::Function ||
+        if(typeDef->kind == ValueType::Func ||
            typeDef->kind == ValueType::Class ||
            typeDef->kind == ValueType::Module ) {
             return std::static_pointer_cast<BlockType>(typeDef);
@@ -87,7 +87,7 @@ BlockType::Ptr CompileContext::curBlockDef() const {
 FuncType::Ptr CompileContext::curFuncDef() const {
     for (auto iterator = types.rbegin(); iterator != types.rend(); iterator ++) {
         auto typeDef = *iterator;
-        if(typeDef->kind == ValueType::Function) {
+        if(typeDef->kind == ValueType::Func) {
             return std::static_pointer_cast<FuncType>(typeDef);
         }
     }

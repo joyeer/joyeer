@@ -399,13 +399,13 @@ struct TypeDefDebugPrinter : YMLPrinter {
                     newline();
                     print(std::static_pointer_cast<BlockType>(tf));
                     break;
-                case ValueType::Function:
-                    output << "kind: Function";
+                case ValueType::Func:
+                    output << "kind: Func";
                     newline();
                     print(std::static_pointer_cast<FuncType>(tf));
                     break;
-                case ValueType::Variable:
-                    output << "kind: Variable";
+                case ValueType::Var:
+                    output << "kind: Var";
                     newline();
                     print(std::static_pointer_cast<VariableType>(tf));
                     break;

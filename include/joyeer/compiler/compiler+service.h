@@ -14,10 +14,18 @@ public:
     ModuleType::Ptr run(const std::string& inputFile);
 
     // register a kind
-    void declare(Type::Ptr type);
+    void declare(const Type::Ptr& type);
 
     // get a Types base on a given address/position
     Type::Ptr getType(int address);
+
+    Type::Ptr getPrimaryType(ValueType valueType);
+
+    // get the Type declaration of the BuildIns func/object
+    Type::Ptr getBuildInsType(BuildIns buildIn) {
+        return types[static_cast<int>(buildIn)];
+    }
+
 private:
     
     // Compile an SourceFile
@@ -32,7 +40,7 @@ private:
     void initializeGlobalSymbolTable();
 
     // initialize the pre-define TypeDefs
-    void initializeTypeDefs();
+    void initializeTypes();
     
     CommandLineArguments::Ptr options;
     std::unordered_map<std::string, SourceFile::Ptr> sourceFiles;
