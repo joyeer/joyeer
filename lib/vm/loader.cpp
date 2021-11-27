@@ -2,11 +2,10 @@
 // Created by Qing Xu on 2021/11/7.
 //
 
-#include "joyeer/vm/compiler.h"
+#include "joyeer/vm/loader.h"
 
 
-
-void VCompiler::compile(const ModuleType::Ptr& module, CompilerService* pService) {
+void ClassLoader::compile(const ModuleType::Ptr& module, CompilerService* pService) {
     this->compilerService = pService;
     auto moduleClass = new ModuleClass();
     auto variables = module->getVariables();
@@ -17,11 +16,11 @@ void VCompiler::compile(const ModuleType::Ptr& module, CompilerService* pService
     compile(module->instructions);
 }
 
-void VCompiler::compile(const std::vector<Instruction> &instructions) {
+void ClassLoader::compile(const std::vector<Instruction> &instructions) {
 
 }
 
-Field VCompiler::compile(const VariableType::Ptr& variableType) {
+Field ClassLoader::compile(const VariableType::Ptr& variableType) {
     auto type = compilerService->getType(variableType->addressOfType);
     switch (type->kind) {
         case ValueType::Int:

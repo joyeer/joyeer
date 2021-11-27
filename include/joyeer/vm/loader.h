@@ -2,19 +2,19 @@
 // Created by Qing Xu on 2021/11/7.
 //
 
-#ifndef __joyeer_vm_compiler_h__
-#define __joyeer_vm_compiler_h__
+#ifndef __joyeer_vm_loader_h__
+#define __joyeer_vm_loader_h__
 
 #include "joyeer/compiler/compiler+service.h"
 #include "joyeer/vm/types.h"
 
 struct IsolateVM;
 
-// VM compiler, compiling the Joyeer Compiler's file into interpreter accepted binary code
+// VM loader, compiling the Joyeer Compiler's file into interpreter accepted binary code
 
-class VCompiler {
+class ClassLoader {
 public:
-    explicit VCompiler(IsolateVM* isolateVM): isolateVM(isolateVM) {}
+    explicit ClassLoader(IsolateVM* isolateVM): isolateVM(isolateVM) {}
 
     void compile(const ModuleType::Ptr& module, CompilerService* pService);
 
@@ -27,4 +27,5 @@ private:
     CompilerService* compilerService;
 };
 
-#endif //__joyeer_vm_compiler_h__
+
+#endif //__joyeer_vm_loader_h__

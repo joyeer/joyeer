@@ -6,15 +6,15 @@
 
 
 IsolateVM::IsolateVM() {
-    vCompiler = new VCompiler(this);
+    classLoader = new ClassLoader(this);
     gc = new GC();
 }
 
 IsolateVM::~IsolateVM() {
-    delete vCompiler;
+    delete classLoader;
     delete gc;
 }
 
-void IsolateVM::run(ModuleType::Ptr module, CompilerService* compilerService) {
-    vCompiler->compile(module, compilerService);
+void IsolateVM::run(const ModuleType::Ptr& module, CompilerService* compilerService) {
+    classLoader->compile(module, compilerService);
 }

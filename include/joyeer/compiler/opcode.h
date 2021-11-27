@@ -59,7 +59,6 @@ enum Opcode : uint16_t {
     OP_GOTO,
 
     OP_DEBUG,
-
 };
 
 //

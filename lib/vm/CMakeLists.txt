@@ -1,6 +1,6 @@
 
 add_joyeer_library(JoyeerVM STATIC
-        compiler.cpp
+        loader.cpp
         frame.cpp
         gc.cpp
         heaps.cpp

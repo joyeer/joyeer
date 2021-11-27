@@ -5,7 +5,7 @@
 #ifndef __joyeer_vm_isolate_h__
 #define __joyeer_vm_isolate_h__
 
-#include "joyeer/vm/compiler.h"
+#include "joyeer/vm/loader.h"
 #include "joyeer/vm/res+table.h"
 #include "joyeer/vm/gc.h"
 #include "joyeer/vm/types.h"
@@ -15,12 +15,12 @@ struct IsolateVM {
     explicit IsolateVM() ;
     ~IsolateVM();
 
-    void run(ModuleType::Ptr fileModule, CompilerService* compilerService);
+    void run(const ModuleType::Ptr& fileModule, CompilerService* compilerService);
 
 private:
-    friend class VCompiler;
+    friend class ClassLoader;
 
-    VCompiler *vCompiler;
+    ClassLoader *classLoader;
     GC* gc;
 
     StringTable* stringTable { new StringTable() };
