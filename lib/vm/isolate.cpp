@@ -6,15 +6,23 @@
 
 
 IsolateVM::IsolateVM() {
-    classLoader = new ClassLoader(this);
     gc = new GC();
 }
 
 IsolateVM::~IsolateVM() {
-    delete classLoader;
     delete gc;
 }
 
 void IsolateVM::run(const ModuleType::Ptr& module, CompilerService* compilerService) {
-    classLoader->compile(module, compilerService);
+    ClassLoader classLoader(this, compilerService);
+    classLoader.load(module);
+}
+
+
+void IsolateVM::register_(const ModuleType::Ptr &moduleType, const ModuleClass *moduleClass) {
+
+}
+
+void IsolateVM::import(ModuleClass *moduleClass) {
+    gc->allocate(MemoryArea::Permanent, moduleClass);
 }

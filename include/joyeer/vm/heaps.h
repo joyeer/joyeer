@@ -5,7 +5,8 @@
 #ifndef __joyeer_vm_heaps_h__
 #define __joyeer_vm_heaps_h__
 
-#include "joyeer/vm/types.h"
+#include <vector>
+#include "joyeer/common/types.h"
 
 constexpr size_t kPageSize = 256 * 1024;
 constexpr size_t kMaxPageNumberInSingleSpace = 1024 * 1024; // the max number of page in one single space
@@ -18,7 +19,7 @@ struct alignas(uintptr_t) MemoryAddress {
     uintptr_t space: 4 = 0;         // max 16 space per heap
     uintptr_t page: 18 = 0;         // max 256k page per space
     uintptr_t position: 18 = 0;     // max 256k byte per page
-    uintptr_t reserved: 24 = 0;
+    uintptr_t length: 24 = 0;
 };
 
 struct alignas(uintptr_t) SpaceAddress {

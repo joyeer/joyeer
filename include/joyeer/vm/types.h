@@ -11,6 +11,7 @@ struct Object;
 #include <vector>
 
 #include "joyeer/common/types.h"
+#include "joyeer/vm/heaps.h"
 
 // Class's field description
 struct Field {
@@ -45,7 +46,7 @@ struct Method {
 // Class description
 struct Class {
 
-    int idx = -1;
+    int typeAddress = -1;
 
     std::vector<Field> instanceFields {};
     std::vector<Field> staticFields {};
@@ -71,7 +72,7 @@ struct Class {
 };
 
 struct ModuleClass : public Class {
-
+    MemoryAddress staticArea;
 };
 
 //

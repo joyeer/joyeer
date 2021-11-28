@@ -7,6 +7,8 @@
 
 #include "joyeer/compiler/compiler+service.h"
 #include "joyeer/vm/types.h"
+#include "joyeer/vm/isolate.h"
+
 
 struct IsolateVM;
 
@@ -14,9 +16,12 @@ struct IsolateVM;
 
 class ClassLoader {
 public:
-    explicit ClassLoader(IsolateVM* isolateVM): isolateVM(isolateVM) {}
+    ClassLoader(IsolateVM* isolateVM, CompilerService* pService):
+        isolateVM(isolateVM),
+        compilerService(pService){
+    }
 
-    void compile(const ModuleType::Ptr& module, CompilerService* pService);
+    void load(const ModuleType::Ptr& module);
 
 private:
     void compile(const std::vector<Instruction>& instructions);
@@ -26,6 +31,7 @@ private:
     IsolateVM* isolateVM;
     CompilerService* compilerService;
 };
+
 
 
 #endif //__joyeer_vm_loader_h__

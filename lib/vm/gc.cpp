@@ -5,7 +5,7 @@
 #include "joyeer/vm/gc.h"
 
 Object *GC::allocate(MemoryArea, Class *klass) {
-    size_t size = klass->getSize();
+    size_t size = klass->getStaticSize();
     auto address = heap->allocate(size);
     return nullptr;
 }

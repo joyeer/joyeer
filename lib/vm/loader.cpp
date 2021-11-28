@@ -3,21 +3,32 @@
 //
 
 #include "joyeer/vm/loader.h"
+#include "joyeer/vm/isolate.h"
 
-
-void ClassLoader::compile(const ModuleType::Ptr& module, CompilerService* pService) {
-    this->compilerService = pService;
+void ClassLoader::load(const ModuleType::Ptr& module) {
     auto moduleClass = new ModuleClass();
+    // register ModuleClass with ModuleType
+    isolateVM->register_(module, moduleClass);
+
     auto variables = module->getVariables();
     for(auto const& variable: variables ) {
         auto field = compile(variable);
         moduleClass->staticFields.push_back(field);
     }
+
+    isolateVM->import(moduleClass);
+    // static memory allocation
     compile(module->instructions);
 }
 
-void ClassLoader::compile(const std::vector<Instruction> &instructions) {
 
+void ClassLoader::compile(const std::vector<Instruction> &instructions) {
+    auto result = std::vector<Instruction>();
+    for(auto const& instruction : instructions) {
+        if(instruction.opcode == OP_GETSTATIC) {
+
+        }
+    }
 }
 
 Field ClassLoader::compile(const VariableType::Ptr& variableType) {
