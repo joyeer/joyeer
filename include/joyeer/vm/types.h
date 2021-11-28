@@ -72,7 +72,7 @@ struct Class {
 };
 
 struct ModuleClass : public Class {
-    MemoryAddress staticArea;
+    intptr_t staticArea;  // static metmbe
 };
 
 //

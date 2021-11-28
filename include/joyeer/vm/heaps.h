@@ -12,16 +12,6 @@ constexpr size_t kPageSize = 256 * 1024;
 constexpr size_t kMaxPageNumberInSingleSpace = 1024 * 1024; // the max number of page in one single space
 constexpr intptr_t kInvalid = -1;
 
-
-// MemoryAddress to locate correct data in Heap
-// Each single Space contains max memory - 64Gb
-struct alignas(uintptr_t) MemoryAddress {
-    uintptr_t space: 4 = 0;         // max 16 space per heap
-    uintptr_t page: 18 = 0;         // max 256k page per space
-    uintptr_t position: 18 = 0;     // max 256k byte per page
-    uintptr_t length: 24 = 0;
-};
-
 struct alignas(uintptr_t) SpaceAddress {
     intptr_t page: 16 = 0;
     intptr_t position: 16 = 0;
@@ -44,10 +34,6 @@ struct Page {
     }
 };
 
-// Some memory allocation is larger than 16k
-struct LargeChunk {
-
-};
 
 // the space contains multi-pages
 struct Space {
@@ -76,11 +62,9 @@ struct Heap {
 #undef DECLARE_SPACE
 
     // allocate a memory for a given size
-    MemoryAddress allocate(size_t size) {
+    intptr_t allocate(size_t size) {
         auto address = SPACE(kNewSpace)->allocate(size);
-        return {
-            .space = 1
-        };
+        return address;
     }
 };
 
