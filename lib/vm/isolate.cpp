@@ -14,6 +14,7 @@ IsolateVM::~IsolateVM() {
 }
 
 void IsolateVM::run(const ModuleType::Ptr& module, CompilerService* compilerService) {
+
     ClassLoader classLoader(this, compilerService);
     classLoader.load(module);
 }

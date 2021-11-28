@@ -27,7 +27,10 @@ public:
     }
 
 private:
-    
+
+    friend class IRGen;
+    friend class IsolateVM;
+
     // Compile an SourceFile
     ModuleType::Ptr compile(const SourceFile::Ptr& sourcefile);
     // try to import module, and return the exported symtable;
@@ -41,6 +44,12 @@ private:
 
     // initialize the pre-define TypeDefs
     void initializeTypes();
+
+    // register a string into string-table
+    intptr_t registerStringResource(const std::string& string) {
+        strings.push_back(string);
+        return strings.size() - 1;
+    }
     
     CommandLineArguments::Ptr options;
     std::unordered_map<std::string, SourceFile::Ptr> sourceFiles;
@@ -50,6 +59,9 @@ private:
 
     // Type tables include
     std::vector<Type::Ptr> types;
+
+    // Strings
+    std::vector<std::string> strings {};
 
     // Module static variable memory alignment
     FileModuleMemoryAlignment fileModuleMemoryAlign;

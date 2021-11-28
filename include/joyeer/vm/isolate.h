@@ -17,7 +17,6 @@ struct IsolateVM {
 
     void run(const ModuleType::Ptr& module, CompilerService* compilerService);
 
-
 private:
     friend class ClassLoader;
 
@@ -25,6 +24,7 @@ private:
 
     // import ModuleClass, prepare the memory for module class
     void import(ModuleClass* moduleClass);
+
 
     ModuleClass* query(const ModuleType::Ptr& module);
     Class* query(const ClassType::Ptr& classType);

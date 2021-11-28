@@ -2,6 +2,7 @@
 // Created by Qing Xu on 2021/11/7.
 //
 
+#include <joyeer/vm/bytecode.h>
 #include "joyeer/vm/loader.h"
 #include "joyeer/vm/isolate.h"
 
@@ -23,10 +24,22 @@ void ClassLoader::load(const ModuleType::Ptr& module) {
 
 
 void ClassLoader::compile(const std::vector<Instruction> &instructions) {
+    BytecodeWriter writer{};
     auto result = std::vector<Instruction>();
     for(auto const& instruction : instructions) {
-        if(instruction.opcode == OP_GETSTATIC) {
-
+        switch (instruction.value) {
+            case OP_SCONST:{
+            }
+                break;
+            case OP_GETSTATIC:{
+            }
+                break;
+            case OP_PUTSTATIC:
+                break;
+            case OP_OLOAD:
+                break;
+            default:
+                assert(false);
         }
     }
 }

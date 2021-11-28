@@ -100,6 +100,8 @@ void IRGen::emit(const ArguCallExpr::Ptr& node) {
 }
 
 void IRGen::emit(const LiteralExpr::Ptr& node) {
+    auto compiler = context->compiler;
+
     switch(node->literal->kind) {
         case decimalLiteral:
             writer.write({
@@ -107,11 +109,13 @@ void IRGen::emit(const LiteralExpr::Ptr& node) {
                 .value = node->literal->intValue
             });
             break;
-        case stringLiteral:
+        case stringLiteral: {
+            auto stringSlot = compiler->registerStringResource(node->literal->rawValue);
             writer.write({
                 .opcode = OP_SCONST,
-                .value = node->literal->index
+                .value = stringSlot
             });
+        }
             break;
         case booleanLiteral:
             writer.write({

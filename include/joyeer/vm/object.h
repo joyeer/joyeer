@@ -18,8 +18,4 @@ struct Object {
 static size_t calculateClassSize(Class* klass);
 
 
-struct FileModuleLoader {
-    void load(IsolateVM* isolateVM, ModuleClass* fileModule);
-};
-
 #endif //__joyeer_vm_object_h__

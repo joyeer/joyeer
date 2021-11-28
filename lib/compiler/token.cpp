@@ -1,5 +1,6 @@
 #include "joyeer/compiler/token.h"
 #include <unordered_map>
+#include <utility>
 
 Token::Token(TokenKind kind, const std::string& rawValue, size_t lineNumber, size_t columnAt):
   kind(kind),

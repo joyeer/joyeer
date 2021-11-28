@@ -7,19 +7,11 @@
 
 #include "joyeer/vm/isolate.h"
 #include "joyeer/vm/frame.h"
+#include "joyeer/vm/bytecode.h"
 #include <stack>
 
-struct Bytecodes {
-    Byte *bytecodes;
-    Int size;
-};
-
-#define FETCH_BYTECODE() \
-
-
 struct BytecodeInterpreter {
-    virtual void operator()(IsolateVM *isolateVM) {
-    };
+    virtual void operator()(IsolateVM *isolateVM) = 0;
 };
 
 struct Interpreter {

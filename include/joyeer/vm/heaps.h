@@ -12,10 +12,6 @@ constexpr size_t kPageSize = 256 * 1024;
 constexpr size_t kMaxPageNumberInSingleSpace = 1024 * 1024; // the max number of page in one single space
 constexpr intptr_t kInvalid = -1;
 
-struct alignas(uintptr_t) SpaceAddress {
-    intptr_t page: 16 = 0;
-    intptr_t position: 16 = 0;
-};
 
 // the default page size : 256k
 struct Page {
@@ -53,11 +49,13 @@ constexpr static int kTotalSpaceCount = 3;
 struct Heap {
 
 #define DECLARE_SPACE(space) new Space(),
+
     Space* spaces[kTotalSpaceCount] {
             DECLARE_SPACE(kStaticSpace)
             DECLARE_SPACE(kNewSpace)
             DECLARE_SPACE(kOldSpace)
     };
+
 #define SPACE(space) spaces[space]
 #undef DECLARE_SPACE
 

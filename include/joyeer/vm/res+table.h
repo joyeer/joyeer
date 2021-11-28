@@ -2,8 +2,8 @@
 // Created by Qing Xu on 2021/11/7.
 //
 
-#ifndef __joyeer_vm_stringtable_h__
-#define __joyeer_vm_stringtable_h__
+#ifndef __joyeer_vm_res_table_h__
+#define __joyeer_vm_res_table_h__
 
 #include <vector>
 #include "joyeer/vm/types.h"
@@ -28,4 +28,4 @@ class MethodResTable {
 };
 
 
-#endif //__joyeer_vm_stringtable_h__
+#endif //__joyeer_vm_res_table_h__
