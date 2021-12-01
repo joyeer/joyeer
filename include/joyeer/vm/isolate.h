@@ -20,14 +20,13 @@ struct IsolateVM {
 private:
     friend class ClassLoader;
 
-    void register_(const ModuleType::Ptr& moduleType, const ModuleClass* moduleClass);
+    void register_(const ModuleType::Ptr& moduleType, Class *klass);
 
     // import ModuleClass, prepare the memory for module class
     void import(ModuleClass* moduleClass);
 
-
-    ModuleClass* query(const ModuleType::Ptr& module);
-    Class* query(const ClassType::Ptr& classType);
+    // query AST ClassType's Class definition in VM
+    const Class* query(const ClassType::Ptr& classType);
 
     GC* gc;
 
@@ -35,8 +34,9 @@ private:
     ClassResTable* classTable { new ClassResTable() };
     MethodResTable* funcTable { new MethodResTable() };
 
-    std::vector<ModuleClass*> modules;
-    std::unordered_map<int, int> mapOfModuleTypeAndModuleClass;
+    std::vector<const Class*> classes {};
+    std::unordered_map<int, int> mapOfTypeAndClass {};
+
 };
 
 #endif //__joyeer_vm_isolate_h__

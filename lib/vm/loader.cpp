@@ -2,9 +2,8 @@
 // Created by Qing Xu on 2021/11/7.
 //
 
-#include <joyeer/vm/bytecode.h>
+#include "joyeer/vm/bytecode.h"
 #include "joyeer/vm/loader.h"
-#include "joyeer/vm/isolate.h"
 
 void ClassLoader::load(const ModuleType::Ptr& module) {
     auto moduleClass = new ModuleClass();
@@ -27,16 +26,35 @@ void ClassLoader::compile(const std::vector<Instruction> &instructions) {
     BytecodeWriter writer{};
     auto result = std::vector<Instruction>();
     for(auto const& instruction : instructions) {
-        switch (instruction.value) {
+        auto opcode = instruction.opcode;
+        auto value = instruction.value;
+        switch (opcode) {
             case OP_SCONST:{
+;                writer.write(DEF_BYTECODE(OP_SCONST, value));
+            }
+                break;
+            case OP_ICONST: {
+                writer.write(DEF_BYTECODE(OP_ICONST, value));
             }
                 break;
             case OP_GETSTATIC:{
+                auto typeVariable = std::static_pointer_cast<VariableType>(compilerService->getType(value));
+                auto typeClass = std::static_pointer_cast<ClassType>(compilerService->getType(typeVariable->parent));
+                auto klass = isolateVM->query(typeClass);
+                writer.write(DEF_BYTECODE_2(OP_GETSTATIC, klass->slotID, typeVariable->position));
             }
                 break;
-            case OP_PUTSTATIC:
+            case OP_PUTSTATIC: {
+                writer.write(DEF_BYTECODE(OP_PUTSTATIC, value));
+            }
                 break;
-            case OP_OLOAD:
+            case OP_OLOAD:{
+                writer.write(DEF_BYTECODE(OP_OLOAD, value));
+            }
+                break;
+            case OP_INVOKE: {
+
+            }
                 break;
             default:
                 assert(false);

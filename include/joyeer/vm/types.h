@@ -40,13 +40,15 @@ struct Arguments {
 };
 
 struct Method {
+    int slotID = -1;
     virtual Value operator () (IsolateVM* vm, Arguments* args) = 0;
 };
 
 // Class description
 struct Class {
 
-    int typeAddress = -1;
+    int slotID = -1;
+    intptr_t staticArea;  // static member area
 
     std::vector<Field> instanceFields {};
     std::vector<Field> staticFields {};
@@ -72,7 +74,6 @@ struct Class {
 };
 
 struct ModuleClass : public Class {
-    intptr_t staticArea;  // static metmbe
 };
 
 //
