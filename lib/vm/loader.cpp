@@ -38,7 +38,7 @@ void ClassLoader::compile(const std::vector<Instruction> &instructions) {
             }
                 break;
             case OP_GETSTATIC:{
-                auto typeVariable = std::static_pointer_cast<VariableType>(compilerService->getType(value));
+                  auto typeVariable = std::static_pointer_cast<VariableType>(compilerService->getType(value));
                 auto typeClass = std::static_pointer_cast<ClassType>(compilerService->getType(typeVariable->parent));
                 auto klass = isolateVM->query(typeClass);
                 writer.write(DEF_BYTECODE_2(OP_GETSTATIC, klass->slotID, typeVariable->position));
@@ -53,7 +53,11 @@ void ClassLoader::compile(const std::vector<Instruction> &instructions) {
             }
                 break;
             case OP_INVOKE: {
+                auto typeFunc = std::static_pointer_cast<FuncType>(compilerService->getType(value));
+                auto method = isolateVM->query(typeFunc);
+                if(method == nullptr) {
 
+                }
             }
                 break;
             default:
@@ -71,6 +75,10 @@ Field ClassLoader::compile(const VariableType::Ptr& variableType) {
             assert(false);
     }
     assert(false);
+}
+
+Method *ClassLoader::compile(const FuncType::Ptr &funcType) {
+    return nullptr;
 }
 
 

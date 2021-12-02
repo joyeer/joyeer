@@ -44,6 +44,10 @@ struct Method {
     virtual Value operator () (IsolateVM* vm, Arguments* args) = 0;
 };
 
+// Method implemented in C
+struct CMethod : Method {
+};
+
 // Class description
 struct Class {
 
@@ -85,9 +89,6 @@ struct ArrayClass : public Class {
     }
 };
 
-struct ArrayClass_$$_size: public Method {
-
-};
 
 //
 struct IntClass : public Class {

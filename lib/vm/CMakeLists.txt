@@ -10,5 +10,6 @@ add_joyeer_library(JoyeerVM STATIC
         memory.cpp
         object.cpp
         res+table.cpp
+        stdlib.cpp
         types.cpp
         )

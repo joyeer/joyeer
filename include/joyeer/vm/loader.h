@@ -26,6 +26,7 @@ public:
 private:
     void compile(const std::vector<Instruction>& instructions);
     Field compile(const VariableType::Ptr& variableType);
+    Method* compile(const FuncType::Ptr& funcType);
     
 private:
     IsolateVM* isolateVM;

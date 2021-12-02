@@ -21,12 +21,16 @@ private:
     friend class ClassLoader;
 
     void register_(const ModuleType::Ptr& moduleType, Class *klass);
+    void register_(const FuncType::Ptr& funcType, Method* method);
 
     // import ModuleClass, prepare the memory for module class
     void import(ModuleClass* moduleClass);
 
     // query AST ClassType's Class definition in VM
     const Class* query(const ClassType::Ptr& classType);
+
+    // query FuncType's class definition in VM
+    const Method* query(const FuncType::Ptr& funcType);
 
     GC* gc;
 
@@ -36,6 +40,9 @@ private:
 
     std::vector<const Class*> classes {};
     std::unordered_map<int, int> mapOfTypeAndClass {};
+
+    std::vector<const Method*> methods {};
+    std::unordered_map<int, int> mapOfTypeAndMethod {};
 
 };
 

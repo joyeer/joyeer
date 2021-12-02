@@ -23,10 +23,15 @@ void IsolateVM::run(const ModuleType::Ptr& module, CompilerService* compilerServ
 
 
 void IsolateVM::register_(const ModuleType::Ptr &moduleType, Class *klass) {
-    klass->slotID = classes.size();
+    klass->slotID = static_cast<int>(classes.size());
     classes.push_back(klass);
     mapOfTypeAndClass[moduleType->address] = klass->slotID;
+}
 
+void IsolateVM::register_(const FuncType::Ptr &funcType, Method *method) {
+    method->slotID = static_cast<int>(methods.size());
+    methods.push_back(method);
+    mapOfTypeAndMethod[funcType->address] = method->slotID;
 }
 
 void IsolateVM::import(ModuleClass *moduleClass) {
@@ -37,4 +42,13 @@ const Class *IsolateVM::query(const ClassType::Ptr &classType) {
     auto klassSlotID = mapOfTypeAndClass[classType->address];
     return const_cast<Class *>(classes[klassSlotID]);
 }
+
+const Method *IsolateVM::query(const FuncType::Ptr &funcType) {
+    if(!mapOfTypeAndMethod.contains(funcType->address)) {
+        return nullptr;
+    }
+    auto funcSlotID = mapOfTypeAndMethod[funcType->address];
+    return const_cast<Method*>(methods[funcSlotID]);
+}
+
 

@@ -7,5 +7,7 @@
 Object *GC::allocate(MemoryArea, Class *klass) {
     size_t size = klass->getStaticSize();
     auto address = heap->allocate(size);
-    return nullptr;
+    Object* object = (Object*)address;
+    object->klass = klass;
+    return object   ;
 }

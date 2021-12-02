@@ -28,8 +28,12 @@ public:
     std::vector<Class*> classes {};
 };
 
+// Store all Method into a ResTable
 class MethodResTable {
+public:
 
+    //import functions from compiler service
+    void import(CompilerService* compilerService);
 };
 
 
