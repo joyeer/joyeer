@@ -21,7 +21,6 @@ private:
     friend class ClassLoader;
 
     void register_(const ModuleType::Ptr& moduleType, Class *klass);
-    void register_(const FuncType::Ptr& funcType, Method* method);
 
     // import ModuleClass, prepare the memory for module class
     void import(ModuleClass* moduleClass);
@@ -36,13 +35,11 @@ private:
 
     StringTable* stringTable { new StringTable() };
     ClassResTable* classTable { new ClassResTable() };
-    MethodResTable* funcTable { new MethodResTable() };
+    MethodResTable* methodTable { new MethodResTable() };
 
     std::vector<const Class*> classes {};
     std::unordered_map<int, int> mapOfTypeAndClass {};
 
-    std::vector<const Method*> methods {};
-    std::unordered_map<int, int> mapOfTypeAndMethod {};
 
 };
 

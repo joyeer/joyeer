@@ -9,7 +9,9 @@
 
 struct Global_$_print : public  CMethod {
     Value operator () (IsolateVM* vm, Arguments* args) override {
-
+        return {
+            .intValue = 0,
+        };
     }
 };
 

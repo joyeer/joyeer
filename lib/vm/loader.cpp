@@ -54,10 +54,11 @@ void ClassLoader::compile(const std::vector<Instruction> &instructions) {
                 break;
             case OP_INVOKE: {
                 auto typeFunc = std::static_pointer_cast<FuncType>(compilerService->getType(value));
-                auto method = isolateVM->query(typeFunc);
+                auto method = isolateVM->methodTable->query(typeFunc);
                 if(method == nullptr) {
-
+                    assert(false);
                 }
+                writer.write(DEF_BYTECODE(OP_INVOKE, method->slotID));
             }
                 break;
             default:
@@ -75,10 +76,6 @@ Field ClassLoader::compile(const VariableType::Ptr& variableType) {
             assert(false);
     }
     assert(false);
-}
-
-Method *ClassLoader::compile(const FuncType::Ptr &funcType) {
-    return nullptr;
 }
 
 

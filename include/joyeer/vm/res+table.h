@@ -5,8 +5,12 @@
 #ifndef __joyeer_vm_res_table_h__
 #define __joyeer_vm_res_table_h__
 
-#include "joyeer/vm/types.h"
 #include <string>
+#include <unordered_map>
+#include "joyeer/vm/types.h"
+#include "joyeer/compiler/compiler+service.h"
+
+class CompilerService;
 
 // all static strings resources
 class StringTable {
@@ -34,6 +38,11 @@ public:
 
     //import functions from compiler service
     void import(CompilerService* compilerService);
+
+    Method* query(const FuncType::Ptr& funcType);
+private:
+    std::vector<Method*> methods {};
+    std::unordered_map<int, int> mapOfTypeAndMethod {};
 };
 
 

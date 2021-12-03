@@ -30,6 +30,7 @@ private:
 
     friend class IRGen;
     friend class IsolateVM;
+    friend class MethodResTable;
 
     // Compile an SourceFile
     ModuleType::Ptr compile(const SourceFile::Ptr& sourcefile);

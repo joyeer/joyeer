@@ -48,11 +48,12 @@ struct Method {
 struct CMethod : Method {
 };
 
+
 // Class description
 struct Class {
 
     int slotID = -1;
-    intptr_t staticArea;  // static member area
+    intptr_t staticArea{};  // static member area
 
     std::vector<Field> instanceFields {};
     std::vector<Field> staticFields {};
