@@ -15,7 +15,11 @@ enum MemoryArea : uint8_t {
 
 class GC {
 public:
-    Object* allocate(MemoryArea area, Class* klass);
+    intptr_t allocate(MemoryArea area, Class* klass);
+
+private:
+    intptr_t allocateForStatic(Class* klass);
+    Object* allocateForDynamic(Class* klass);
 private:
     Heap* heap { new Heap() };
 };

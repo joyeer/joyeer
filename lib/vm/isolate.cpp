@@ -20,9 +20,7 @@ void IsolateVM::run(const ModuleType::Ptr& module, CompilerService* compilerServ
 
     ClassLoader classLoader(this, compilerService);
     classLoader.load(module);
-    
 }
-
 
 void IsolateVM::register_(const ModuleType::Ptr &moduleType, Class *klass) {
     klass->slotID = static_cast<int>(classes.size());
@@ -30,18 +28,11 @@ void IsolateVM::register_(const ModuleType::Ptr &moduleType, Class *klass) {
     mapOfTypeAndClass[moduleType->address] = klass->slotID;
 }
 
-
 void IsolateVM::import(ModuleClass *moduleClass) {
-    gc->allocate(MemoryArea::Permanent, moduleClass);
+    moduleClass->staticArea = gc->allocate(MemoryArea::Permanent, moduleClass);
 }
 
 const Class *IsolateVM::query(const ClassType::Ptr &classType) {
     auto klassSlotID = mapOfTypeAndClass[classType->address];
     return const_cast<Class *>(classes[klassSlotID]);
 }
-
-const Method *IsolateVM::query(const FuncType::Ptr &funcType) {
-    return nullptr;
-}
-
-

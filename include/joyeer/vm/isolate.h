@@ -28,8 +28,6 @@ private:
     // query AST ClassType's Class definition in VM
     const Class* query(const ClassType::Ptr& classType);
 
-    // query FuncType's class definition in VM
-    const Method* query(const FuncType::Ptr& funcType);
 
     GC* gc;
 
