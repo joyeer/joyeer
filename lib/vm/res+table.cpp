@@ -21,8 +21,7 @@ void MethodResTable::import(CompilerService *compilerService) {
         if(type->kind == ValueType::Func) {
             if(type->address == static_cast<size_t>(BuildIns::Func_Print)) {
                 auto method = new Global_$_print();
-                method->slotID = methods.size();
-                methods.push_back(method);
+                import(method);
                 mapOfTypeAndMethod[type->address] = method->slotID;
             } else {
                 assert(false);
@@ -33,4 +32,10 @@ void MethodResTable::import(CompilerService *compilerService) {
 
 Method* MethodResTable::query(const FuncType::Ptr& funcType) {
     return methods[mapOfTypeAndMethod[funcType->address]];
+}
+
+void MethodResTable::import(Method *method) {
+    assert(method->slotID == -1);
+    method->slotID = static_cast<int>(methods.size());
+    methods.push_back(method);
 }

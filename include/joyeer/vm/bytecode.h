@@ -25,6 +25,9 @@ constexpr int kBytecodeValue2Offset = 32;
     (int64_t)((int64_t)op | (int64_t)value2 << kBytecodeValue2Offset | (int64_t)value1 << kBytecodeOpWidth)
 
 struct Bytecodes {
+    Bytecodes(Byte* bytes, int length);
+    ~Bytecodes();
+
     Byte *bytecodes;
     Int size;
 };
@@ -32,7 +35,7 @@ struct Bytecodes {
 class BytecodeWriter {
 public:
     void write(Bytecode bytecode);
-
+    Bytecodes* getBytecodes() const;
 private:
     MemoryBuffer buffer {};
 };

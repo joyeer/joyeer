@@ -24,7 +24,8 @@ public:
     void load(const ModuleType::Ptr& module);
 
 private:
-    void compile(const std::vector<Instruction>& instructions);
+    Method* compile(const ModuleType::Ptr& module);
+    Bytecodes* compile(const std::vector<Instruction>& instructions);
     Field compile(const VariableType::Ptr& variableType);
     
 private:

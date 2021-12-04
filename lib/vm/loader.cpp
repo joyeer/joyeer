@@ -4,6 +4,7 @@
 
 #include "joyeer/vm/bytecode.h"
 #include "joyeer/vm/loader.h"
+#include "joyeer/vm/types.h"
 
 void ClassLoader::load(const ModuleType::Ptr& module) {
     auto moduleClass = new ModuleClass();
@@ -18,11 +19,17 @@ void ClassLoader::load(const ModuleType::Ptr& module) {
 
     isolateVM->import(moduleClass);
     // static memory allocation
-    compile(module->instructions);
+    compile(module);
 }
 
+Method *ClassLoader::compile(const ModuleType::Ptr& module) {
+    auto bytecodes = compile(module->instructions);
+    auto method = new VMethod(bytecodes);
+    isolateVM->methodTable->import(method);
+    return method;
+}
 
-void ClassLoader::compile(const std::vector<Instruction> &instructions) {
+Bytecodes* ClassLoader::compile(const std::vector<Instruction> &instructions) {
     BytecodeWriter writer{};
     auto result = std::vector<Instruction>();
     for(auto const& instruction : instructions) {
@@ -65,6 +72,8 @@ void ClassLoader::compile(const std::vector<Instruction> &instructions) {
                 assert(false);
         }
     }
+
+    return writer.getBytecodes();
 }
 
 Field ClassLoader::compile(const VariableType::Ptr& variableType) {
@@ -77,5 +86,6 @@ Field ClassLoader::compile(const VariableType::Ptr& variableType) {
     }
     assert(false);
 }
+
 
 

@@ -28,7 +28,6 @@ private:
     // query AST ClassType's Class definition in VM
     const Class* query(const ClassType::Ptr& classType);
 
-
     GC* gc;
 
     StringTable* stringTable { new StringTable() };

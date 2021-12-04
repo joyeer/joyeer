@@ -38,8 +38,9 @@ public:
 
     //import functions from compiler service
     void import(CompilerService* compilerService);
-
+    void import(Method* method);
     Method* query(const FuncType::Ptr& funcType);
+
 private:
     std::vector<Method*> methods {};
     std::unordered_map<int, int> mapOfTypeAndMethod {};
