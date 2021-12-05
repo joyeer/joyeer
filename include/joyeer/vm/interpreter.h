@@ -35,12 +35,7 @@ struct Interpreter {
     void entry(ModuleClass* moduleClass);
     void entry(Method* method);
 
-    void run() {
-next_point:
-
-return_point:
-        return;
-    }
+    [[maybe_unused]] void run();
 };
 
 #endif //__joyeer_vm_interpreter_h__

@@ -4,3 +4,6 @@
 
 #include "joyeer/vm/object.h"
 
+size_t calculateClassSize(Class* klass) {
+    return 0;
+}

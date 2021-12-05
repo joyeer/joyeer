@@ -3,3 +3,9 @@
 //
 
 #include "joyeer/vm/stdlib.h"
+
+Value Global_$_print::operator()(IsolateVM *vm, Arguments *args) {
+    return {
+            .intValue = 0,
+    };
+}
