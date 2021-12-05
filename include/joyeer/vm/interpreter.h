@@ -8,10 +8,15 @@
 #include "joyeer/vm/isolate.h"
 #include "joyeer/vm/frame.h"
 #include "joyeer/vm/bytecode.h"
-#include <stack>
 
 struct BytecodeInterpreter {
     virtual void operator()(IsolateVM *isolateVM) = 0;
+};
+
+struct Stack {
+public:
+    struct StackSlot {
+    };
 };
 
 struct Interpreter {
@@ -20,13 +25,15 @@ struct Interpreter {
     Bytecodes *bytecodes;
     IsolateVM *isolateVM;
 
-    std::stack<StackFrame*> stackFrameTraces;
-
     explicit Interpreter(IsolateVM *isolateVm) :
             isolateVM(isolateVm),
             cp(0),
             bytecodes(nullptr) {
     }
+
+    // entry a Module
+    void entry(ModuleClass* moduleClass);
+    void entry(Method* method);
 
     void run() {
 next_point:

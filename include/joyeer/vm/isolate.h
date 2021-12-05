@@ -16,7 +16,7 @@ struct IsolateVM {
     ~IsolateVM();
 
     void run(const ModuleType::Ptr& module, CompilerService* compilerService);
-
+    void run(const ModuleClass* moduleClass);
 private:
     friend class ClassLoader;
 

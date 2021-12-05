@@ -70,12 +70,5 @@ struct ModuleEntryFrame : public StackFrame {
     }
 };
 
-struct Stack {
-public:
-    struct StackSlot {
-    };
-};
-
-
 
 #endif //__joyeer_vm_frames_h__

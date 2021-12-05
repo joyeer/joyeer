@@ -19,23 +19,23 @@ constexpr int kBytecodeValue1Width = 24;
 constexpr int kBytecodeValue2Offset = 32;
 
 #define DEF_BYTECODE(op, value) \
-    (int64_t)((int64_t)op | (int64_t)value << kBytecodeOpWidth)
+    (int64_t)((int64_t)(op) | (int64_t)(value) << kBytecodeOpWidth)
 
 #define DEF_BYTECODE_2(op, value1, value2) \
-    (int64_t)((int64_t)op | (int64_t)value2 << kBytecodeValue2Offset | (int64_t)value1 << kBytecodeOpWidth)
+    (int64_t)((int64_t)(op) | (int64_t)(value2) << kBytecodeValue2Offset | (int64_t)(value1) << kBytecodeOpWidth)
 
 struct Bytecodes {
     Bytecodes(Byte* bytes, int length);
     ~Bytecodes();
 
     Byte *bytecodes;
-    Int size;
+    Int size{};
 };
 
 class BytecodeWriter {
 public:
     void write(Bytecode bytecode);
-    Bytecodes* getBytecodes() const;
+    [[nodiscard]] Bytecodes* getBytecodes() const;
 private:
     MemoryBuffer buffer {};
 };

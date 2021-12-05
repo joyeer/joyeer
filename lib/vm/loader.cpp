@@ -6,7 +6,7 @@
 #include "joyeer/vm/loader.h"
 #include "joyeer/vm/types.h"
 
-void ClassLoader::load(const ModuleType::Ptr& module) {
+ModuleClass* ClassLoader::load(const ModuleType::Ptr& module) {
     auto moduleClass = new ModuleClass();
     // register ModuleClass with ModuleType
     isolateVM->register_(module, moduleClass);
@@ -19,7 +19,10 @@ void ClassLoader::load(const ModuleType::Ptr& module) {
 
     isolateVM->import(moduleClass);
     // static memory allocation
-    compile(module);
+    auto moduleInitializer = compile(module);
+
+    moduleClass->initializerSlotID = moduleInitializer->slotID;
+    return moduleClass;
 }
 
 Method *ClassLoader::compile(const ModuleType::Ptr& module) {

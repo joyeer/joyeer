@@ -21,7 +21,7 @@ public:
         compilerService(pService){
     }
 
-    void load(const ModuleType::Ptr& module);
+    ModuleClass* load(const ModuleType::Ptr& module);
 
 private:
     Method* compile(const ModuleType::Ptr& module);
