@@ -13,29 +13,32 @@ struct BytecodeInterpreter {
     virtual void operator()(IsolateVM *isolateVM) = 0;
 };
 
-struct Stack {
-public:
-    struct StackSlot {
-    };
+constexpr int kStackMaxSize = 1024 * 1024 * 4; // 4M intptr_t;
+
+struct Executor {
+
+    intptr_t fp = 0;
+    intptr_t sp = 0;
+    IsolateVM* isolateVM;
+
+    explicit Executor(IsolateVM* isolateVM);
+
+    // execute a Module
+    void execute(const ModuleClass* moduleClass);
+
+    // execute a Method
+    void execute(const Method* method);
+private:
+
+    void execute(const CMethod* method);
+    void execute(const VMethod* method);
+
+    void push(Slot frame, int size);
+    void pop(Slot frame);
+
+    std::vector<Slot> frames {};
+    char stack[kStackMaxSize] {};
 };
 
-struct Interpreter {
-    uint64_t cp;
-    Stack stack;
-    Bytecodes *bytecodes;
-    IsolateVM *isolateVM;
-
-    explicit Interpreter(IsolateVM *isolateVm) :
-            isolateVM(isolateVm),
-            cp(0),
-            bytecodes(nullptr) {
-    }
-
-    // entry a Module
-    void entry(ModuleClass* moduleClass);
-    void entry(Method* method);
-
-    [[maybe_unused]] void run();
-};
 
 #endif //__joyeer_vm_interpreter_h__

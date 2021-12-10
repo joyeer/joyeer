@@ -6,6 +6,7 @@
 
 
 VMethod::VMethod(Bytecodes* bytecodes):
+Method(MethodKind::VM_Method),
 bytecodes(bytecodes) {
 }
 
@@ -13,7 +14,8 @@ VMethod::~VMethod() {
     delete(bytecodes);
 }
 
-Value VMethod::operator()(IsolateVM *vm, Arguments *args) {
+Value VMethod::operator()(IsolateVM *vm, Arguments *args) const {
     Value result;
     return result;
 }
+

@@ -10,15 +10,18 @@
 typedef char            Byte;
 typedef int64_t         Int;
 typedef bool            Bool;
-typedef uintptr_t       ObjPtr;
 typedef const char*     String;
 typedef uintptr_t       FuncPtr;
 typedef uintptr_t       Any;
 typedef uintptr_t       Blob;
+typedef intptr_t        Slot;
+typedef const char*     FramePtr;
+typedef uintptr_t       ObjPtr;
 
 union Value {
-    Int           intValue;
-    Bool          boolValue;
+    Int         intValue;
+    Bool        boolValue;
+    Slot        slotValue;
 };
 
 // Constants

@@ -41,6 +41,7 @@ public:
     void import(Method* method);
     Method* query(const FuncType::Ptr& funcType);
 
+    const Method* operator[] (Slot slot);
 private:
     std::vector<Method*> methods {};
     std::unordered_map<int, int> mapOfTypeAndMethod {};

@@ -3,7 +3,7 @@
 //
 
 #include "joyeer/vm/isolate.h"
-
+#include "joyeer/vm/interpreter.h"
 
 IsolateVM::IsolateVM() {
     gc = new GC();
@@ -24,7 +24,8 @@ void IsolateVM::run(const ModuleType::Ptr& module, CompilerService* compilerServ
 }
 
 void IsolateVM::run(const ModuleClass* moduleClass) {
-
+    Executor executor(this);
+    executor.execute(moduleClass);
 }
 
 

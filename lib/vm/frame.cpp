@@ -3,3 +3,11 @@
 //
 
 #include "joyeer/vm/frame.h"
+
+int FuncCallFrame::size() {
+    return kMethodSlotOffset;
+}
+
+int ModuleEntryFrame::size() {
+    return kModuleEntryFrameSize;
+}

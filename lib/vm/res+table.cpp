@@ -39,3 +39,7 @@ void MethodResTable::import(Method *method) {
     method->slotID = static_cast<int>(methods.size());
     methods.push_back(method);
 }
+
+const Method* MethodResTable::operator[](Slot slot) {
+    return methods[slot];
+}

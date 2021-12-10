@@ -8,7 +8,7 @@
 #include "joyeer/vm/types.h"
 
 struct Global_$_print : public  CMethod {
-    Value operator () (IsolateVM* vm, Arguments* args) override;
+    Value operator () (IsolateVM* vm, Arguments* args) const override;
 };
 
 struct ArrayClass_$$_size: public CMethod {

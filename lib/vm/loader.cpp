@@ -21,7 +21,7 @@ ModuleClass* ClassLoader::load(const ModuleType::Ptr& module) {
     // static memory allocation
     auto moduleInitializer = compile(module);
 
-    moduleClass->initializerSlotID = moduleInitializer->slotID;
+    moduleClass->initializerSlot = moduleInitializer->slotID;
     return moduleClass;
 }
 

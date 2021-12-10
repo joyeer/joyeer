@@ -4,7 +4,7 @@
 
 #include "joyeer/vm/stdlib.h"
 
-Value Global_$_print::operator()(IsolateVM *vm, Arguments *args) {
+Value Global_$_print::operator()(IsolateVM *vm, Arguments *args) const {
     return {
             .intValue = 0,
     };

@@ -13,7 +13,7 @@ struct ModuleEntryFrame;
 // define the frame types
 #define DECLARE_TYPE(type, ignore) type,
 #define STACK_FRAME_TYPE_LIST(D) \
-    D(FILE_MODULE, FileModuleEntryFrame) \
+    D(MODULE, ModuleEntryFrame) \
     D(FUNC_CALL, FuncCallFrame)
 
 // Base class for all Frame
@@ -25,7 +25,6 @@ struct StackFrame {
         NUMBER_OF_FRAME_TYPES
     };
 
-    [[nodiscard]] virtual Type type() const = 0;
 };
 
 #undef DECLARE_TYPE
@@ -34,39 +33,69 @@ struct StackFrame {
 /**
  *  slot  +------------------+
  *  -n-1  |  param n         |
- *        |------------------+
+ *  ----- |------------------+
  *  -n    |  param n-1       |
  *  ....  |  ....            |
  *  -2    |  param 1         |
- *        |------------------+
+ *  ----- |------------------+
  *  -1    |  param 0         |
- *        |------------------+
+ *  ----- |------------------+
  *  0     + return addr      |
  *        |------------------+
- *  1     | frame ptr        |  -> frame ptr
+ *  1     | frame type       |
  *        +------------------+
- *
+ *  2
  */
 
 struct FuncCallFrame : public StackFrame {
+    constexpr static int kReturnValueOffset = 0;
+    constexpr static int kFrameTypeOffset = kValueSize;
+    constexpr static int kMethodSlotOffset = kFrameTypeOffset + kValueSize;
+    constexpr static int kFuncCallFrameSize = kMethodSlotOffset + kValueSize;
 
-    [[nodiscard]] Type type() const override {
-        return StackFrame::Type::FUNC_CALL;
+    static int size();
+
+    static void set(FramePtr frame, Value returnValue, Slot methodSlot) {
+        *(Value*)(frame + kReturnValueOffset) = returnValue;
+        *(Value*)(frame + kFrameTypeOffset) = { .intValue = StackFrame::Type::FUNC_CALL } ;
+        *(Value*)(frame + kMethodSlotOffset) = { .slotValue = methodSlot };
     }
 };
 
 /**
  * slot +---------------------+
- *  0   | module address      |
+ *  0   | return value        |
  * -----+---------------------+
- *  1   | frame ptr           |
+ *  1   | frame type          |
+ * -----+---------------------+
+ *  2   | module slot id      |
  * -----+---------------------+
  */
 
 struct ModuleEntryFrame : public StackFrame {
+    constexpr static int kReturnValueOffset = 0;
+    constexpr static int kFrameTypeOffset = kValueSize;
+    constexpr static int kModuleSlotOffset = kFrameTypeOffset + kValueSize;
+    constexpr static int kModuleEntryFrameSize = kModuleSlotOffset + kValueSize;
 
-    [[nodiscard]] Type type() const override {
-        return StackFrame::Type::FILE_MODULE;
+    static int size();
+
+    static void set(FramePtr frame, Value returnValue, Slot moduleSlot) {
+        *(Value*)(frame + kReturnValueOffset) = returnValue;
+        *(Value*)(frame + kFrameTypeOffset) = { .intValue = StackFrame::Type::MODULE } ;
+        *(Value*)(frame + kModuleSlotOffset) = { .slotValue = moduleSlot };
+    }
+
+    static Value getReturnValue(FramePtr frame) {
+        return *(Value*)(frame + kReturnValueOffset);
+    }
+
+    static StackFrame::Type getFrameType(FramePtr frame) {
+        return (StackFrame::Type)(*(Value*)(frame + kFrameTypeOffset)).intValue;
+    }
+
+    static StackFrame::Type getFrameType() {
+        return StackFrame::MODULE;
     }
 };
 

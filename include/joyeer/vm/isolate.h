@@ -19,6 +19,7 @@ struct IsolateVM {
     void run(const ModuleClass* moduleClass);
 private:
     friend class ClassLoader;
+    friend class Executor;
 
     void register_(const ModuleType::Ptr& moduleType, Class *klass);
 
