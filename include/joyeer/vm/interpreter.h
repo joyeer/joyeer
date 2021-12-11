@@ -30,11 +30,16 @@ struct Executor {
     void execute(const Method* method);
 private:
 
+    friend class Interpreter;
+
     void execute(const CMethod* method);
     void execute(const VMethod* method);
 
     void push(Slot frame, int size);
     void pop(Slot frame);
+
+    // Push Value into Stack
+    void push(Value value);
 
     std::vector<Slot> frames {};
     char stack[kStackMaxSize] {};

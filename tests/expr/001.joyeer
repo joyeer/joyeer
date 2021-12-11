@@ -1,4 +1,3 @@
-print(message: "hello world")
 var i = 100
 var j = 100
 print(message: i)

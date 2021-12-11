@@ -13,7 +13,6 @@ enum Opcode : uint16_t {
 
     OP_OCONST_NIL,
     OP_ICONST,
-    OP_ICONST_64,
     OP_SCONST,
 
     OP_ISTORE,
@@ -24,8 +23,8 @@ enum Opcode : uint16_t {
     OP_NEW,
     OP_PUTFIELD,
     OP_GETFIELD,
-    OP_GETSTATIC,
     OP_PUTSTATIC,
+    OP_GETSTATIC,
 
     OP_IAND,
     OP_ICMP_G,

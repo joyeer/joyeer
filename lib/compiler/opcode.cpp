@@ -20,7 +20,6 @@ std::string debugPrint(const Instruction& instruction) {
             { OP_NEW, "new" },
             { OP_OCONST_NIL, "const.nil" },
             { OP_ICONST, "const.int" },
-            { OP_ICONST_64, "const.int.64" },
             { OP_SCONST, "const.string" },
 
             { OP_ISTORE, "store.int" },

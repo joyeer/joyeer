@@ -12,15 +12,15 @@
 
 struct IsolateVM {
 
+    StringTable* stringTable { new StringTable() };
+    ClassResTable* classTable { new ClassResTable() };
+    MethodResTable* methodTable { new MethodResTable() };
+
     explicit IsolateVM() ;
     ~IsolateVM();
 
     void run(const ModuleType::Ptr& module, CompilerService* compilerService);
     void run(const ModuleClass* moduleClass);
-private:
-    friend class ClassLoader;
-    friend class Executor;
-
     void register_(const ModuleType::Ptr& moduleType, Class *klass);
 
     // import ModuleClass, prepare the memory for module class
@@ -31,9 +31,6 @@ private:
 
     GC* gc;
 
-    StringTable* stringTable { new StringTable() };
-    ClassResTable* classTable { new ClassResTable() };
-    MethodResTable* methodTable { new MethodResTable() };
 
     std::vector<const Class*> classes {};
     std::unordered_map<int, int> mapOfTypeAndClass {};
