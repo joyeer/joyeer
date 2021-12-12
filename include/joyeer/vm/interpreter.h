@@ -40,6 +40,7 @@ private:
 
     // Push Value into Stack
     void push(Value value);
+    Value pop();
 
     std::vector<Slot> frames {};
     char stack[kStackMaxSize] {};

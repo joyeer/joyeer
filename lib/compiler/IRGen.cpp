@@ -151,18 +151,16 @@ void IRGen::emit(const VarDecl::Ptr& node) {
             // static field
             if(varDef->isStatic()) {
                 writer.write({
-                    .opcode = OP_OLOAD
-                });
-
-                writer.write({
                     .opcode = OP_PUTSTATIC,
                     .value = varDef->address,
                 });
             } else {
+                writer.write({
+                    .opcode = OP_OLOAD
+                });
                 assert(false);
             }
         }
-
             break;
         default:
             assert(false);
@@ -193,7 +191,7 @@ void IRGen::emit(const IdentifierExpr::Ptr& node) {
 
     if(symbol->flag  == SymbolFlag::var) {
 //        auto kind = symbol->kind;
-        
+
 //        if(kind->kind == BuildIn::Types::Int->kind) {
 //            writer.write({
 //                .opcode = OP_ILOAD,

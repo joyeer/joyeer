@@ -48,14 +48,17 @@ Bytecodes* ClassLoader::compile(const std::vector<Instruction> &instructions) {
             }
                 break;
             case OP_GETSTATIC:{
-                  auto typeVariable = std::static_pointer_cast<VariableType>(compilerService->getType(value));
+                auto typeVariable = std::static_pointer_cast<VariableType>(compilerService->getType(value));
                 auto typeClass = std::static_pointer_cast<ClassType>(compilerService->getType(typeVariable->parent));
                 auto klass = isolateVM->query(typeClass);
                 writer.write(DEF_BYTECODE_2(OP_GETSTATIC, klass->slotID, typeVariable->position));
             }
                 break;
             case OP_PUTSTATIC: {
-                writer.write(DEF_BYTECODE(OP_PUTSTATIC, value));
+                auto typeVariable = std::static_pointer_cast<VariableType>(compilerService->getType(value));
+                auto typeClass = std::static_pointer_cast<ClassType>(compilerService->getType(typeVariable->parent));
+                auto klass = isolateVM->query(typeClass);
+                writer.write(DEF_BYTECODE_2(OP_PUTSTATIC, klass->slotID, typeVariable->position));
             }
                 break;
             case OP_OLOAD:{

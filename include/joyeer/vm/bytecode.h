@@ -15,7 +15,6 @@ typedef int64_t Bytecode;
 typedef uint8_t BytecodeOp;
 
 constexpr int kBytecodeOpWidth = 8;
-constexpr int kBytecodeValue1Width = 24;
 constexpr int kBytecodeValue2Offset = 32;
 
 #define DEF_BYTECODE(op, value) \
@@ -23,6 +22,13 @@ constexpr int kBytecodeValue2Offset = 32;
 
 #define DEF_BYTECODE_2(op, value1, value2) \
     (int64_t)((int64_t)(op) | (int64_t)(value2) << kBytecodeValue2Offset | (int64_t)(value1) << kBytecodeOpWidth)
+
+#define OP_FROM_BYTECODE(bytecode) (BytecodeOp)((bytecode) & 0x000000FF)
+
+#define VALUE_FROM_BYTECODE(bytecode) (Int)(((bytecode) & 0xFFFFFFFFFFFF00) >> kBytecodeOpWidth)
+
+#define VAL1_FROM_BYTECODE(bytecode) (Int)(((bytecode) & 0xFFFFFF00) >> kBytecodeOpWidth)
+#define VAL2_FROM_BYTECODE(bytecode) (Int)(((bytecode) & 0xFFFFFFFF00000000) >> kBytecodeValue2Offset)
 
 struct Bytecodes {
     Bytecodes(Byte* bytes, int length);
