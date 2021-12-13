@@ -153,15 +153,24 @@ loop:
 
     inline void Handle_PUTSTATIC(Bytecode bytecode) {
         assert(OP_FROM_BYTECODE(bytecode) == OP_PUTSTATIC);
-        auto val1 = VAL1_FROM_BYTECODE(bytecode);
-        auto val2 = VAL2_FROM_BYTECODE(bytecode);
+
+        auto classSlotId = VAL1_FROM_BYTECODE(bytecode);    // slot id of class
+        auto fieldOffset = VAL2_FROM_BYTECODE(bytecode); // field variable position
         auto value = pop();
-        assert(false);
+
+        auto klass = (*isolateVm->classTable)[classSlotId];
+        GC::write(klass->staticArea, value, fieldOffset);
     }
 
     inline void Handle_GETSTATIC(Bytecode bytecode) {
         assert(OP_FROM_BYTECODE(bytecode) == OP_GETSTATIC);
-        assert(false);
+        auto classSlotId = VAL1_FROM_BYTECODE(bytecode);    // slot id of class
+        auto fieldOffset = VAL2_FROM_BYTECODE(bytecode);
+
+        auto klass = (*isolateVm->classTable)[classSlotId];
+        auto value = GC::read(klass->staticArea, fieldOffset);
+
+        push(value);
     }
 
     inline void Handle_IAND(Bytecode bytecode) {

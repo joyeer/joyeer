@@ -6,13 +6,27 @@
 #include "joyeer/vm/stdlib.h"
 
 
-
 void StringTable::import(std::vector<std::string>& strings) {
     this->strings = strings;
 }
 
 const std::string &StringTable::operator[](int index) {
     return strings[index];
+}
+
+void ClassResTable::register_(const ModuleType::Ptr &moduleType, Class *klass) {
+    klass->slotID = static_cast<int>(classes.size());
+    classes.push_back(klass);
+    mapOfTypeAndClass[moduleType->address] = klass->slotID;
+}
+
+Class* ClassResTable::query(const ClassType::Ptr &classType) {
+    auto klassSlotID = mapOfTypeAndClass[classType->address];
+    return const_cast<Class *>(classes[klassSlotID]);
+}
+
+const Class *ClassResTable::operator[](Slot slot) {
+    return classes[slot];
 }
 
 void MethodResTable::import(CompilerService *compilerService) {

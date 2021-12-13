@@ -26,3 +26,12 @@ Object* GC::allocateForDynamic(Class *klass) {
     object->klass = klass;
     return object ;
 }
+
+void GC::write(intptr_t memory, Value value, int offset) {
+    Value *address = reinterpret_cast<Value*>(memory) + offset;
+    *address = value;
+}
+
+Value GC::read(intptr_t memory, int offset) {
+    return *(reinterpret_cast<Value*>(memory) + offset);
+}

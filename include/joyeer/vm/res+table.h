@@ -30,6 +30,12 @@ public:
     explicit ClassResTable() = default;
 
     std::vector<Class*> classes {};
+    std::unordered_map<int, int> mapOfTypeAndClass {};
+
+    void register_(const ModuleType::Ptr &moduleType, Class *klass);
+    Class* query(const ClassType::Ptr &classType);
+
+    const Class* operator[] (Slot slot);
 };
 
 // Store all Method into a ResTable

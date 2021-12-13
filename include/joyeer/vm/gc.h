@@ -17,6 +17,8 @@ class GC {
 public:
     intptr_t allocate(MemoryArea area, Class* klass);
 
+    static void write(intptr_t memory, Value value, int offset);
+    static Value read(intptr_t memory, int offset);
 private:
     intptr_t allocateForStatic(Class* klass);
     Object* allocateForDynamic(Class* klass);

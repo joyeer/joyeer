@@ -9,7 +9,7 @@
 ModuleClass* ClassLoader::load(const ModuleType::Ptr& module) {
     auto moduleClass = new ModuleClass();
     // register ModuleClass with ModuleType
-    isolateVM->register_(module, moduleClass);
+    isolateVM->classTable->register_(module, moduleClass);
 
     auto variables = module->getVariables();
     for(auto const& variable: variables ) {
@@ -50,14 +50,14 @@ Bytecodes* ClassLoader::compile(const std::vector<Instruction> &instructions) {
             case OP_GETSTATIC:{
                 auto typeVariable = std::static_pointer_cast<VariableType>(compilerService->getType(value));
                 auto typeClass = std::static_pointer_cast<ClassType>(compilerService->getType(typeVariable->parent));
-                auto klass = isolateVM->query(typeClass);
+                auto klass = isolateVM->classTable->query(typeClass);
                 writer.write(DEF_BYTECODE_2(OP_GETSTATIC, klass->slotID, typeVariable->position));
             }
                 break;
             case OP_PUTSTATIC: {
                 auto typeVariable = std::static_pointer_cast<VariableType>(compilerService->getType(value));
                 auto typeClass = std::static_pointer_cast<ClassType>(compilerService->getType(typeVariable->parent));
-                auto klass = isolateVM->query(typeClass);
+                auto klass = isolateVM->classTable->query(typeClass);
                 writer.write(DEF_BYTECODE_2(OP_PUTSTATIC, klass->slotID, typeVariable->position));
             }
                 break;

@@ -21,21 +21,11 @@ struct IsolateVM {
 
     void run(const ModuleType::Ptr& module, CompilerService* compilerService);
     void run(const ModuleClass* moduleClass);
-    void register_(const ModuleType::Ptr& moduleType, Class *klass);
 
     // import ModuleClass, prepare the memory for module class
     void import(ModuleClass* moduleClass);
 
-    // query AST ClassType's Class definition in VM
-    const Class* query(const ClassType::Ptr& classType);
-
     GC* gc;
-
-
-    std::vector<const Class*> classes {};
-    std::unordered_map<int, int> mapOfTypeAndClass {};
-
-
 };
 
 #endif //__joyeer_vm_isolate_h__
