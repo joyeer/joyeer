@@ -321,7 +321,7 @@ struct AssignExpr : Node {
 
     Node::Ptr expr;
 
-    // After binded, the identifier will be binded
+    // After bound, the identifier will be bound
     Node::Ptr left;
 
     explicit AssignExpr(Node::Ptr expr) :

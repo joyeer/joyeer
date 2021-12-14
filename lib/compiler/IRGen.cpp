@@ -240,24 +240,20 @@ void IRGen::emit(const AssignExpr::Ptr& node) {
     if(node->left->kind == SyntaxKind::identifierExpr) {
         emit(node->expr);
         auto identifierExpr = std::static_pointer_cast<IdentifierExpr>(node->left);
-//        if(identifierExpr->symbol->flag == SymbolFlag::field) {
-//            // If the identifier is a field
-//            auto function = context->curFuncDef();
-//            writer.write({
-//                .opcode = OP_OLOAD,
-//                .value = (int32_t)(function->paramTypes.size() - 1)      // last parameter is the self object
-//            });
-//            writer.write({
-//                .opcode = OP_PUTFIELD,
-//                .value = identifierExpr->symbol->addressOfField
-//            });
-//        } else {
-//            writer.write({
-//                .opcode = OP_ISTORE,
-//                .value = identifierExpr->symbol->addressOfVariable
-//            });
-//        }
-//
+        auto symbol = context->lookup(identifierExpr->getSimpleName());
+        auto type = std::static_pointer_cast<VariableType>(context->compiler->getType(symbol->address));
+
+        if(symbol->flag == SymbolFlag::field) {
+            if(type->isStatic()) {
+                writer.write({
+                    .opcode = OP_PUTSTATIC,
+                    .value = type->address
+                });
+                return;
+            } else {
+                assert(false);
+            }
+        }
 
         assert(false);
     } else if( node->left->kind == SyntaxKind::selfExpr ) {

@@ -192,12 +192,47 @@ protected:
     }
 
     Node::Ptr visit(const Expr::Ptr& decl) override {
-        assert(false);
+        output << "expr:";
+        DEBUG_BLOCK_START
+        if(decl->prefix != nullptr) {
+            output << "prefix:";
+            DEBUG_BLOCK_START
+                NodeVisitor::visit(decl->prefix);
+            DEBUG_BLOCK_END
+        }
+
+        newline();
+        output << "binaries:";
+        DEBUG_BLOCK_START
+            for(const auto& param: decl->binaries) {
+                output << "- ";
+                NodeVisitor::visit(param);
+            }
+        DEBUG_BLOCK_END
+        DEBUG_BLOCK_END
         return decl;
     }
 
     Node::Ptr visit(const AssignExpr::Ptr& decl) override {
-        assert(false);
+        output << "assignExpr:";
+        DEBUG_BLOCK_START
+        if(decl->expr != nullptr) {
+            output << "expr:";
+            DEBUG_BLOCK_START
+            NodeVisitor::visit(decl->expr);
+            DEBUG_BLOCK_END
+        }
+
+            newline();
+        if(decl->left != nullptr) {
+            output << "left:";
+            DEBUG_BLOCK_START
+            NodeVisitor::visit(decl->left);
+            DEBUG_BLOCK_END
+        }
+
+
+        DEBUG_BLOCK_END
         return decl;
     }
 
