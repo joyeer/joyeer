@@ -768,12 +768,12 @@ struct ClassDecl : public DeclNode {
 };
 
 // Represent an Module in Ast tree, each xxx.joyeer file is a file module
-class FileModuleDecl : public ClassDecl {
+class ModuleDecl : public ClassDecl {
 public:
-    using Ptr = std::shared_ptr<FileModuleDecl>;
+    using Ptr = std::shared_ptr<ModuleDecl>;
 
 public:
-    FileModuleDecl(const ModuleDescriptor::Ptr& descriptor, const StmtsBlock::Ptr& block) :
+    ModuleDecl(const ModuleDescriptor::Ptr& descriptor, const StmtsBlock::Ptr& block) :
             ClassDecl(nullptr, block) {
         this->members = block;
         kind = SyntaxKind::module;

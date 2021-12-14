@@ -8,7 +8,7 @@ class SyntaxParser
 {
 public:
     explicit SyntaxParser(SourceFile::Ptr sourcefile);
-    FileModuleDecl::Ptr parse();
+    ModuleDecl::Ptr parse();
 
 private:
 

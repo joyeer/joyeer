@@ -11,7 +11,7 @@
 struct FileModuleMemoryAlignment {
     using Ptr = std::shared_ptr<FileModuleMemoryAlignment>;
 
-    void align(const FileModuleDecl::Ptr& decl);
+    void align(const ModuleDecl::Ptr& decl);
 
 private:
     void align(const StmtsBlock::Ptr& decl);

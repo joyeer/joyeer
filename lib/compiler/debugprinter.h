@@ -84,7 +84,7 @@ struct NodeDebugPrinter : public NodeVisitor, public YMLPrinter {
 
 protected:
 
-    Node::Ptr visit(const FileModuleDecl::Ptr& decl) override {
+    Node::Ptr visit(const ModuleDecl::Ptr& decl) override {
         output << "module:";
         DEBUG_BLOCK_START
         output << "simple-name: " << escapeString(decl->getSimpleName());

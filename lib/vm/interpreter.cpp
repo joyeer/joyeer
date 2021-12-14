@@ -7,6 +7,14 @@
 
 struct Interpreter;
 
+Arguments::Arguments(Executor *executor):
+executor(executor) {
+}
+
+Value Arguments::getArgument(Slot slot) {
+    auto pValue = ((Value*)executor->stack) - slot;
+    return *pValue;
+}
 
 #define HANDLE_BYTECODE(OP) \
         case OP_##OP: \
@@ -290,7 +298,21 @@ loop:
 
     inline void Handle_INVOKE(Bytecode bytecode) {
         assert(OP_FROM_BYTECODE(bytecode) == OP_INVOKE);
-        assert(false);
+        auto methodSlot = VALUE_FROM_BYTECODE(bytecode);
+        auto method = (*isolateVm->methodTable)[methodSlot];
+        switch(method->kind) {
+            case MethodKind::C_Method: {
+                auto cMethod = dynamic_cast<const CMethod*>(method);
+                executor->execute(cMethod);
+            }
+                break;
+            case MethodKind::VM_Method: {
+                auto vMethod = dynamic_cast<const VMethod*>(method);
+                executor->execute(vMethod);
+            }
+
+                break;
+        }
     }
 
     inline void Handle_DUP(Bytecode bytecode) {
@@ -319,7 +341,7 @@ isolateVM(isolateVM) {
 void Executor::execute(const ModuleClass *moduleClass) {
     auto savedFP = sp;
     auto frame = &stack[sp];
-    ModuleEntryFrame::set(frame, {.intValue = 0}, moduleClass->slotID);
+    ModuleEntryFrame::set(frame, {.intValue = 0}, moduleClass->slot);
 
     push(savedFP, ModuleEntryFrame::size());
     auto method = (*isolateVM->methodTable)[moduleClass->initializerSlot];
@@ -353,8 +375,8 @@ void Executor::execute(const VMethod *method) {
 }
 
 void  Executor::execute(const CMethod *method) {
-    Arguments arguments;
-    method->operator() (isolateVM, &arguments);
+    Arguments arguments(this);
+    (*method)(isolateVM, &arguments);
 }
 
 void Executor::push(Slot frame, int size) {
@@ -379,4 +401,3 @@ void Executor::pop(Slot frame) {
     frames.pop_back();
     sp = frame;
 }
-

@@ -36,7 +36,7 @@ protected:
     // Declarations
     virtual Node::Ptr visit(const StmtsBlock::Ptr& decl) = 0;
     virtual Node::Ptr visit(const FuncDecl::Ptr& decl) = 0;
-    virtual Node::Ptr visit(const FileModuleDecl::Ptr& decl) = 0;
+    virtual Node::Ptr visit(const ModuleDecl::Ptr& decl) = 0;
     virtual Node::Ptr visit(const ClassDecl::Ptr& classDecl) = 0;
     virtual Node::Ptr visit(const VarDecl::Ptr& varDecl) = 0;
 

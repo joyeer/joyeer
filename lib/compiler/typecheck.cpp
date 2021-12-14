@@ -13,7 +13,7 @@ Node::Ptr TypeChecker::visit(const Node::Ptr& node) {
     return NodeVisitor::visit(node);
 }
 
-Node::Ptr TypeChecker::visit(const FileModuleDecl::Ptr& node) {
+Node::Ptr TypeChecker::visit(const ModuleDecl::Ptr& node) {
     
     context->visit(CompileStage::visitFileModule, node, [this, node](){
         processClassDecl(node);

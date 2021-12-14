@@ -9,11 +9,15 @@
 #include "joyeer/vm/frame.h"
 #include "joyeer/vm/bytecode.h"
 
-struct BytecodeInterpreter {
-    virtual void operator()(IsolateVM *isolateVM) = 0;
-};
-
 constexpr int kStackMaxSize = 1024 * 1024 * 4; // 4M intptr_t;
+
+struct Executor;
+
+struct Arguments {
+    Executor* executor;
+    explicit Arguments(Executor* executor);
+    Value getArgument(Slot slot);
+};
 
 struct Executor {
 
@@ -31,6 +35,7 @@ struct Executor {
 private:
 
     friend class Interpreter;
+    friend class Arguments;
 
     void execute(const CMethod* method);
     void execute(const VMethod* method);

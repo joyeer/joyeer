@@ -8,7 +8,7 @@ sourcefile(sourcefile) {
     endIterator = sourcefile->tokens.end();
 }
 
-FileModuleDecl::Ptr SyntaxParser::parse() {
+ModuleDecl::Ptr SyntaxParser::parse() {
     std::vector<std::shared_ptr<Node>> decls;
     while(iterator != endIterator) {
         std::shared_ptr<Node> decl = tryParseStmt();
@@ -21,7 +21,7 @@ FileModuleDecl::Ptr SyntaxParser::parse() {
     }
     auto block =  std::make_shared<StmtsBlock>(decls);
     auto descriptor = std::make_shared<ModuleDescriptor>(sourcefile->getLocation());
-    return std::make_shared<FileModuleDecl>(descriptor, block);
+    return std::make_shared<ModuleDecl>(descriptor, block);
 }
 
 ////////////////////////////////////////////////////////////////////////////

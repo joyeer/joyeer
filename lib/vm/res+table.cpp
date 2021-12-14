@@ -15,9 +15,9 @@ const std::string &StringTable::operator[](int index) {
 }
 
 void ClassResTable::register_(const ModuleType::Ptr &moduleType, Class *klass) {
-    klass->slotID = static_cast<int>(classes.size());
+    klass->slot = static_cast<int>(classes.size());
     classes.push_back(klass);
-    mapOfTypeAndClass[moduleType->address] = klass->slotID;
+    mapOfTypeAndClass[moduleType->address] = klass->slot;
 }
 
 Class* ClassResTable::query(const ClassType::Ptr &classType) {
@@ -36,7 +36,7 @@ void MethodResTable::import(CompilerService *compilerService) {
             if(type->address == static_cast<size_t>(BuildIns::Func_Print)) {
                 auto method = new Global_$_print();
                 import(method);
-                mapOfTypeAndMethod[type->address] = method->slotID;
+                mapOfTypeAndMethod[type->address] = method->slot;
             } else {
                 assert(false);
             }
@@ -49,8 +49,8 @@ Method* MethodResTable::query(const FuncType::Ptr& funcType) {
 }
 
 void MethodResTable::import(Method *method) {
-    assert(method->slotID == -1);
-    method->slotID = static_cast<int>(methods.size());
+    assert(method->slot == -1);
+    method->slot = static_cast<int>(methods.size());
     methods.push_back(method);
 }
 

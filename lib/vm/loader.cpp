@@ -21,7 +21,7 @@ ModuleClass* ClassLoader::load(const ModuleType::Ptr& module) {
     // static memory allocation
     auto moduleInitializer = compile(module);
 
-    moduleClass->initializerSlot = moduleInitializer->slotID;
+    moduleClass->initializerSlot = moduleInitializer->slot;
     return moduleClass;
 }
 
@@ -51,14 +51,14 @@ Bytecodes* ClassLoader::compile(const std::vector<Instruction> &instructions) {
                 auto typeVariable = std::static_pointer_cast<VariableType>(compilerService->getType(value));
                 auto typeClass = std::static_pointer_cast<ClassType>(compilerService->getType(typeVariable->parent));
                 auto klass = isolateVM->classTable->query(typeClass);
-                writer.write(DEF_BYTECODE_2(OP_GETSTATIC, klass->slotID, typeVariable->position));
+                writer.write(DEF_BYTECODE_2(OP_GETSTATIC, klass->slot, typeVariable->position));
             }
                 break;
             case OP_PUTSTATIC: {
                 auto typeVariable = std::static_pointer_cast<VariableType>(compilerService->getType(value));
                 auto typeClass = std::static_pointer_cast<ClassType>(compilerService->getType(typeVariable->parent));
                 auto klass = isolateVM->classTable->query(typeClass);
-                writer.write(DEF_BYTECODE_2(OP_PUTSTATIC, klass->slotID, typeVariable->position));
+                writer.write(DEF_BYTECODE_2(OP_PUTSTATIC, klass->slot, typeVariable->position));
             }
                 break;
             case OP_OLOAD:{
@@ -68,10 +68,8 @@ Bytecodes* ClassLoader::compile(const std::vector<Instruction> &instructions) {
             case OP_INVOKE: {
                 auto typeFunc = std::static_pointer_cast<FuncType>(compilerService->getType(value));
                 auto method = isolateVM->methodTable->query(typeFunc);
-                if(method == nullptr) {
-                    assert(false);
-                }
-                writer.write(DEF_BYTECODE(OP_INVOKE, method->slotID));
+                assert(method != nullptr);
+                writer.write(DEF_BYTECODE(OP_INVOKE, method->slot));
             }
                 break;
             default:

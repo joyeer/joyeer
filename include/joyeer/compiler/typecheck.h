@@ -11,7 +11,7 @@ public:
     Node::Ptr visit(const Node::Ptr& node) override;
     
 protected:
-    Node::Ptr visit(const FileModuleDecl::Ptr& decl) override;
+    Node::Ptr visit(const ModuleDecl::Ptr& decl) override;
     Node::Ptr visit(const ClassDecl::Ptr& classDecl) override;
     Node::Ptr visit(const VarDecl::Ptr& varDecl) override;
     Node::Ptr visit(const TypeIdentifier::Ptr& decl) override;

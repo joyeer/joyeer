@@ -9,7 +9,7 @@
 // FileModuleMemoryAlignment
 ////////////////////////////////////////////////////////
 
-void FileModuleMemoryAlignment::align(const FileModuleDecl::Ptr& decl) {
+void FileModuleMemoryAlignment::align(const ModuleDecl::Ptr& decl) {
     align(decl->members);
 }
 

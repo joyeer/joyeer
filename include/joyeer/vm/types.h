@@ -7,13 +7,16 @@
 
 struct IsolateVM;
 struct Object;
+struct Bytecodes;
+struct Arguments;
 
 #include <vector>
 
 #include "joyeer/common/types.h"
 #include "joyeer/vm/heaps.h"
 
-struct Bytecodes;
+
+
 
 // Class's field description
 struct Field {
@@ -37,17 +40,13 @@ struct Field {
 #undef DECLARE_TYPE
 };
 
-struct Arguments {
-
-};
-
 enum class MethodKind: intptr_t {
     VM_Method,
     C_Method
 };
 
 struct Method {
-    int slotID = -1;
+    Slot slot = -1;
     MethodKind kind;
 
     explicit Method(MethodKind kind): kind(kind) {}
@@ -72,7 +71,7 @@ struct VMethod : Method {
 // Class description
 struct Class {
 
-    int slotID = -1;
+    Slot slot = -1;
     intptr_t staticArea{};  // static member area
 
     std::vector<Field> instanceFields {};

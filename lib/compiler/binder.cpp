@@ -20,7 +20,7 @@ Node::Ptr Binder::visit(const Node::Ptr& node) {
     return NodeVisitor::visit(node);
 }
 
-Node::Ptr Binder::visit(const FileModuleDecl::Ptr& fileModule) {
+Node::Ptr Binder::visit(const ModuleDecl::Ptr& fileModule) {
     // register Module
 
     auto fileModuleDef = std::make_shared<ModuleType>(fileModule->getSimpleName());
@@ -105,6 +105,14 @@ Node::Ptr Binder::visit(const FuncDecl::Ptr& decl) {
         
         decl->codeBlock = visit(decl->codeBlock);
 
+        // check the function return statement
+        if(decl->returnType == nullptr) {
+            auto statements = std::static_pointer_cast<StmtsBlock>(decl->codeBlock);
+            auto lastStatement = statements->statements.back();
+            if(lastStatement->kind != SyntaxKind::returnStmt) {
+                statements->statements.push_back(std::make_shared<ReturnStmt>(nullptr));
+            }
+        }
     });
     
     return decl;
