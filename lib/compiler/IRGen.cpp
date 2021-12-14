@@ -48,13 +48,18 @@ void IRGen::emit(const Node::Ptr& node) {
 }
 
 ModuleType::Ptr IRGen::emit(const ModuleDecl::Ptr& decl) {
-    auto fileModuleDef = std::static_pointer_cast<ModuleType>(decl->type);
+    auto moduleDef = std::static_pointer_cast<ModuleType>(decl->type);
     context->visit(CompileStage::visitFileModule, decl, [this, decl]() {
         emit(decl->members);
     });
 
-    fileModuleDef->instructions = writer.instructions;
-    return fileModuleDef;
+    writer.write({
+        .opcode = OP_RETURN,
+        .value = 0
+    });
+    moduleDef->instructions = writer.instructions;
+
+    return moduleDef;
 }
 
 void IRGen::emit(const FuncCallExpr::Ptr& funcCallExpr) {

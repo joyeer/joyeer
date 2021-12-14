@@ -278,7 +278,6 @@ loop:
 
     inline void Handle_RETURN(Bytecode bytecode) {
         assert(OP_FROM_BYTECODE(bytecode) == OP_RETURN);
-        assert(false);
     }
 
     inline void Handle_IRETURN(Bytecode bytecode) {

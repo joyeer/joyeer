@@ -72,6 +72,9 @@ Bytecodes* ClassLoader::compile(const std::vector<Instruction> &instructions) {
                 writer.write(DEF_BYTECODE(OP_INVOKE, method->slot));
             }
                 break;
+            case OP_RETURN:
+                writer.write(DEF_BYTECODE(OP_RETURN, 0));
+                break;
             default:
                 assert(false);
         }
