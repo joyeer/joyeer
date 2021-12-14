@@ -309,7 +309,6 @@ loop:
                 auto vMethod = dynamic_cast<const VMethod*>(method);
                 executor->execute(vMethod);
             }
-
                 break;
         }
     }

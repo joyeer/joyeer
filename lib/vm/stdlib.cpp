@@ -7,7 +7,7 @@
 
 Value Global_$_print::operator()(IsolateVM *vm, Arguments *args) const {
     auto value =args->getArgument(0);
-    printf("%lld", value.intValue);
+    printf("%lld\n", value.intValue);
     return {
             .intValue = 0,
     };

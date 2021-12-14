@@ -1,3 +1,7 @@
 var i = 100
-var j = 100
+var j = 111
 print(message: i)
+print(message: j)
+
+print(message: 1000)
+print(message: 100)
