@@ -6,14 +6,14 @@
 
 
 ////////////////////////////////////////////////////////
-// FileModuleMemoryAlignment
+// ModuleMemoryAlignment
 ////////////////////////////////////////////////////////
 
-void FileModuleMemoryAlignment::align(const ModuleDecl::Ptr& decl) {
+void ModuleMemoryAlignment::align(const ModuleDecl::Ptr& decl) {
     align(decl->members);
 }
 
-void FileModuleMemoryAlignment::align(const StmtsBlock::Ptr &decl) {
+void ModuleMemoryAlignment::align(const StmtsBlock::Ptr &decl) {
     auto blockDef = std::static_pointer_cast<BlockType>(decl->getType());
     blockDef->base = base;
     auto startPosition = blockDef->base;

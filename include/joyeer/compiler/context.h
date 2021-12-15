@@ -7,7 +7,7 @@
 class CompilerService;
 
 enum class CompileStage : uint64_t {
-    visitFileModule  = 1,
+    visitModule  = 1,
     visitCodeBlock,
     visitClassDecl,
     visitVarDecl,
@@ -37,19 +37,16 @@ public:
     
     SymbolTable::Ptr curSymTable() ;
 
-    [[nodiscard]] Type::Ptr curTypeDef() const;
+    [[nodiscard]] Type::Ptr curType() const;
 
-    // Return the Top declarations Types - FileModuleDef/FuncDef/ClassDef
-    [[nodiscard]] Type::Ptr  curDeclTypeDef() const ;
+    // Return the Top declarations Types - ModuleType/FuncType/ClassType
+    [[nodiscard]] Type::Ptr  curDeclType() const ;
 
-    // return the current FuncDef in the stack
-    [[nodiscard]] FuncType::Ptr curFuncDef() const;
+    // return the current FuncType in the stack
+    [[nodiscard]] FuncType::Ptr curFuncType() const;
 
-    // return the current JrModuleTypeDef in the stack
-    [[nodiscard]] ModuleType::Ptr curModuleDef() const;
-
-    // return the current BlockDef in stack
-    [[nodiscard]] BlockType::Ptr curBlockDef() const;
+    // return the current BlockType in stack
+    [[nodiscard]] BlockType::Ptr curBlockType() const;
 
     // the current parsing source file
     SourceFile::Ptr sourcefile = nullptr;

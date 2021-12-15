@@ -49,7 +49,7 @@ void IRGen::emit(const Node::Ptr& node) {
 
 ModuleType::Ptr IRGen::emit(const ModuleDecl::Ptr& decl) {
     auto moduleDef = std::static_pointer_cast<ModuleType>(decl->type);
-    context->visit(CompileStage::visitFileModule, decl, [this, decl]() {
+    context->visit(CompileStage::visitModule, decl, [this, decl]() {
         emit(decl->members);
     });
 
@@ -260,7 +260,7 @@ void IRGen::emit(const AssignExpr::Ptr& node) {
         emit(node->expr);
         auto selfExpr = std::static_pointer_cast<SelfExpr>(node->left);
         
-        auto function = context->curFuncDef();
+        auto function = context->curFuncType();
         
         writer.write({
             .opcode = OP_OLOAD,

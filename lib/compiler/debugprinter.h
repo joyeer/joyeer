@@ -252,7 +252,24 @@ protected:
     }
 
     Node::Ptr visit(const IfStmt::Ptr& decl) override {
-        assert(false);
+        output << "ifStmt:";
+        DEBUG_BLOCK_START
+        output << "condition:";
+        DEBUG_BLOCK_START
+            NodeVisitor::visit(decl->condition);
+        DEBUG_BLOCK_END
+        newline();
+        output << "if-block:";
+        DEBUG_BLOCK_START
+            NodeVisitor::visit(decl->ifCodeBlock);
+        DEBUG_BLOCK_END
+        newline();
+        output << "else-block:";
+        DEBUG_BLOCK_START
+        NodeVisitor::visit(decl->elseCodeBlock);
+        DEBUG_BLOCK_END
+        newline();
+        DEBUG_BLOCK_END
         return decl;
     }
 

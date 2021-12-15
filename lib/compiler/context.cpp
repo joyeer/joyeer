@@ -58,11 +58,11 @@ Symbol::Ptr CompileContext::lookup(const std::string &name) {
     return nullptr;
 }
 
-Type::Ptr CompileContext::curTypeDef() const {
+Type::Ptr CompileContext::curType() const {
     return types.back();
 }
 
-Type::Ptr CompileContext::curDeclTypeDef() const {
+Type::Ptr CompileContext::curDeclType() const {
     for (auto iterator = types.rbegin(); iterator != types.rend(); iterator ++) {
         auto typeDef = *iterator;
         if(typeDef->kind == ValueType::Func ||
@@ -74,7 +74,7 @@ Type::Ptr CompileContext::curDeclTypeDef() const {
     return nullptr;
 }
 
-BlockType::Ptr CompileContext::curBlockDef() const {
+BlockType::Ptr CompileContext::curBlockType() const {
     for (auto iterator = types.rbegin(); iterator != types.rend(); iterator ++) {
         auto typeDef = *iterator;
         if(typeDef->kind == ValueType::Block) {
@@ -84,7 +84,7 @@ BlockType::Ptr CompileContext::curBlockDef() const {
     return nullptr;
 }
 
-FuncType::Ptr CompileContext::curFuncDef() const {
+FuncType::Ptr CompileContext::curFuncType() const {
     for (auto iterator = types.rbegin(); iterator != types.rend(); iterator ++) {
         auto typeDef = *iterator;
         if(typeDef->kind == ValueType::Func) {
@@ -93,9 +93,4 @@ FuncType::Ptr CompileContext::curFuncDef() const {
     }
 
     return nullptr;
-}
-
-ModuleType::Ptr CompileContext::curModuleDef() const {
-    // The top one must be the FileModuleTypeDef
-    return std::static_pointer_cast<ModuleType>(types[0]);
 }

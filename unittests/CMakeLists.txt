@@ -3,7 +3,7 @@ include(ExternalProject)
 # Download and install GoogleTest
 ExternalProject_Add(
     gtest
-    URL https://github.com/google/googletest/archive/master.zip
+    URL https://github.com/google/googletest/archive/refs/tags/release-1.11.0.zip
     DOWNLOAD_DIR ${CMAKE_CURRENT_BINARY_DIR}/gtest/download
     PREFIX ${CMAKE_CURRENT_BINARY_DIR}/gtest
     INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/gtest/install

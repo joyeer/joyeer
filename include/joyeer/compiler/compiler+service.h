@@ -65,6 +65,6 @@ private:
     std::vector<std::string> strings {};
 
     // Module static variable memory alignment
-    FileModuleMemoryAlignment fileModuleMemoryAlign;
+    ModuleMemoryAlignment fileModuleMemoryAlign;
 };
 #endif

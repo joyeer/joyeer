@@ -20,20 +20,20 @@ Node::Ptr Binder::visit(const Node::Ptr& node) {
     return NodeVisitor::visit(node);
 }
 
-Node::Ptr Binder::visit(const ModuleDecl::Ptr& fileModule) {
+Node::Ptr Binder::visit(const ModuleDecl::Ptr& module) {
     // register Module
 
-    auto fileModuleDef = std::make_shared<ModuleType>(fileModule->getSimpleName());
+    auto fileModuleDef = std::make_shared<ModuleType>(module->getSimpleName());
     context->compiler->declare(fileModuleDef);
-    fileModule->type = fileModuleDef;
+    module->type = fileModuleDef;
 
-    fileModule->recursiveUpdate();
+    module->recursiveUpdate();
 
-    context->visit(CompileStage::visitFileModule, fileModule, [fileModule, this]() {
-        visit(fileModule->members);
+    context->visit(CompileStage::visitModule, module, [module, this]() {
+        visit(module->members);
     });
     
-    return fileModule;
+    return module;
 }
 
 Node::Ptr Binder::visit(const ClassDecl::Ptr& decl) {
@@ -139,7 +139,7 @@ Node::Ptr Binder::visit(const VarDecl::Ptr& decl) {
 
     // if the closest declaration type, is the FileModuleDef/ClassDef,
     // the variable will be treated as field in Symbol
-    auto declType = context->curDeclTypeDef();
+    auto declType = context->curDeclType();
     auto flag = SymbolFlag::var;
     switch (declType->kind) {
         case ValueType::Module:
@@ -158,7 +158,7 @@ Node::Ptr Binder::visit(const VarDecl::Ptr& decl) {
     auto stage = context->curStage();
     switch (stage) {
         case CompileStage::visitCodeBlock: {
-            auto blockDef = context->curBlockDef();
+            auto blockDef = context->curBlockType();
             assert(blockDef);
             blockDef->localVars.push_back(varDef);
         }
@@ -415,16 +415,16 @@ Node::Ptr Binder::visit(const WhileStmt::Ptr& decl) {
 Node::Ptr Binder::visit(const StmtsBlock::Ptr& decl) {
 
     // generate a BlockType
-    auto blockDef = std::make_shared<BlockType>();
-    context->compiler->declare(blockDef);
-    decl->type = blockDef;
+    auto blockType = std::make_shared<BlockType>();
+    context->compiler->declare(blockType);
+    decl->type = blockType;
 
-    // check parent's type, assign the BlockTypeDef to Parent
-    auto typeDef = context->curTypeDef();
+    // check parent's type, assign the BlockType to Parent
+    auto typeDef = context->curType();
     switch (typeDef->kind) {
         case ValueType::Module: {
-            auto moduleDef = std::static_pointer_cast<ModuleType>(typeDef);
-            moduleDef->block = blockDef;
+            auto moduleType = std::static_pointer_cast<ModuleType>(typeDef);
+            moduleType->block = blockType;
         }
             break;
         default:
@@ -521,7 +521,7 @@ Node::Ptr Binder::visit(const ArrayType::Ptr& decl) {
 }
 
 Node::Ptr Binder::visit(const ImportStmt::Ptr& decl) {
-    if(context->curStage() != CompileStage::visitFileModule) {
+    if(context->curStage() != CompileStage::visitModule) {
         Diagnostics::reportError(Diagnostics::errorFileImportShouldAtTopOfSourceFile);
         return nullptr;
     }

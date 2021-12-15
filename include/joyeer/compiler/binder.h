@@ -16,7 +16,7 @@ public:
     
     explicit Binder(CompileContext::Ptr context);
     
-    Node::Ptr visit(const ModuleDecl::Ptr& fileModule) override;
+    Node::Ptr visit(const ModuleDecl::Ptr& module) override;
 protected:
     // recursive bind down node
     Node::Ptr visit(const Node::Ptr& node) override;

@@ -15,7 +15,7 @@ Node::Ptr TypeChecker::visit(const Node::Ptr& node) {
 
 Node::Ptr TypeChecker::visit(const ModuleDecl::Ptr& node) {
     
-    context->visit(CompileStage::visitFileModule, node, [this, node](){
+    context->visit(CompileStage::visitModule, node, [this, node](){
         processClassDecl(node);
     });
     
@@ -25,7 +25,7 @@ Node::Ptr TypeChecker::visit(const ModuleDecl::Ptr& node) {
 Node::Ptr TypeChecker::visit(const FuncDecl::Ptr& node) {
 
     context->visit(CompileStage::visitFuncDecl, node, [this, node]() {
-        auto funcDef = context->curFuncDef();
+        auto funcDef = context->curFuncType();
         context->visit(CompileStage::visitFuncParamDecl, node->parameterClause, [this, node]() {
             node->parameterClause = visit(node->parameterClause);
         });
@@ -175,7 +175,7 @@ Node::Ptr TypeChecker::visit(const Pattern::Ptr& node) {
 Node::Ptr TypeChecker::visit(const IdentifierExpr::Ptr& node) {
     auto name = node->getSimpleName();
     switch (context->curStage()) {
-        case CompileStage::visitFileModule:
+        case CompileStage::visitModule:
         case CompileStage::visitExpr:
         case CompileStage::visitCodeBlock:
         case CompileStage::visitMemberAccess: {

@@ -1,0 +1,6 @@
+var a = true
+if a {
+    print(message: a)
+} else {
+    print(message: 10)
+}

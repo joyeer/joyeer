@@ -23,7 +23,7 @@ struct ErrorMessage {
 struct Diagnostics {
     
     // `fileimport` should be presented at the begin of source file
-    DIAGNOSTICS_ERROR_MESSAGE(errorFileImportShouldAtTopOfSourceFile,           "`fileimport` should be presented at the begin of source file")
+    DIAGNOSTICS_ERROR_MESSAGE(errorFileImportShouldAtTopOfSourceFile,           "`import` should be presented at the begin of source file")
     DIAGNOSTICS_ERROR_MESSAGE(errorNoSuchFileOrDirectory,                       "no such file or directory:")
     DIAGNOSTICS_ERROR_MESSAGE(success,                                          "message")
     

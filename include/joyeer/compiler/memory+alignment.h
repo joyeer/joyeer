@@ -8,8 +8,8 @@
 #include "joyeer/compiler/node.h"
 
 // Module's variables will be stored in
-struct FileModuleMemoryAlignment {
-    using Ptr = std::shared_ptr<FileModuleMemoryAlignment>;
+struct ModuleMemoryAlignment {
+    using Ptr = std::shared_ptr<ModuleMemoryAlignment>;
 
     void align(const ModuleDecl::Ptr& decl);
 
