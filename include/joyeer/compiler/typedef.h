@@ -122,15 +122,12 @@ struct ClassType : Type {
 
     explicit ClassType(const std::string& name);
 
-    static ClassType::Ptr create(const std::string& name) {
-        return std::make_shared<ClassType>(name);
-    }
 };
 
 struct ModuleType : ClassType {
     using Ptr = std::shared_ptr<ModuleType>;
 
-    // include ClassDef/FuncDef
+    // include ClassType/FuncType
     BlockType::Ptr block;
 
     // File initialize instructions
