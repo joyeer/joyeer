@@ -51,7 +51,7 @@ Node::Ptr Binder::visit(const ClassDecl::Ptr& decl) {
     });
     symtable->insert(symbol);
 
-    auto objectType = ClassType::create(name);
+    auto objectType = std::make_shared<ClassType>(name);
 
     decl->symtable = context->curSymTable();
     bool hasCustomizedConstructor = false;
@@ -425,6 +425,10 @@ Node::Ptr Binder::visit(const StmtsBlock::Ptr& decl) {
         case ValueType::Module: {
             auto moduleType = std::static_pointer_cast<ModuleType>(typeDef);
             moduleType->block = blockType;
+        }
+            break;
+        case ValueType::Block: {
+
         }
             break;
         default:

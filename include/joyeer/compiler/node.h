@@ -675,15 +675,8 @@ struct ReturnStmt : Node {
  *  Decl Section
  *********************************************************/
 
-struct DeclNode : public Node {
-    using Ptr = std::shared_ptr<DeclNode>;
-public:
-
-    explicit DeclNode(SyntaxKind kind) : Node(kind) {}
-};
-
 // Represent a Function in Ast tree.
-struct FuncDecl : public DeclNode {
+struct FuncDecl : public Node {
 public:
     using Ptr = std::shared_ptr<FuncDecl>;
 
@@ -693,22 +686,14 @@ public:
     Node::Ptr returnType = nullptr;
 
     FuncDecl(Node::Ptr identifier, Node::Ptr parameterClause, Node::Ptr returnType, Node::Ptr codeBlock) :
-            DeclNode(SyntaxKind::funcDecl),
+            Node(SyntaxKind::funcDecl),
             identifier(std::move(identifier)),
             parameterClause(std::move(parameterClause)),
             returnType(std::move(returnType)),
             codeBlock(std::move(codeBlock)) {
         symtable = std::make_shared<SymbolTable>();
     }
-
-    // make FuncDecl as Static initializer
-    static Ptr makeStaticInitializer(const std::string& initializerName, const StmtsBlock::Ptr& stmts) {
-        auto token = std::make_shared<Token>(TokenKind::identifier, initializerName, -1, -1);
-        auto identifierExpr = std::make_shared<IdentifierExpr>(token);
-        auto decl = std::make_shared<FuncDecl>(identifierExpr, nullptr, nullptr, stmts);
-        return decl;
-    }
-
+    
     // create a Constructor FuncDecl
     static Ptr makeConstructor(const Node::Ptr& parameterClause, const StmtsBlock::Ptr& stmts) {
         auto decl = std::make_shared<FuncDecl>(nullptr, parameterClause, nullptr, stmts);
@@ -745,14 +730,14 @@ public:
 };
 
 
-struct ClassDecl : public DeclNode {
+struct ClassDecl : public Node {
     using Ptr = std::shared_ptr<ClassDecl>;
 
     Token::Ptr name = nullptr;
     StmtsBlock::Ptr members;
 
     ClassDecl(Token::Ptr name, StmtsBlock::Ptr members) :
-            DeclNode(SyntaxKind::classDecl),
+            Node(SyntaxKind::classDecl),
             name(std::move(name)),
             members(std::move(members)) {
         symtable = std::make_shared<SymbolTable>();
@@ -794,14 +779,14 @@ public:
 
 
 // `let` or `var` declaration
-struct VarDecl : public DeclNode {
+struct VarDecl : public Node {
     using Ptr = std::shared_ptr<VarDecl>;
 
     Pattern::Ptr pattern;
     Node::Ptr initializer;
 
     VarDecl(Pattern::Ptr pattern, Node::Ptr initializer) :
-            DeclNode(SyntaxKind::varDecl),
+            Node(SyntaxKind::varDecl),
             pattern(std::move(pattern)),
             initializer(std::move(initializer)) {
     }
