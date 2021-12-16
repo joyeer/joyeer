@@ -75,6 +75,15 @@ Bytecodes* ClassLoader::compile(const std::vector<Instruction> &instructions) {
             case OP_RETURN:
                 writer.write(DEF_BYTECODE(OP_RETURN, 0));
                 break;
+            case OP_IFLE:
+                writer.write(DEF_BYTECODE(OP_IFLE, value));
+                break;
+            case OP_GOTO:
+                writer.write(DEF_BYTECODE(OP_GOTO, value));
+                break;
+            case OP_IFNE:
+                writer.write(DEF_BYTECODE(OP_IFNE, value));
+                break;
             default:
                 assert(false);
         }
@@ -88,6 +97,8 @@ Field ClassLoader::compile(const VariableType::Ptr& variableType) {
     switch (type->kind) {
         case ValueType::Int:
             return Field(ValueType::Int);
+        case ValueType::Bool:
+            return Field(ValueType::Bool);
         default:
             assert(false);
     }

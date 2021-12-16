@@ -693,7 +693,7 @@ public:
             codeBlock(std::move(codeBlock)) {
         symtable = std::make_shared<SymbolTable>();
     }
-    
+
     // create a Constructor FuncDecl
     static Ptr makeConstructor(const Node::Ptr& parameterClause, const StmtsBlock::Ptr& stmts) {
         auto decl = std::make_shared<FuncDecl>(nullptr, parameterClause, nullptr, stmts);
@@ -753,14 +753,13 @@ struct ClassDecl : public Node {
 };
 
 // Represent an Module in Ast tree, each xxx.joyeer file is a file module
-class ModuleDecl : public ClassDecl {
+class ModuleDecl : public StmtsBlock {
 public:
     using Ptr = std::shared_ptr<ModuleDecl>;
 
 public:
-    ModuleDecl(const ModuleDescriptor::Ptr& descriptor, const StmtsBlock::Ptr& block) :
-            ClassDecl(nullptr, block) {
-        this->members = block;
+    ModuleDecl(const ModuleDescriptor::Ptr& descriptor, std::vector<Node::Ptr>& statements) :
+            StmtsBlock(statements) {
         kind = SyntaxKind::module;
         assert(symtable != nullptr);
     }
@@ -773,7 +772,7 @@ public:
     }
 
     void recursiveUpdate() override {
-        ClassDecl::recursiveUpdate();
+        StmtsBlock::recursiveUpdate();
     }
 };
 

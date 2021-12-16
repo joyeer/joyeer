@@ -7,7 +7,7 @@
 class SyntaxParser
 {
 public:
-    explicit SyntaxParser(SourceFile::Ptr sourcefile);
+    explicit SyntaxParser(const SourceFile::Ptr& sourcefile);
     ModuleDecl::Ptr parse();
 
 private:

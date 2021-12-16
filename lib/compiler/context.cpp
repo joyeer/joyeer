@@ -94,3 +94,8 @@ FuncType::Ptr CompileContext::curFuncType() const {
 
     return nullptr;
 }
+
+ModuleType::Ptr CompileContext::curModuleType() const {
+    assert(types[0]->kind == ValueType::Module);
+    return std::static_pointer_cast<ModuleType>(types[0]);
+}

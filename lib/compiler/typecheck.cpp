@@ -16,7 +16,11 @@ Node::Ptr TypeChecker::visit(const Node::Ptr& node) {
 Node::Ptr TypeChecker::visit(const ModuleDecl::Ptr& node) {
     
     context->visit(CompileStage::visitModule, node, [this, node](){
-        processClassDecl(node);
+        auto statements = std::vector<Node::Ptr>();
+        for(const auto& statement: node->statements) {
+            statements.push_back(visit(statement));
+        }
+        node->statements =  statements;
     });
     
     return node;
@@ -197,12 +201,6 @@ Node::Ptr TypeChecker::visit(const IdentifierExpr::Ptr& node) {
     return node;
 }
 
-ClassDecl::Ptr TypeChecker::processClassDecl(ClassDecl::Ptr decl) {
-    // visit static fields
-    visit(decl->members);
-    return decl;
-}
-
 Node::Ptr TypeChecker::visit(const TypeIdentifier::Ptr& node) {
     auto symbol = context->lookup(node->identifier->getSimpleName());
     if(symbol == nullptr) {
@@ -251,6 +249,9 @@ Node::Ptr TypeChecker::visit(const LiteralExpr::Ptr& node) {
             break;
         case TokenKind::stringLiteral:
             node->type = context->compiler->getPrimaryType(ValueType::String);
+            break;
+        case TokenKind::booleanLiteral:
+            node->type = context->compiler->getPrimaryType(ValueType::Bool);
             break;
         default:
             assert(false);

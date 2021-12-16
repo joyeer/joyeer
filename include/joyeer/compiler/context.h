@@ -44,8 +44,11 @@ public:
     // return the current FuncType in the stack
     [[nodiscard]] FuncType::Ptr curFuncType() const;
 
-    // return the current BlockType in stack
+    // return the current BlockType in the stack
     [[nodiscard]] BlockType::Ptr curBlockType() const;
+
+    // return the current ModuleType in the stack
+    [[nodiscard]] ModuleType::Ptr curModuleType() const;
 
     // the current parsing source file
     SourceFile::Ptr sourcefile = nullptr;

@@ -10,7 +10,7 @@
 ////////////////////////////////////////////////////////
 
 void ModuleMemoryAlignment::align(const ModuleDecl::Ptr& decl) {
-    align(decl->members);
+    align(std::static_pointer_cast<StmtsBlock>(decl));
 }
 
 void ModuleMemoryAlignment::align(const StmtsBlock::Ptr &decl) {

@@ -23,14 +23,18 @@ Node::Ptr Binder::visit(const Node::Ptr& node) {
 Node::Ptr Binder::visit(const ModuleDecl::Ptr& module) {
     // register Module
 
-    auto fileModuleDef = std::make_shared<ModuleType>(module->getSimpleName());
-    context->compiler->declare(fileModuleDef);
-    module->type = fileModuleDef;
+    auto moduleType = std::make_shared<ModuleType>(module->getSimpleName());
+    context->compiler->declare(moduleType);
+    module->type = moduleType;
 
     module->recursiveUpdate();
 
     context->visit(CompileStage::visitModule, module, [module, this]() {
-        visit(module->members);
+        auto statements = std::vector<Node::Ptr>();
+        for(const auto& statement : module->statements) {
+            statements.push_back(NodeVisitor::visit(statement));
+        }
+        module->statements = statements;
     });
     
     return module;
@@ -157,8 +161,8 @@ Node::Ptr Binder::visit(const VarDecl::Ptr& decl) {
     // double-check to complicate
     auto stage = context->curStage();
     switch (stage) {
-        case CompileStage::visitCodeBlock: {
-            auto blockDef = context->curBlockType();
+        case CompileStage::visitModule: {
+            auto blockDef = context->curModuleType();
             assert(blockDef);
             blockDef->localVars.push_back(varDef);
         }
@@ -418,22 +422,6 @@ Node::Ptr Binder::visit(const StmtsBlock::Ptr& decl) {
     auto blockType = std::make_shared<BlockType>();
     context->compiler->declare(blockType);
     decl->type = blockType;
-
-    // check parent's type, assign the BlockType to Parent
-    auto typeDef = context->curType();
-    switch (typeDef->kind) {
-        case ValueType::Module: {
-            auto moduleType = std::static_pointer_cast<ModuleType>(typeDef);
-            moduleType->block = blockType;
-        }
-            break;
-        case ValueType::Block: {
-
-        }
-            break;
-        default:
-            assert(false);
-    }
 
     // start to process code block
     context->visit(CompileStage::visitCodeBlock, decl,[decl, this]() {

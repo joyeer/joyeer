@@ -90,14 +90,12 @@ protected:
         output << "simple-name: " << escapeString(decl->getSimpleName());
         newline();
         print(decl->symtable);
-        if(decl->members != nullptr) {
-            newline();
+        for(const auto& member : decl->statements) {
             output << "members:";
             DEBUG_BLOCK_START
-            visit(decl->members);
+            NodeVisitor::visit(member);
             DEBUG_BLOCK_END
         }
-
         DEBUG_BLOCK_END
         
         return decl;

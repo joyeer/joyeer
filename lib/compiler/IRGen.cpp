@@ -50,7 +50,9 @@ void IRGen::emit(const Node::Ptr& node) {
 ModuleType::Ptr IRGen::emit(const ModuleDecl::Ptr& decl) {
     auto moduleDef = std::static_pointer_cast<ModuleType>(decl->type);
     context->visit(CompileStage::visitModule, decl, [this, decl]() {
-        emit(decl->members);
+        for(const auto& member: decl->statements) {
+            emit(member);
+        }
     });
 
     writer.write({
@@ -401,8 +403,9 @@ void IRGen::emit(const IfStmt::Ptr& node) {
     }
     
     emit(node->condition);
+
     writer.write({
-        .opcode = OP_IFLE,
+        .opcode = OP_IFNE,
         .value = static_cast<int32_t>(instructions.size())
     });
     writer.write(instructions);

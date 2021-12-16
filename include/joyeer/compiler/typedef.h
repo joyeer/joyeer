@@ -124,17 +124,14 @@ struct ClassType : Type {
 
 };
 
-struct ModuleType : ClassType {
+struct ModuleType : BlockType {
     using Ptr = std::shared_ptr<ModuleType>;
-
-    // include ClassType/FuncType
-    BlockType::Ptr block;
 
     // File initialize instructions
     std::vector<Instruction> instructions;
 
     [[nodiscard]] std::vector<VariableType::Ptr> getVariables() const {
-        return block->localVars;
+        return localVars;
     }
 
     explicit ModuleType(const std::string& name);

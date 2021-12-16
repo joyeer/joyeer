@@ -21,6 +21,10 @@ Value Arguments::getArgument(Slot slot) {
             Handle_##OP(bytecode); \
             goto next;
 
+#define HANDLE_BYTECODE_JUMP(OP) \
+        case OP_##OP: \
+            Handle_##OP(bytecode); \
+            goto loop;
 
 #define HANDLE_BYTECODE_RETURN(OP) \
         case OP_##OP: \
@@ -253,7 +257,12 @@ loop:
 
     inline void Handle_IFNE(Bytecode bytecode) {
         assert(OP_FROM_BYTECODE(bytecode) == OP_IFNE);
-        assert(false);
+        auto value = pop();
+        auto offset = VALUE_FROM_BYTECODE(bytecode);
+
+        if (value.intValue == 0) {
+            cp += offset * kIntSize;
+        }
     }
 
     inline void Handle_IFLT(Bytecode bytecode) {
@@ -263,6 +272,8 @@ loop:
 
     inline void Handle_IFLE(Bytecode bytecode) {
         assert(OP_FROM_BYTECODE(bytecode) == OP_IFLE);
+        auto value = pop();
+
         assert(false);
     }
 
@@ -320,7 +331,9 @@ loop:
 
     inline void Handle_GOTO(Bytecode bytecode) {
         assert(OP_FROM_BYTECODE(bytecode) == OP_GOTO);
-        assert(false);
+
+        auto offset = VALUE_FROM_BYTECODE(bytecode);
+        cp += offset * kIntSize;
     }
 
     inline void Handle_DEBUG(Bytecode bytecode) {

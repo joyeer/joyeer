@@ -41,8 +41,6 @@ protected:
     Node::Ptr visit(const SubscriptExpr::Ptr& decl) override;
     Node::Ptr visit(const ArrayType::Ptr& decl) override;
     Node::Ptr visit(const ImportStmt::Ptr& decl) override;
-    
-    ClassDecl::Ptr processClassDecl(ClassDecl::Ptr decl);
 
     Type::Ptr typeOf(const Node::Ptr& node);
     Type::Ptr typeOf(const IdentifierExpr::Ptr& node);
