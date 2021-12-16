@@ -84,6 +84,21 @@ Bytecodes* ClassLoader::compile(const std::vector<Instruction> &instructions) {
             case OP_IFNE:
                 writer.write(DEF_BYTECODE(OP_IFNE, value));
                 break;
+            case OP_IDIV:
+                writer.write(DEF_BYTECODE(OP_IDIV, -1));
+                break;
+            case OP_IREM:
+                writer.write(DEF_BYTECODE(OP_IREM, -1));
+                break;
+            case OP_IMUL:
+                writer.write(DEF_BYTECODE(OP_IMUL, -1));
+                break;
+            case OP_ISUB:
+                writer.write(DEF_BYTECODE(OP_ISUB, -1));
+                break;
+            case OP_IADD:
+                writer.write(DEF_BYTECODE(OP_IADD, -1));
+                break;
             default:
                 assert(false);
         }

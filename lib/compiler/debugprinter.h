@@ -235,17 +235,37 @@ protected:
     }
 
     Node::Ptr visit(const BinaryExpr::Ptr& decl) override {
-        assert(false);
+        output << "binaryExpr:";
+        DEBUG_BLOCK_START
+        output << "op:";
+        DEBUG_BLOCK_START
+            visit(decl->op);
+        DEBUG_BLOCK_END
+        newline();
+        output << "expr:";
+        DEBUG_BLOCK_START
+        NodeVisitor::visit(decl->expr);
+        DEBUG_BLOCK_END
+        DEBUG_BLOCK_END
         return decl;
     }
 
     Node::Ptr visit(const OperatorExpr::Ptr& decl) override {
-        assert(false);
+        output << "operatorExpr:";
+        DEBUG_BLOCK_START
+        output << "token: " << decl->token->rawValue;
+        DEBUG_BLOCK_END
         return decl;
     }
 
     Node::Ptr visit(const ParenthesizedExpr::Ptr& decl) override {
-        assert(false);
+        output << "parenthesizedExpr:";
+        DEBUG_BLOCK_START
+        output << "expr: ";
+        DEBUG_BLOCK_START
+            NodeVisitor::visit(decl->expr);
+        DEBUG_BLOCK_END
+        DEBUG_BLOCK_END
         return decl;
     }
 

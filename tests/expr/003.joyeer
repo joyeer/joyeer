@@ -1,4 +1,12 @@
-var a = true
+var a = false
+if a {
+    print(message: a)
+} else {
+    print(message: 10)
+}
+
+a = true
+
 if a {
     print(message: a)
 } else {

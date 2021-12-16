@@ -12,7 +12,7 @@ executor(executor) {
 }
 
 Value Arguments::getArgument(Slot slot) {
-    auto pValue = ((Value*)executor->stack) - slot;
+    auto pValue = (Value*)(executor->stack + executor->sp - kValueSize - slot);
     return *pValue;
 }
 
@@ -222,31 +222,58 @@ loop:
 
     inline void Handle_IADD(Bytecode bytecode) {
         assert(OP_FROM_BYTECODE(bytecode) == OP_IADD);
-        assert(false);
+
+        auto value1 = pop();
+        auto value2 = pop();
+
+        auto result = value2.intValue + value1.intValue;
+        push({ .intValue = result});
     }
 
     inline void Handle_ISUB(Bytecode bytecode) {
         assert(OP_FROM_BYTECODE(bytecode) == OP_ISUB);
-        assert(false);
+        auto value1 = pop();
+        auto value2 = pop();
+
+        auto result = value2.intValue - value1.intValue;
+        push({ .intValue = result});
     }
 
     inline void Handle_IMUL(Bytecode bytecode) {
         assert(OP_FROM_BYTECODE(bytecode) == OP_IMUL);
-        assert(false);
+        auto value1 = pop();
+        auto value2 = pop();
+
+        auto result = value2.intValue * value1.intValue;
+        push({.intValue = result});
     }
 
     inline void Handle_IDIV(Bytecode bytecode) {
         assert(OP_FROM_BYTECODE(bytecode) == OP_IDIV);
-        assert(false);
+        auto value1 = pop();
+        auto value2 = pop();
+
+        auto result = value2.intValue / value1.intValue;
+        push({ .intValue = result} );
     }
 
     inline void Handle_IREM(Bytecode bytecode) {
         assert(OP_FROM_BYTECODE(bytecode) == OP_IREM);
-        assert(false);
+        auto value1 = pop();
+        auto value2 = pop();
+
+        auto result = value2.intValue % value1.intValue;
+        push({ .intValue = result});
     }
 
     inline void Handle_INEG(Bytecode bytecode) {
         assert(OP_FROM_BYTECODE(bytecode) == OP_INEG);
+
+        auto value1 = pop();
+        auto value2 = pop();
+
+        auto result = value2.intValue % value1.intValue;
+        push({.intValue = result});
         assert(false);
     }
 
@@ -362,7 +389,6 @@ void Executor::execute(const ModuleClass *moduleClass) {
 
 void Executor::execute(const Method *method) {
     auto savedFP = sp;
-    auto frame = &stack[sp];
 
     push(savedFP, FuncCallFrame::size());
 
@@ -396,16 +422,16 @@ void Executor::push(Slot frame, int size) {
 }
 
 void Executor::push(Value value) {
-    *(Int *)stack = value.intValue;
+    *(Int *)(stack + sp) = value.intValue;
     sp += kValueSize;
 }
 
 Value Executor::pop() {
-    auto result = *(Int *)stack;
     sp -= kValueSize;
+    auto result = *(Int *)(stack + sp);
+
     return {.intValue = result };
 }
-
 
 void Executor::pop(Slot frame) {
     assert(frames.back() == frame);
