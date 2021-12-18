@@ -133,6 +133,9 @@ void CompilerService::initializeGlobalSymbolTable() {
     globalSymbols = std::make_shared<SymbolTable>();
     auto print = getBuildInsType(BuildIns::Func_Print);
     globalSymbols->insert(Symbol::make(SymbolFlag::func, print->name, print->address));
+    globalSymbols->insert(Symbol::make(SymbolFlag::klass, "Int", (int)ValueType::Int));
+    globalSymbols->insert(Symbol::make(SymbolFlag::klass, "Void", (int)ValueType::Void));
+    globalSymbols->insert(Symbol::make(SymbolFlag::klass, "Bool", (int)ValueType::Bool));
 }
 
 void CompilerService::initializeTypes() {

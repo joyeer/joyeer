@@ -156,6 +156,10 @@ struct TypeIdentifier : Node {
 
     explicit TypeIdentifier(Node::Ptr identifier);
 
+    std::string getSimpleName() override  {
+        return identifier->getSimpleName();
+    }
+
     void recursiveUpdate() override {
         NODE_RECURSIVE_UPDATE(identifier, NODE_UPDATE_ACTION_SET_PARENT_THIS(identifier))
     }
@@ -192,9 +196,9 @@ struct Pattern : public Node {
     using Ptr = std::shared_ptr<Pattern>;
 
     IdentifierExpr::Ptr identifier; // the name of pattern
-    Node::Ptr typeNode; // the kind of pattern, optional nullptr
+    Node::Ptr typeExpr; // the kind of pattern, optional nullptr
 
-    Pattern(IdentifierExpr::Ptr identifier, Node::Ptr typeNode);
+    Pattern(IdentifierExpr::Ptr identifier, Node::Ptr typeExpr);
 
     const std::string &getIdentifierName() const;
 
@@ -204,7 +208,7 @@ struct Pattern : public Node {
 
     void recursiveUpdate() override {
         NODE_RECURSIVE_UPDATE(identifier, NODE_UPDATE_ACTION_SET_PARENT_THIS(identifier))
-        NODE_RECURSIVE_UPDATE(typeNode, NODE_UPDATE_ACTION_SET_PARENT_THIS(typeNode))
+        NODE_RECURSIVE_UPDATE(typeExpr, NODE_UPDATE_ACTION_SET_PARENT_THIS(typeExpr))
     }
 
 };

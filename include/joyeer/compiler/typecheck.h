@@ -9,7 +9,7 @@ public:
     explicit TypeChecker(CompileContext::Ptr context);
 
     Node::Ptr visit(const Node::Ptr& node) override;
-    
+
 protected:
     Node::Ptr visit(const ModuleDecl::Ptr& decl) override;
     Node::Ptr visit(const ClassDecl::Ptr& classDecl) override;

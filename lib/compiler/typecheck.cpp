@@ -29,21 +29,21 @@ Node::Ptr TypeChecker::visit(const ModuleDecl::Ptr& node) {
 Node::Ptr TypeChecker::visit(const FuncDecl::Ptr& node) {
 
     context->visit(CompileStage::visitFuncDecl, node, [this, node]() {
-        auto funcDef = context->curFuncType();
+        auto funcType = context->curFuncType();
         context->visit(CompileStage::visitFuncParamDecl, node->parameterClause, [this, node]() {
             node->parameterClause = visit(node->parameterClause);
         });
 
-        assert(funcDef->paramTypes.empty());
+        assert(funcType->paramTypes.empty());
         if(node->returnType != nullptr) {
             node->returnType = visit(node->returnType);
-            funcDef->returnType = typeOf(node->returnType);
+            funcType->returnType = typeOf(node->returnType);
         }
 
         // Binding function's kind
         auto parameterClause = std::static_pointer_cast<ParameterClause>(node->parameterClause);
         for(const auto& parameter: parameterClause->parameters) {
-            funcDef->paramTypes.push_back(parameter->type);
+            funcType->paramTypes.push_back(parameter->type);
         }
 
         node->codeBlock = visit(node->codeBlock);
@@ -169,10 +169,13 @@ Node::Ptr TypeChecker::visit(const ParameterClause::Ptr& node) {
 
 Node::Ptr TypeChecker::visit(const Pattern::Ptr& node) {
     node->identifier = std::static_pointer_cast<IdentifierExpr>(visit(node->identifier));
-    if(node->typeNode != nullptr) {
-        node->typeNode = visit(node->typeNode);
+    if(node->typeExpr != nullptr) {
+        node->typeExpr = visit(node->typeExpr);
+        node->type = node->typeExpr->type;
+    } else {
         assert(false);
     }
+
     return node;
 }
 
@@ -186,14 +189,24 @@ Node::Ptr TypeChecker::visit(const IdentifierExpr::Ptr& node) {
             auto symbol = context->lookup(name);
             if(symbol == nullptr) {
                 Diagnostics::reportError(ErrorLevel::failure, "[TODO][Error] Cannot find variable");
+            } else {
+                node->type = context->compiler->getType(symbol->address);
+                assert(node->type != nullptr);
             }
-            assert(symbol != nullptr);
+
         }
             break;
         case CompileStage::visitAssignExpr:
         case CompileStage::visitFuncParamDecl:
         case CompileStage::visitVarDecl:
-        case CompileStage::visitLetDecl:
+        case CompileStage::visitLetDecl: {
+            auto symbol = context->lookup(name);
+            if(symbol == nullptr) {
+                Diagnostics::reportError(ErrorLevel::failure, "[TODO][Error] Cannot find variable");
+            }
+            assert(symbol->address != -1);
+            node->type = context->compiler->getType(symbol->address);
+        }
             break;
         default:
             break;
@@ -202,12 +215,14 @@ Node::Ptr TypeChecker::visit(const IdentifierExpr::Ptr& node) {
 }
 
 Node::Ptr TypeChecker::visit(const TypeIdentifier::Ptr& node) {
-    auto symbol = context->lookup(node->identifier->getSimpleName());
+    auto simpleName = node->getSimpleName();
+    auto symbol = context->lookup(simpleName);
     if(symbol == nullptr) {
-        Diagnostics::reportError("[Error]Cannot find kind");
+        Diagnostics::reportError("[Error]Cannot find type");
+    } else {
+        node->type = context->compiler->getType(symbol->address);
     }
-//    node->symbol = symbol;
-    
+
     return node;
 }
 
@@ -454,6 +469,7 @@ Type::Ptr TypeChecker::typeOf(const Expr::Ptr& node) {
 
         } else {
             auto type = typeOf(n);
+            assert(type != nullptr);
             stack.push(type);
         };
 
@@ -502,7 +518,7 @@ Type::Ptr TypeChecker::typeOf(const Pattern::Ptr& node) {
     if(node->type == nullptr) {
         return context->compiler->getPrimaryType(ValueType::Any);
     }
-    return typeOf(node->typeNode);
+    return typeOf(node->typeExpr);
 }
 
 Type::Ptr TypeChecker::typeOf(const TypeIdentifier::Ptr& node) {

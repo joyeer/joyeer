@@ -79,12 +79,13 @@ Node::Ptr Binder::visit(const FuncDecl::Ptr& decl) {
         return nullptr;
     }
 
-    // define FuncTypeDef
-    auto funcDef = std::make_shared<FuncType>(funcSimpleName);
-    context->compiler->declare(funcDef);
+    // define FuncType
+    auto funcType = std::make_shared<FuncType>(funcSimpleName);
+    context->compiler->declare(funcType);
+    decl->type = funcType;
 
     // prepare the symbol, register the symbol into parent
-    auto symbol = Symbol::make(SymbolFlag::func, funcSimpleName, funcDef->address);
+    auto symbol = Symbol::make(SymbolFlag::func, funcSimpleName, funcType->address);
     symtable->insert(symbol);
     
     // visit func declaration
@@ -138,8 +139,8 @@ Node::Ptr Binder::visit(const VarDecl::Ptr& decl) {
     }
 
     // declare the VariableType
-    auto varDef = std::make_shared<VariableType>(name);
-    context->compiler->declare(varDef);
+    auto variableType = std::make_shared<VariableType>(name);
+    context->compiler->declare(variableType);
 
     // if the closest declaration type, is the FileModuleDef/ClassDef,
     // the variable will be treated as field in Symbol
@@ -148,23 +149,33 @@ Node::Ptr Binder::visit(const VarDecl::Ptr& decl) {
     switch (declType->kind) {
         case ValueType::Module:
             flag = SymbolFlag::field;
-            varDef->markAsStatic();
-            varDef->parent = declType->address; // parent address
+            variableType->markAsStatic();
+            variableType->parent = declType->address; // parent address
+            break;
+        case ValueType::Func:
+            flag = SymbolFlag::func;
+            variableType->parent = declType->address;
             break;
         default:
             assert(false);
     }
 
-    auto symbol = Symbol::make(flag, name, varDef->address);
+    auto symbol = Symbol::make(flag, name, variableType->address);
     symtable->insert(symbol);
 
     // double-check to complicate
     auto stage = context->curStage();
     switch (stage) {
         case CompileStage::visitModule: {
-            auto blockDef = context->curModuleType();
-            assert(blockDef);
-            blockDef->localVars.push_back(varDef);
+            auto moduleType = context->curModuleType();
+            assert(moduleType);
+            moduleType->localVars.push_back(variableType);
+        }
+            break;
+        case CompileStage::visitCodeBlock: {
+            auto blockType = context->curBlockType();
+            assert(blockType);
+            blockType->localVars.push_back(variableType);
         }
             break;
         default:
@@ -238,10 +249,10 @@ Node::Ptr Binder::visit(const IdentifierExpr::Ptr& decl) {
                 Diagnostics::reportError("[Error] duplicate variable declaration in fucntion");
                 return nullptr;
             }
-            
+
             auto symbol = std::shared_ptr<Symbol>(new Symbol {
                 .flag = SymbolFlag::var,
-                .name = name
+                .name = name,
             });
             table->insert(symbol);
             return decl;
@@ -448,7 +459,7 @@ Node::Ptr Binder::visit(const ParameterClause::Ptr& decl) {
 
 Node::Ptr Binder::visit(const Pattern::Ptr& decl) {
     decl->identifier = std::static_pointer_cast<IdentifierExpr>(visit(decl->identifier));
-    decl->typeNode = std::static_pointer_cast<TypeIdentifier>(visit(decl->typeNode));
+    decl->typeExpr = std::static_pointer_cast<TypeIdentifier>(visit(decl->typeExpr));
     return decl;
 }
 

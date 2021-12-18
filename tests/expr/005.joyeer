@@ -1,0 +1,10 @@
+
+func add(left:Int, right: Int): Int {
+    var i = left + right
+    return i
+}
+
+var a = 0
+a = add(left:10, right:12)
+print(message: a)
+

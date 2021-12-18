@@ -90,12 +90,14 @@ protected:
         output << "simple-name: " << escapeString(decl->getSimpleName());
         newline();
         print(decl->symtable);
+        newline();
+        output << "members:";
+        DEBUG_BLOCK_START
         for(const auto& member : decl->statements) {
-            output << "members:";
-            DEBUG_BLOCK_START
+            newline();
             NodeVisitor::visit(member);
-            DEBUG_BLOCK_END
         }
+        DEBUG_BLOCK_END
         DEBUG_BLOCK_END
         
         return decl;
@@ -144,6 +146,7 @@ protected:
             for(const auto& argument: decl->arguments) {
                 output << "- ";
                 visit(argument);
+                newline();
             }
             DEBUG_BLOCK_END
         DEBUG_BLOCK_END
@@ -205,6 +208,7 @@ protected:
             for(const auto& param: decl->binaries) {
                 output << "- ";
                 NodeVisitor::visit(param);
+                newline();
             }
         DEBUG_BLOCK_END
         DEBUG_BLOCK_END
@@ -221,7 +225,7 @@ protected:
             DEBUG_BLOCK_END
         }
 
-            newline();
+        newline();
         if(decl->left != nullptr) {
             output << "left:";
             DEBUG_BLOCK_START
@@ -363,14 +367,14 @@ protected:
         visit(decl->identifier);
         if(decl->type != nullptr) {
             newline();
-            NodeVisitor::visit(decl->typeNode);
+            NodeVisitor::visit(decl->typeExpr);
         }
         decTab();
         return  decl;
     }
 
     Node::Ptr visit(const ReturnStmt::Ptr& decl) override {
-        assert(false);
+        output << "return:" ;
         return decl;
     }
 

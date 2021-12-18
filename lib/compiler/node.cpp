@@ -27,9 +27,9 @@ parameters(std::move(parameters)) {
 }
 
 Pattern::Pattern(IdentifierExpr::Ptr identifier, Node::Ptr type):
-Node(SyntaxKind::pattern),
-identifier(std::move(identifier)),
-typeNode(std::move(type)) {
+        Node(SyntaxKind::pattern),
+        identifier(std::move(identifier)),
+        typeExpr(std::move(type)) {
 }
 
 const std::string& Pattern::getIdentifierName() const {
