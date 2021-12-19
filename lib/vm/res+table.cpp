@@ -29,6 +29,10 @@ const Class *ClassResTable::operator[](Slot slot) {
     return classes[slot];
 }
 
+//////////////////////////////////////////
+//  MethodResTable
+//////////////////////////////////////////
+
 void MethodResTable::import(CompilerService *compilerService) {
 
     for(auto const& type: compilerService->types) {

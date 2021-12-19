@@ -48,14 +48,12 @@ Node::Ptr Binder::visit(const ClassDecl::Ptr& decl) {
     if(symtable->find(name) != nullptr) {
         Diagnostics::reportError("[Error] duplicate class name");
     }
-    
-    auto symbol = Symbol::Ptr(new Symbol {
-        .flag = SymbolFlag::klass,
-        .name = name
-    });
-    symtable->insert(symbol);
 
     auto objectType = std::make_shared<ClassType>(name);
+    context->compiler->declare(objectType);
+
+    auto symbol = std::make_shared<Symbol>(SymbolFlag::klass, name, objectType->address);
+    symtable->insert(symbol);
 
     decl->symtable = context->curSymTable();
     bool hasCustomizedConstructor = false;
@@ -85,7 +83,7 @@ Node::Ptr Binder::visit(const FuncDecl::Ptr& decl) {
     decl->type = funcType;
 
     // prepare the symbol, register the symbol into parent
-    auto symbol = Symbol::make(SymbolFlag::func, funcSimpleName, funcType->address);
+    auto symbol = std::make_shared<Symbol>(SymbolFlag::func, funcSimpleName, funcType->address);
     symtable->insert(symbol);
     
     // visit func declaration
@@ -160,7 +158,7 @@ Node::Ptr Binder::visit(const VarDecl::Ptr& decl) {
             assert(false);
     }
 
-    auto symbol = Symbol::make(flag, name, variableType->address);
+    auto symbol = std::make_shared<Symbol>(flag, name, variableType->address);
     symtable->insert(symbol);
 
     // double-check to complicate
@@ -240,26 +238,31 @@ Node::Ptr Binder::visit(const PrefixExpr::Ptr& decl) {
 
 Node::Ptr Binder::visit(const IdentifierExpr::Ptr& decl) {
     auto name = decl->getSimpleName();
-    
+
     switch (context->curStage()) {
         case CompileStage::visitFuncParamDecl: {
-            // verify the func declaration's parameter duplicate name
+            // verify the func declaration's parameter duplicated name
             auto table = context->curSymTable();
             if(table->find(name) != nullptr) {
-                Diagnostics::reportError("[Error] duplicate variable declaration in fucntion");
+                Diagnostics::reportError("[Error] duplicate variable declaration in function");
                 return nullptr;
             }
-
-            auto symbol = std::shared_ptr<Symbol>(new Symbol {
-                .flag = SymbolFlag::var,
-                .name = name,
-            });
-            table->insert(symbol);
             return decl;
         }
-        default: {
-            return decl;
+        case CompileStage::visitModule:
+        case CompileStage::visitCodeBlock: {
+            auto symbol = context->lookup(name);
+            if(symbol != nullptr) {
+                Diagnostics::reportError("[Error] cannot find variable declaration in function");
+            } else {
+                decl->type = context->compiler->getType(symbol->address);
+            }
         }
+            return decl;
+        case CompileStage::visitFuncNameDecl:
+            return decl;
+        default:
+            assert(false);
     }
 }
 
@@ -450,7 +453,14 @@ Node::Ptr Binder::visit(const StmtsBlock::Ptr& decl) {
 Node::Ptr Binder::visit(const ParameterClause::Ptr& decl) {
     std::vector<Pattern::Ptr> parameters;
     for(const auto& parameter: decl->parameters) {
-        parameters.push_back(std::static_pointer_cast<Pattern>(visit(parameter)));
+        auto pattern = std::static_pointer_cast<Pattern>(visit(parameter));
+        parameters.push_back(pattern);
+
+        // register the parameter into Symbol table
+        auto symtable = context->curSymTable();
+        auto parameterSimpleName = pattern->identifier->getSimpleName();
+        auto typeAddress = pattern->typeExpr->type->address;
+        symtable->insert(std::make_shared<Symbol>(SymbolFlag::var, parameterSimpleName, typeAddress));
     }
     
     decl->parameters = parameters;
@@ -460,6 +470,19 @@ Node::Ptr Binder::visit(const ParameterClause::Ptr& decl) {
 Node::Ptr Binder::visit(const Pattern::Ptr& decl) {
     decl->identifier = std::static_pointer_cast<IdentifierExpr>(visit(decl->identifier));
     decl->typeExpr = std::static_pointer_cast<TypeIdentifier>(visit(decl->typeExpr));
+
+    if(decl->typeExpr != nullptr) {
+        // Pattern's type, binding to Type
+        auto typeSimpleName = decl->typeExpr->getSimpleName();
+        auto symbol = context->lookup(typeSimpleName);
+        if(symbol == nullptr) {
+            Diagnostics::reportError("[Bind][Error]cannot find pattern name");
+        }
+
+        auto type = context->compiler->getType(symbol->address);
+        decl->typeExpr->type = type;
+    }
+
     return decl;
 }
 

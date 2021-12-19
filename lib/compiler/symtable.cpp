@@ -1,4 +1,6 @@
 #include "joyeer/compiler/symtable.h"
+
+#include <utility>
 #include "joyeer/common/diagnostic.h"
 
 std::string debugStringOfSymbolFlag(SymbolFlag flag) {
@@ -14,6 +16,12 @@ std::string debugStringOfSymbolFlag(SymbolFlag flag) {
         default:
             assert(false);
     }
+}
+
+Symbol::Symbol(SymbolFlag flag, std::string name, int address):
+flag(flag),
+name(std::move(name)),
+address(address) {
 }
 
 /////////////////////////////////////////////////////////////////

@@ -23,21 +23,15 @@ std::string debugStringOfSymbolFlag(SymbolFlag flag);
  */
 struct Symbol {
     using Ptr = std::shared_ptr<Symbol>;
-public:
+
     SymbolFlag flag;
     std::string name;
 
     // address of ModuleType/FuncType/ClassType
     int32_t address = -1;
 
-    // create a new symbol
-    static Symbol::Ptr make(SymbolFlag flag, const std::string& name, int32_t address) {
-        return Symbol::Ptr(new Symbol {
-            .flag = flag,
-            .name =name,
-            .address = address,
-        });
-    }
+    Symbol(SymbolFlag flag, std::string  name, int address);
+
 };
 
 

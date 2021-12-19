@@ -26,33 +26,36 @@ Node::Ptr TypeChecker::visit(const ModuleDecl::Ptr& node) {
     return node;
 }
 
-Node::Ptr TypeChecker::visit(const FuncDecl::Ptr& node) {
+Node::Ptr TypeChecker::visit(const FuncDecl::Ptr& decl) {
 
-    context->visit(CompileStage::visitFuncDecl, node, [this, node]() {
+    context->visit(CompileStage::visitFuncDecl, decl, [this, decl]() {
         auto funcType = context->curFuncType();
-        context->visit(CompileStage::visitFuncParamDecl, node->parameterClause, [this, node]() {
-            node->parameterClause = visit(node->parameterClause);
+
+        // visit parameters decls
+        context->visit(CompileStage::visitFuncParamDecl, decl->parameterClause, [this, decl]() {
+            decl->parameterClause = visit(decl->parameterClause);
         });
 
         assert(funcType->paramTypes.empty());
-        if(node->returnType != nullptr) {
-            node->returnType = visit(node->returnType);
-            funcType->returnType = typeOf(node->returnType);
+        if(decl->returnType != nullptr) {
+            decl->returnType = visit(decl->returnType);
+            funcType->returnType = typeOf(decl->returnType);
         }
 
         // Binding function's kind
-        auto parameterClause = std::static_pointer_cast<ParameterClause>(node->parameterClause);
+        auto parameterClause = std::static_pointer_cast<ParameterClause>(decl->parameterClause);
         for(const auto& parameter: parameterClause->parameters) {
             funcType->paramTypes.push_back(parameter->type);
         }
 
-        node->codeBlock = visit(node->codeBlock);
+
+        decl->codeBlock = visit(decl->codeBlock);
 
         // verify return statement
-        verifyReturnStatement(std::static_pointer_cast<StmtsBlock>(node->codeBlock));
+        verifyReturnStatement(std::static_pointer_cast<StmtsBlock>(decl->codeBlock));
     });
 
-    return node;
+    return decl;
 }
 
 Node::Ptr TypeChecker::visit(const FuncCallExpr::Ptr& node) {
@@ -171,7 +174,6 @@ Node::Ptr TypeChecker::visit(const Pattern::Ptr& node) {
     node->identifier = std::static_pointer_cast<IdentifierExpr>(visit(node->identifier));
     if(node->typeExpr != nullptr) {
         node->typeExpr = visit(node->typeExpr);
-        node->type = node->typeExpr->type;
     } else {
         assert(false);
     }
@@ -189,24 +191,14 @@ Node::Ptr TypeChecker::visit(const IdentifierExpr::Ptr& node) {
             auto symbol = context->lookup(name);
             if(symbol == nullptr) {
                 Diagnostics::reportError(ErrorLevel::failure, "[TODO][Error] Cannot find variable");
-            } else {
-                node->type = context->compiler->getType(symbol->address);
-                assert(node->type != nullptr);
             }
-
         }
             break;
         case CompileStage::visitAssignExpr:
         case CompileStage::visitFuncParamDecl:
         case CompileStage::visitVarDecl:
-        case CompileStage::visitLetDecl: {
-            auto symbol = context->lookup(name);
-            if(symbol == nullptr) {
-                Diagnostics::reportError(ErrorLevel::failure, "[TODO][Error] Cannot find variable");
-            }
-            assert(symbol->address != -1);
-            node->type = context->compiler->getType(symbol->address);
-        }
+        case CompileStage::visitLetDecl:
+            // nothing to do
             break;
         default:
             break;
