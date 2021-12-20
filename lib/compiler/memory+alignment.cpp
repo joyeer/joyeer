@@ -6,14 +6,18 @@
 
 
 ////////////////////////////////////////////////////////
-// ModuleMemoryAlignment
+// VariablePositionAlignment
 ////////////////////////////////////////////////////////
 
-void ModuleMemoryAlignment::align(const ModuleDecl::Ptr& decl) {
+void VariablePositionAlignment::align(const ModuleDecl::Ptr& decl) {
     align(std::static_pointer_cast<StmtsBlock>(decl));
 }
 
-void ModuleMemoryAlignment::align(const StmtsBlock::Ptr &decl) {
+void VariablePositionAlignment::align(const FuncDecl::Ptr &decl) {
+
+}
+
+void VariablePositionAlignment::align(const StmtsBlock::Ptr &decl) {
     auto blockDef = std::static_pointer_cast<BlockType>(decl->getType());
     blockDef->base = base;
     auto startPosition = blockDef->base;

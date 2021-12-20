@@ -48,7 +48,7 @@ void IRGen::emit(const Node::Ptr& node) {
 }
 
 ModuleType::Ptr IRGen::emit(const ModuleDecl::Ptr& decl) {
-    auto moduleDef = std::static_pointer_cast<ModuleType>(decl->type);
+    auto moduleType = std::static_pointer_cast<ModuleType>(decl->type);
     context->visit(CompileStage::visitModule, decl, [this, decl]() {
         for(const auto& member: decl->statements) {
             emit(member);
@@ -59,9 +59,9 @@ ModuleType::Ptr IRGen::emit(const ModuleDecl::Ptr& decl) {
         .opcode = OP_RETURN,
         .value = 0
     });
-    moduleDef->instructions = writer.instructions;
+    moduleType->instructions = writer.instructions;
 
-    return moduleDef;
+    return moduleType;
 }
 
 void IRGen::emit(const FuncCallExpr::Ptr& funcCallExpr) {
@@ -72,14 +72,14 @@ void IRGen::emit(const FuncCallExpr::Ptr& funcCallExpr) {
             emit(argument);
         }
 
-        auto funcDef = std::static_pointer_cast<FuncType>(funcCallExpr->type);
+        auto funcType = std::static_pointer_cast<FuncType>(funcCallExpr->type);
         if(funcCallExpr->identifier->kind == SyntaxKind::memberAccessExpr) {
             emit(funcCallExpr->identifier);
         }
 
         writer.write({
             .opcode = OP_INVOKE,
-            .value = funcDef->address
+            .value = funcType->address
         });
 
     });
@@ -144,7 +144,7 @@ void IRGen::emit(const VarDecl::Ptr& node) {
     emit(node->initializer);
 
     auto symbol = context->lookup(node->getSimpleName());
-    auto varDef = std::static_pointer_cast<VariableType>(context->compiler->getType(symbol->address));
+    auto varType = std::static_pointer_cast<VariableType>(context->compiler->getType(symbol->address));
 
     switch (symbol->flag) {
         case SymbolFlag::var:
@@ -156,10 +156,10 @@ void IRGen::emit(const VarDecl::Ptr& node) {
             break;
         case SymbolFlag::field: {
             // static field
-            if(varDef->isStatic()) {
+            if(varType->isStatic()) {
                 writer.write({
                     .opcode = OP_PUTSTATIC,
-                    .value = varDef->address,
+                    .value = varType->address,
                 });
             } else {
                 writer.write({
@@ -443,7 +443,7 @@ void IRGen::emit(const StmtsBlock::Ptr& node) {
 }
 
 void IRGen::emit(const FuncDecl::Ptr& node) {
-//    assert(node->symbol->flag == SymbolFlag::func);
+
     auto function = std::static_pointer_cast<FuncType>(node->type);
 
     IRGen generator(context);

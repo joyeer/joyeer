@@ -15,8 +15,8 @@
     }
 
 CompilerService::CompilerService(CommandLineArguments::Ptr opts):
-options(std::move(opts)),
-fileModuleMemoryAlign(){
+        options(std::move(opts)),
+        variablePositionAlignment(){
     initializeTypes();
     initializeGlobalSymbolTable();
 }
@@ -79,7 +79,7 @@ ModuleType::Ptr CompilerService::compile(const SourceFile::Ptr& sourcefile) {
     CHECK_ERROR_RETURN_NULL
 
     // alignment memory
-    fileModuleMemoryAlign.align(block);
+    variablePositionAlignment.align(block);
 
     // generate IR code
     IRGen irGen(context);

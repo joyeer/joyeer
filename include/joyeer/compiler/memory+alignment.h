@@ -7,11 +7,15 @@
 
 #include "joyeer/compiler/node.h"
 
-// Module's variables will be stored in
-struct ModuleMemoryAlignment {
-    using Ptr = std::shared_ptr<ModuleMemoryAlignment>;
+// Adjust the variables be stored in right positions
+struct VariablePositionAlignment {
+    using Ptr = std::shared_ptr<VariablePositionAlignment>;
 
+    // align Module
     void align(const ModuleDecl::Ptr& decl);
+
+    // align Function
+    void align(const FuncDecl::Ptr& decl);
 
 private:
     void align(const StmtsBlock::Ptr& decl);
