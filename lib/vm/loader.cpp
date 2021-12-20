@@ -82,6 +82,9 @@ Bytecodes* ClassLoader::compile(const std::vector<Instruction> &instructions) {
             case OP_RETURN:
                 writer.write(DEF_BYTECODE(OP_RETURN, 0));
                 break;
+            case OP_IRETURN:
+                writer.write(DEF_BYTECODE(OP_IRETURN, -1));
+                break;
             case OP_IFLE:
                 writer.write(DEF_BYTECODE(OP_IFLE, value));
                 break;
@@ -105,6 +108,12 @@ Bytecodes* ClassLoader::compile(const std::vector<Instruction> &instructions) {
                 break;
             case OP_IADD:
                 writer.write(DEF_BYTECODE(OP_IADD, -1));
+                break;
+            case OP_ISTORE:
+                writer.write(DEF_BYTECODE(OP_ISTORE, value));
+                break;
+            case OP_ILOAD:
+                writer.write(DEF_BYTECODE(OP_ILOAD, value));
                 break;
             default:
                 assert(false);

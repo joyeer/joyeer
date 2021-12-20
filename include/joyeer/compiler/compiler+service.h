@@ -2,7 +2,6 @@
 #define __joyeer_compiler_compiler_service_h__
 
 #include "joyeer/compiler/context.h"
-#include "joyeer/compiler/memory+alignment.h"
 
 class CompilerService : public std::enable_shared_from_this<CompilerService> {
 public:
@@ -64,7 +63,5 @@ private:
     // Strings
     std::vector<std::string> strings {};
 
-    // Module static variable memory alignment
-    VariablePositionAlignment variablePositionAlignment;
 };
 #endif

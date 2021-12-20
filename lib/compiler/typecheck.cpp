@@ -41,7 +41,7 @@ Node::Ptr TypeChecker::visit(const FuncDecl::Ptr& decl) {
         // Binding function's kind
         auto parameterClause = std::static_pointer_cast<ParameterClause>(decl->parameterClause);
         for(const auto& parameter: parameterClause->parameters) {
-            funcType->paramTypes.push_back(parameter->type);
+            funcType->paramTypes.push_back(std::static_pointer_cast<VariableType>(parameter->getType()));
         }
 
         // verify return type
@@ -172,6 +172,7 @@ Node::Ptr TypeChecker::visit(const Pattern::Ptr& node) {
     node->identifier = std::static_pointer_cast<IdentifierExpr>(visit(node->identifier));
     if(node->typeExpr != nullptr) {
         node->typeExpr = visit(node->typeExpr);
+        node->type = node->typeExpr->getType();
     }
 
     return node;

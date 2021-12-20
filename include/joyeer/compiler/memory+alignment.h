@@ -8,8 +8,8 @@
 #include "joyeer/compiler/node.h"
 
 // Adjust the variables be stored in right positions
-struct VariablePositionAlignment {
-    using Ptr = std::shared_ptr<VariablePositionAlignment>;
+struct VariableLocalRebase {
+    using Ptr = std::shared_ptr<VariableLocalRebase>;
 
     // align Module
     void align(const ModuleDecl::Ptr& decl);

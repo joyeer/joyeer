@@ -15,8 +15,7 @@
     }
 
 CompilerService::CompilerService(CommandLineArguments::Ptr opts):
-        options(std::move(opts)),
-        variablePositionAlignment(){
+        options(std::move(opts)) {
     initializeTypes();
     initializeGlobalSymbolTable();
 }
@@ -77,9 +76,6 @@ ModuleType::Ptr CompilerService::compile(const SourceFile::Ptr& sourcefile) {
     typeChecker.visit(std::static_pointer_cast<Node>(block));
     debugPrint(block, sourcefile->getAbstractLocation() + ".typechecker.debug.yml");
     CHECK_ERROR_RETURN_NULL
-
-    // alignment memory
-    variablePositionAlignment.align(block);
 
     // generate IR code
     IRGen irGen(context);

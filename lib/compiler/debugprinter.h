@@ -437,11 +437,11 @@ struct TypeDefDebugPrinter : YMLPrinter {
             YMLPrinter(filename) {}
 
     void print(const std::vector<Type::Ptr> typedefs) {
-        output << "typedefs:";
+        output << "types:";
         DEBUG_BLOCK_START
         auto i = 0;
         for(const auto& tf : typedefs) {
-            output << "- typedef:";
+            output << "- type:";
             DEBUG_BLOCK_START
                 output << "index: " << i;
                 newline();
@@ -496,6 +496,19 @@ struct TypeDefDebugPrinter : YMLPrinter {
 
     void print(const FuncType::Ptr& func) {
         output<< "name: " << func->name;
+        if(func->instructions.size() > 0 ) {
+            newline();
+            output << "instructions:";
+            DEBUG_BLOCK_START
+            auto i = 0;
+            for(const auto& instruction: func->instructions) {
+                if(i > 0){
+                    newline();
+                }
+                output << "- " << i++ << ": " << debugPrint(instruction);
+            }
+            DEBUG_BLOCK_END
+        }
     }
 
     void print(const ModuleType::Ptr& fileModule) {

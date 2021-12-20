@@ -6,27 +6,33 @@
 
 
 ////////////////////////////////////////////////////////
-// VariablePositionAlignment
+// VariableLocalRebase
 ////////////////////////////////////////////////////////
 
-void VariablePositionAlignment::align(const ModuleDecl::Ptr& decl) {
+void VariableLocalRebase::align(const ModuleDecl::Ptr& decl) {
     align(std::static_pointer_cast<StmtsBlock>(decl));
 }
 
-void VariablePositionAlignment::align(const FuncDecl::Ptr &decl) {
-
+void VariableLocalRebase::align(const FuncDecl::Ptr &decl) {
+    auto funcType = std::static_pointer_cast<FuncType>(decl->getType());
+    for(const auto paramType: funcType->paramTypes) {
+        paramType->position = base;
+        base ++;
+    }
+    auto stmts = std::static_pointer_cast<StmtsBlock>(decl->codeBlock);
+    align(stmts);
 }
 
-void VariablePositionAlignment::align(const StmtsBlock::Ptr &decl) {
-    auto blockDef = std::static_pointer_cast<BlockType>(decl->getType());
-    blockDef->base = base;
-    auto startPosition = blockDef->base;
+void VariableLocalRebase::align(const StmtsBlock::Ptr &decl) {
+    auto blockType = std::static_pointer_cast<BlockType>(decl->getType());
+    blockType->base = base;
+    auto startPosition = blockType->base;
 
-    for(auto& localVar : blockDef->localVars) {
+    for(auto& localVar : blockType->localVars) {
         localVar->position = startPosition;
         startPosition ++;
     }
-    base += static_cast<int>(blockDef->localVars.size());
+    base += static_cast<int>(blockType->localVars.size());
 
     for(const auto& member : decl->statements) {
         // process the IfStmt

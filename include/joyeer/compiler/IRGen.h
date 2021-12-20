@@ -29,7 +29,6 @@ protected:
     void emit(const FuncDecl::Ptr& node);
     void emit(const ReturnStmt::Ptr& node);
     void emit(const MemberAccessExpr::Ptr& node);
-    void emit(const MemberAssignExpr::Ptr& node);
     void emit(const ClassDecl::Ptr& node);
     void emit(const ArrayLiteralExpr::Ptr& node);
     void emit(const DictLiteralExpr::Ptr& node);

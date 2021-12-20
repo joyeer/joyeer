@@ -110,7 +110,7 @@ struct FuncType : Type {
 
     FuncTypeKind funcKind;
     BlockType::Ptr block;
-    std::vector<Type::Ptr> paramTypes;
+    std::vector<VariableType::Ptr> paramTypes;
     Type::Ptr returnType;
     std::vector<Instruction> instructions;
 

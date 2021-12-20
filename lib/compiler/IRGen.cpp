@@ -1,7 +1,7 @@
 #include "joyeer/compiler/IRGen.h"
 #include "joyeer/common/diagnostic.h"
 #include "joyeer/compiler/compiler+service.h"
-
+#include "joyeer/compiler/memory+alignment.h"
 
 ////////////////////////////////////////////////////////
 // IRGen
@@ -48,6 +48,10 @@ void IRGen::emit(const Node::Ptr& node) {
 }
 
 ModuleType::Ptr IRGen::emit(const ModuleDecl::Ptr& decl) {
+
+    VariableLocalRebase rebase;
+    rebase.align(decl);
+
     auto moduleType = std::static_pointer_cast<ModuleType>(decl->type);
     context->visit(CompileStage::visitModule, decl, [this, decl]() {
         for(const auto& member: decl->statements) {
@@ -148,10 +152,9 @@ void IRGen::emit(const VarDecl::Ptr& node) {
 
     switch (symbol->flag) {
         case SymbolFlag::var:
-            assert(false);
             writer.write({
                 .opcode = OP_ISTORE,
-                .value = symbol->address
+                .value = varType->position
             });
             break;
         case SymbolFlag::field: {
@@ -194,19 +197,25 @@ void IRGen::emit(const IdentifierExpr::Ptr& node) {
         return;
     }
 
-    auto varDef = std::static_pointer_cast<VariableType>(context->compiler->getType(symbol->address));
+    auto varType = std::static_pointer_cast<VariableType>(context->compiler->getType(symbol->address));
 
     if(symbol->flag  == SymbolFlag::var) {
-//        auto kind = symbol->kind;
+        auto typeOfVariable = context->compiler->getType(varType->addressOfType);
+        switch (typeOfVariable->kind) {
+            case ValueType::Int: {
+                writer.write({
+                    .opcode = OP_ILOAD,
+                    .value = varType->position
+                });
+            }
+                break;
+            default:
+                assert(false);
+        }
 
-//        if(kind->kind == BuildIn::Types::Int->kind) {
-//            writer.write({
-//                .opcode = OP_ILOAD,
-//                .value = symbol->addressOfVariable
-//            });
 //        } else if(kind->kind == TypeKind::Class || kind->kind == TypeKind::Any ) {
 //            writer.write({
-//                .opcode = OP_OLOAD,x`x`
+//                .opcode = OP_OLOAD,
 //                .value = symbol->addressOfVariable
 //            });
 //        } else if(kind->kind == TypeKind::Nil) {
@@ -216,14 +225,13 @@ void IRGen::emit(const IdentifierExpr::Ptr& node) {
 //        } else {
 //            assert(false);
 //        }
-        assert(false);
         return;
     } else if(symbol->flag == SymbolFlag::field) {
-        if(varDef->isStatic()) {
+        if(varType->isStatic()) {
             // static field
             writer.write({
                 .opcode = OP_GETSTATIC,
-                .value = varDef->address
+                .value = varType->address
             });
             return;
         }
@@ -444,10 +452,17 @@ void IRGen::emit(const StmtsBlock::Ptr& node) {
 
 void IRGen::emit(const FuncDecl::Ptr& node) {
 
+    VariableLocalRebase rebase;
+    rebase.align(node);
+
     auto function = std::static_pointer_cast<FuncType>(node->type);
 
     IRGen generator(context);
-    generator.emit(node->codeBlock);
+
+    context->visit(CompileStage::visitFuncDecl, node, [node, &generator](){
+        generator.emit(node->codeBlock);
+    });
+
     auto instructions = generator.writer.instructions;
     
     assert(function != nullptr && function->instructions.empty());
