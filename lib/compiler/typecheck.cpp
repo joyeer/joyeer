@@ -37,10 +37,6 @@ Node::Ptr TypeChecker::visit(const FuncDecl::Ptr& decl) {
         });
 
         assert(funcType->paramTypes.empty());
-        if(decl->returnType != nullptr) {
-            decl->returnType = visit(decl->returnType);
-            funcType->returnType = typeOf(decl->returnType);
-        }
 
         // Binding function's kind
         auto parameterClause = std::static_pointer_cast<ParameterClause>(decl->parameterClause);
@@ -48,11 +44,13 @@ Node::Ptr TypeChecker::visit(const FuncDecl::Ptr& decl) {
             funcType->paramTypes.push_back(parameter->type);
         }
 
+        // verify return type
+        if(decl->returnType != nullptr) {
+            decl->returnType = visit(decl->returnType);
+            funcType->returnType = typeOf(decl->returnType);
+        }
 
         decl->codeBlock = visit(decl->codeBlock);
-
-        // verify return statement
-        verifyReturnStatement(std::static_pointer_cast<StmtsBlock>(decl->codeBlock));
     });
 
     return decl;
@@ -228,9 +226,24 @@ Node::Ptr TypeChecker::visit(const StmtsBlock::Ptr& node) {
     return node;
 }
 
-Node::Ptr TypeChecker::visit(const ReturnStmt::Ptr& node) {
-    node->expr = visit(node->expr);
-    return node;
+Node::Ptr TypeChecker::visit(const ReturnStmt::Ptr& decl) {
+    if(decl->expr != nullptr) {
+        decl->expr = visit(decl->expr);
+
+        auto type = decl->expr->getType();
+        switch (type->kind) {
+            case ValueType::Var: {
+                auto variable = std::static_pointer_cast<VariableType>(type);
+                auto typeOfVariable = context->compiler->getType(variable->addressOfType);
+                decl->type = typeOfVariable;
+            }
+                break;
+            default:
+                assert(false);
+        }
+    }
+
+    return decl;
 }
 
 Node::Ptr TypeChecker::visit(const Expr::Ptr& node) {

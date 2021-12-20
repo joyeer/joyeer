@@ -151,7 +151,7 @@ Node::Ptr Binder::visit(const VarDecl::Ptr& decl) {
             variableType->parent = declType->address; // parent address
             break;
         case ValueType::Func:
-            flag = SymbolFlag::func;
+            flag = SymbolFlag::var;
             variableType->parent = declType->address;
             break;
         default:
