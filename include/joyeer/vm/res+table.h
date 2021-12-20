@@ -43,8 +43,7 @@ class MethodResTable {
 public:
 
     //import functions from compiler service
-    void import(CompilerService* compilerService);
-    void import(Method* method);
+    void import(Method* method, const Type::Ptr& funcType);
     Method* query(const FuncType::Ptr& funcType);
 
     const Method* operator[] (Slot slot);

@@ -28,7 +28,14 @@ ModuleClass* ClassLoader::load(const ModuleType::Ptr& module) {
 Method *ClassLoader::compile(const ModuleType::Ptr& module) {
     auto bytecodes = compile(module->instructions);
     auto method = new VMethod(bytecodes);
-    isolateVM->methodTable->import(method);
+    isolateVM->methodTable->import(method, module);
+    return method;
+}
+
+Method* ClassLoader::compile(const FuncType::Ptr &funcType){
+    auto bytecodes = compile(funcType->instructions);
+    auto method = new VMethod(bytecodes);
+    isolateVM->methodTable->import(method, funcType);
     return method;
 }
 

@@ -24,11 +24,13 @@ public:
     ModuleClass* load(const ModuleType::Ptr& module);
 
 private:
+    friend class IsolateVM;
+
     Method* compile(const ModuleType::Ptr& module);
+    Method* compile(const FuncType::Ptr& funcType);
     Bytecodes* compile(const std::vector<Instruction>& instructions);
     Field compile(const VariableType::Ptr& variableType);
-    
-private:
+
     IsolateVM* isolateVM;
     CompilerService* compilerService;
 };

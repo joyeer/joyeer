@@ -174,8 +174,6 @@ Node::Ptr TypeChecker::visit(const Pattern::Ptr& node) {
     node->identifier = std::static_pointer_cast<IdentifierExpr>(visit(node->identifier));
     if(node->typeExpr != nullptr) {
         node->typeExpr = visit(node->typeExpr);
-    } else {
-        assert(false);
     }
 
     return node;

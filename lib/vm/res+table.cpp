@@ -33,29 +33,15 @@ const Class *ClassResTable::operator[](Slot slot) {
 //  MethodResTable
 //////////////////////////////////////////
 
-void MethodResTable::import(CompilerService *compilerService) {
-
-    for(auto const& type: compilerService->types) {
-        if(type->kind == ValueType::Func) {
-            if(type->address == static_cast<size_t>(BuildIns::Func_Print)) {
-                auto method = new Global_$_print();
-                import(method);
-                mapOfTypeAndMethod[type->address] = method->slot;
-            } else {
-                assert(false);
-            }
-        }
-    }
-}
-
 Method* MethodResTable::query(const FuncType::Ptr& funcType) {
     return methods[mapOfTypeAndMethod[funcType->address]];
 }
 
-void MethodResTable::import(Method *method) {
+void MethodResTable::import(Method *method, const Type::Ptr& funcType) {
     assert(method->slot == -1);
     method->slot = static_cast<int>(methods.size());
     methods.push_back(method);
+    mapOfTypeAndMethod[funcType->address] = method->slot;
 }
 
 const Method* MethodResTable::operator[](Slot slot) {

@@ -28,4 +28,5 @@ struct IsolateVM {
     GC* gc;
 };
 
+
 #endif //__joyeer_vm_isolate_h__

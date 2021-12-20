@@ -4,6 +4,7 @@
 
 #include "joyeer/vm/isolate.h"
 #include "joyeer/vm/interpreter.h"
+#include "joyeer/vm/stdlib.h"
 
 IsolateVM::IsolateVM() {
     gc = new GC();
@@ -14,11 +15,24 @@ IsolateVM::~IsolateVM() {
 }
 
 void IsolateVM::run(const ModuleType::Ptr& module, CompilerService* compilerService) {
+    ClassLoader classLoader(this, compilerService);
+
     // import string tables
     stringTable->import(compilerService->strings);
-    methodTable->import(compilerService);
 
-    ClassLoader classLoader(this, compilerService);
+    // import methods
+    for(const auto& type : compilerService->types) {
+        if(type->kind == ValueType::Func) {
+            auto funcType = std::static_pointer_cast<FuncType>(type);
+            if(type->address == static_cast<size_t>(BuildIns::Func_Print)) {
+                auto method = new Global_$_print();
+                methodTable->import(method, funcType);
+            } else {
+                classLoader.compile(funcType);
+            }
+        }
+    }
+
     auto moduleClass = classLoader.load(module);
     run(moduleClass);
 }

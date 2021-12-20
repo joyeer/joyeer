@@ -252,7 +252,7 @@ Node::Ptr Binder::visit(const IdentifierExpr::Ptr& decl) {
         case CompileStage::visitModule:
         case CompileStage::visitCodeBlock: {
             auto symbol = context->lookup(name);
-            if(symbol != nullptr) {
+            if(symbol == nullptr) {
                 Diagnostics::reportError("[Error] cannot find variable declaration in function");
             } else {
                 decl->type = context->compiler->getType(symbol->address);
