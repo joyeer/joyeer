@@ -37,6 +37,7 @@ enum class ValueType : size_t {
     Int,
     Bool,
     Nil,
+    Unspecified,
     Any,
     String,
     RESOLVED_PRIMARY_TYPE_COUNT [[maybe_unused]],

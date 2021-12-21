@@ -53,8 +53,14 @@ struct AnyType : Type {
     AnyType(): Type("Any", ValueType::Any) {}
 };
 
+// Represent types are not unspecified
+struct UnspecifiedType: Type {
+    using Ptr = std::shared_ptr<UnspecifiedType>;
+    UnspecifiedType(): Type("Unspecified", ValueType::Unspecified) {}
+};
+
 // Variable for Field/LocalVariable declarations
-// will be used in ClassDef/FileModuleDef/FuncDef
+// will be used in ClassType/ModuleType/FuncType
 struct VariableType: Type {
     using Ptr = std::shared_ptr<VariableType>;
 

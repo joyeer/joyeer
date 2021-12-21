@@ -138,7 +138,7 @@ Node::Ptr TypeChecker::visit(const VarDecl::Ptr& decl) {
     }
 
     context->visit(CompileStage::visitVarDecl, decl, [this, decl]() {
-        visit(decl->pattern);
+        decl->pattern = std::static_pointer_cast<Pattern>(visit(decl->pattern));
     });
 
     // if the pattern specify the Types, VarDecl will follow the pattern

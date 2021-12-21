@@ -365,7 +365,7 @@ protected:
         incTab();
         newline();
         visit(decl->identifier);
-        if(decl->type != nullptr) {
+        if(decl->typeExpr != nullptr) {
             newline();
             NodeVisitor::visit(decl->typeExpr);
         }

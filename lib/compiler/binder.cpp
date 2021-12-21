@@ -128,6 +128,10 @@ Node::Ptr Binder::visit(const VarDecl::Ptr& decl) {
         decl->initializer = visit(decl->initializer);
     }
 
+    context->visit(CompileStage::visitVarDecl, decl, [this, decl]() {
+        decl->pattern = std::static_pointer_cast<Pattern>(visit(decl->pattern));
+    });
+
     auto pattern = decl->pattern;
     auto symtable = context->curSymTable();
     auto name = pattern->identifier->getSimpleName();
@@ -139,8 +143,9 @@ Node::Ptr Binder::visit(const VarDecl::Ptr& decl) {
     // declare the VariableType
     auto variableType = std::make_shared<VariableType>(name);
     context->compiler->declare(variableType);
+    variableType->addressOfType = decl->pattern->getType()->address;
 
-    // if the closest declaration type, is the FileModuleDef/ClassDef,
+    // if the closest declaration type, is the ModuleType/ClassType,
     // the variable will be treated as field in Symbol
     auto declType = context->curDeclType();
     auto flag = SymbolFlag::var;
@@ -202,8 +207,8 @@ Node::Ptr Binder::visit(const FuncCallExpr::Ptr& decl) {
 
     // go down to bind argument
     std::vector<ArguCallExpr::Ptr> argus;
-    for(auto& paramter: decl->arguments) {
-        argus.push_back(std::static_pointer_cast<ArguCallExpr>(visit(paramter)));
+    for(auto& parameter: decl->arguments) {
+        argus.push_back(std::static_pointer_cast<ArguCallExpr>(visit(parameter)));
     }
     decl->arguments = argus;
     
@@ -255,10 +260,16 @@ Node::Ptr Binder::visit(const IdentifierExpr::Ptr& decl) {
             if(symbol == nullptr) {
                 Diagnostics::reportError("[Error] cannot find variable declaration in function");
             } else {
-                decl->type = context->compiler->getType(symbol->address);
+                auto type = context->compiler->getType(symbol->address);
+                assert(type->kind == ValueType::Var);
+                auto variableType = std::static_pointer_cast<VariableType>(type);
+                auto typeOfVariable = context->compiler->getType(variableType->addressOfType);
+                assert(typeOfVariable->kind != ValueType::Var);
+                decl->type = typeOfVariable;
             }
         }
             return decl;
+        case CompileStage::visitVarDecl:
         case CompileStage::visitFuncNameDecl:
             return decl;
         default:
@@ -459,8 +470,13 @@ Node::Ptr Binder::visit(const ParameterClause::Ptr& decl) {
         // register the parameter into Symbol table
         auto symtable = context->curSymTable();
         auto parameterSimpleName = pattern->identifier->getSimpleName();
-        auto typeAddress = pattern->typeExpr->type->address;
-        symtable->insert(std::make_shared<Symbol>(SymbolFlag::var, parameterSimpleName, typeAddress));
+
+        auto variableType = std::make_shared<VariableType>(parameterSimpleName);
+        context->compiler->declare(variableType);
+
+        variableType->addressOfType = pattern->typeExpr->type->address;
+        variableType->parent = context->curFuncType()->address;
+        symtable->insert(std::make_shared<Symbol>(SymbolFlag::var, parameterSimpleName, variableType->address));
     }
     
     decl->parameters = parameters;
@@ -469,9 +485,9 @@ Node::Ptr Binder::visit(const ParameterClause::Ptr& decl) {
 
 Node::Ptr Binder::visit(const Pattern::Ptr& decl) {
     decl->identifier = std::static_pointer_cast<IdentifierExpr>(visit(decl->identifier));
-    decl->typeExpr = std::static_pointer_cast<TypeIdentifier>(visit(decl->typeExpr));
 
     if(decl->typeExpr != nullptr) {
+        decl->typeExpr = std::static_pointer_cast<TypeIdentifier>(visit(decl->typeExpr));
         // Pattern's type, binding to Type
         auto typeSimpleName = decl->typeExpr->getSimpleName();
         auto symbol = context->lookup(typeSimpleName);
@@ -481,6 +497,8 @@ Node::Ptr Binder::visit(const Pattern::Ptr& decl) {
 
         auto type = context->compiler->getType(symbol->address);
         decl->typeExpr->type = type;
+    } else {
+        decl->type = context->compiler->getType(static_cast<int>(ValueType::Unspecified));
     }
 
     return decl;

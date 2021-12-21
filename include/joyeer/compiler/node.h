@@ -105,7 +105,7 @@ struct Node : std::enable_shared_from_this<Node> {
     }
 
     // return Types underlay, for non-expr, it returns nullptr;
-    Type::Ptr getType() const {
+    virtual Type::Ptr getType() const {
         return type;
     }
 
@@ -611,6 +611,7 @@ struct ForInStmt : Node {
             inExpr(std::move(inExpr)),
             codeBlock(std::move(codeBlock)) {
     }
+
 
     void recursiveUpdate() override {
         NODE_RECURSIVE_UPDATE(pattern, NODE_UPDATE_ACTION_SET_PARENT_THIS(pattern))

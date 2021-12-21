@@ -148,6 +148,7 @@ void CompilerService::initializeTypes() {
     DECLARE_TYPE(ValueType::Int, IntType)
     DECLARE_TYPE(ValueType::Bool, BoolType)
     DECLARE_TYPE(ValueType::Nil, NilType)
+    DECLARE_TYPE(ValueType::Unspecified, UnspecifiedType)
     DECLARE_TYPE(ValueType::Any, AnyType)
 
     DECLARE_TYPE_2(BuildIns::Func_Print, FuncType, "print(message:)")
