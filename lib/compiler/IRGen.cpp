@@ -1,7 +1,6 @@
 #include "joyeer/compiler/IRGen.h"
 #include "joyeer/common/diagnostic.h"
 #include "joyeer/compiler/compiler+service.h"
-#include "joyeer/compiler/memory+alignment.h"
 
 ////////////////////////////////////////////////////////
 // IRGen
@@ -48,9 +47,6 @@ void IRGen::emit(const Node::Ptr& node) {
 }
 
 ModuleType::Ptr IRGen::emit(const ModuleDecl::Ptr& decl) {
-
-    VariableLocalRebase rebase;
-    rebase.align(decl);
 
     auto moduleType = std::static_pointer_cast<ModuleType>(decl->type);
     context->visit(CompileStage::visitModule, decl, [this, decl]() {
@@ -148,28 +144,30 @@ void IRGen::emit(const VarDecl::Ptr& node) {
     emit(node->initializer);
 
     auto symbol = context->lookup(node->getSimpleName());
-    auto varType = std::static_pointer_cast<VariableType>(context->compiler->getType(symbol->address));
 
     switch (symbol->flag) {
         case SymbolFlag::var:
             writer.write({
                 .opcode = OP_ISTORE,
-                .value = varType->position
+                .value = symbol->locationInParent
             });
             break;
         case SymbolFlag::field: {
-            // static field
-            if(varType->isStatic()) {
+            if(symbol->isStatic) {
                 writer.write({
                     .opcode = OP_PUTSTATIC,
-                    .value = varType->address,
-                });
+                    .pair = {
+                            .val1 = symbol->parentTypeSlot,
+                            .val2 = symbol->locationInParent
+                    }});
+                return;
             } else {
                 writer.write({
                     .opcode = OP_OLOAD
-                });
-                assert(false);
+                 });
             }
+
+
         }
             break;
         default:
@@ -197,15 +195,14 @@ void IRGen::emit(const IdentifierExpr::Ptr& node) {
         return;
     }
 
-    auto varType = std::static_pointer_cast<VariableType>(context->compiler->getType(symbol->address));
 
     if(symbol->flag  == SymbolFlag::var) {
-        auto typeOfVariable = context->compiler->getType(varType->addressOfType);
+        auto typeOfVariable = context->compiler->getType(symbol->typeSlot);
         switch (typeOfVariable->kind) {
             case ValueType::Int: {
                 writer.write({
                     .opcode = OP_ILOAD,
-                    .value = varType->position
+                    .value = symbol->locationInParent
                 });
             }
                 break;
@@ -227,18 +224,20 @@ void IRGen::emit(const IdentifierExpr::Ptr& node) {
 //        }
         return;
     } else if(symbol->flag == SymbolFlag::field) {
-        if(varType->isStatic()) {
+
+        if(symbol->isStatic) {
             // static field
+            assert(symbol->parentTypeSlot != -1);
+            assert(symbol->locationInParent != -1);
             writer.write({
-                .opcode = OP_GETSTATIC,
-                .value = varType->address
-            });
+                                 .opcode = OP_GETSTATIC,
+                                 .pair = {
+                                         .val1 = symbol->parentTypeSlot,
+                                         .val2 = symbol->locationInParent
+                                 }
+                         });
             return;
         }
-
-        assert(false);
-        
-        return;
     }
 
     assert(false);
@@ -251,21 +250,22 @@ void IRGen::emit(const AssignExpr::Ptr& node) {
         emit(node->expr);
         auto identifierExpr = std::static_pointer_cast<IdentifierExpr>(node->left);
         auto symbol = context->lookup(identifierExpr->getSimpleName());
-        auto type = std::static_pointer_cast<VariableType>(context->compiler->getType(symbol->address));
 
         if(symbol->flag == SymbolFlag::field) {
-            if(type->isStatic()) {
+            assert(symbol->parentTypeSlot != -1);
+            assert(symbol->locationInParent != -1);
+            if(symbol->isStatic) {
                 writer.write({
-                    .opcode = OP_PUTSTATIC,
-                    .value = type->address
-                });
-                return;
+                             .opcode = OP_PUTSTATIC,
+                             .pair = {
+                                     .val1 = symbol->parentTypeSlot,
+                                     .val2 = symbol->locationInParent
+                                     }
+                     });
             } else {
                 assert(false);
             }
         }
-
-        assert(false);
     } else if( node->left->kind == SyntaxKind::selfExpr ) {
         emit(node->expr);
         auto selfExpr = std::static_pointer_cast<SelfExpr>(node->left);
@@ -451,9 +451,6 @@ void IRGen::emit(const StmtsBlock::Ptr& node) {
 }
 
 void IRGen::emit(const FuncDecl::Ptr& node) {
-
-    VariableLocalRebase rebase;
-    rebase.align(node);
 
     auto function = std::static_pointer_cast<FuncType>(node->type);
 

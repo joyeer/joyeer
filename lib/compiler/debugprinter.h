@@ -95,6 +95,7 @@ protected:
         DEBUG_BLOCK_START
         for(const auto& member : decl->statements) {
             newline();
+            output << "- ";
             NodeVisitor::visit(member);
         }
         DEBUG_BLOCK_END
@@ -478,10 +479,9 @@ struct TypeDefDebugPrinter : YMLPrinter {
                     newline();
                     print(std::static_pointer_cast<FuncType>(tf));
                     break;
-                case ValueType::Var:
-                    output << "kind: Var";
+                case ValueType::Unspecified:
+                    output << "kind: Unspecified";
                     newline();
-                    print(std::static_pointer_cast<VariableType>(tf));
                     break;
                 default:
                     assert(false);
@@ -534,16 +534,10 @@ struct TypeDefDebugPrinter : YMLPrinter {
             if (i > 0) {
                 newline();
             }
-            output << "- variable: " << variable->address;
+//            output << "- variable: " << variable->typeSlot;
             i ++;
         }
         DEBUG_BLOCK_END
-    }
-
-    void print(const VariableType::Ptr& variable) {
-        output << "name: " << variable->name;
-        newline();
-        output << "access-flag: " << debugAccessFlag(variable->accessFlags);
     }
 };
 

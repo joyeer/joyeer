@@ -15,10 +15,10 @@ public:
     // register a kind
     void declare(const Type::Ptr& type);
 
-    // get a Types base on a given address/position
+    // get a Types base on a given typeSlot/position
     Type::Ptr getType(int address);
 
-    Type::Ptr getPrimaryType(ValueType valueType);
+    Type::Ptr getType(ValueType valueType);
 
     // get the Type declaration of the BuildIns func/object
     Type::Ptr getBuildInsType(BuildIns buildIn) {
@@ -33,8 +33,7 @@ private:
 
     // Compile an SourceFile
     ModuleType::Ptr compile(const SourceFile::Ptr& sourcefile);
-    // try to import module, and return the exported symtable;
-    SourceFile::Ptr tryImport(const CompileContext::Ptr& context, const std::string& moduleName);
+
     SourceFile::Ptr findSourceFile(const std::string& path, const std::string& relativeFolder = "");
     
     void debugPrint(const Node::Ptr& node, const std::string& debugFilePath);

@@ -65,8 +65,6 @@ ModuleType::Ptr CompilerService::compile(const SourceFile::Ptr& sourcefile) {
     
     // Detect for kind creating
     Binder binder(context);
-    binder.importDelegate = std::bind(&CompilerService::tryImport, this, std::placeholders::_1, std::placeholders::_2);
-    
     binder.visit(block);
     debugPrint(block, block->filename + ".binder.debug.yml");
     CHECK_ERROR_RETURN_NULL
@@ -99,22 +97,8 @@ Type::Ptr CompilerService::getType(int address) {
     return types[address];
 }
 
-Type::Ptr CompilerService::getPrimaryType(ValueType valueType) {
+Type::Ptr CompilerService::getType(ValueType valueType) {
     return types[static_cast<int>(valueType)];
-}
-
-SourceFile::Ptr CompilerService::tryImport(const CompileContext::Ptr& context, const std::string &moduleName) {
-    auto sourcefile = context->sourcefile;
-    auto relativedFolder = sourcefile->getParentFolder();
-    auto importfile = findSourceFile(moduleName, relativedFolder);
-    if(importfile == nullptr) {
-        Diagnostics::reportError("Error: Module cannot be found");
-        return nullptr;
-    }
-    compile(importfile);
-    
-    CHECK_ERROR_RETURN_NULL
-    return importfile;
 }
 
 void CompilerService::debugPrint(const Node::Ptr& node, const std::string &debugFilePath) {

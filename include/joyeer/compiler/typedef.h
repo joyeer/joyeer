@@ -9,6 +9,7 @@
 #include "joyeer/compiler/opcode.h"
 
 #include <string>
+#include <utility>
 
 enum AccessFlag : uint32_t {
     Public = 0x0001,
@@ -61,12 +62,15 @@ struct UnspecifiedType: Type {
 
 // Variable for Field/LocalVariable declarations
 // will be used in ClassType/ModuleType/FuncType
-struct VariableType: Type {
-    using Ptr = std::shared_ptr<VariableType>;
+struct Variable {
+    using Ptr = std::shared_ptr<Variable>;
 
-    int position = -1;
-    int parent = -1; // Variable's parent Type, e.g. ClassType/ModuleType/FuncType
-    int addressOfType = -1; // Variable's type
+    // the debugger name's variable/field
+    const std::string name;
+
+    int parentSlot = -1; // Variable's parentTypeSlot Type, e.g. ClassType/ModuleType/FuncType
+    int typeSlot = -1; // Variable's type
+    int location = -1;
 
     AccessFlag accessFlags = AccessFlag::Public;
 
@@ -79,8 +83,7 @@ struct VariableType: Type {
         return (accessFlags & AccessFlag::Static) == AccessFlag::Static;
     }
 
-    explicit VariableType(std::string  name):
-            Type(name, ValueType::Var) {}
+    explicit Variable(std::string  name): name(std::move(name)) {}
 };
 
 // Represent Int kind
@@ -99,8 +102,8 @@ struct BoolType : Type {
 struct BlockType : Type {
     using Ptr = std::shared_ptr<BlockType>;
 
-    int32_t base = -1; // re-located address for block variables
-    std::vector<VariableType::Ptr> localVars; // local-variables
+    int32_t base = -1; // re-located typeSlot for block variables
+    std::vector<Variable::Ptr> localVars; // local-variables
 
     BlockType();
 };
@@ -116,7 +119,7 @@ struct FuncType : Type {
 
     FuncTypeKind funcKind;
     BlockType::Ptr block;
-    std::vector<VariableType::Ptr> paramTypes;
+    std::vector<Variable::Ptr> paramTypes;
     Type::Ptr returnType;
     std::vector<Instruction> instructions;
 
@@ -136,7 +139,7 @@ struct ModuleType : BlockType {
     // File initialize instructions
     std::vector<Instruction> instructions;
 
-    [[nodiscard]] std::vector<VariableType::Ptr> getVariables() const {
+    [[nodiscard]] std::vector<Variable::Ptr> getVariables() const {
         return localVars;
     }
 

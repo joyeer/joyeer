@@ -55,17 +55,20 @@ Bytecodes* ClassLoader::compile(const std::vector<Instruction> &instructions) {
             }
                 break;
             case OP_GETSTATIC:{
-                auto typeVariable = std::static_pointer_cast<VariableType>(compilerService->getType(value));
-                auto typeClass = std::static_pointer_cast<ClassType>(compilerService->getType(typeVariable->parent));
+
+                auto typeSlot = instruction.pair.val1;
+                auto location = instruction.pair.val2;
+                auto typeClass = std::static_pointer_cast<ClassType>(compilerService->getType(typeSlot));
                 auto klass = isolateVM->classTable->query(typeClass);
-                writer.write(DEF_BYTECODE_2(OP_GETSTATIC, klass->slot, typeVariable->position));
+                writer.write(DEF_BYTECODE_2(OP_GETSTATIC, klass->slot, location));
             }
                 break;
             case OP_PUTSTATIC: {
-                auto typeVariable = std::static_pointer_cast<VariableType>(compilerService->getType(value));
-                auto typeClass = std::static_pointer_cast<ClassType>(compilerService->getType(typeVariable->parent));
+                auto typeSlot = instruction.pair.val1;
+                auto location = instruction.pair.val2;
+                auto typeClass = std::static_pointer_cast<ClassType>(compilerService->getType(typeSlot));
                 auto klass = isolateVM->classTable->query(typeClass);
-                writer.write(DEF_BYTECODE_2(OP_PUTSTATIC, klass->slot, typeVariable->position));
+                writer.write(DEF_BYTECODE_2(OP_PUTSTATIC, klass->slot, location));
             }
                 break;
             case OP_OLOAD:{
@@ -123,8 +126,8 @@ Bytecodes* ClassLoader::compile(const std::vector<Instruction> &instructions) {
     return writer.getBytecodes();
 }
 
-Field ClassLoader::compile(const VariableType::Ptr& variableType) {
-    auto type = compilerService->getType(variableType->addressOfType);
+Field ClassLoader::compile(const Variable::Ptr& variable) {
+    auto type = compilerService->getType(variable->typeSlot);
     switch (type->kind) {
         case ValueType::Int:
             return Field(ValueType::Int);

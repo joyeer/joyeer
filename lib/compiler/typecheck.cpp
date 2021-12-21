@@ -38,10 +38,11 @@ Node::Ptr TypeChecker::visit(const FuncDecl::Ptr& decl) {
 
         assert(funcType->paramTypes.empty());
 
-        // Binding function's kind
         auto parameterClause = std::static_pointer_cast<ParameterClause>(decl->parameterClause);
         for(const auto& parameter: parameterClause->parameters) {
-            funcType->paramTypes.push_back(std::static_pointer_cast<VariableType>(parameter->getType()));
+            auto parameterName = parameter->getSimpleName();
+            auto variable = std::make_shared<Variable>(parameterName);
+            funcType->paramTypes.push_back(variable);
         }
 
         // verify return type
@@ -142,18 +143,12 @@ Node::Ptr TypeChecker::visit(const VarDecl::Ptr& decl) {
     });
 
     // if the pattern specify the Types, VarDecl will follow the pattern
-    if(decl->pattern->getType() != nullptr) {
-        decl->type = decl->pattern->getType();
+    if(decl->pattern->getType()->kind == ValueType::Unspecified) {
+        decl->type = decl->initializer->getType();
     } else {
         // follow the initializer expression's typedef
-        decl->type = decl->initializer->getType();
+        decl->type = decl->pattern->getType();
     }
-
-    assert(decl->getType() != nullptr);
-    // assign the decl for VariableType;
-    auto variableType = std::static_pointer_cast<VariableType>(context->compiler->getType(symbol->address));
-    assert(variableType->kind == ValueType::Var);
-    variableType->addressOfType = decl->getType()->address;
 
     return decl;
 }
@@ -209,7 +204,7 @@ Node::Ptr TypeChecker::visit(const TypeIdentifier::Ptr& node) {
     if(symbol == nullptr) {
         Diagnostics::reportError("[Error]Cannot find type");
     } else {
-        node->type = context->compiler->getType(symbol->address);
+        node->type = context->compiler->getType(symbol->typeSlot);
     }
 
     return node;
@@ -233,12 +228,6 @@ Node::Ptr TypeChecker::visit(const ReturnStmt::Ptr& decl) {
 
         auto type = decl->expr->getType();
         switch (type->kind) {
-            case ValueType::Var: {
-                auto variable = std::static_pointer_cast<VariableType>(type);
-                auto typeOfVariable = context->compiler->getType(variable->addressOfType);
-                decl->type = typeOfVariable;
-            }
-                break;
             default:
                 assert(false);
         }
@@ -264,13 +253,13 @@ Node::Ptr TypeChecker::visit(const Expr::Ptr& node) {
 Node::Ptr TypeChecker::visit(const LiteralExpr::Ptr& node) {
     switch(node->literal->kind) {
         case TokenKind::decimalLiteral:
-            node->type = context->compiler->getPrimaryType(ValueType::Int);
+            node->type = context->compiler->getType(ValueType::Int);
             break;
         case TokenKind::stringLiteral:
-            node->type = context->compiler->getPrimaryType(ValueType::String);
+            node->type = context->compiler->getType(ValueType::String);
             break;
         case TokenKind::booleanLiteral:
-            node->type = context->compiler->getPrimaryType(ValueType::Bool);
+            node->type = context->compiler->getType(ValueType::Bool);
             break;
         default:
             assert(false);
@@ -484,13 +473,13 @@ Type::Ptr TypeChecker::typeOf(const Expr::Ptr& node) {
 Type::Ptr TypeChecker::typeOf(const LiteralExpr::Ptr& node) {
     switch(node->literal->kind) {
         case booleanLiteral:
-            return context->compiler->getPrimaryType(ValueType::Bool);
+            return context->compiler->getType(ValueType::Bool);
         case decimalLiteral:
-            return context->compiler->getPrimaryType(ValueType::Int);
+            return context->compiler->getType(ValueType::Int);
         case nilLiteral:
-            return context->compiler->getPrimaryType(ValueType::Nil);
+            return context->compiler->getType(ValueType::Nil);
         case stringLiteral:
-            return context->compiler->getPrimaryType(ValueType::String);
+            return context->compiler->getType(ValueType::String);
         default:
             assert(false);
     }
@@ -500,13 +489,13 @@ Type::Ptr TypeChecker::typeOf(const FuncCallExpr::Ptr& node) {
     auto funcName = node->getSimpleName();
     auto symbol = context->lookup(funcName);
     assert(symbol->flag == SymbolFlag::func);
-    return context->compiler->getType(symbol->address);
+    return context->compiler->getType(symbol->typeSlot);
 }
 
 Type::Ptr TypeChecker::typeOf(const MemberFuncCallExpr::Ptr& node) {
     auto funcName = node->getSimpleName();
     auto symbol = context->lookup(funcName);
-    auto funcDef = std::static_pointer_cast<FuncType> (context->compiler->getType(symbol->address));
+    auto funcDef = std::static_pointer_cast<FuncType> (context->compiler->getType(symbol->typeSlot));
     return funcDef->returnType;
 }
 
@@ -520,7 +509,7 @@ Type::Ptr TypeChecker::typeOf(const SelfExpr::Ptr& node) {
 
 Type::Ptr TypeChecker::typeOf(const Pattern::Ptr& node) {
     if(node->type == nullptr) {
-        return context->compiler->getPrimaryType(ValueType::Any);
+        return context->compiler->getType(ValueType::Any);
     }
     return typeOf(node->typeExpr);
 }
@@ -539,7 +528,7 @@ Type::Ptr TypeChecker::typeOf(const ArrayLiteralExpr::Ptr& node) {
         auto type = typeOf(item);
         if(previousType != nullptr) {
             if(type->kind != previousType->kind) {
-                return context->compiler->getPrimaryType(ValueType::Any);
+                return context->compiler->getType(ValueType::Any);
             }
         }
 
@@ -624,7 +613,7 @@ Type::Ptr TypeChecker::returnTypeOf(const Node::Ptr& node) {
         case SyntaxKind::returnStmt: {
             auto returnStatement = std::static_pointer_cast<ReturnStmt>(node);
             if(returnStatement->expr == nullptr) {
-                return context->compiler->getPrimaryType(ValueType::Void);;
+                return context->compiler->getType(ValueType::Void);;
             } else {
                 return typeOf(returnStatement->expr);
             }

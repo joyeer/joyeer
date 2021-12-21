@@ -9,9 +9,9 @@
 struct CommandLineArguments {
     using Ptr = std::shared_ptr<CommandLineArguments>;
     
-    // the executable of joyeer's location
+    // the executable of joyeer's locationInParent
     std::filesystem::path vmLocation;
-    // main entry point of source code location
+    // main entry point of source code locationInParent
     std::filesystem::path inputfile;
     // working directory for source code
     std::filesystem::path workingDirectory;

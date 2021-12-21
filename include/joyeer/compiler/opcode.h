@@ -63,7 +63,14 @@ enum Opcode : uint16_t {
 //
 struct Instruction {
     Opcode opcode;
-    int64_t value = -1;
+    union {
+        int64_t value = -1;
+        struct {
+            int32_t val1 = -1;
+            int32_t val2 = -1;
+        } pair;
+    };
+
 };
 
 struct JrCodeWriter {

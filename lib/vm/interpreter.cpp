@@ -21,11 +21,6 @@ Value Arguments::getArgument(Slot slot) {
             Handle_##OP(bytecode); \
             goto next;
 
-#define HANDLE_BYTECODE_JUMP(OP) \
-        case OP_##OP: \
-            Handle_##OP(bytecode); \
-            goto loop;
-
 #define HANDLE_BYTECODE_RETURN(OP) \
         case OP_##OP: \
             Handle_##OP(bytecode); \

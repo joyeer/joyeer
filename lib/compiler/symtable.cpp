@@ -19,9 +19,9 @@ std::string debugStringOfSymbolFlag(SymbolFlag flag) {
 }
 
 Symbol::Symbol(SymbolFlag flag, std::string name, int address):
-flag(flag),
-name(std::move(name)),
-address(address) {
+        flag(flag),
+        name(std::move(name)),
+        typeSlot(address) {
 }
 
 /////////////////////////////////////////////////////////////////
@@ -35,7 +35,8 @@ bool SymbolTable::insert(const Symbol::Ptr& symbol) {
     if(symbols.find(symbol->name) != symbols.end()) {
         return false;
     }
-    
+
+    symbol->locationInParent = symbols.size();
     symbols.insert({
         symbol->name,
         symbol

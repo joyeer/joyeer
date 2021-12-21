@@ -82,7 +82,7 @@ Node::Ptr Binder::visit(const FuncDecl::Ptr& decl) {
     context->compiler->declare(funcType);
     decl->type = funcType;
 
-    // prepare the symbol, register the symbol into parent
+    // prepare the symbol, register the symbol into parentTypeSlot
     auto symbol = std::make_shared<Symbol>(SymbolFlag::func, funcSimpleName, funcType->address);
     symtable->insert(symbol);
     
@@ -140,11 +140,6 @@ Node::Ptr Binder::visit(const VarDecl::Ptr& decl) {
         Diagnostics::reportError("[Error] duplicate variable name");
     }
 
-    // declare the VariableType
-    auto variableType = std::make_shared<VariableType>(name);
-    context->compiler->declare(variableType);
-    variableType->addressOfType = decl->pattern->getType()->address;
-
     // if the closest declaration type, is the ModuleType/ClassType,
     // the variable will be treated as field in Symbol
     auto declType = context->curDeclType();
@@ -152,34 +147,21 @@ Node::Ptr Binder::visit(const VarDecl::Ptr& decl) {
     switch (declType->kind) {
         case ValueType::Module:
             flag = SymbolFlag::field;
-            variableType->markAsStatic();
-            variableType->parent = declType->address; // parent address
             break;
         case ValueType::Func:
             flag = SymbolFlag::var;
-            variableType->parent = declType->address;
             break;
         default:
             assert(false);
     }
 
-    auto symbol = std::make_shared<Symbol>(flag, name, variableType->address);
+    auto symbol = std::make_shared<Symbol>(flag, name, pattern->getType()->address);
     symtable->insert(symbol);
 
-    // double-check to complicate
-    auto stage = context->curStage();
-    switch (stage) {
-        case CompileStage::visitModule: {
-            auto moduleType = context->curModuleType();
-            assert(moduleType);
-            moduleType->localVars.push_back(variableType);
-        }
-            break;
-        case CompileStage::visitCodeBlock: {
-            auto blockType = context->curBlockType();
-            assert(blockType);
-            blockType->localVars.push_back(variableType);
-        }
+    switch (context->curStage()) {
+        case CompileStage::visitModule:
+            symbol->isStatic = true;
+            symbol->parentTypeSlot = declType->address;
             break;
         default:
             assert(false);
@@ -203,7 +185,7 @@ Node::Ptr Binder::visit(const FuncCallExpr::Ptr& decl) {
         Diagnostics::reportError(ErrorLevel::failure, "[TODO] cannot find func");
         return decl;
     }
-    decl->type = context->compiler->getType(symbol->address);
+    decl->type = context->compiler->getType(symbol->typeSlot);
 
     // go down to bind argument
     std::vector<ArguCallExpr::Ptr> argus;
@@ -259,13 +241,6 @@ Node::Ptr Binder::visit(const IdentifierExpr::Ptr& decl) {
             auto symbol = context->lookup(name);
             if(symbol == nullptr) {
                 Diagnostics::reportError("[Error] cannot find variable declaration in function");
-            } else {
-                auto type = context->compiler->getType(symbol->address);
-                assert(type->kind == ValueType::Var);
-                auto variableType = std::static_pointer_cast<VariableType>(type);
-                auto typeOfVariable = context->compiler->getType(variableType->addressOfType);
-                assert(typeOfVariable->kind != ValueType::Var);
-                decl->type = typeOfVariable;
             }
         }
             return decl;
@@ -471,12 +446,7 @@ Node::Ptr Binder::visit(const ParameterClause::Ptr& decl) {
         auto symtable = context->curSymTable();
         auto parameterSimpleName = pattern->identifier->getSimpleName();
 
-        auto variableType = std::make_shared<VariableType>(parameterSimpleName);
-        context->compiler->declare(variableType);
-
-        variableType->addressOfType = pattern->typeExpr->type->address;
-        variableType->parent = context->curFuncType()->address;
-        symtable->insert(std::make_shared<Symbol>(SymbolFlag::var, parameterSimpleName, variableType->address));
+        symtable->insert(std::make_shared<Symbol>(SymbolFlag::var, parameterSimpleName, -1));
     }
     
     decl->parameters = parameters;
@@ -495,7 +465,7 @@ Node::Ptr Binder::visit(const Pattern::Ptr& decl) {
             Diagnostics::reportError("[Bind][Error]cannot find pattern name");
         }
 
-        auto type = context->compiler->getType(symbol->address);
+        auto type = context->compiler->getType(symbol->typeSlot);
         decl->typeExpr->type = type;
     } else {
         decl->type = context->compiler->getType(static_cast<int>(ValueType::Unspecified));

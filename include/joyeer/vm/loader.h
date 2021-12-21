@@ -29,7 +29,7 @@ private:
     Method* compile(const ModuleType::Ptr& module);
     Method* compile(const FuncType::Ptr& funcType);
     Bytecodes* compile(const std::vector<Instruction>& instructions);
-    Field compile(const VariableType::Ptr& variableType);
+    Field compile(const Variable::Ptr& variable);
 
     IsolateVM* isolateVM;
     CompilerService* compilerService;

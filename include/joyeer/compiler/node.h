@@ -53,7 +53,7 @@ enum class SyntaxKind {
 
 };
 
-// Lambda expr for update node's parent = this
+// Lambda expr for update node's parentTypeSlot = this
 #define NODE_UPDATE_ACTION_SET_PARENT_THIS(node) [this]() { (node)->parent = shared_from_this(); }
 #define NODE_UPDATE_ACTION_SET_PARENT_THIS_2(node) [this, node]() { (node)->parent = shared_from_this(); }
 

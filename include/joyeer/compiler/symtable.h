@@ -9,7 +9,7 @@ enum class SymbolFlag : uint16_t {
     func = 1,
     var,
     field,
-    klass,d
+    klass,
 };
 
 std::string debugStringOfSymbolFlag(SymbolFlag flag);
@@ -27,11 +27,17 @@ struct Symbol {
     SymbolFlag flag;
     std::string name;
 
-    // address of ModuleType/FuncType/ClassType
-    int32_t address = -1;
+    // typeSlot of ModuleType/FuncType/ClassType
+    int typeSlot = -1;
+
+    // the parentTypeSlot type's slot
+    int parentTypeSlot = -1;
+
+    int locationInParent = -1;
+
+    bool isStatic = false;
 
     Symbol(SymbolFlag flag, std::string  name, int address);
-
 };
 
 
@@ -47,7 +53,9 @@ public:
     
     // find symbol by a given name
     [[nodiscard]] Symbol::Ptr find(const std::string& name) const;
-    
+
+private:
+    friend class NodeDebugPrinter;
     std::unordered_map<std::string, Symbol::Ptr> symbols;
 };
 
