@@ -150,16 +150,28 @@ Node::Ptr TypeChecker::visit(const VarDecl::Ptr& decl) {
         decl->type = decl->pattern->getType();
     }
 
+    // Update the Variable's type base on declaraiton
+    symbol->typeSlot = decl->getType()->address;
+
+
     return decl;
 }
 
 Node::Ptr TypeChecker::visit(const ParameterClause::Ptr& node) {
-    auto symtable = context->curSymTable();
+
     auto parameters = std::vector<Pattern::Ptr>();
     for(const auto& param: node->parameters) {
         parameters.push_back(std::static_pointer_cast<Pattern>(visit(param)));
     }
     node->parameters = parameters;
+
+    // enrich the symbol's type
+    for(const auto& param: node->parameters) {
+        auto parameterName = param->getSimpleName();
+        auto symbol = context->lookup(parameterName);
+        assert(symbol != nullptr);
+        symbol->typeSlot = param->getType()->address;
+    }
     return node;
 }
 
@@ -184,6 +196,9 @@ Node::Ptr TypeChecker::visit(const IdentifierExpr::Ptr& node) {
             if(symbol == nullptr) {
                 Diagnostics::reportError(ErrorLevel::failure, "[TODO][Error] Cannot find variable");
             }
+            assert(symbol->typeSlot != -1);
+            assert(node->type == nullptr);
+            node->type = context->compiler->getType(symbol->typeSlot);
         }
             break;
         case CompileStage::visitAssignExpr:
@@ -228,6 +243,8 @@ Node::Ptr TypeChecker::visit(const ReturnStmt::Ptr& decl) {
 
         auto type = decl->expr->getType();
         switch (type->kind) {
+            case ValueType::Int:
+                break;
             default:
                 assert(false);
         }
@@ -427,6 +444,7 @@ Type::Ptr TypeChecker::typeOf(const IdentifierExpr::Ptr& node) {
     auto symbol = context->lookup(node->getSimpleName());
     switch(symbol->flag) {
         case SymbolFlag::var:
+            assert(node->type != nullptr);
             return node->type;
         case SymbolFlag::field: {
 //            auto kind = (JrObjectType*)(context->curType());

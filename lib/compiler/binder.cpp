@@ -157,11 +157,14 @@ Node::Ptr Binder::visit(const VarDecl::Ptr& decl) {
 
     auto symbol = std::make_shared<Symbol>(flag, name, pattern->getType()->address);
     symtable->insert(symbol);
+    symbol->parentTypeSlot = declType->address;
 
     switch (context->curStage()) {
         case CompileStage::visitModule:
             symbol->isStatic = true;
-            symbol->parentTypeSlot = declType->address;
+            break;
+        case CompileStage::visitCodeBlock:
+            symbol->isStatic = false;
             break;
         default:
             assert(false);
