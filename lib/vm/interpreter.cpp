@@ -12,7 +12,7 @@ executor(executor) {
 }
 
 Value Arguments::getArgument(Slot slot) {
-    auto pValue = (Value*)(executor->stack + executor->sp - kValueSize - slot);
+    auto pValue = (Value*)(executor->stack + executor->fp - kValueSize - slot);
     return *pValue;
 }
 
@@ -140,6 +140,7 @@ loop:
 
     inline void Handle_ILOAD(Bytecode bytecode) {
         assert(OP_FROM_BYTECODE(bytecode) == OP_ILOAD);
+        auto value = VALUE_FROM_BYTECODE(bytecode);
         assert(false);
     }
 
@@ -389,10 +390,10 @@ void Executor::execute(const Method *method) {
 
     switch (method->kind) {
         case MethodKind::C_Method:
-            execute(dynamic_cast<const CMethod*>(method));
+            invoke(dynamic_cast<const CMethod*>(method));
             break;
         case MethodKind::VM_Method:
-            execute(dynamic_cast<const VMethod*>(method));
+            invoke(dynamic_cast<const VMethod*>(method));
             break;
         default:
             assert(false);
@@ -401,12 +402,12 @@ void Executor::execute(const Method *method) {
     pop(savedFP);
 }
 
-void Executor::execute(const VMethod *method) {
+void Executor::invoke(const VMethod *method) {
     Interpreter interpreter(this, method->bytecodes);
     interpreter.run();
 }
 
-void  Executor::execute(const CMethod *method) {
+void  Executor::invoke(const CMethod *method) {
     Arguments arguments(this);
     (*method)(isolateVM, &arguments);
 }
@@ -414,7 +415,16 @@ void  Executor::execute(const CMethod *method) {
 void Executor::push(Slot frame, int size) {
     frames.push_back(frame);
     sp += size;
+    fp = frame;
 }
+
+void Executor::pop(Slot frame) {
+    assert(frames.back() == frame);
+    frames.pop_back();
+    sp = frame;
+    fp = frames.back();
+}
+
 
 void Executor::push(Value value) {
     *(Int *)(stack + sp) = value.intValue;
@@ -428,8 +438,3 @@ Value Executor::pop() {
     return {.intValue = result };
 }
 
-void Executor::pop(Slot frame) {
-    assert(frames.back() == frame);
-    frames.pop_back();
-    sp = frame;
-}

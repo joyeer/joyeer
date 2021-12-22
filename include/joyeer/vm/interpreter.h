@@ -14,9 +14,11 @@ constexpr int kStackMaxSize = 1024 * 1024 * 4; // 4M intptr_t;
 struct Executor;
 
 struct Arguments {
-    Executor* executor;
     explicit Arguments(Executor* executor);
     Value getArgument(Slot slot);
+
+private:
+    Executor* executor;
 };
 
 struct Executor {
@@ -28,17 +30,17 @@ struct Executor {
     explicit Executor(IsolateVM* isolateVM);
 
     // execute a Module
-    void execute(const ModuleClass* moduleClass);
+    void execute(const ModuleClass* module);
 
     // execute a Method
     void execute(const Method* method);
-private:
 
+private:
     friend class Interpreter;
     friend class Arguments;
 
-    void execute(const CMethod* method);
-    void execute(const VMethod* method);
+    void invoke(const CMethod* method);
+    void invoke(const VMethod* method);
 
     void push(Slot frame, int size);
     void pop(Slot frame);
