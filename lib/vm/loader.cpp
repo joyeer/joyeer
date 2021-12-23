@@ -27,14 +27,16 @@ ModuleClass* ClassLoader::load(const ModuleType::Ptr& module) {
 
 Method *ClassLoader::compile(const ModuleType::Ptr& module) {
     auto bytecodes = compile(module->instructions);
-    auto method = new VMethod(bytecodes);
+    auto method = new VMethod(bytecodes, 0, module->getVariables().size());
     isolateVM->methodTable->import(method, module);
     return method;
 }
 
 Method* ClassLoader::compile(const FuncType::Ptr &funcType){
     auto bytecodes = compile(funcType->instructions);
-    auto method = new VMethod(bytecodes);
+    auto paramCount = funcType->paramTypes.size();
+    auto localVarCount = paramCount + funcType->getLocalVarCount();
+    auto method = new VMethod(bytecodes, paramCount, localVarCount);
     isolateVM->methodTable->import(method, funcType);
     return method;
 }

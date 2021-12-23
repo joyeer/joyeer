@@ -120,10 +120,13 @@ struct FuncType : Type {
     FuncTypeKind funcKind;
     BlockType::Ptr block;
     std::vector<Variable::Ptr> paramTypes;
+    std::vector<Variable::Ptr> localVars;
     Type::Ptr returnType;
     std::vector<Instruction> instructions;
 
     explicit FuncType(const std::string& name);
+
+    int getLocalVarCount() const ;
 };
 
 struct ClassType : Type {

@@ -60,6 +60,11 @@ struct FuncCallFrame : public StackFrame {
         *(Value*)(frame + kFrameTypeOffset) = { .intValue = StackFrame::Type::FUNC_CALL } ;
         *(Value*)(frame + kMethodSlotOffset) = { .slotValue = methodSlot };
     }
+
+    // Return the local variable in stack
+    static Value getLocalVar(FramePtr frame, Slot slot) {
+        return *(Value*)(frame + kFuncCallFrameSize - kValueSize + slot * kValueSize);
+    }
 };
 
 /**

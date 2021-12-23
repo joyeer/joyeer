@@ -12,7 +12,7 @@ executor(executor) {
 }
 
 Value Arguments::getArgument(Slot slot) {
-    auto pValue = (Value*)(executor->stack + executor->fp - kValueSize - slot);
+    auto pValue = (Value*)(executor->stack + executor->fp - kValueSize - slot * kValueSize);
     return *pValue;
 }
 
@@ -96,6 +96,10 @@ loop:
         return;
     }
 
+    inline FramePtr getCurrentFramePoint() const {
+        return (FramePtr )(executor->stack + executor->fp);
+    }
+
     inline void push(Value value) const {
         executor->push(value);
     }
@@ -130,6 +134,7 @@ loop:
 
     inline void Handle_ISTORE(Bytecode bytecode) {
         assert(OP_FROM_BYTECODE(bytecode) == OP_ISTORE);
+        auto value = VALUE_FROM_BYTECODE(bytecode);
         assert(false);
     }
 
@@ -141,7 +146,9 @@ loop:
     inline void Handle_ILOAD(Bytecode bytecode) {
         assert(OP_FROM_BYTECODE(bytecode) == OP_ILOAD);
         auto value = VALUE_FROM_BYTECODE(bytecode);
-        assert(false);
+
+        auto intValue = FuncCallFrame::getLocalVar(getCurrentFramePoint(), value);
+        push(intValue);
     }
 
     inline void Handle_NEW(Bytecode bytecode) {
@@ -366,19 +373,17 @@ loop:
 };
 
 
-
-
 Executor::Executor(IsolateVM *isolateVM):
 isolateVM(isolateVM) {
 }
 
-void Executor::execute(const ModuleClass *moduleClass) {
+void Executor::execute(const ModuleClass *module) {
     auto savedFP = sp;
     auto frame = &stack[sp];
-    ModuleEntryFrame::set(frame, {.intValue = 0}, moduleClass->slot);
+    ModuleEntryFrame::set(frame, {.intValue = 0}, module->slot);
 
     push(savedFP, ModuleEntryFrame::size());
-    auto method = (*isolateVM->methodTable)[moduleClass->initializerSlot];
+    auto method = (*isolateVM->methodTable)[module->initializerSlot];
     execute(method);
     pop(savedFP);
 }
@@ -403,6 +408,17 @@ void Executor::execute(const Method *method) {
 }
 
 void Executor::invoke(const VMethod *method) {
+    // prepare the variable
+    Arguments arguments(this);
+
+    for(int i = 0; i < method->localVarCount; i ++ ) {
+        if(i < method->paramCount) {
+            auto argument = arguments.getArgument(i);
+            push(argument);
+        } else {
+            push({.intValue = 0});
+        }
+    }
     Interpreter interpreter(this, method->bytecodes);
     interpreter.run();
 }

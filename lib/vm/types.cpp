@@ -5,8 +5,10 @@
 #include "joyeer/vm/bytecode.h"
 
 
-VMethod::VMethod(Bytecodes* bytecodes):
+VMethod::VMethod(Bytecodes* bytecodes, int paramCount, int localVarCount):
 Method(MethodKind::VM_Method),
+paramCount(paramCount),
+localVarCount(localVarCount),
 bytecodes(bytecodes) {
 }
 

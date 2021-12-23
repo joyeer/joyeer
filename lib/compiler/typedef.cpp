@@ -57,6 +57,10 @@ FuncType::FuncType(const std::string &name) :
         paramTypes(),
         returnType(nullptr) {}
 
+int FuncType::getLocalVarCount() const {
+    return localVars.size();
+}
+
 ClassType::ClassType(const std::string &name) :
         Type(name, ValueType::Func) {}
 

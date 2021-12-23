@@ -130,8 +130,9 @@ Node::Ptr TypeChecker::visit(const MemberFuncCallExpr::Ptr& node) {
 
 Node::Ptr TypeChecker::visit(const VarDecl::Ptr& decl) {
 
+    auto simpleName = decl->getSimpleName();
     auto symtable = context->curSymTable();
-    auto symbol = context->lookup(decl->getSimpleName());
+    auto symbol = context->lookup(simpleName);
 
     assert(decl->getType() == nullptr);
     if(decl->initializer != nullptr) {
@@ -153,6 +154,24 @@ Node::Ptr TypeChecker::visit(const VarDecl::Ptr& decl) {
     // Update the Variable's type base on declaraiton
     symbol->typeSlot = decl->getType()->address;
 
+    auto declType = context->curDeclType();
+    auto variableType = std::make_shared<Variable>(simpleName);
+    variableType->typeSlot = symbol->typeSlot;
+    variableType->parentSlot = declType->address;
+    switch (declType->kind) {
+        case ValueType::Func: {
+            auto funcType = std::static_pointer_cast<FuncType>(declType);
+            funcType->localVars.push_back(variableType);
+        }
+            break;
+        case ValueType::Module: {
+            auto moduleType = std::static_pointer_cast<ModuleType>(declType);
+            moduleType->localVars.push_back(variableType);
+        }
+            break;
+        default:
+            assert(false);
+    }
 
     return decl;
 }
@@ -204,7 +223,6 @@ Node::Ptr TypeChecker::visit(const IdentifierExpr::Ptr& node) {
         case CompileStage::visitAssignExpr:
         case CompileStage::visitFuncParamDecl:
         case CompileStage::visitVarDecl:
-        case CompileStage::visitLetDecl:
             // nothing to do
             break;
         default:
@@ -227,6 +245,7 @@ Node::Ptr TypeChecker::visit(const TypeIdentifier::Ptr& node) {
 
 Node::Ptr TypeChecker::visit(const StmtsBlock::Ptr& node) {
     assert(node->symtable != nullptr);
+
     context->visit(CompileStage::visitCodeBlock, node, [this, node]() {
         auto statements = std::vector<Node::Ptr>();
         for(const auto& statement: node->statements) {

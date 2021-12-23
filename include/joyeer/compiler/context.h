@@ -11,7 +11,6 @@ enum class CompileStage : uint64_t {
     visitCodeBlock,
     visitClassDecl,
     visitVarDecl,
-    visitLetDecl,
     visitFuncDecl,          // process func declaration
     visitFuncNameDecl,      // process func name
     visitFuncParamDecl,
