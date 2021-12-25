@@ -161,11 +161,14 @@ Node::Ptr TypeChecker::visit(const VarDecl::Ptr& decl) {
     switch (declType->kind) {
         case ValueType::Func: {
             auto funcType = std::static_pointer_cast<FuncType>(declType);
+            symbol->locationInParent = funcType->paramTypes.size() + funcType->localVars.size();
             funcType->localVars.push_back(variableType);
         }
             break;
         case ValueType::Module: {
             auto moduleType = std::static_pointer_cast<ModuleType>(declType);
+            symbol->locationInParent = moduleType->localVars.size();
+            symbol->locationInParent = moduleType->localVars.size();
             moduleType->localVars.push_back(variableType);
         }
             break;

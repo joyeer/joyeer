@@ -65,6 +65,14 @@ struct FuncCallFrame : public StackFrame {
     static Value getLocalVar(FramePtr frame, Slot slot) {
         return *(Value*)(frame + kFuncCallFrameSize - kValueSize + slot * kValueSize);
     }
+
+    static void setLocalVar(FramePtr frame, Slot slot, Value newValue) {
+        *(Value*)(frame + kFuncCallFrameSize - kValueSize + slot * kValueSize) = newValue;
+    }
+
+    static void setReturnValue(FramePtr frame, Value newValue) {
+        *(Value*)(frame + kReturnValueOffset) = newValue;
+    }
 };
 
 /**

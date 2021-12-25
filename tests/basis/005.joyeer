@@ -1,5 +1,7 @@
 
 func add(left:Int, right: Int): Int {
+    print(message:left)
+    print(message:right)
     var i = left + right
     return i
 }

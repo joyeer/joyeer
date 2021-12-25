@@ -134,8 +134,10 @@ loop:
 
     inline void Handle_ISTORE(Bytecode bytecode) {
         assert(OP_FROM_BYTECODE(bytecode) == OP_ISTORE);
-        auto value = VALUE_FROM_BYTECODE(bytecode);
-        assert(false);
+        auto slot = VALUE_FROM_BYTECODE(bytecode);
+        auto newValue = pop();
+
+        FuncCallFrame::setLocalVar(getCurrentFramePoint(), slot, newValue);
     }
 
     inline void Handle_OLOAD(Bytecode bytecode) {
@@ -323,7 +325,9 @@ loop:
 
     inline void Handle_IRETURN(Bytecode bytecode) {
         assert(OP_FROM_BYTECODE(bytecode) == OP_IRETURN);
-        assert(false);
+        auto value = pop();
+
+        FuncCallFrame::setReturnValue(getCurrentFramePoint(), value);
     }
 
     inline void Handle_ORETURN(Bytecode bytecode) {
@@ -403,8 +407,9 @@ void Executor::execute(const Method *method) {
         default:
             assert(false);
     }
-
     pop(savedFP);
+
+    sp += kValueSize;
 }
 
 void Executor::invoke(const VMethod *method) {
@@ -413,7 +418,7 @@ void Executor::invoke(const VMethod *method) {
 
     for(int i = 0; i < method->localVarCount; i ++ ) {
         if(i < method->paramCount) {
-            auto argument = arguments.getArgument(i);
+            auto argument = arguments.getArgument(method->paramCount - i - 1);
             push(argument);
         } else {
             push({.intValue = 0});
@@ -421,6 +426,7 @@ void Executor::invoke(const VMethod *method) {
     }
     Interpreter interpreter(this, method->bytecodes);
     interpreter.run();
+
 }
 
 void  Executor::invoke(const CMethod *method) {
