@@ -169,12 +169,13 @@ struct TypeIdentifier : Node {
 struct ArrayType : Node {
     using Ptr = std::shared_ptr<ArrayType>;
 
-    Node::Ptr type;
+    Node::Ptr valueType;
 
     explicit ArrayType(Node::Ptr type);
 
+
     void recursiveUpdate() override {
-        NODE_RECURSIVE_UPDATE(type, NODE_UPDATE_ACTION_SET_PARENT_THIS(type))
+        NODE_RECURSIVE_UPDATE(valueType, NODE_UPDATE_ACTION_SET_PARENT_THIS(valueType))
     }
 };
 

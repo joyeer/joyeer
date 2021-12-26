@@ -403,7 +403,7 @@ Node::Ptr TypeChecker::visit(const SubscriptExpr::Ptr& node) {
 }
 
 Node::Ptr TypeChecker::visit(const ArrayType::Ptr& node) {
-    node->type = visit(node->type);
+    node->valueType = visit(node->valueType);
     return node;
 }
 

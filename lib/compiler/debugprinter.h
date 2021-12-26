@@ -385,7 +385,16 @@ protected:
     }
 
     Node::Ptr visit(const ArrayLiteralExpr::Ptr& decl) override {
-        assert(false);
+        output << "arrayLiteralExpr:";
+        DEBUG_BLOCK_START
+        auto i = 0;
+        for(const auto& expr : decl->items) {
+            output << i << ": ";
+            NodeVisitor::visit(expr);
+            newline();
+        }
+
+        DEBUG_BLOCK_END
         return decl;
     }
 
@@ -416,12 +425,28 @@ protected:
     }
 
     Node::Ptr visit(const SubscriptExpr::Ptr& decl) override {
-        assert(false);
+        output << "subscriptExpr:";
+        DEBUG_BLOCK_START
+        output << "identifier:";
+        DEBUG_BLOCK_START
+        output << decl->identifier;
+        DEBUG_BLOCK_END
+        output << "indexExpr:";
+        DEBUG_BLOCK_START
+        output << decl->indexExpr;
+        DEBUG_BLOCK_END
+        DEBUG_BLOCK_END
         return decl;
     }
 
     Node::Ptr visit(const ArrayType::Ptr& decl) override {
-        assert(false);
+        output << "array:";
+        DEBUG_BLOCK_START
+        output << "type:";
+        DEBUG_BLOCK_START
+        NodeVisitor::visit(decl->valueType);
+        DEBUG_BLOCK_END
+        DEBUG_BLOCK_END
         return decl;
     }
 

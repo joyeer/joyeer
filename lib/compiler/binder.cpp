@@ -533,7 +533,7 @@ Node::Ptr Binder::visit(const SubscriptExpr::Ptr& decl) {
 }
 
 Node::Ptr Binder::visit(const ArrayType::Ptr& decl) {
-    decl->type = visit(decl->type);
+    decl->valueType = visit(decl->valueType);
     return decl;
 }
 

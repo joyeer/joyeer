@@ -49,7 +49,7 @@ private:
         strings.push_back(string);
         return strings.size() - 1;
     }
-    
+
     CommandLineArguments::Ptr options;
     std::unordered_map<std::string, SourceFile::Ptr> sourceFiles;
     
@@ -58,6 +58,10 @@ private:
 
     // Type tables include
     std::vector<Type::Ptr> types;
+
+    // the exporting symtable of classes, used to export functions/fields inside a class
+    // The first key is the address of ClassType
+    std::unordered_map<int, SymbolTable::Ptr> exportingSymbolTableOfClasses;
 
     // Strings
     std::vector<std::string> strings {};

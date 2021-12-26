@@ -43,7 +43,7 @@ identifier(std::move(identifier)) {
 
 ArrayType::ArrayType(Node::Ptr type):
 Node(SyntaxKind::arrayType),
-type(std::move(type)) {
+valueType(std::move(type)) {
 }
 
 
