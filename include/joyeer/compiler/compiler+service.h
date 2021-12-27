@@ -40,9 +40,6 @@ private:
     
     void debugPrint(const Node::Ptr& node, const std::string& debugFilePath);
 
-    // initialize the global symbol table
-    void initializeGlobalSymbolTable();
-
     // initialize the pre-define TypeDefs
     void initializeTypes();
 

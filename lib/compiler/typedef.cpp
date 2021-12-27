@@ -62,7 +62,7 @@ int FuncType::getLocalVarCount() const {
 }
 
 ClassType::ClassType(const std::string &name) :
-        Type(name, ValueType::Func) {}
+        Type(name, ValueType::Class) {}
 
 ModuleType::ModuleType(const std::string &name) :
         BlockType(),

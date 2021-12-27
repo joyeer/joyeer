@@ -389,9 +389,13 @@ protected:
         DEBUG_BLOCK_START
         auto i = 0;
         for(const auto& expr : decl->items) {
-            output << i << ": ";
-            NodeVisitor::visit(expr);
-            newline();
+            output << "- " << i ++ << ": ";
+            DEBUG_BLOCK_START
+                NodeVisitor::visit(expr);
+            DEBUG_BLOCK_END
+            if(i < decl->items.size()) {
+                newline();
+            }
         }
 
         DEBUG_BLOCK_END
@@ -429,11 +433,12 @@ protected:
         DEBUG_BLOCK_START
         output << "identifier:";
         DEBUG_BLOCK_START
-        output << decl->identifier;
+        NodeVisitor::visit(decl->identifier);
         DEBUG_BLOCK_END
+        newline();
         output << "indexExpr:";
         DEBUG_BLOCK_START
-        output << decl->indexExpr;
+        NodeVisitor::visit(decl->indexExpr);
         DEBUG_BLOCK_END
         DEBUG_BLOCK_END
         return decl;
@@ -493,7 +498,8 @@ struct TypeDefDebugPrinter : YMLPrinter {
                     output << "kind: Any";
                     break;
                 case ValueType::Class:
-                    assert(false);
+                    output << "kind: Class";
+                    break;
                 case ValueType::Block:
                     output << "kind: Block";
                     newline();

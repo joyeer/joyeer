@@ -173,6 +173,9 @@ struct ArrayType : Node {
 
     explicit ArrayType(Node::Ptr type);
 
+    std::string getSimpleName() override {
+        return "Array";
+    }
 
     void recursiveUpdate() override {
         NODE_RECURSIVE_UPDATE(valueType, NODE_UPDATE_ACTION_SET_PARENT_THIS(valueType))

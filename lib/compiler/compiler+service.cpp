@@ -16,8 +16,9 @@
 
 CompilerService::CompilerService(CommandLineArguments::Ptr opts):
         options(std::move(opts)) {
+
+    globalSymbols = std::make_shared<SymbolTable>();
     initializeTypes();
-    initializeGlobalSymbolTable();
 }
 
 ModuleType::Ptr CompilerService::run(const std::string& inputFile) {
@@ -114,15 +115,6 @@ void CompilerService::debugPrint(const Node::Ptr& node, const std::string &debug
     }
 }
 
-void CompilerService::initializeGlobalSymbolTable() {
-    globalSymbols = std::make_shared<SymbolTable>();
-    auto print = getBuildInsType(BuildIns::Func_Print);
-    globalSymbols->insert(std::make_shared<Symbol>(SymbolFlag::func, print->name, print->address));
-    globalSymbols->insert(std::make_shared<Symbol>(SymbolFlag::klass, "Int", (int)ValueType::Int));
-    globalSymbols->insert(std::make_shared<Symbol>(SymbolFlag::klass, "Void", (int)ValueType::Void));
-    globalSymbols->insert(std::make_shared<Symbol>(SymbolFlag::klass, "Bool", (int)ValueType::Bool));
-}
-
 void CompilerService::initializeTypes() {
 
 #define DECLARE_TYPE(type, TypeClass) \
@@ -138,9 +130,10 @@ void CompilerService::initializeTypes() {
     }
 
 #define BEGIN_DECLARE_CLASS(type, name) \
-    { \
+    {                                   \
         auto symtable = std::make_shared<SymbolTable>(); \
         auto classAddress = declare(std::make_shared<ClassType>(name)); \
+        globalSymbols->insert(std::make_shared<Symbol>(SymbolFlag::klass, name, classAddress)); \
         assert((size_t)(type) == classAddress); \
         exportingSymbolTableOfClasses.insert({ classAddress, symtable });
 
@@ -170,5 +163,11 @@ void CompilerService::initializeTypes() {
         DECLARE_CLASS_FUNC("size()")
         DECLARE_CLASS_FUNC("get(index:)")
     END_DECLARE_CLASS("Array")
+
+    auto print = getBuildInsType(BuildIns::Func_Print);
+    globalSymbols->insert(std::make_shared<Symbol>(SymbolFlag::func, print->name, print->address));
+    globalSymbols->insert(std::make_shared<Symbol>(SymbolFlag::klass, "Int", (int)ValueType::Int));
+    globalSymbols->insert(std::make_shared<Symbol>(SymbolFlag::klass, "Void", (int)ValueType::Void));
+    globalSymbols->insert(std::make_shared<Symbol>(SymbolFlag::klass, "Bool", (int)ValueType::Bool));
 
 }

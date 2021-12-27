@@ -488,12 +488,11 @@ void IRGen::emit(const ArrayLiteralExpr::Ptr& node) {
         .value = static_cast<int32_t>(node->items.size())
     });
     
-//    writer.write({
-//        .opcode = OP_ONEWARRAY,
-//        .value = Type::Any->addressOfType
-//    });
+    writer.write({
+        .opcode = OP_ONEWARRAY,
+        .value = context->compiler->getType(BuildIns::Object_Array)->address
+    });
 
-    assert(false);
 }
 
 void IRGen::emit(const DictLiteralExpr::Ptr& node) {
@@ -541,6 +540,17 @@ void IRGen::emit(const SubscriptExpr::Ptr& node) {
     // handle the index expr of array access
     emit(node->indexExpr);
     emit(node->identifier);
+
+    auto type = node->identifier->getType();
+    if(type->address == context->compiler->getType(BuildIns::Object_Array)->address) {
+        writer.write({
+            .opcode = OP_INVOKE,
+            .value = context->compiler->getType(BuildIns::Object_Array_Func_get)->address
+        });
+    } else {
+        assert(false);
+    }
+
 //    assert(node->identifier->symbol != nullptr);
     
 //    if (node->identifier->symbol->addressOfType == JrObjectMap::Type->addressOfType) {
@@ -548,16 +558,7 @@ void IRGen::emit(const SubscriptExpr::Ptr& node) {
 //            .opcode = OP_INVOKE,
 //            .value = JrObjectMap_Get::Func->addressOfFunc
 //        });
-//    } else if(node->identifier->symbol->addressOfType == JrObjectArray::Type->addressOfType) {
-//        writer.write({
-//            .opcode = OP_INVOKE,
-//            .value = JrObjectArray_Get::Func->addressOfFunc
-//        });
-//    } else {
-//        assert(false);
-//    }
 
-    assert(false);
 }
 
 void IRGen::emit(const ImportStmt::Ptr& node) {

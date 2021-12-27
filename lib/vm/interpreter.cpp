@@ -337,6 +337,7 @@ loop:
 
     inline void Handle_ONEWARRAY(Bytecode bytecode) {
         assert(OP_FROM_BYTECODE(bytecode) == OP_ONEWARRAY);
+        auto value = pop();
         assert(false);
     }
 

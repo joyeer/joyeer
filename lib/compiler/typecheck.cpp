@@ -152,7 +152,7 @@ Node::Ptr TypeChecker::visit(const VarDecl::Ptr& decl) {
         decl->type = decl->pattern->getType();
     }
 
-    // Update the Variable's type base on declaraiton
+    // Update the Variable's type base on declaration
     symbol->typeSlot = decl->getType()->address;
 
     auto declType = context->curDeclType();
@@ -403,11 +403,18 @@ Node::Ptr TypeChecker::visit(const MemberAssignExpr::Ptr& node) {
 Node::Ptr TypeChecker::visit(const SubscriptExpr::Ptr& node) {
     node->identifier = visit(node->identifier);
     node->indexExpr = visit(node->indexExpr);
+
+    auto simpleName = node->identifier->getSimpleName();
+    auto symbol = context->lookup(simpleName);
+    assert(symbol->typeSlot == compiler->getType(BuildIns::Object_Array)->address);
+
+    node->type = compiler->getType(ValueType::Any);
     return node;
 }
 
 Node::Ptr TypeChecker::visit(const ArrayType::Ptr& node) {
     node->valueType = visit(node->valueType);
+    node->type = compiler->getType(BuildIns::Object_Array);
     return node;
 }
 

@@ -539,7 +539,8 @@ Node::Ptr Binder::visit(const ImportStmt::Ptr& decl) {
     }
     
     auto moduleName = decl->stringLiteral->rawValue;
-    auto importedSourceFile = importDelegate(context, moduleName);
-    
+    //TODO
+    //
+
     return decl;
 }

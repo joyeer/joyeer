@@ -85,6 +85,9 @@ Bytecodes* ClassLoader::compile(const std::vector<Instruction> &instructions) {
                 writer.write(DEF_BYTECODE(OP_INVOKE, method->slot));
             }
                 break;
+            case OP_ONEWARRAY:
+                writer.write(DEF_BYTECODE(OP_ONEWARRAY, value));
+                break;
             case OP_RETURN:
                 writer.write(DEF_BYTECODE(OP_RETURN, 0));
                 break;
@@ -136,6 +139,10 @@ Field ClassLoader::compile(const Variable::Ptr& variable) {
             return Field(ValueType::Int);
         case ValueType::Bool:
             return Field(ValueType::Bool);
+        case ValueType::Class:
+            return Field(ValueType::Class);
+        case ValueType::Any:
+            return Field(ValueType::Any);
         default:
             assert(false);
     }

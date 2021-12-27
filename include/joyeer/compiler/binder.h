@@ -12,7 +12,6 @@ struct SourceFile;
 // Reduce the expression's depth level
 class Binder: public NodeVisitor {
 public:
-    std::function<SourceFile::Ptr(CompileContext::Ptr, const std::string&)> importDelegate;
     
     explicit Binder(CompileContext::Ptr context);
     
