@@ -52,6 +52,7 @@ protected:
 
 private:
     CompileContext::Ptr context;
+    CompilerService* compiler;
 };
 
 #endif

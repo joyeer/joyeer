@@ -14,6 +14,7 @@
 Binder::Binder(CompileContext::Ptr context):
         NodeVisitor(),
         context(std::move(context)) {
+    compiler = this->context->compiler;
 }
 
 Node::Ptr Binder::visit(const Node::Ptr& node) {
@@ -155,7 +156,7 @@ Node::Ptr Binder::visit(const VarDecl::Ptr& decl) {
             assert(false);
     }
 
-    auto symbol = std::make_shared<Symbol>(flag, name, pattern->getType()->address);
+    auto symbol = std::make_shared<Symbol>(flag, name, context->compiler->getType(ValueType::Unspecified)->address);
     symtable->insert(symbol);
     symbol->parentTypeSlot = declType->address;
 
@@ -467,13 +468,7 @@ Node::Ptr Binder::visit(const Pattern::Ptr& decl) {
         if(symbol == nullptr) {
             Diagnostics::reportError("[Bind][Error]cannot find pattern name");
         }
-
-        auto type = context->compiler->getType(symbol->typeSlot);
-        decl->typeExpr->type = type;
-    } else {
-        decl->type = context->compiler->getType(static_cast<int>(ValueType::Unspecified));
     }
-
     return decl;
 }
 

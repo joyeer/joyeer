@@ -102,7 +102,6 @@ struct BoolType : Type {
 struct BlockType : Type {
     using Ptr = std::shared_ptr<BlockType>;
 
-    int32_t base = -1; // re-located typeSlot for block variables
     std::vector<Variable::Ptr> localVars; // local-variables
 
     BlockType();
@@ -122,7 +121,7 @@ struct FuncType : Type {
     std::vector<Variable::Ptr> paramTypes;
     std::vector<Variable::Ptr> localVars;
     Type::Ptr returnType;
-    std::vector<Instruction> instructions;
+    std::vector<Instruction> instructions {};
 
     explicit FuncType(const std::string& name);
 

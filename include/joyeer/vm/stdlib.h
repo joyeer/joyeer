@@ -11,7 +11,12 @@ struct Global_$_print : public  CMethod {
     Value operator () (IsolateVM* vm, Arguments* args) const override;
 };
 
-struct ArrayClass_$$_size: public CMethod {
+struct Array_$$_append: public CMethod {
+
+};
+
+
+struct Array_$$_size: public CMethod {
 
 };
 

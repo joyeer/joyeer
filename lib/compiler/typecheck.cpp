@@ -7,6 +7,7 @@
 
 TypeChecker::TypeChecker(CompileContext::Ptr context):
 context(std::move(context)) {
+    compiler = this->context->compiler;
 }
 
 Node::Ptr TypeChecker::visit(const Node::Ptr& node) {
@@ -202,6 +203,8 @@ Node::Ptr TypeChecker::visit(const Pattern::Ptr& node) {
     if(node->typeExpr != nullptr) {
         node->typeExpr = visit(node->typeExpr);
         node->type = node->typeExpr->getType();
+    } else {
+        node->type = compiler->getType(ValueType::Unspecified);
     }
 
     return node;
@@ -362,6 +365,7 @@ Node::Ptr TypeChecker::visit(const SelfExpr::Ptr& node) {
 }
 
 Node::Ptr TypeChecker::visit(const ArrayLiteralExpr::Ptr& node) {
+    node->type = context->compiler->getType(BuildIns::Object_Array);
     auto items = std::vector<Node::Ptr>();
     for(const auto& item: node->items) {
         items.push_back(visit(item));

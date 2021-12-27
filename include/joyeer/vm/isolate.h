@@ -15,6 +15,7 @@ struct IsolateVM {
     StringTable* stringTable { new StringTable() };
     ClassResTable* classTable { new ClassResTable() };
     MethodResTable* methodTable { new MethodResTable() };
+    GC* gc;
 
     explicit IsolateVM() ;
     ~IsolateVM();
@@ -25,7 +26,6 @@ struct IsolateVM {
     // import ModuleClass, prepare the memory for module class
     void import(ModuleClass* moduleClass);
 
-    GC* gc;
 };
 
 

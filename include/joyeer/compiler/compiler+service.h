@@ -13,12 +13,14 @@ public:
     ModuleType::Ptr run(const std::string& inputFile);
 
     // register a kind
-    void declare(const Type::Ptr& type);
+    int declare(const Type::Ptr& type);
 
     // get a Types base on a given typeSlot/position
     Type::Ptr getType(int address);
 
     Type::Ptr getType(ValueType valueType);
+
+    Type::Ptr getType(BuildIns buildIn);
 
     // get the Type declaration of the BuildIns func/object
     Type::Ptr getBuildInsType(BuildIns buildIn) {

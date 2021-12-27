@@ -521,7 +521,7 @@ struct TypeDefDebugPrinter : YMLPrinter {
 
     void print(const FuncType::Ptr& func) {
         output<< "name: " << func->name;
-        if(func->instructions.size() > 0 ) {
+        if(func->funcKind == VM_Func && func->instructions.size() > 0 ) {
             newline();
             output << "instructions:";
             DEBUG_BLOCK_START

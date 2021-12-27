@@ -24,12 +24,15 @@ void IsolateVM::run(const ModuleType::Ptr& module, CompilerService* compilerServ
     for(const auto& type : compilerService->types) {
         if(type->kind == ValueType::Func) {
             auto funcType = std::static_pointer_cast<FuncType>(type);
-            if(type->address == static_cast<size_t>(BuildIns::Func_Print)) {
-                auto method = new Global_$_print();
-                methodTable->import(method, funcType);
+            if(funcType->funcKind == C_Func) {
+                if(type->address == static_cast<size_t>(BuildIns::Func_Print)) {
+                    auto method = new Global_$_print();
+                    methodTable->import(method, funcType);
+                }
             } else {
                 classLoader.compile(funcType);
             }
+
         }
     }
 

@@ -69,6 +69,7 @@ protected:
     Type::Ptr returnTypeOf(const WhileStmt::Ptr& node);
     
     CompileContext::Ptr context;
+    CompilerService* compiler;
 };
 
 #endif

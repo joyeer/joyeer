@@ -44,10 +44,7 @@ enum class ValueType : size_t {
     Module,
     Class,
     Block,
-    Func,
-    Var,
-    Object,
-    Blob,
+    Func
 };
 
 enum class BuildIns : size_t  {

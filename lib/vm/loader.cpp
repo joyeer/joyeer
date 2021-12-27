@@ -37,6 +37,7 @@ Method* ClassLoader::compile(const FuncType::Ptr &funcType){
     auto paramCount = funcType->paramTypes.size();
     auto localVarCount = paramCount + funcType->getLocalVarCount();
     auto method = new VMethod(bytecodes, paramCount, localVarCount);
+
     isolateVM->methodTable->import(method, funcType);
     return method;
 }

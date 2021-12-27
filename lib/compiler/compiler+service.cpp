@@ -88,9 +88,10 @@ ModuleType::Ptr CompilerService::compile(const SourceFile::Ptr& sourcefile) {
     return sourcefile->moduleClass;
 }
 
-void CompilerService::declare(const Type::Ptr& type) {
-    type.get()->address = static_cast<int32_t>(types.size());
+int CompilerService::declare(const Type::Ptr& type) {
+    type->address = static_cast<int32_t>(types.size());
     types.push_back(type);
+    return type->address;
 }
 
 Type::Ptr CompilerService::getType(int address) {
@@ -99,6 +100,10 @@ Type::Ptr CompilerService::getType(int address) {
 
 Type::Ptr CompilerService::getType(ValueType valueType) {
     return types[static_cast<int>(valueType)];
+}
+
+Type::Ptr CompilerService::getType(BuildIns buildIn) {
+    return types[static_cast<int>(buildIn)];
 }
 
 void CompilerService::debugPrint(const Node::Ptr& node, const std::string &debugFilePath) {
@@ -125,8 +130,30 @@ void CompilerService::initializeTypes() {
     assert((type) == types.back()->kind);  \
     assert((size_t)(type) == (types.size() - 1));
 
-#define DECLARE_TYPE_2(type, TypeClass, param) \
-    declare(std::make_shared<TypeClass>(param));
+#define DECLARE_FUNC(type, param) \
+    { \
+        auto func = std::make_shared<FuncType>(param); \
+        func->funcKind = FuncTypeKind::C_Func; \
+        declare(func); \
+    }
+
+#define BEGIN_DECLARE_CLASS(type, name) \
+    { \
+        auto symtable = std::make_shared<SymbolTable>(); \
+        auto classAddress = declare(std::make_shared<ClassType>(name)); \
+        assert((size_t)(type) == classAddress); \
+        exportingSymbolTableOfClasses.insert({ classAddress, symtable });
+
+#define DECLARE_CLASS_FUNC(name) \
+    { \
+        auto func = std::make_shared<FuncType>(name); \
+        func->funcKind = FuncTypeKind::C_Func; \
+        auto funcAddress = declare(func); \
+        symtable->insert(std::make_shared<Symbol>(SymbolFlag::func, name, funcAddress)); \
+    }
+
+#define END_DECLARE_CLASS(type) \
+    }
 
     DECLARE_TYPE(ValueType::Void, VoidType)
     DECLARE_TYPE(ValueType::Int, IntType)
@@ -135,5 +162,13 @@ void CompilerService::initializeTypes() {
     DECLARE_TYPE(ValueType::Unspecified, UnspecifiedType)
     DECLARE_TYPE(ValueType::Any, AnyType)
 
-    DECLARE_TYPE_2(BuildIns::Func_Print, FuncType, "print(message:)")
+    DECLARE_FUNC(BuildIns::Func_Print, "print(message:)")
+
+    // Declare build-in classes and its members
+    BEGIN_DECLARE_CLASS(BuildIns::Object_Array, "Array")
+        DECLARE_CLASS_FUNC("append(content:)")
+        DECLARE_CLASS_FUNC("size()")
+        DECLARE_CLASS_FUNC("get(index:)")
+    END_DECLARE_CLASS("Array")
+
 }
