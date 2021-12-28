@@ -10,6 +10,8 @@
 #include "joyeer/vm/gc.h"
 #include "joyeer/vm/types.h"
 
+struct ArrayClass;
+
 struct IsolateVM {
 
     StringTable* stringTable { new StringTable() };
@@ -26,6 +28,13 @@ struct IsolateVM {
     // import ModuleClass, prepare the memory for module class
     void import(ModuleClass* moduleClass);
 
+private:
+    friend class Interpreter;
+
+    // initialize the std library
+    void initStdlib(CompilerService* compiler);
+
+    ArrayClass* arrayClass;
 };
 
 

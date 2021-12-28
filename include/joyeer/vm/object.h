@@ -8,14 +8,16 @@
 #include <cstdint>
 #include "joyeer/vm/types.h"
 
-
-struct Object {
-    Class* klass;
-    Byte data[];
+struct ObjectHead {
+    int klassSlot: 20;
+    int refCount: 12;
+    int reversed: 32;
 };
 
-// calculate a given Class size
-static size_t calculateClassSize(Class* klass);
+struct Object {
+    ObjectHead head;
+    Byte data[];
+};
 
 
 #endif //__joyeer_vm_object_h__

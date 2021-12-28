@@ -15,6 +15,7 @@ IsolateVM::~IsolateVM() {
 }
 
 void IsolateVM::run(const ModuleType::Ptr& module, CompilerService* compilerService) {
+    initStdlib(compilerService);
     ClassLoader classLoader(this, compilerService);
 
     // import string tables
@@ -48,5 +49,14 @@ void IsolateVM::run(const ModuleClass* moduleClass) {
 
 void IsolateVM::import(ModuleClass *moduleClass) {
     moduleClass->staticArea = gc->allocate(MemoryArea::Permanent, moduleClass);
+}
+
+void IsolateVM::initStdlib(CompilerService* compiler) {
+
+    assert(arrayClass == nullptr);
+    arrayClass = new ArrayClass();
+    auto arrayType = std::static_pointer_cast<ClassType>(compiler->getType(BuildIns::Object_Array));
+    classTable->import(arrayType, arrayClass);
+
 }
 

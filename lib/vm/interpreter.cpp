@@ -338,6 +338,8 @@ loop:
     inline void Handle_ONEWARRAY(Bytecode bytecode) {
         assert(OP_FROM_BYTECODE(bytecode) == OP_ONEWARRAY);
         auto value = pop();
+        auto arrayObj = isolateVm->arrayClass->allocate(isolateVm, value.intValue);
+
         assert(false);
     }
 

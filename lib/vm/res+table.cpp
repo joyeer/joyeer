@@ -14,10 +14,10 @@ const std::string &StringTable::operator[](int index) {
     return strings[index];
 }
 
-void ClassResTable::register_(const ModuleType::Ptr &moduleType, Class *klass) {
+void ClassResTable::import(const ClassType::Ptr &classType, Class *klass) {
     klass->slot = static_cast<int>(classes.size());
     classes.push_back(klass);
-    mapOfTypeAndClass[moduleType->address] = klass->slot;
+    mapOfTypeAndClass[classType->address] = klass->slot;
 }
 
 Class* ClassResTable::query(const ClassType::Ptr &classType) {

@@ -27,15 +27,18 @@ private:
 // Store all Class in Class resource table
 struct ClassResTable {
 public:
-    explicit ClassResTable() = default;
 
-    std::vector<Class*> classes {};
-    std::unordered_map<int, int> mapOfTypeAndClass {};
+    // import a ClassType which from CompilerService, bound with A VM Class
+    void import(const ClassType::Ptr &classType, Class* klass);
 
-    void register_(const ModuleType::Ptr &moduleType, Class *klass);
     Class* query(const ClassType::Ptr &classType);
 
     const Class* operator[] (Slot slot);
+
+private:
+    std::vector<Class*> classes {};
+    std::unordered_map<int, int> mapOfTypeAndClass {};
+
 };
 
 // Store all Method into a ResTable

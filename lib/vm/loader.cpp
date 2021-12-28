@@ -9,7 +9,7 @@
 ModuleClass* ClassLoader::load(const ModuleType::Ptr& module) {
     auto moduleClass = new ModuleClass();
     // register ModuleClass with ModuleType
-    isolateVM->classTable->register_(module, moduleClass);
+    isolateVM->classTable->import((const ClassType::Ptr &) module, moduleClass);
 
     auto variables = module->getVariables();
     for(auto const& variable: variables ) {

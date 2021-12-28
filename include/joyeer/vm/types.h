@@ -15,9 +15,6 @@ struct Arguments;
 #include "joyeer/common/types.h"
 #include "joyeer/vm/heaps.h"
 
-
-
-
 // Class's field description
 struct Field {
 #define DECLARE_TYPE(type, size) size,
@@ -73,7 +70,9 @@ struct VMethod : Method {
 // Class description
 struct Class {
 
-    Slot slot = -1;
+    constexpr static int kObjectHeadOffset = 0;
+
+    Slot slot = -1;         // memory address slot
     intptr_t staticArea{};  // static member area
 
     std::vector<Field> instanceFields {};
@@ -82,7 +81,7 @@ struct Class {
     std::vector<FuncPtr> instanceMethods {};
     std::vector<FuncPtr> staticMethods {};
 
-    [[nodiscard]] size_t getSize() const {
+    virtual size_t getSize() const {
         size_t size = 0;
         for(const auto& field: instanceFields) {
             size += field.getSize();
@@ -97,19 +96,28 @@ struct Class {
         }
         return size;
     }
+
 };
 
 struct ModuleClass : public Class {
     Slot initializerSlot = -1; // slotId of the initializer method
 };
 
-//
+// Array Object class
 struct ArrayClass : public Class {
-    constexpr static int kArrayLengthOffset = 0;
+    constexpr static int kArrayCapacityOffset = kObjectHeadOffset + kIntSize;
+    constexpr static int kArrayLengthOffset = kArrayCapacityOffset + kIntSize;
     constexpr static int kArrayDataOffset = kArrayLengthOffset + kIntSize;
 
-    explicit ArrayClass(): Class() {
-    }
+    intptr_t allocate(IsolateVM* isolateVm, int capacity);
+
+    void setCapacity(intptr_t object, Value capacity);
+    Value getCapacity(intptr_t object);
+
+private:
+    // calculate array object size based on capacity
+    // result size should be (power of 2 + kArrayDataOffset)
+    static size_t calculateArrayCapacitySize(int size);
 };
 
 
