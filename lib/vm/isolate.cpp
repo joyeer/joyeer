@@ -19,18 +19,13 @@ void IsolateVM::run(const ModuleType::Ptr& module, CompilerService* compilerServ
     ClassLoader classLoader(this, compilerService);
 
     // import string tables
-    stringTable->import(compilerService->strings);
+    strings->import(compilerService->strings);
 
     // import methods
     for(const auto& type : compilerService->types) {
         if(type->kind == ValueType::Func) {
             auto funcType = std::static_pointer_cast<FuncType>(type);
-            if(funcType->funcKind == C_Func) {
-                if(type->address == static_cast<size_t>(BuildIns::Func_Print)) {
-                    auto method = new Global_$_print();
-                    methodTable->import(method, funcType);
-                }
-            } else {
+            if(funcType->funcKind == VM_Func) {
                 classLoader.compile(funcType);
             }
 
@@ -53,10 +48,18 @@ void IsolateVM::import(ModuleClass *moduleClass) {
 
 void IsolateVM::initStdlib(CompilerService* compiler) {
 
+    assert(printFunc == nullptr);
+    printFunc = new Global_$_print();
+    methods->import(printFunc, compiler->getType(BuildIns::Func_Print));
+
+
     assert(arrayClass == nullptr);
     arrayClass = new ArrayClass();
     auto arrayType = std::static_pointer_cast<ClassType>(compiler->getType(BuildIns::Object_Array));
-    classTable->import(arrayType, arrayClass);
+    classes->import(arrayType, arrayClass);
+
+    arrayGetFunc = new Array_$$_get();
+    methods->import(arrayGetFunc, compiler->getType(BuildIns::Object_Array_Func_get));
 
 }
 

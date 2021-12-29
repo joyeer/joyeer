@@ -96,7 +96,7 @@ loop:
         return;
     }
 
-    inline FramePtr getCurrentFramePoint() const {
+    [[nodiscard]] inline FramePtr getCurrentFramePoint() const {
         return (FramePtr )(executor->stack + executor->fp);
     }
 
@@ -128,7 +128,7 @@ loop:
         assert(OP_FROM_BYTECODE(bytecode) == OP_SCONST);
         auto value = VALUE_FROM_BYTECODE(bytecode);
 
-        auto stringValue = executor->isolateVM->stringTable[value];
+        auto stringValue = executor->isolateVM->strings[value];
         assert(false);
     }
 
@@ -175,7 +175,7 @@ loop:
         auto fieldOffset = VAL2_FROM_BYTECODE(bytecode); // field variable position
         auto value = pop();
 
-        auto klass = (*isolateVm->classTable)[classSlotId];
+        auto klass = (*isolateVm->classes)[classSlotId];
         GC::write(klass->staticArea, value, fieldOffset);
     }
 
@@ -184,7 +184,7 @@ loop:
         auto classSlotId = VAL1_FROM_BYTECODE(bytecode);    // slot id of class
         auto fieldOffset = VAL2_FROM_BYTECODE(bytecode);
 
-        auto klass = (*isolateVm->classTable)[classSlotId];
+        auto klass = (*isolateVm->classes)[classSlotId];
         auto value = GC::read(klass->staticArea, fieldOffset);
 
         push(value);
@@ -337,16 +337,20 @@ loop:
 
     inline void Handle_ONEWARRAY(Bytecode bytecode) {
         assert(OP_FROM_BYTECODE(bytecode) == OP_ONEWARRAY);
+        auto arrayClass = isolateVm->arrayClass;
         auto value = pop();
-        auto arrayObj = isolateVm->arrayClass->allocate(isolateVm, value.intValue);
-
-        assert(false);
+        auto arrayObj = arrayClass->allocate(isolateVm, value.intValue);
+        for(int i = 0 ; i < value.intValue; i ++ ) {
+            auto popValue = pop();
+            arrayClass->append(arrayObj, popValue);
+        }
+        push({.intValue = arrayObj});
     }
 
     inline void Handle_INVOKE(Bytecode bytecode) {
         assert(OP_FROM_BYTECODE(bytecode) == OP_INVOKE);
         auto methodSlot = VALUE_FROM_BYTECODE(bytecode);
-        auto method = (*isolateVm->methodTable)[methodSlot];
+        auto method = (*isolateVm->methods)[methodSlot];
         switch(method->kind) {
             case MethodKind::C_Method: {
                 auto cMethod = dynamic_cast<const CMethod*>(method);
@@ -390,7 +394,7 @@ void Executor::execute(const ModuleClass *module) {
     ModuleEntryFrame::set(frame, {.intValue = 0}, module->slot);
 
     push(savedFP, ModuleEntryFrame::size());
-    auto method = (*isolateVM->methodTable)[module->initializerSlot];
+    auto method = (*isolateVM->methods)[module->initializerSlot];
     execute(method);
     pop(savedFP);
 }

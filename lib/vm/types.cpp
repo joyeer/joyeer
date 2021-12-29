@@ -51,3 +51,20 @@ Value ArrayClass::getCapacity(intptr_t object) {
     char* objPtr = reinterpret_cast<char *>(object);
     return *(Value*)(objPtr + kArrayCapacityOffset);
 }
+
+void ArrayClass::setLength(intptr_t object, Value length) {
+    char* objPtr = reinterpret_cast<char *>(object);
+    *(Value*)(objPtr + kArrayLengthOffset) = length;
+}
+
+Value ArrayClass::getLength(intptr_t object) {
+    char* objPtr = reinterpret_cast<char *>(object);
+    return *(Value*)(objPtr + kArrayLengthOffset);
+}
+
+void ArrayClass::append(intptr_t object, Value value) {
+    char* objPtr = reinterpret_cast<char *>(object);
+    auto lengthValue = ArrayClass::getLength(object);
+    *(Value*)(objPtr + kArrayDataOffset + kIntSize * (lengthValue.intValue)) = value;
+    ArrayClass::setLength(object, {.intValue = lengthValue.intValue});
+}

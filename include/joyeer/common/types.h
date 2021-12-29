@@ -29,7 +29,7 @@ constexpr int kValueSize = sizeof(Value);
 constexpr int kByteSize = sizeof(Byte);
 constexpr int kIntSize = sizeof(Int);
 constexpr int kBoolSize = sizeof (Bool);
-constexpr int KAnySize = sizeof(Any);
+constexpr int kAnySize = sizeof(Any);
 
 // Value Types
 enum class ValueType : size_t {

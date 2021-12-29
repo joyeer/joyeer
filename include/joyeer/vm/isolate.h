@@ -8,15 +8,16 @@
 #include "joyeer/vm/loader.h"
 #include "joyeer/vm/res+table.h"
 #include "joyeer/vm/gc.h"
-#include "joyeer/vm/types.h"
+#include "joyeer/vm/stdlib.h"
 
 struct ArrayClass;
 
 struct IsolateVM {
 
-    StringTable* stringTable { new StringTable() };
-    ClassResTable* classTable { new ClassResTable() };
-    MethodResTable* methodTable { new MethodResTable() };
+    StringTable* strings {new StringTable() };
+    ClassResTable* classes {new ClassResTable() };
+    MethodResTable* methods {new MethodResTable() };
+
     GC* gc;
 
     explicit IsolateVM() ;
@@ -30,11 +31,15 @@ struct IsolateVM {
 
 private:
     friend class Interpreter;
+    friend class Array_$$_get;
 
     // initialize the std library
     void initStdlib(CompilerService* compiler);
 
-    ArrayClass* arrayClass;
+    // std library classes
+    Global_$_print* printFunc = nullptr;
+    ArrayClass* arrayClass = nullptr;
+    Array_$$_get* arrayGetFunc = nullptr;
 };
 
 

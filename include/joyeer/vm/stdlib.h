@@ -12,7 +12,12 @@ struct Global_$_print : public  CMethod {
 };
 
 struct Array_$$_append: public CMethod {
+    Value operator () (IsolateVM* vm, Arguments* args) const override;
+};
 
+
+struct Array_$$_get: public CMethod {
+    Value operator () (IsolateVM* vm, Arguments* args) const override;
 };
 
 

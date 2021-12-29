@@ -12,3 +12,14 @@ Value Global_$_print::operator()(IsolateVM *vm, Arguments *args) const {
             .intValue = 0,
     };
 }
+
+Value Array_$$_get::operator()(IsolateVM *vm, Arguments *args) const {
+    auto objValue = args->getArgument(0);
+    auto indexValue = args->getArgument(1);
+
+    auto arrayClass = vm->arrayClass;
+
+    return {
+        .intValue = 0
+    };
+}

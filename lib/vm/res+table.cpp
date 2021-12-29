@@ -34,7 +34,10 @@ const Class *ClassResTable::operator[](Slot slot) {
 //////////////////////////////////////////
 
 Method* MethodResTable::query(const FuncType::Ptr& funcType) {
-    return methods[mapOfTypeAndMethod[funcType->address]];
+    if(mapOfTypeAndMethod.contains(funcType->address)) {
+        return methods[mapOfTypeAndMethod[funcType->address]];
+    }
+    return nullptr;
 }
 
 void MethodResTable::import(Method *method, const Type::Ptr& funcType) {

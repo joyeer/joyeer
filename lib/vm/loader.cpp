@@ -9,7 +9,7 @@
 ModuleClass* ClassLoader::load(const ModuleType::Ptr& module) {
     auto moduleClass = new ModuleClass();
     // register ModuleClass with ModuleType
-    isolateVM->classTable->import((const ClassType::Ptr &) module, moduleClass);
+    isolateVM->classes->import((const ClassType::Ptr &) module, moduleClass);
 
     auto variables = module->getVariables();
     for(auto const& variable: variables ) {
@@ -28,7 +28,7 @@ ModuleClass* ClassLoader::load(const ModuleType::Ptr& module) {
 Method *ClassLoader::compile(const ModuleType::Ptr& module) {
     auto bytecodes = compile(module->instructions);
     auto method = new VMethod(bytecodes, 0, module->getVariables().size());
-    isolateVM->methodTable->import(method, module);
+    isolateVM->methods->import(method, module);
     return method;
 }
 
@@ -38,7 +38,7 @@ Method* ClassLoader::compile(const FuncType::Ptr &funcType){
     auto localVarCount = paramCount + funcType->getLocalVarCount();
     auto method = new VMethod(bytecodes, paramCount, localVarCount);
 
-    isolateVM->methodTable->import(method, funcType);
+    isolateVM->methods->import(method, funcType);
     return method;
 }
 
@@ -62,7 +62,7 @@ Bytecodes* ClassLoader::compile(const std::vector<Instruction> &instructions) {
                 auto typeSlot = instruction.pair.val1;
                 auto location = instruction.pair.val2;
                 auto typeClass = std::static_pointer_cast<ClassType>(compilerService->getType(typeSlot));
-                auto klass = isolateVM->classTable->query(typeClass);
+                auto klass = isolateVM->classes->query(typeClass);
                 writer.write(DEF_BYTECODE_2(OP_GETSTATIC, klass->slot, location));
             }
                 break;
@@ -70,7 +70,7 @@ Bytecodes* ClassLoader::compile(const std::vector<Instruction> &instructions) {
                 auto typeSlot = instruction.pair.val1;
                 auto location = instruction.pair.val2;
                 auto typeClass = std::static_pointer_cast<ClassType>(compilerService->getType(typeSlot));
-                auto klass = isolateVM->classTable->query(typeClass);
+                auto klass = isolateVM->classes->query(typeClass);
                 writer.write(DEF_BYTECODE_2(OP_PUTSTATIC, klass->slot, location));
             }
                 break;
@@ -80,7 +80,7 @@ Bytecodes* ClassLoader::compile(const std::vector<Instruction> &instructions) {
                 break;
             case OP_INVOKE: {
                 auto typeFunc = std::static_pointer_cast<FuncType>(compilerService->getType(value));
-                auto method = isolateVM->methodTable->query(typeFunc);
+                auto method = isolateVM->methods->query(typeFunc);
                 assert(method != nullptr);
                 writer.write(DEF_BYTECODE(OP_INVOKE, method->slot));
             }

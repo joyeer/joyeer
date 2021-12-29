@@ -17,21 +17,13 @@ struct Arguments;
 
 // Class's field description
 struct Field {
-#define DECLARE_TYPE(type, size) size,
-
-    constexpr static const size_t ValueTypes[] = {
-        DECLARE_TYPE(ValueType::Any, KAnySize)
-        DECLARE_TYPE(ValueType::Int, kIntSize)
-        DECLARE_TYPE(ValueType::Bool, kBoolSize)
-    };
-
     ValueType type;
 
     explicit Field(ValueType type): type(type) {}
 
     // get the size of the field
     [[nodiscard]] size_t getSize() const {
-        return ValueTypes[static_cast<uintptr_t>(type)];
+        return kIntSize;
     }
 
 #undef DECLARE_TYPE
@@ -113,6 +105,13 @@ struct ArrayClass : public Class {
 
     void setCapacity(intptr_t object, Value capacity);
     Value getCapacity(intptr_t object);
+
+    void setLength(intptr_t object, Value length);
+    Value getLength(intptr_t object);
+
+    void append(intptr_t object, Value value);
+
+    Value get(intptr_t object, Value index);
 
 private:
     // calculate array object size based on capacity
