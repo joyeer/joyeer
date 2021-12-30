@@ -2,3 +2,5 @@
 var array:[Int] = [1, 2, 3]
 var j = array[2]
 print(message: j)
+print(message: array[0])
+print(message: array[1])
