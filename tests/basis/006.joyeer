@@ -1,4 +1,4 @@
 
 var array:[Int] = [1, 2, 3]
-var j = array[1]
+var j = array[2]
 print(message: j)

@@ -38,7 +38,9 @@ struct Executor {
 private:
     friend class Interpreter;
     friend class Arguments;
+    friend class Array_$$_get;
 
+    FramePtr getCurrentFrame() const;
     void invoke(const CMethod* method);
     void invoke(const VMethod* method);
 

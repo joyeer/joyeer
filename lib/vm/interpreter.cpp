@@ -96,10 +96,6 @@ loop:
         return;
     }
 
-    [[nodiscard]] inline FramePtr getCurrentFramePoint() const {
-        return (FramePtr )(executor->stack + executor->fp);
-    }
-
     inline void push(Value value) const {
         executor->push(value);
     }
@@ -137,7 +133,7 @@ loop:
         auto slot = VALUE_FROM_BYTECODE(bytecode);
         auto newValue = pop();
 
-        FuncCallFrame::setLocalVar(getCurrentFramePoint(), slot, newValue);
+        FuncCallFrame::setLocalVar(executor->getCurrentFrame(), slot, newValue);
     }
 
     inline void Handle_OLOAD(Bytecode bytecode) {
@@ -149,7 +145,7 @@ loop:
         assert(OP_FROM_BYTECODE(bytecode) == OP_ILOAD);
         auto value = VALUE_FROM_BYTECODE(bytecode);
 
-        auto intValue = FuncCallFrame::getLocalVar(getCurrentFramePoint(), value);
+        auto intValue = FuncCallFrame::getLocalVar(executor->getCurrentFrame(), value);
         push(intValue);
     }
 
@@ -327,7 +323,7 @@ loop:
         assert(OP_FROM_BYTECODE(bytecode) == OP_IRETURN);
         auto value = pop();
 
-        FuncCallFrame::setReturnValue(getCurrentFramePoint(), value);
+        FuncCallFrame::setReturnValue(executor->getCurrentFrame(), value);
     }
 
     inline void Handle_ORETURN(Bytecode bytecode) {
@@ -342,8 +338,9 @@ loop:
         auto arrayObj = arrayClass->allocate(isolateVm, value.intValue);
         for(int i = 0 ; i < value.intValue; i ++ ) {
             auto popValue = pop();
-            arrayClass->append(arrayObj, popValue);
+            arrayClass->set(arrayObj, {.intValue = value.intValue - i - 1}, popValue);
         }
+        arrayClass->setLength(arrayObj, value);
         push({.intValue = arrayObj});
     }
 
@@ -419,6 +416,10 @@ void Executor::execute(const Method *method) {
     sp += kValueSize;
 }
 
+FramePtr Executor::getCurrentFrame() const {
+    return (FramePtr )(stack + fp);
+}
+
 void Executor::invoke(const VMethod *method) {
     // prepare the variable
     Arguments arguments(this);
@@ -438,7 +439,9 @@ void Executor::invoke(const VMethod *method) {
 
 void  Executor::invoke(const CMethod *method) {
     Arguments arguments(this);
-    (*method)(isolateVM, &arguments);
+    auto value = (*method)(this, &arguments);
+
+    FuncCallFrame::setReturnValue(getCurrentFrame(), value);
 }
 
 void Executor::push(Slot frame, int size) {
@@ -453,7 +456,6 @@ void Executor::pop(Slot frame) {
     sp = frame;
     fp = frames.back();
 }
-
 
 void Executor::push(Value value) {
     *(Int *)(stack + sp) = value.intValue;

@@ -6,6 +6,7 @@
 #define __joyeer_vm_metadata_h__
 
 struct IsolateVM;
+struct Executor;
 struct Object;
 struct Bytecodes;
 struct Arguments;
@@ -40,7 +41,7 @@ struct Method {
 
     explicit Method(MethodKind kind): kind(kind) {}
 
-    virtual Value operator () (IsolateVM* vm, Arguments* args) const = 0;
+    virtual Value operator () (Executor* executor, Arguments* args) const = 0;
 };
 
 // Method implemented in C
@@ -53,7 +54,7 @@ struct VMethod : Method {
     explicit VMethod(Bytecodes* bytecodes, int paramCount, int localVarCount);
     ~VMethod();
 
-    Value operator()(IsolateVM* vm, Arguments* args) const override;
+    Value operator()(Executor* executor, Arguments* args) const override;
     int paramCount;
     int localVarCount;
     Bytecodes* bytecodes;
@@ -111,6 +112,7 @@ struct ArrayClass : public Class {
 
     void append(intptr_t object, Value value);
 
+    void set(intptr_t object, Value index, Value value);
     Value get(intptr_t object, Value index);
 
 private:

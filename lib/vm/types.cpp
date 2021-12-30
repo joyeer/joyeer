@@ -3,7 +3,7 @@
 //
 #include "joyeer/vm/types.h"
 #include "joyeer/vm/bytecode.h"
-#include "joyeer/vm/isolate.h"
+#include "joyeer/vm/interpreter.h"
 
 VMethod::VMethod(Bytecodes* bytecodes, int paramCount, int localVarCount):
 Method(MethodKind::VM_Method),
@@ -16,7 +16,7 @@ VMethod::~VMethod() {
     delete(bytecodes);
 }
 
-Value VMethod::operator()(IsolateVM *vm, Arguments *args) const {
+Value VMethod::operator()(Executor* executor, Arguments *args) const {
     Value result;
     return result;
 }
@@ -24,11 +24,11 @@ Value VMethod::operator()(IsolateVM *vm, Arguments *args) const {
 ////////////////////////////////////////////////
 // ArrayClass implementation
 ////////////////////////////////////////////////
-intptr_t ArrayClass::allocate(IsolateVM* isolateVm, int capacity) {
+intptr_t ArrayClass::allocate(IsolateVM* vm, int capacity) {
     size_t adjustedCapacity = calculateArrayCapacitySize(capacity) * kIntSize;
     size_t size = adjustedCapacity + kArrayDataOffset;
 
-    intptr_t object = isolateVm->gc->allocate(this, size);
+    intptr_t object = vm->gc->allocate(this, size);
     setCapacity(object, {.intValue = static_cast<Int>(adjustedCapacity) });
 
     return object;
@@ -72,4 +72,9 @@ void ArrayClass::append(intptr_t object, Value value) {
 Value ArrayClass::get(intptr_t object, Value index) {
     char* objPtr = reinterpret_cast<char *>(object);
     return *(Value*)(objPtr + kArrayDataOffset + kIntSize * (index.intValue));
+}
+
+void ArrayClass::set(intptr_t object, Value index, Value value) {
+    char* objPtr = reinterpret_cast<char *>(object);
+    *(Value*)(objPtr + kArrayDataOffset + kIntSize * (index.intValue)) = value;
 }
