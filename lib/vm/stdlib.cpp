@@ -19,6 +19,7 @@ Value Array_$$_get::operator()(IsolateVM *vm, Arguments *args) const {
 
     auto arrayClass = vm->arrayClass;
 
+    auto itemValue = arrayClass->get(objValue.intValue, indexValue);
     return {
         .intValue = 0
     };

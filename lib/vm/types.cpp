@@ -66,5 +66,10 @@ void ArrayClass::append(intptr_t object, Value value) {
     char* objPtr = reinterpret_cast<char *>(object);
     auto lengthValue = ArrayClass::getLength(object);
     *(Value*)(objPtr + kArrayDataOffset + kIntSize * (lengthValue.intValue)) = value;
-    ArrayClass::setLength(object, {.intValue = lengthValue.intValue});
+    ArrayClass::setLength(object, {.intValue = lengthValue.intValue + 1});
+}
+
+Value ArrayClass::get(intptr_t object, Value index) {
+    char* objPtr = reinterpret_cast<char *>(object);
+    return *(Value*)(objPtr + kArrayDataOffset + kIntSize * (index.intValue));
 }
