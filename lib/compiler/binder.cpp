@@ -179,17 +179,10 @@ Node::Ptr Binder::visit(const FuncCallExpr::Ptr& decl) {
     if(decl->identifier->kind == SyntaxKind::memberAccessExpr) {
         // Transfer to MemberF
         auto memberAccessExpr = std::static_pointer_cast<MemberAccessExpr>(decl->identifier);
-        auto memberFuncCallExpr = std::make_shared<MemberFuncCallExpr>(memberAccessExpr->callee, memberAccessExpr->member, decl->arguments);
+        auto funcCallExpr = std::make_shared<FuncCallExpr>(memberAccessExpr->member, decl->arguments);
+        auto memberFuncCallExpr = std::make_shared<MemberFuncCallExpr>(memberAccessExpr->callee, funcCallExpr);
         return visit(memberFuncCallExpr);
     }
-
-    auto calleeSimpleName = decl->getCalleeFuncSimpleName();
-    auto symbol = context->lookup(calleeSimpleName);
-    if(symbol == nullptr) {
-        Diagnostics::reportError(ErrorLevel::failure, "[TODO] cannot find func");
-        return decl;
-    }
-    decl->type = context->compiler->getType(symbol->typeSlot);
 
     // go down to bind argument
     std::vector<ArguCallExpr::Ptr> argus;
@@ -203,12 +196,7 @@ Node::Ptr Binder::visit(const FuncCallExpr::Ptr& decl) {
 
 Node::Ptr Binder::visit(const MemberFuncCallExpr::Ptr& decl) {
     decl->callee = visit(decl->callee);
-    
-    std::vector<ArguCallExpr::Ptr> argus;
-    for(auto &parameter: decl->arguments) {
-        argus.push_back(std::static_pointer_cast<ArguCallExpr>(visit(parameter)));
-    }
-    decl->arguments = argus;
+    decl->member = visit(decl->member);
     return decl;
 }
 

@@ -120,7 +120,7 @@ struct FuncType : Type {
     BlockType::Ptr block;
     std::vector<Variable::Ptr> paramTypes;
     std::vector<Variable::Ptr> localVars;
-    Type::Ptr returnType;
+    int returnTypeSlot = -1;
     std::vector<Instruction> instructions {};
 
     explicit FuncType(const std::string& name);

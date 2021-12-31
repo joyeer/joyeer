@@ -585,7 +585,7 @@ Node::Ptr SyntaxParser::tryParseMemberAccessExpr(Node::Ptr postfixExpr) {
 }
 
 Node::Ptr SyntaxParser::tryParseFuncCallExpr(Node::Ptr postfixExpr) {
-    std::vector<std::shared_ptr<Token>>::const_iterator mark = iterator;
+    auto mark = iterator;
     
     auto identifier = postfixExpr;
     

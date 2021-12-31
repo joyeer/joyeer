@@ -61,5 +61,10 @@ void IsolateVM::initStdlib(CompilerService* compiler) {
     arrayGetFunc = new Array_$$_get();
     methods->import(arrayGetFunc, compiler->getType(BuildIns::Object_Array_Func_get));
 
+    auto arraySizeFunc = new Array_$$_size();
+    methods->import(arraySizeFunc, compiler->getType(BuildIns::Object_Array_Func_size));
+
+
+
 }
 

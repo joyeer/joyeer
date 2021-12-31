@@ -32,6 +32,7 @@ struct IsolateVM {
 private:
     friend class Interpreter;
     friend class Array_$$_get;
+    friend class Array_$$_size;
 
     // initialize the std library
     void initStdlib(CompilerService* compiler);

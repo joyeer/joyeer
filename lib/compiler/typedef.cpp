@@ -54,8 +54,7 @@ BlockType::BlockType() :
 FuncType::FuncType(const std::string &name) :
         Type(name, ValueType::Func),
         funcKind(FuncTypeKind::VM_Func),
-        paramTypes(),
-        returnType(nullptr) {}
+        paramTypes() {}
 
 int FuncType::getLocalVarCount() const {
     return localVars.size();

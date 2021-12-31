@@ -107,6 +107,10 @@ Type::Ptr CompilerService::getType(BuildIns buildIn) {
     return types[static_cast<int>(buildIn)];
 }
 
+SymbolTable::Ptr CompilerService::getExportingSymbolTable(const Type::Ptr &type) {
+    return exportingSymbolTableOfClasses[type->address];
+}
+
 void CompilerService::debugPrint(const Node::Ptr& node, const std::string &debugFilePath) {
     if(options->vmDebug) {
         NodeDebugPrinter syntaxDebugger(debugFilePath);
@@ -137,10 +141,11 @@ void CompilerService::initializeTypes() {
         assert((size_t)(type) == classAddress); \
         exportingSymbolTableOfClasses.insert({ classAddress, symtable });
 
-#define DECLARE_CLASS_FUNC(name) \
+#define DECLARE_CLASS_FUNC(name, typeSlot) \
     { \
         auto func = std::make_shared<FuncType>(name); \
-        func->funcKind = FuncTypeKind::C_Func; \
+        func->funcKind = FuncTypeKind::C_Func;        \
+        func->returnTypeSlot = (int)(typeSlot);  \
         auto funcAddress = declare(func); \
         symtable->insert(std::make_shared<Symbol>(SymbolFlag::func, name, funcAddress)); \
     }
@@ -159,12 +164,12 @@ void CompilerService::initializeTypes() {
 
     // Declare build-in classes and its members
     BEGIN_DECLARE_CLASS(BuildIns::Object_Array, "Array")
-        DECLARE_CLASS_FUNC("append(content:)")
-        DECLARE_CLASS_FUNC("size()")
-        DECLARE_CLASS_FUNC("get(index:)")
+        DECLARE_CLASS_FUNC("append(content:)", ValueType::Void)
+        DECLARE_CLASS_FUNC("size()", ValueType::Int)
+        DECLARE_CLASS_FUNC("get(index:)", ValueType::Any)
     END_DECLARE_CLASS("Array")
 
-    auto print = getBuildInsType(BuildIns::Func_Print);
+    auto print = getType(BuildIns::Func_Print);
     globalSymbols->insert(std::make_shared<Symbol>(SymbolFlag::func, print->name, print->address));
     globalSymbols->insert(std::make_shared<Symbol>(SymbolFlag::klass, "Int", (int)ValueType::Int));
     globalSymbols->insert(std::make_shared<Symbol>(SymbolFlag::klass, "Void", (int)ValueType::Void));

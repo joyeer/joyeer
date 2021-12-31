@@ -46,12 +46,6 @@ Node::Ptr TypeChecker::visit(const FuncDecl::Ptr& decl) {
             funcType->paramTypes.push_back(variable);
         }
 
-        // verify return type
-        if(decl->returnType != nullptr) {
-            decl->returnType = visit(decl->returnType);
-            funcType->returnType = typeOf(decl->returnType);
-        }
-
         decl->codeBlock = visit(decl->codeBlock);
     });
 
@@ -90,19 +84,19 @@ Node::Ptr TypeChecker::visit(const FuncCallExpr::Ptr& node) {
             assert(false);
         }
     }
-    
+
     auto name = node->getCalleeFuncSimpleName();
     symbol = context->lookup(name);
-    
+
     if(symbol == nullptr) {
         Diagnostics::reportError("[Error]Cannot find the function");
     }
-    
-//    node->symbol = symbol;
+
+    node->funcTypeSlot = symbol->typeSlot;
     for(const auto& argument: node->arguments) {
         visit(argument);
     }
-    
+
     return node;
 }
 
@@ -113,19 +107,26 @@ Node::Ptr TypeChecker::visit(const MemberFuncCallExpr::Ptr& node) {
     
     auto type = node->callee->type;
     assert(type != nullptr);
-    node->callee->type = type;
 
-    auto name = node->getSimpleName();
-    auto symbol = context->lookup(name);
-    
+    auto symtable = compiler->getExportingSymbolTable(type);
+
+    auto funcCallExpr = std::static_pointer_cast<FuncCallExpr>( node->member);
+    auto name = funcCallExpr->getCalleeFuncSimpleName();
+
+    auto symbol = symtable->find(name);
+
     if(symbol == nullptr) {
         Diagnostics::reportError("[Error]Cannot find the function");
     }
 
-    for(const auto& argument: node->arguments) {
+    auto funcType = std::static_pointer_cast<FuncType>(compiler->getType(symbol->typeSlot));
+    node->type = compiler->getType(funcType->returnTypeSlot);
+    funcCallExpr->funcTypeSlot = funcType->address;
+
+    for(const auto& argument: funcCallExpr->arguments) {
         visit(argument);
     }
-    
+
     return node;
 }
 
@@ -147,9 +148,11 @@ Node::Ptr TypeChecker::visit(const VarDecl::Ptr& decl) {
     // if the pattern specify the Types, VarDecl will follow the pattern
     if(decl->pattern->getType()->kind == ValueType::Unspecified) {
         decl->type = decl->initializer->getType();
+        assert(decl->type != nullptr);
     } else {
         // follow the initializer expression's typedef
         decl->type = decl->pattern->getType();
+        assert(decl->type != nullptr);
     }
 
     // Update the Variable's type base on declaration
@@ -547,7 +550,8 @@ Type::Ptr TypeChecker::typeOf(const MemberFuncCallExpr::Ptr& node) {
     auto funcName = node->getSimpleName();
     auto symbol = context->lookup(funcName);
     auto funcDef = std::static_pointer_cast<FuncType> (context->compiler->getType(symbol->typeSlot));
-    return funcDef->returnType;
+    assert(false);
+    return nullptr;
 }
 
 Type::Ptr TypeChecker::typeOf(const ParenthesizedExpr::Ptr& node) {

@@ -22,10 +22,8 @@ public:
 
     Type::Ptr getType(BuildIns buildIn);
 
-    // get the Type declaration of the BuildIns func/object
-    Type::Ptr getBuildInsType(BuildIns buildIn) {
-        return types[static_cast<int>(buildIn)];
-    }
+    // get specific type's exporting symbol table
+    SymbolTable::Ptr getExportingSymbolTable(const Type::Ptr& type);
 
 private:
 

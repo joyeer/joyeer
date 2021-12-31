@@ -155,7 +155,18 @@ protected:
     }
 
     Node::Ptr visit(const MemberFuncCallExpr::Ptr& decl) override {
-        assert(false);
+        output << "memberFuncCallExpr:";
+        DEBUG_BLOCK_START
+            output << "callee:";
+            DEBUG_BLOCK_START
+            NodeVisitor::visit(decl->callee);
+            DEBUG_BLOCK_END
+            newline();
+            output << "member:";
+            DEBUG_BLOCK_START
+            NodeVisitor::visit(decl->member);
+            DEBUG_BLOCK_END
+        DEBUG_BLOCK_END
         return decl;
     }
 
@@ -408,7 +419,18 @@ protected:
     }
 
     Node::Ptr visit(const MemberAccessExpr::Ptr& decl) override {
-        assert(false);
+        output << "memberAccessExpr:";
+        DEBUG_BLOCK_START
+        output << "callee:";
+        DEBUG_BLOCK_START
+        NodeVisitor::visit(decl->callee);
+        DEBUG_BLOCK_END
+        newline();
+        output << "member:";
+        DEBUG_BLOCK_START
+        NodeVisitor::visit(decl->member);
+        DEBUG_BLOCK_END
+        DEBUG_BLOCK_END
         return decl;
     }
 

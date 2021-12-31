@@ -368,6 +368,7 @@ struct FuncCallExpr : Node {
 
     Node::Ptr identifier;
     std::vector<ArguCallExpr::Ptr> arguments;
+    int funcTypeSlot = -1;
 
     FuncCallExpr(Node::Ptr expr, std::vector<ArguCallExpr::Ptr> arguments) :
             Node(SyntaxKind::funcCallExpr),
@@ -400,23 +401,17 @@ struct MemberFuncCallExpr : Node {
     using Ptr = std::shared_ptr<MemberFuncCallExpr>;
 
     Node::Ptr callee;
-    Node::Ptr member;
+    Node::Ptr member; // FuncCallExpr
 
-    std::vector<ArguCallExpr::Ptr> arguments;
-
-    MemberFuncCallExpr(Node::Ptr callee, Node::Ptr member, std::vector<ArguCallExpr::Ptr> arguments) :
+    MemberFuncCallExpr(Node::Ptr callee, FuncCallExpr::Ptr funcCallExpr) :
             Node(SyntaxKind::memberFuncCallExpr),
             callee(std::move(callee)),
-            member(std::move(member)),
-            arguments(std::move(arguments)) {
+            member(std::move(funcCallExpr)) {
     }
 
     void recursiveUpdate() override {
         NODE_RECURSIVE_UPDATE(callee, NODE_UPDATE_ACTION_SET_PARENT_THIS(callee))
         NODE_RECURSIVE_UPDATE(member, NODE_UPDATE_ACTION_SET_PARENT_THIS(member))
-        for (auto &argument: arguments) {
-            NODE_RECURSIVE_UPDATE(argument, NODE_UPDATE_ACTION_SET_PARENT_THIS_2(argument))
-        }
     }
 };
 

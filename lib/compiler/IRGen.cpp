@@ -72,7 +72,9 @@ void IRGen::emit(const FuncCallExpr::Ptr& funcCallExpr) {
             emit(argument);
         }
 
-        auto funcType = std::static_pointer_cast<FuncType>(funcCallExpr->type);
+        assert(funcCallExpr->funcTypeSlot != -1);
+        auto funcType = std::static_pointer_cast<FuncType>(context->compiler->getType(funcCallExpr->funcTypeSlot));
+        assert(funcType != nullptr);
         if(funcCallExpr->identifier->kind == SyntaxKind::memberAccessExpr) {
             emit(funcCallExpr->identifier);
         }
@@ -86,19 +88,9 @@ void IRGen::emit(const FuncCallExpr::Ptr& funcCallExpr) {
 }
 
 void IRGen::emit(const MemberFuncCallExpr::Ptr& memberFuncCallExpr) {
-    context->visit(CompileStage::visitFuncCall, memberFuncCallExpr, [this, memberFuncCallExpr](){
-        for(const auto& argument : memberFuncCallExpr->arguments) {
-            emit(argument);
-        }
-        
-        emit(memberFuncCallExpr->callee);
-        
-        auto funcDef = memberFuncCallExpr->type;
-        assert(funcDef != nullptr);
-        writer.write({
-            .opcode = OP_INVOKE,
-            .value = funcDef->address
-        });
+    emit(memberFuncCallExpr->callee);
+    context->visit(CompileStage::visitMemberFuncCall, memberFuncCallExpr, [this, memberFuncCallExpr](){
+        emit(memberFuncCallExpr->member);
     });
 }
 

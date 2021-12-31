@@ -16,7 +16,7 @@ struct Array_$$_get: public CMethod {
 };
 
 struct Array_$$_size: public CMethod {
-
+    Value operator () (Executor* executor, Arguments* args) const override;
 };
 
 

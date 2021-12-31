@@ -16,6 +16,7 @@ enum class CompileStage : uint64_t {
     visitFuncParamDecl,
     visitFuncCall,
     visitMemberAccess,
+    visitMemberFuncCall,
     visitAssignExpr,
     visitExpr,
 };

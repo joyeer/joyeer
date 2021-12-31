@@ -4,3 +4,6 @@ var j = array[2]
 print(message: j)
 print(message: array[0])
 print(message: array[1])
+
+var size = array.size()
+print(message:size)

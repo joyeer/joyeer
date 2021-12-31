@@ -22,3 +22,9 @@ Value Array_$$_get::operator()(Executor* executor, Arguments *args) const {
     auto itemValue = arrayClass->get(objValue.intValue, indexValue);
     return itemValue;
 }
+
+Value Array_$$_size::operator()(Executor *executor, Arguments *args) const {
+    auto objValue = args->getArgument(0);
+    auto arrayClass = executor->isolateVM->arrayClass;
+    return arrayClass->getLength(objValue.intValue);
+}
