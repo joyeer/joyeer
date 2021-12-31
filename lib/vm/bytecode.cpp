@@ -14,7 +14,7 @@ Bytecodes::~Bytecodes() {
 }
 
 void BytecodeWriter::write(Bytecode bytecode) {
-    buffer.write(bytecode);
+    buffer.write(*(int64_t*)&bytecode);
 }
 
 Bytecodes *BytecodeWriter::getBytecodes() const {

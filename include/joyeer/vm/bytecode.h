@@ -8,27 +8,48 @@
 #include "joyeer/vm/memory.h"
 
 /**
- * | - 8 -  | -- 65 -- |
+ * | - 8 -  | -- 56 -- |
  * | opcode |   value  |
  */
-typedef int64_t Bytecode;
-typedef uint8_t BytecodeOp;
 
-constexpr int kBytecodeOpWidth = 8;
-constexpr int kBytecodeValue2Offset = 32;
+struct Bytecode {
+    union {
+        struct {
+            int8_t op: 8 = -1;
+            int64_t value: 56 = -1;
+        } format1 ;
+        struct {
+            int8_t op: 8 =-1;
+            int32_t value1: 24 = -1;
+            int32_t value2: 32 = -1;
+        } format2;
+    };
+
+    Bytecode(int8_t op, int64_t value) {
+        format1.op = op;
+        format1.value = value;
+    }
+
+    Bytecode(int8_t op, int32_t value1, int32_t value2) {
+        format2.op = op;
+        format2.value1 = value1;
+        format2.value2 = value2;
+    }
+};
+
 
 #define DEF_BYTECODE(op, value) \
-    (int64_t)((int32_t)(op) | (int32_t)(value) << kBytecodeOpWidth)
+    Bytecode((int8_t)(op), (int64_t)(value))
 
 #define DEF_BYTECODE_2(op, value1, value2) \
-    (int64_t)((int64_t)(op) | (int64_t)(value2) << kBytecodeValue2Offset | (int64_t)(value1) << kBytecodeOpWidth)
+    Bytecode((int8_t)(op), (int32_t)(value1), (int32_t)(value2))
 
-#define OP_FROM_BYTECODE(bytecode) (BytecodeOp)((bytecode) & 0x000000FF)
+#define OP_FROM_BYTECODE(bytecode) (int8_t)((bytecode).format1.op)
 
-#define VALUE_FROM_BYTECODE(bytecode) (Int)(((bytecode) & 0xFFFFFFFFFFFFFF00) >> kBytecodeOpWidth)
+#define VALUE_FROM_BYTECODE(bytecode) (int64_t)((bytecode).format1.value)
 
-#define VAL1_FROM_BYTECODE(bytecode) (Int)(((bytecode) & 0xFFFFFF00) >> kBytecodeOpWidth)
-#define VAL2_FROM_BYTECODE(bytecode) (Int)(((bytecode) & 0xFFFFFFFF00000000) >> kBytecodeValue2Offset)
+#define VAL1_FROM_BYTECODE(bytecode) (int32_t)((bytecode).format2.value1)
+#define VAL2_FROM_BYTECODE(bytecode) (int32_t)((bytecode).format2.value2)
 
 struct Bytecodes {
     Bytecodes(Byte* bytes, int length);

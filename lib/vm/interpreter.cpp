@@ -40,7 +40,7 @@ struct Interpreter {
 
     [[maybe_unused]] void run() {
 loop:
-        auto bytecode = *(Int *)(bytecodes->bytecodes + cp);
+        auto bytecode = *(Bytecode *)(bytecodes->bytecodes + cp);
 
         auto opcode = OP_FROM_BYTECODE(bytecode);
 
