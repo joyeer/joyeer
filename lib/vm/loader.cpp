@@ -58,7 +58,6 @@ Bytecodes* ClassLoader::compile(const std::vector<Instruction> &instructions) {
             }
                 break;
             case OP_GETSTATIC:{
-
                 auto typeSlot = instruction.pair.val1;
                 auto location = instruction.pair.val2;
                 auto typeClass = std::static_pointer_cast<ClassType>(compilerService->getType(typeSlot));
@@ -123,6 +122,12 @@ Bytecodes* ClassLoader::compile(const std::vector<Instruction> &instructions) {
                 break;
             case OP_ILOAD:
                 writer.write(DEF_BYTECODE(OP_ILOAD, value));
+                break;
+            case OP_ICMP_G:
+                writer.write(DEF_BYTECODE(OP_ICMP_G, value));
+                break;
+            case OP_IAND:
+                writer.write(DEF_BYTECODE(OP_IAND, value));
                 break;
             default:
                 assert(false);

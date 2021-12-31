@@ -308,7 +308,18 @@ protected:
     }
 
     Node::Ptr visit(const WhileStmt::Ptr& decl) override {
-        assert(false);
+        output << "whileStmt:";
+        DEBUG_BLOCK_START
+        output << "expr:";
+        DEBUG_BLOCK_START
+        NodeVisitor::visit(decl->expr);
+        DEBUG_BLOCK_END
+        newline();
+        output << "codeBlock:";
+        DEBUG_BLOCK_START
+        NodeVisitor::visit(decl->codeBlock);
+        DEBUG_BLOCK_END
+        DEBUG_BLOCK_END
         return decl;
     }
 

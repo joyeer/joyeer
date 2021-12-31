@@ -43,7 +43,6 @@ protected:
     Node::Ptr visit(const ImportStmt::Ptr& decl) override;
 
     Type::Ptr typeOf(const Node::Ptr& node);
-    Type::Ptr typeOf(const IdentifierExpr::Ptr& node);
     Type::Ptr typeOf(const Expr::Ptr& node);
     Type::Ptr typeOf(const LiteralExpr::Ptr& node);
     Type::Ptr typeOf(const FuncCallExpr::Ptr& node);

@@ -188,12 +188,21 @@ loop:
 
     inline void Handle_IAND(Bytecode bytecode) {
         assert(OP_FROM_BYTECODE(bytecode) == OP_IAND);
-        assert(false);
+        auto rightValue = pop();
+        auto leftValue = pop();
+
+        push({.intValue = leftValue.intValue > 0 && rightValue.intValue > 0} );
     }
 
     inline void Handle_ICMP_G(Bytecode bytecode) {
         assert(OP_FROM_BYTECODE(bytecode) == OP_ICMP_G);
-        assert(false);
+        auto rightValue = pop();
+        auto leftValue = pop();
+        if(leftValue.intValue > rightValue.intValue ) {
+            push({.intValue = 1});
+        } else {
+            push({.intValue = 0});
+        }
     }
 
     inline void Handle_ICMP_GE(Bytecode bytecode) {
@@ -301,8 +310,12 @@ loop:
     inline void Handle_IFLE(Bytecode bytecode) {
         assert(OP_FROM_BYTECODE(bytecode) == OP_IFLE);
         auto value = pop();
+        auto offset = VALUE_FROM_BYTECODE(bytecode);
 
-        assert(false);
+        if(value.intValue <= 0 ) {
+            cp += offset * kIntSize;
+        }
+
     }
 
     inline void Handle_IFGT(Bytecode bytecode) {

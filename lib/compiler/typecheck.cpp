@@ -441,7 +441,8 @@ Node::Ptr TypeChecker::visit(const OperatorExpr::Ptr& decl) {
 Type::Ptr TypeChecker::typeOf(const Node::Ptr& node) {
     switch (node->kind) {
         case SyntaxKind::identifierExpr:
-            return typeOf(std::static_pointer_cast<IdentifierExpr>(node));
+            assert(node->type != nullptr);
+            return node->type;
         case SyntaxKind::expr:
             return typeOf(std::static_pointer_cast<Expr>(node));
         case SyntaxKind::funcCallExpr:
@@ -470,24 +471,6 @@ Type::Ptr TypeChecker::typeOf(const Node::Ptr& node) {
             return typeOf(std::static_pointer_cast<ArrayType>(node));
         case SyntaxKind::prefixExpr:
             return typeOf(std::static_pointer_cast<PrefixExpr>(node));
-        default:
-            assert(false);
-    }
-}
-
-Type::Ptr TypeChecker::typeOf(const IdentifierExpr::Ptr& node) {
-
-    auto symbol = context->lookup(node->getSimpleName());
-    switch(symbol->flag) {
-        case SymbolFlag::var:
-            assert(node->type != nullptr);
-            return node->type;
-        case SymbolFlag::field: {
-//            auto kind = (JrObjectType*)(context->curType());
-//            auto field = kind->virtualFields[node->symbol->addressOfField];
-//            return Global::types[field->addressOfField];
-            assert(false);
-        }
         default:
             assert(false);
     }
