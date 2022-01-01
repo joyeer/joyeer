@@ -13,10 +13,8 @@ typedef bool            Bool;
 typedef const char*     String;
 typedef uintptr_t       FuncPtr;
 typedef uintptr_t       Any;
-typedef uintptr_t       Blob;
 typedef intptr_t        Slot;
 typedef const char*     FramePtr;
-typedef uintptr_t       ObjPtr;
 
 union Value {
     Int         intValue;
@@ -29,7 +27,6 @@ constexpr int kValueSize = sizeof(Value);
 constexpr int kByteSize = sizeof(Byte);
 constexpr int kIntSize = sizeof(Int);
 constexpr int kBoolSize = sizeof (Bool);
-constexpr int kAnySize = sizeof(Any);
 
 // Value Types
 enum class ValueType : size_t {
