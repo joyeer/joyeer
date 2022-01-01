@@ -1,5 +1,6 @@
 #include "joyeer/compiler/context.h"
 #include "joyeer/compiler/symtable.h"
+#include "joyeer/compiler/compiler+service.h"
 #include "joyeer/common/diagnostic.h"
 #include <cassert>
 #include <memory>
@@ -22,8 +23,8 @@ void CompileContext::visit(CompileStage stage, const Node::Ptr& node, const std:
         symbols.push_back(node->symtable);
     }
 
-    if(node != nullptr && node->type != nullptr && (node->isDeclNode() || node->kind == SyntaxKind::stmtsBlock)) {
-        types.push_back(node->type);
+    if(node != nullptr && node->typeSlot != -1 && (node->isDeclNode() || node->kind == SyntaxKind::stmtsBlock)) {
+        types.push_back(node->typeSlot);
     }
 
     // visit
@@ -33,7 +34,7 @@ void CompileContext::visit(CompileStage stage, const Node::Ptr& node, const std:
         symbols.pop_back();
     }
 
-    if(node != nullptr && node->type != nullptr && (node->isDeclNode() || node->kind == SyntaxKind::stmtsBlock)) {
+    if(node != nullptr && node->typeSlot != -1 && (node->isDeclNode() || node->kind == SyntaxKind::stmtsBlock)) {
         types.pop_back();
     }
 
@@ -58,17 +59,14 @@ Symbol::Ptr CompileContext::lookup(const std::string &name) {
     return nullptr;
 }
 
-Type::Ptr CompileContext::curType() const {
-    return types.back();
-}
-
 Type::Ptr CompileContext::curDeclType() const {
     for (auto iterator = types.rbegin(); iterator != types.rend(); iterator ++) {
-        auto typeDef = *iterator;
-        if(typeDef->kind == ValueType::Func ||
-           typeDef->kind == ValueType::Class ||
-           typeDef->kind == ValueType::Module ) {
-            return std::static_pointer_cast<BlockType>(typeDef);
+        auto typeSlot = *iterator;
+        auto type = compiler->getType(typeSlot);
+        if(type->kind == ValueType::Func ||
+            type->kind == ValueType::Class ||
+            type->kind == ValueType::Module ) {
+            return type;
         }
     }
     return nullptr;
@@ -76,9 +74,10 @@ Type::Ptr CompileContext::curDeclType() const {
 
 BlockType::Ptr CompileContext::curBlockType() const {
     for (auto iterator = types.rbegin(); iterator != types.rend(); iterator ++) {
-        auto typeDef = *iterator;
-        if(typeDef->kind == ValueType::Block) {
-            return std::static_pointer_cast<BlockType>(typeDef);
+        auto typeSlot = *iterator;
+        auto type = compiler->getType(typeSlot);
+        if(type->kind == ValueType::Block) {
+            return std::static_pointer_cast<BlockType>(type);
         }
     }
     return nullptr;
@@ -86,9 +85,10 @@ BlockType::Ptr CompileContext::curBlockType() const {
 
 FuncType::Ptr CompileContext::curFuncType() const {
     for (auto iterator = types.rbegin(); iterator != types.rend(); iterator ++) {
-        auto typeDef = *iterator;
-        if(typeDef->kind == ValueType::Func) {
-            return std::static_pointer_cast<FuncType>(typeDef);
+        auto typeSlot = *iterator;
+        auto type = compiler->getType(typeSlot);
+        if(type->kind == ValueType::Func) {
+            return std::static_pointer_cast<FuncType>(type);
         }
     }
 
@@ -96,6 +96,7 @@ FuncType::Ptr CompileContext::curFuncType() const {
 }
 
 ModuleType::Ptr CompileContext::curModuleType() const {
-    assert(types[0]->kind == ValueType::Module);
-    return std::static_pointer_cast<ModuleType>(types[0]);
+    auto type = compiler->getType(types[0]);
+    assert(type->kind == ValueType::Module);
+    return std::static_pointer_cast<ModuleType>(type);
 }

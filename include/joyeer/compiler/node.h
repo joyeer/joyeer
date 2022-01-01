@@ -74,7 +74,7 @@ struct Node : std::enable_shared_from_this<Node> {
     Node::Ptr parent = nullptr;
 
     // represent the Node's Type, only available in Expr Node
-    Type::Ptr type = nullptr;
+    int typeSlot = -1;
 
     // return the name of Node, it will be used as symbol in some cases
     virtual std::string getSimpleName();

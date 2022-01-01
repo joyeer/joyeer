@@ -107,8 +107,9 @@ Type::Ptr CompilerService::getType(BuildIns buildIn) {
     return types[static_cast<int>(buildIn)];
 }
 
-SymbolTable::Ptr CompilerService::getExportingSymbolTable(const Type::Ptr &type) {
-    return exportingSymbolTableOfClasses[type->slot];
+SymbolTable::Ptr CompilerService::getExportingSymbolTable(int typeSlot) {
+    assert(typeSlot != -1);
+    return exportingSymbolTableOfClasses[typeSlot];
 }
 
 void CompilerService::debugPrint(const Node::Ptr& node, const std::string &debugFilePath) {

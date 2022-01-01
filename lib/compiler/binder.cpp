@@ -26,7 +26,7 @@ Node::Ptr Binder::visit(const ModuleDecl::Ptr& module) {
 
     auto moduleType = std::make_shared<ModuleType>(module->getSimpleName());
     context->compiler->declare(moduleType);
-    module->type = moduleType;
+    module->typeSlot = moduleType->slot;
 
     module->recursiveUpdate();
 
@@ -81,7 +81,7 @@ Node::Ptr Binder::visit(const FuncDecl::Ptr& decl) {
     // define FuncType
     auto funcType = std::make_shared<FuncType>(funcSimpleName);
     context->compiler->declare(funcType);
-    decl->type = funcType;
+    decl->typeSlot = funcType->slot;
 
     // prepare the symbol, register the symbol into parentTypeSlot
     auto symbol = std::make_shared<Symbol>(SymbolFlag::func, funcSimpleName, funcType->slot);
@@ -156,7 +156,7 @@ Node::Ptr Binder::visit(const VarDecl::Ptr& decl) {
             assert(false);
     }
 
-    auto symbol = std::make_shared<Symbol>(flag, name, context->compiler->getType(ValueType::Unspecified)->slot);
+    auto symbol = std::make_shared<Symbol>(flag, name, compiler->getType(ValueType::Unspecified)->slot);
     symtable->insert(symbol);
     symbol->parentTypeSlot = declType->slot;
 
@@ -413,7 +413,7 @@ Node::Ptr Binder::visit(const StmtsBlock::Ptr& decl) {
     // generate a BlockType
     auto blockType = std::make_shared<BlockType>();
     context->compiler->declare(blockType);
-    decl->type = blockType;
+    decl->typeSlot = blockType->slot;
 
     // start to process code block
     context->visit(CompileStage::visitCodeBlock, decl,[decl, this]() {

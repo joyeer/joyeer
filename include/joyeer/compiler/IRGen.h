@@ -38,6 +38,7 @@ protected:
 private:
     JrCodeWriter writer;
     CompileContext::Ptr context;
+    CompilerService* compiler;
 };
 
 #endif

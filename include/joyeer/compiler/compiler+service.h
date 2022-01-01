@@ -23,7 +23,7 @@ public:
     Type::Ptr getType(BuildIns buildIn);
 
     // get specific type's exporting symbol table
-    SymbolTable::Ptr getExportingSymbolTable(const Type::Ptr& type);
+    SymbolTable::Ptr getExportingSymbolTable(int typeSlot);
 
 private:
 

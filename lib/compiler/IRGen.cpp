@@ -8,6 +8,7 @@
 
 IRGen::IRGen(CompileContext::Ptr context):
 context(std::move(context)) {
+    compiler = this->context->compiler;
 }
 
 void IRGen::emit(const Node::Ptr& node) {
@@ -48,7 +49,7 @@ void IRGen::emit(const Node::Ptr& node) {
 
 ModuleType::Ptr IRGen::emit(const ModuleDecl::Ptr& decl) {
 
-    auto moduleType = std::static_pointer_cast<ModuleType>(decl->type);
+    auto moduleType = std::static_pointer_cast<ModuleType>(compiler->getType(decl->typeSlot));
     context->visit(CompileStage::visitModule, decl, [this, decl]() {
         for(const auto& member: decl->statements) {
             emit(member);
@@ -295,7 +296,7 @@ void IRGen::emit(const AssignExpr::Ptr& node) {
         emit(node->expr);
 
         // check identifier's symbol's kind
-        if(subscriptExpr->identifier->type->slot == (int)BuildIns::Object_Array ) {
+        if(subscriptExpr->identifier->typeSlot == compiler->getType(BuildIns::Object_Array)->slot ) {
             writer.write({
                 .opcode = OP_INVOKE,
                 .value = (int)BuildIns::Object_Array_Func_set
@@ -450,7 +451,7 @@ void IRGen::emit(const StmtsBlock::Ptr& node) {
 
 void IRGen::emit(const FuncDecl::Ptr& node) {
 
-    auto function = std::static_pointer_cast<FuncType>(node->type);
+    auto function = std::static_pointer_cast<FuncType>(compiler->getType(node->typeSlot));
 
     IRGen generator(context);
 
@@ -539,8 +540,8 @@ void IRGen::emit(const SubscriptExpr::Ptr& node) {
     emit(node->indexExpr);
     emit(node->identifier);
 
-    auto type = node->identifier->type;
-    if(type->slot == context->compiler->getType(BuildIns::Object_Array)->slot) {
+    auto typeSlot = node->identifier->typeSlot;
+    if(typeSlot == context->compiler->getType(BuildIns::Object_Array)->slot) {
         writer.write({
             .opcode = OP_INVOKE,
             .value = context->compiler->getType(BuildIns::Object_Array_Func_get)->slot

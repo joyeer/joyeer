@@ -27,7 +27,7 @@ public:
     
     CompileContext(CommandLineArguments::Ptr options, const SymbolTable::Ptr& globalSymTable);
 
-    void visit(CompileStage stage, const Node::Ptr& node, const std::function<void(void)>& visit);
+    void visit(CompileStage stage, const Node::Ptr& nodde, const std::function<void(void)>& visit);
 
     [[nodiscard]] CompileStage curStage() const;
     
@@ -35,8 +35,6 @@ public:
     Symbol::Ptr lookup(const std::string& name);
     
     SymbolTable::Ptr curSymTable() ;
-
-    [[nodiscard]] Type::Ptr curType() const;
 
     // Return the Top declarations Types - ModuleType/FuncType/ClassType
     [[nodiscard]] Type::Ptr  curDeclType() const ;
@@ -61,7 +59,7 @@ protected:
     std::vector<SymbolTable::Ptr> symbols;
 
     // the parsing stack
-    std::vector<Type::Ptr> types;
+    std::vector<int> types;
     
     // stage of compiling status, the last element of stages present the current stage
     std::vector<CompileStage> stages;
