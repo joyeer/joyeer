@@ -104,11 +104,6 @@ struct Node : std::enable_shared_from_this<Node> {
         }
     }
 
-    // return Types underlay, for non-expr, it returns nullptr;
-    virtual Type::Ptr getType() const {
-        return type;
-    }
-
     // recursive update the children node
     virtual void recursiveUpdate() = 0;
 

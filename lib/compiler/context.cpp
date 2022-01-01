@@ -22,8 +22,8 @@ void CompileContext::visit(CompileStage stage, const Node::Ptr& node, const std:
         symbols.push_back(node->symtable);
     }
 
-    if(node != nullptr && node->getType() != nullptr && (node->isDeclNode() || node->kind == SyntaxKind::stmtsBlock)) {
-        types.push_back(node->getType());
+    if(node != nullptr && node->type != nullptr && (node->isDeclNode() || node->kind == SyntaxKind::stmtsBlock)) {
+        types.push_back(node->type);
     }
 
     // visit
@@ -33,7 +33,7 @@ void CompileContext::visit(CompileStage stage, const Node::Ptr& node, const std:
         symbols.pop_back();
     }
 
-    if(node != nullptr && node->getType() != nullptr && (node->isDeclNode() || node->kind == SyntaxKind::stmtsBlock)) {
+    if(node != nullptr && node->type != nullptr && (node->isDeclNode() || node->kind == SyntaxKind::stmtsBlock)) {
         types.pop_back();
     }
 

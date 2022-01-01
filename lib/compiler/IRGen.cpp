@@ -539,7 +539,7 @@ void IRGen::emit(const SubscriptExpr::Ptr& node) {
     emit(node->indexExpr);
     emit(node->identifier);
 
-    auto type = node->identifier->getType();
+    auto type = node->identifier->type;
     if(type->slot == context->compiler->getType(BuildIns::Object_Array)->slot) {
         writer.write({
             .opcode = OP_INVOKE,

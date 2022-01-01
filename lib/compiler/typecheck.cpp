@@ -152,7 +152,7 @@ Node::Ptr TypeChecker::visit(const VarDecl::Ptr& decl) {
     auto symtable = context->curSymTable();
     auto symbol = context->lookup(simpleName);
 
-    assert(decl->getType() == nullptr);
+    assert(decl->type == nullptr);
     if(decl->initializer != nullptr) {
         decl->initializer = visit(decl->initializer);
     }
@@ -162,17 +162,17 @@ Node::Ptr TypeChecker::visit(const VarDecl::Ptr& decl) {
     });
 
     // if the pattern specify the Types, VarDecl will follow the pattern
-    if(decl->pattern->getType()->kind == ValueType::Unspecified) {
-        decl->type = decl->initializer->getType();
+    if(decl->pattern->type->kind == ValueType::Unspecified) {
+        decl->type = decl->initializer->type;
         assert(decl->type != nullptr);
     } else {
         // follow the initializer expression's typedef
-        decl->type = decl->pattern->getType();
+        decl->type = decl->pattern->type;
         assert(decl->type != nullptr);
     }
 
     // Update the Variable's type base on declaration
-    symbol->typeSlot = decl->getType()->slot;
+    symbol->typeSlot = decl->type->slot;
 
     auto declType = context->curDeclType();
     auto variableType = std::make_shared<Variable>(simpleName);
@@ -212,7 +212,7 @@ Node::Ptr TypeChecker::visit(const ParameterClause::Ptr& node) {
         auto parameterName = param->getSimpleName();
         auto symbol = context->lookup(parameterName);
         assert(symbol != nullptr);
-        symbol->typeSlot = param->getType()->slot;
+        symbol->typeSlot = param->type->slot;
     }
     return node;
 }
@@ -221,7 +221,7 @@ Node::Ptr TypeChecker::visit(const Pattern::Ptr& node) {
     node->identifier = std::static_pointer_cast<IdentifierExpr>(visit(node->identifier));
     if(node->typeExpr != nullptr) {
         node->typeExpr = visit(node->typeExpr);
-        node->type = node->typeExpr->getType();
+        node->type = node->typeExpr->type;
     } else {
         node->type = compiler->getType(ValueType::Unspecified);
     }
