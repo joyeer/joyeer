@@ -1,5 +1,5 @@
-#ifndef __joyeer_common_descriptor_h__
-#define __joyeer_common_descriptor_h__
+#ifndef __joyeer_runtime_descriptor_h__
+#define __joyeer_runtime_descriptor_h__
 
 
 #include <string>

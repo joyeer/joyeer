@@ -1,5 +1,5 @@
 
-add_joyeer_library(JoyeerCommon STATIC
+add_joyeer_library(JoyeerRuntime STATIC
         arguments.cpp
         descriptor.cpp
         diagnostic.cpp

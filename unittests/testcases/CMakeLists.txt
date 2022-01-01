@@ -8,7 +8,7 @@ add_executable(UnitTests
 TARGET_LINK_LIBRARIES(UnitTests
         libgtest
         libgmock
-        JoyeerCommon
+        JoyeerRuntime
         JoyeerCompiler
         JoyeerVM
         )

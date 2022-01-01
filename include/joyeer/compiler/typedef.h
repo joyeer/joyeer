@@ -5,7 +5,7 @@
 #ifndef __joyeer_compiler_typedef_h__
 #define __joyeer_compiler_typedef_h__
 
-#include "joyeer/common/types.h"
+#include "joyeer/runtime/types.h"
 #include "joyeer/compiler/opcode.h"
 
 #include <string>

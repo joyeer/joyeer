@@ -1,4 +1,4 @@
-#include "joyeer/common/diagnostic.h"
+#include "joyeer/runtime/diagnostic.h"
 #include <iostream>
 
 ErrorLevel Diagnostics::errorLevel = none;

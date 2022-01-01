@@ -6,7 +6,7 @@
 #define __joyeer_vm_heaps_h__
 
 #include <vector>
-#include "joyeer/common/types.h"
+#include "joyeer/runtime/types.h"
 
 constexpr size_t kPageSize = 256 * 1024;
 constexpr size_t kMaxPageNumberInSingleSpace = 1024 * 1024; // the max number of page in one single space

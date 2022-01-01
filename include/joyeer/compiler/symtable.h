@@ -28,12 +28,12 @@ struct Symbol {
     std::string name;
 
     // typeSlot of ModuleType/FuncType/ClassType
-    int typeSlot = -1;
+    int typeSlot:32 = -1;
 
     // the parentTypeSlot type's slot
-    int parentTypeSlot = -1;
+    int parentTypeSlot:32 = -1;
 
-    int locationInParent = -1;
+    int locationInParent:16 = -1;
 
     bool isStatic = false;
 

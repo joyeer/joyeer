@@ -13,7 +13,7 @@ struct Arguments;
 
 #include <vector>
 
-#include "joyeer/common/types.h"
+#include "joyeer/runtime/types.h"
 #include "joyeer/vm/heaps.h"
 
 // Class's field description

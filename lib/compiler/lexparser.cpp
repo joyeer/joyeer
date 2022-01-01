@@ -1,5 +1,5 @@
 #include "joyeer/compiler/lexparser.h"
-#include "joyeer/common/diagnostic.h"
+#include "joyeer/runtime/diagnostic.h"
 
 void LexParser::parse(const SourceFile::Ptr& sourceFile) {
     

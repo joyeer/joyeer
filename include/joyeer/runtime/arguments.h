@@ -1,5 +1,5 @@
-#ifndef __joyeer_common_arguments_h__
-#define __joyeer_common_arguments_h__
+#ifndef __joyeer_runtime_arguments_h__
+#define __joyeer_runtime_arguments_h__
 
 #include <filesystem>
 #include <string>

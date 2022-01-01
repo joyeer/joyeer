@@ -2,8 +2,8 @@
 // Created by Qing Xu on 2021/11/26.
 //
 
-#ifndef __joyeer_common_types_h__
-#define __joyeer_common_types_h__
+#ifndef __joyeer_runtime_types_h__
+#define __joyeer_runtime_types_h__
 
 #include <cstdlib>
 
@@ -55,4 +55,4 @@ enum class BuildIns : size_t  {
 };
 
 
-#endif //__joyeer_common_types_h__
+#endif //__joyeer_runtime_types_h__

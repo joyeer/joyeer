@@ -5,7 +5,7 @@
 #include <sstream>
 #include <fstream>
 
-#include "joyeer/common/descriptor.h"
+#include "joyeer/runtime/descriptor.h"
 #include "joyeer/compiler/token.h"
 #include "joyeer/compiler/symtable.h"
 #include "joyeer/compiler/typedef.h"

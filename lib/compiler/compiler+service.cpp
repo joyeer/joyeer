@@ -1,6 +1,6 @@
 #include "joyeer/compiler/compiler+service.h"
 #include "joyeer/compiler/lexparser.h"
-#include "joyeer/common/diagnostic.h"
+#include "joyeer/runtime/diagnostic.h"
 #include "joyeer/compiler/binder.h"
 #include "joyeer/compiler/typecheck.h"
 #include "joyeer/compiler/syntaxparser.h"
