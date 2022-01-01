@@ -126,10 +126,11 @@ void CompilerService::initializeTypes() {
     assert((type) == types.back()->kind);  \
     assert((size_t)(type) == (types.size() - 1));
 
-#define DECLARE_FUNC(type, param) \
+#define DECLARE_FUNC(type, param, typeSlot) \
     { \
         auto func = std::make_shared<FuncType>(param); \
-        func->funcKind = FuncTypeKind::C_Func; \
+        func->funcKind = FuncTypeKind::C_Func;         \
+        func->returnTypeSlot = (int)typeSlot; \
         declare(func); \
     }
 
@@ -160,13 +161,14 @@ void CompilerService::initializeTypes() {
     DECLARE_TYPE(ValueType::Unspecified, UnspecifiedType)
     DECLARE_TYPE(ValueType::Any, AnyType)
 
-    DECLARE_FUNC(BuildIns::Func_Print, "print(message:)")
+    DECLARE_FUNC(BuildIns::Func_Print, "print(message:)", ValueType::Void)
 
     // Declare build-in classes and its members
     BEGIN_DECLARE_CLASS(BuildIns::Object_Array, "Array")
         DECLARE_CLASS_FUNC("append(content:)", ValueType::Void)
         DECLARE_CLASS_FUNC("size()", ValueType::Int)
         DECLARE_CLASS_FUNC("get(index:)", ValueType::Any)
+        DECLARE_CLASS_FUNC("set(index:value:)", ValueType::Void)
     END_DECLARE_CLASS("Array")
 
     auto print = getType(BuildIns::Func_Print);

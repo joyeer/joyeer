@@ -64,7 +64,8 @@ void IsolateVM::initStdlib(CompilerService* compiler) {
     auto arraySizeFunc = new Array_$$_size();
     methods->import(arraySizeFunc, compiler->getType(BuildIns::Object_Array_Func_size));
 
-
+    auto arraySetFunc = new Array_$$_set();
+    methods->import(arraySetFunc, compiler->getType(BuildIns::Object_Array_Func_set));
 
 }
 

@@ -32,6 +32,15 @@ Node::Ptr TypeChecker::visit(const FuncDecl::Ptr& decl) {
     context->visit(CompileStage::visitFuncDecl, decl, [this, decl]() {
         auto funcType = context->curFuncType();
 
+        if(decl->returnType == nullptr) {
+            // no return
+            funcType->returnTypeSlot = compiler->getType(ValueType::Void)->address;
+        } else {
+            decl->returnType = visit(decl->returnType);
+            funcType->returnTypeSlot = decl->returnType->type->address;
+            assert(funcType->returnTypeSlot != -1);
+        }
+
         // visit parameters decls
         context->visit(CompileStage::visitFuncParamDecl, decl->parameterClause, [this, decl]() {
             decl->parameterClause = visit(decl->parameterClause);
@@ -47,6 +56,9 @@ Node::Ptr TypeChecker::visit(const FuncDecl::Ptr& decl) {
         }
 
         decl->codeBlock = visit(decl->codeBlock);
+
+
+
     });
 
     return decl;
@@ -93,6 +105,9 @@ Node::Ptr TypeChecker::visit(const FuncCallExpr::Ptr& node) {
     }
 
     node->funcTypeSlot = symbol->typeSlot;
+    auto funcType = std::static_pointer_cast<FuncType>(compiler->getType(node->funcTypeSlot));
+    node->type = compiler->getType(funcType->returnTypeSlot);
+
     for(const auto& argument: node->arguments) {
         visit(argument);
     }
@@ -122,6 +137,7 @@ Node::Ptr TypeChecker::visit(const MemberFuncCallExpr::Ptr& node) {
     auto funcType = std::static_pointer_cast<FuncType>(compiler->getType(symbol->typeSlot));
     node->type = compiler->getType(funcType->returnTypeSlot);
     funcCallExpr->funcTypeSlot = funcType->address;
+    node->funcTypeSlot = funcCallExpr->funcTypeSlot;
 
     for(const auto& argument: funcCallExpr->arguments) {
         visit(argument);
@@ -268,14 +284,6 @@ Node::Ptr TypeChecker::visit(const StmtsBlock::Ptr& node) {
 Node::Ptr TypeChecker::visit(const ReturnStmt::Ptr& decl) {
     if(decl->expr != nullptr) {
         decl->expr = visit(decl->expr);
-
-        auto type = decl->expr->getType();
-        switch (type->kind) {
-            case ValueType::Int:
-                break;
-            default:
-                assert(false);
-        }
     }
 
     return decl;
@@ -530,11 +538,11 @@ Type::Ptr TypeChecker::typeOf(const FuncCallExpr::Ptr& node) {
 }
 
 Type::Ptr TypeChecker::typeOf(const MemberFuncCallExpr::Ptr& node) {
-    auto funcName = node->getSimpleName();
-    auto symbol = context->lookup(funcName);
-    auto funcDef = std::static_pointer_cast<FuncType> (context->compiler->getType(symbol->typeSlot));
-    assert(false);
-    return nullptr;
+    assert(node->funcTypeSlot != -1);
+    auto funcType = std::static_pointer_cast<FuncType>( compiler->getType(node->funcTypeSlot));
+    auto type = compiler->getType(funcType->returnTypeSlot);
+    assert(type != nullptr);
+    return type;
 }
 
 Type::Ptr TypeChecker::typeOf(const ParenthesizedExpr::Ptr& node) {

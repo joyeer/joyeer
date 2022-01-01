@@ -53,7 +53,8 @@ enum class BuildIns : size_t  {
     Object_Array,
     Object_Array_Func_append,
     Object_Array_Func_size,
-    Object_Array_Func_get
+    Object_Array_Func_get,
+    Object_Array_Func_set
 };
 
 

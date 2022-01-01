@@ -126,6 +126,9 @@ Bytecodes* ClassLoader::compile(const std::vector<Instruction> &instructions) {
             case OP_ICMP_G:
                 writer.write(DEF_BYTECODE(OP_ICMP_G, value));
                 break;
+            case OP_ICMP_L:
+                writer.write(DEF_BYTECODE(OP_ICMP_L, value));
+                break;
             case OP_IAND:
                 writer.write(DEF_BYTECODE(OP_IAND, value));
                 break;

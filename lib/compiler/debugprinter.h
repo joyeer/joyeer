@@ -297,12 +297,13 @@ protected:
         DEBUG_BLOCK_START
             NodeVisitor::visit(decl->ifCodeBlock);
         DEBUG_BLOCK_END
-        newline();
-        output << "else-block:";
-        DEBUG_BLOCK_START
-        NodeVisitor::visit(decl->elseCodeBlock);
-        DEBUG_BLOCK_END
-        newline();
+        if(decl->elseCodeBlock) {
+            newline();
+            output << "else-block:";
+            DEBUG_BLOCK_START
+            NodeVisitor::visit(decl->elseCodeBlock);
+            DEBUG_BLOCK_END
+        }
         DEBUG_BLOCK_END
         return decl;
     }
@@ -425,6 +426,7 @@ protected:
     }
 
     Node::Ptr visit(const DictLiteralExpr::Ptr& decl) override {
+        output << "dictLiteralExpr:";
         assert(false);
         return decl;
     }

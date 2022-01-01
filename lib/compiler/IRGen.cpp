@@ -198,15 +198,18 @@ void IRGen::emit(const IdentifierExpr::Ptr& node) {
                 });
             }
                 break;
+            case ValueType::Any:
+            case ValueType::Class: {
+                writer.write({
+                    .opcode = OP_OLOAD,
+                    .value = symbol->locationInParent
+                });
+            }
+                break;
             default:
                 assert(false);
         }
 
-//        } else if(kind->kind == TypeKind::Class || kind->kind == TypeKind::Any ) {
-//            writer.write({
-//                .opcode = OP_OLOAD,
-//                .value = symbol->addressOfVariable
-//            });
 //        } else if(kind->kind == TypeKind::Nil) {
 //            writer.write({
 //                .opcode = OP_OCONST_NIL,
@@ -290,12 +293,15 @@ void IRGen::emit(const AssignExpr::Ptr& node) {
         emit(subscriptExpr->identifier);
         emit(subscriptExpr->indexExpr);
         emit(node->expr);
+
         // check identifier's symbol's kind
-//        if(subscriptExpr->identifier->symbol->addressOfType == JrObjectArray::Type->addressOfType) {
-//            writer.write({
-//                .opcode = OP_INVOKE,
-//                .value = JrObjectArray_Set::Func->addressOfFunc
-//            });
+        if(subscriptExpr->identifier->type->address == (int)BuildIns::Object_Array ) {
+            writer.write({
+                .opcode = OP_INVOKE,
+                .value = (int)BuildIns::Object_Array_Func_set
+            });
+            return;
+        }
 //        } else if(subscriptExpr->identifier->symbol->addressOfType == JrObjectMap::Type->addressOfType) {
 //            writer.write({
 //                .opcode = OP_INVOKE,

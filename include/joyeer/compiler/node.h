@@ -403,6 +403,8 @@ struct MemberFuncCallExpr : Node {
     Node::Ptr callee;
     Node::Ptr member; // FuncCallExpr
 
+    int funcTypeSlot = -1;
+
     MemberFuncCallExpr(Node::Ptr callee, FuncCallExpr::Ptr funcCallExpr) :
             Node(SyntaxKind::memberFuncCallExpr),
             callee(std::move(callee)),

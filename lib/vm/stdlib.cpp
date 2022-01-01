@@ -28,3 +28,8 @@ Value Array_$$_size::operator()(Executor *executor, Arguments *args) const {
     auto arrayClass = executor->isolateVM->arrayClass;
     return arrayClass->getLength(objValue.intValue);
 }
+
+Value Array_$$_set::operator()(Executor *executor, Arguments *args) const {
+    Value result;
+    return result;
+}
