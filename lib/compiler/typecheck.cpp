@@ -34,10 +34,10 @@ Node::Ptr TypeChecker::visit(const FuncDecl::Ptr& decl) {
 
         if(decl->returnType == nullptr) {
             // no return
-            funcType->returnTypeSlot = compiler->getType(ValueType::Void)->address;
+            funcType->returnTypeSlot = compiler->getType(ValueType::Void)->slot;
         } else {
             decl->returnType = visit(decl->returnType);
-            funcType->returnTypeSlot = decl->returnType->type->address;
+            funcType->returnTypeSlot = decl->returnType->type->slot;
             assert(funcType->returnTypeSlot != -1);
         }
 
@@ -136,7 +136,7 @@ Node::Ptr TypeChecker::visit(const MemberFuncCallExpr::Ptr& node) {
 
     auto funcType = std::static_pointer_cast<FuncType>(compiler->getType(symbol->typeSlot));
     node->type = compiler->getType(funcType->returnTypeSlot);
-    funcCallExpr->funcTypeSlot = funcType->address;
+    funcCallExpr->funcTypeSlot = funcType->slot;
     node->funcTypeSlot = funcCallExpr->funcTypeSlot;
 
     for(const auto& argument: funcCallExpr->arguments) {
@@ -172,12 +172,12 @@ Node::Ptr TypeChecker::visit(const VarDecl::Ptr& decl) {
     }
 
     // Update the Variable's type base on declaration
-    symbol->typeSlot = decl->getType()->address;
+    symbol->typeSlot = decl->getType()->slot;
 
     auto declType = context->curDeclType();
     auto variableType = std::make_shared<Variable>(simpleName);
     variableType->typeSlot = symbol->typeSlot;
-    variableType->parentSlot = declType->address;
+    variableType->parentSlot = declType->slot;
     switch (declType->kind) {
         case ValueType::Func: {
             auto funcType = std::static_pointer_cast<FuncType>(declType);
@@ -212,7 +212,7 @@ Node::Ptr TypeChecker::visit(const ParameterClause::Ptr& node) {
         auto parameterName = param->getSimpleName();
         auto symbol = context->lookup(parameterName);
         assert(symbol != nullptr);
-        symbol->typeSlot = param->getType()->address;
+        symbol->typeSlot = param->getType()->slot;
     }
     return node;
 }
@@ -417,7 +417,7 @@ Node::Ptr TypeChecker::visit(const SubscriptExpr::Ptr& node) {
 
     auto simpleName = node->identifier->getSimpleName();
     auto symbol = context->lookup(simpleName);
-    assert(symbol->typeSlot == compiler->getType(BuildIns::Object_Array)->address);
+    assert(symbol->typeSlot == compiler->getType(BuildIns::Object_Array)->slot);
 
     node->type = compiler->getType(ValueType::Any);
     return node;

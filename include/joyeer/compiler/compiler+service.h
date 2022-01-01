@@ -57,7 +57,7 @@ private:
     std::vector<Type::Ptr> types;
 
     // the exporting symtable of classes, used to export functions/fields inside a class
-    // The first key is the address of ClassType
+    // The first key is the slot of ClassType
     std::unordered_map<int, SymbolTable::Ptr> exportingSymbolTableOfClasses;
 
     // Strings

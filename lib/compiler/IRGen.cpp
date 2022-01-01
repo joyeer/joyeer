@@ -81,7 +81,7 @@ void IRGen::emit(const FuncCallExpr::Ptr& funcCallExpr) {
 
         writer.write({
             .opcode = OP_INVOKE,
-            .value = funcType->address
+            .value = funcType->slot
         });
 
     });
@@ -295,7 +295,7 @@ void IRGen::emit(const AssignExpr::Ptr& node) {
         emit(node->expr);
 
         // check identifier's symbol's kind
-        if(subscriptExpr->identifier->type->address == (int)BuildIns::Object_Array ) {
+        if(subscriptExpr->identifier->type->slot == (int)BuildIns::Object_Array ) {
             writer.write({
                 .opcode = OP_INVOKE,
                 .value = (int)BuildIns::Object_Array_Func_set
@@ -488,7 +488,7 @@ void IRGen::emit(const ArrayLiteralExpr::Ptr& node) {
     
     writer.write({
         .opcode = OP_ONEWARRAY,
-        .value = context->compiler->getType(BuildIns::Object_Array)->address
+        .value = context->compiler->getType(BuildIns::Object_Array)->slot
     });
 
 }
@@ -540,10 +540,10 @@ void IRGen::emit(const SubscriptExpr::Ptr& node) {
     emit(node->identifier);
 
     auto type = node->identifier->getType();
-    if(type->address == context->compiler->getType(BuildIns::Object_Array)->address) {
+    if(type->slot == context->compiler->getType(BuildIns::Object_Array)->slot) {
         writer.write({
             .opcode = OP_INVOKE,
-            .value = context->compiler->getType(BuildIns::Object_Array_Func_get)->address
+            .value = context->compiler->getType(BuildIns::Object_Array_Func_get)->slot
         });
     } else {
         assert(false);

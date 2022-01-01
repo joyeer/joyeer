@@ -65,7 +65,7 @@ struct Class {
 
     constexpr static int kObjectHeadOffset = 0;
 
-    Slot slot = -1;         // memory address slot
+    Slot slot = -1;         // memory slot slot
     intptr_t staticArea{};  // static member area
 
     std::vector<Field> instanceFields {};

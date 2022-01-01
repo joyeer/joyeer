@@ -90,9 +90,9 @@ ModuleType::Ptr CompilerService::compile(const SourceFile::Ptr& sourcefile) {
 }
 
 int CompilerService::declare(const Type::Ptr& type) {
-    type->address = static_cast<int32_t>(types.size());
+    type->slot = static_cast<int32_t>(types.size());
     types.push_back(type);
-    return type->address;
+    return type->slot;
 }
 
 Type::Ptr CompilerService::getType(int address) {
@@ -108,7 +108,7 @@ Type::Ptr CompilerService::getType(BuildIns buildIn) {
 }
 
 SymbolTable::Ptr CompilerService::getExportingSymbolTable(const Type::Ptr &type) {
-    return exportingSymbolTableOfClasses[type->address];
+    return exportingSymbolTableOfClasses[type->slot];
 }
 
 void CompilerService::debugPrint(const Node::Ptr& node, const std::string &debugFilePath) {
@@ -172,7 +172,7 @@ void CompilerService::initializeTypes() {
     END_DECLARE_CLASS("Array")
 
     auto print = getType(BuildIns::Func_Print);
-    globalSymbols->insert(std::make_shared<Symbol>(SymbolFlag::func, print->name, print->address));
+    globalSymbols->insert(std::make_shared<Symbol>(SymbolFlag::func, print->name, print->slot));
     globalSymbols->insert(std::make_shared<Symbol>(SymbolFlag::klass, "Int", (int)ValueType::Int));
     globalSymbols->insert(std::make_shared<Symbol>(SymbolFlag::klass, "Void", (int)ValueType::Void));
     globalSymbols->insert(std::make_shared<Symbol>(SymbolFlag::klass, "Bool", (int)ValueType::Bool));

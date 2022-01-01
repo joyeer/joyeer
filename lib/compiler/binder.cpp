@@ -53,7 +53,7 @@ Node::Ptr Binder::visit(const ClassDecl::Ptr& decl) {
     auto objectType = std::make_shared<ClassType>(name);
     context->compiler->declare(objectType);
 
-    auto symbol = std::make_shared<Symbol>(SymbolFlag::klass, name, objectType->address);
+    auto symbol = std::make_shared<Symbol>(SymbolFlag::klass, name, objectType->slot);
     symtable->insert(symbol);
 
     decl->symtable = context->curSymTable();
@@ -84,7 +84,7 @@ Node::Ptr Binder::visit(const FuncDecl::Ptr& decl) {
     decl->type = funcType;
 
     // prepare the symbol, register the symbol into parentTypeSlot
-    auto symbol = std::make_shared<Symbol>(SymbolFlag::func, funcSimpleName, funcType->address);
+    auto symbol = std::make_shared<Symbol>(SymbolFlag::func, funcSimpleName, funcType->slot);
     symtable->insert(symbol);
     
     // visit func declaration
@@ -156,9 +156,9 @@ Node::Ptr Binder::visit(const VarDecl::Ptr& decl) {
             assert(false);
     }
 
-    auto symbol = std::make_shared<Symbol>(flag, name, context->compiler->getType(ValueType::Unspecified)->address);
+    auto symbol = std::make_shared<Symbol>(flag, name, context->compiler->getType(ValueType::Unspecified)->slot);
     symtable->insert(symbol);
-    symbol->parentTypeSlot = declType->address;
+    symbol->parentTypeSlot = declType->slot;
 
     switch (context->curStage()) {
         case CompileStage::visitModule:
