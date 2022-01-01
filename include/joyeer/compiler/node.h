@@ -6,9 +6,9 @@
 #include <fstream>
 
 #include "joyeer/runtime/descriptor.h"
+#include "joyeer/runtime/types.h"
 #include "joyeer/compiler/token.h"
 #include "joyeer/compiler/symtable.h"
-#include "joyeer/compiler/typedef.h"
 
 enum class SyntaxKind {
     module = 1L,

@@ -2,6 +2,8 @@
 #define __joyeer_compiler_node_debugprint_h__
 
 #include "joyeer/compiler/node+visitor.h"
+#include "joyeer/runtime/bytecode.h"
+
 #include <fstream>
 #include <sstream>
 

@@ -1,6 +1,6 @@
 #include "joyeer/compiler/typecheck.h"
 #include "joyeer/runtime/diagnostic.h"
-#include "joyeer/compiler/typedef.h"
+#include "joyeer/runtime/types.h"
 #include "joyeer/compiler/compiler+service.h"
 #include <cassert>
 #include <utility>

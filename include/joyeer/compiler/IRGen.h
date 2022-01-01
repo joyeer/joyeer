@@ -2,6 +2,8 @@
 #define __joyeer_compiler_irgen_h__
 
 #include "joyeer/compiler/context.h"
+#include "joyeer/runtime/bytecode.h"
+
 
 // Joyeer IR code generator
 class IRGen {

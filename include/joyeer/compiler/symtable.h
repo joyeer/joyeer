@@ -3,7 +3,7 @@
 
 #include <unordered_map>
 
-#include "joyeer/compiler/typedef.h"
+#include "joyeer/runtime/types.h"
 
 enum class SymbolFlag : uint16_t {
     func = 1,
