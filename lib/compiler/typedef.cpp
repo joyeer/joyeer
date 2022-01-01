@@ -64,8 +64,7 @@ ClassType::ClassType(const std::string &name) :
         Type(name, ValueType::Class) {}
 
 ModuleType::ModuleType(const std::string &name) :
-        BlockType(),
-        instructions() {
+        BlockType() {
     kind = ValueType::Module;
 }
 

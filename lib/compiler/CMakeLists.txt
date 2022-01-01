@@ -8,7 +8,6 @@ add_joyeer_library(JoyeerCompiler STATIC
         node.cpp
         node+visitor.cpp
         debugprinter.cpp
-        opcode.cpp
         sourcefile.cpp
         symtable.cpp
         syntaxparser.cpp

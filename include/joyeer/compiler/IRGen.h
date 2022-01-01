@@ -36,7 +36,7 @@ protected:
     void emit(const ImportStmt::Ptr& node);
     
 private:
-    JrCodeWriter writer;
+    BytecodeWriter writer;
     CompileContext::Ptr context;
     CompilerService* compiler;
 };

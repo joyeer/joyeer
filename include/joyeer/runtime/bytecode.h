@@ -1,9 +1,8 @@
 #ifndef __joyeer_runtime_bytecode_h__
 #define __joyeer_runtime_bytecode_h__
 
-#include <cstdint>
-#include "joyeer/runtime/types.h"
 #include "joyeer/runtime/memory.h"
+#include <string>
 
 enum Opcode : uint8_t {
     OP_NOP = 0x00,
@@ -108,16 +107,25 @@ struct Bytecodes {
     ~Bytecodes();
 
     Byte *bytecodes;
-    Int size{};
+    Int size = -1;
 };
 
 class BytecodeWriter {
 public:
     void write(Bytecode bytecode);
+    void write(Bytecodes* bytecodes);
+
     [[nodiscard]] Bytecodes* getBytecodes() const;
+
+    [[nodiscard]] int size() const {
+        return buffer.pos;
+    };
 private:
     MemoryBuffer buffer {};
 };
+
+// debug output the instruction
+std::string debugPrint(Bytecode* bytecode);
 
 
 #endif

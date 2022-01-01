@@ -562,32 +562,32 @@ struct TypeDefDebugPrinter : YMLPrinter {
 
     void print(const FuncType::Ptr& func) {
         output<< "name: " << func->name;
-        if(func->funcKind == VM_Func && func->instructions.size() > 0 ) {
+        if(func->funcKind == VM_Func && func->bytecodes->size > 0 ) {
             newline();
-            output << "instructions:";
+            output << "bytecodes:";
             DEBUG_BLOCK_START
-            auto i = 0;
-            for(const auto& instruction: func->instructions) {
+            for(auto i = 0 ; i < func->bytecodes->size; i ++) {
                 if(i > 0){
                     newline();
                 }
-                output << "- " << i++ << ": " << debugPrint(instruction);
+                auto bytecode = (Bytecode*)&func->bytecodes[i];
+                output << "- " << i++ << ": " << debugPrint(bytecode);
             }
             DEBUG_BLOCK_END
         }
     }
 
-    void print(const ModuleType::Ptr& fileModule) {
-        output << "name: " << fileModule->name;
+    void print(const ModuleType::Ptr& module) {
+        output << "name: " << module->name;
         newline();
-        output << "instructions:";
+        output << "bytecodes:";
         DEBUG_BLOCK_START
-        auto i = 0;
-        for(const auto& instruction: fileModule->instructions) {
+        for(auto i = 0 ; i < module->bytecodes->size; i ++) {
             if(i > 0){
                 newline();
             }
-            output << "- " << i++ << ": " << debugPrint(instruction);
+            auto bytecode = (Bytecode*)&module->bytecodes[i];
+            output << "- " << i++ << ": " << debugPrint(bytecode);
         }
         DEBUG_BLOCK_END
     }

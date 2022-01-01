@@ -56,11 +56,8 @@ ModuleType::Ptr IRGen::emit(const ModuleDecl::Ptr& decl) {
         }
     });
 
-    writer.write({
-        .opcode = OP_RETURN,
-        .value = 0
-    });
-    moduleType->instructions = writer.instructions;
+    writer.write(Bytecode(OP_RETURN,0));
+    moduleType->bytecodes = writer.getBytecodes();
 
     return moduleType;
 }
@@ -80,10 +77,7 @@ void IRGen::emit(const FuncCallExpr::Ptr& funcCallExpr) {
             emit(funcCallExpr->identifier);
         }
 
-        writer.write({
-            .opcode = OP_INVOKE,
-            .value = funcType->slot
-        });
+        writer.write(Bytecode(OP_INVOKE, funcType->slot));
 
     });
 }
@@ -104,29 +98,19 @@ void IRGen::emit(const LiteralExpr::Ptr& node) {
 
     switch(node->literal->kind) {
         case decimalLiteral:
-            writer.write({
-                .opcode = OP_ICONST,
-                .value = node->literal->intValue
-            });
+            writer.write(Bytecode(OP_ICONST, node->literal->intValue));
             break;
         case stringLiteral: {
             auto stringSlot = compiler->registerStringResource(node->literal->rawValue);
-            writer.write({
-                .opcode = OP_SCONST,
-                .value = stringSlot
-            });
+            writer.write(Bytecode(OP_SCONST, stringSlot));
         }
             break;
         case booleanLiteral:
-            writer.write({
-                .opcode = OP_ICONST,
-                .value = node->literal->rawValue == Literals::TRUE ? 1 : 0
-            });
+            writer.write(Bytecode(OP_ICONST, node->literal->rawValue == Literals::TRUE ? 1 : 0));
             break;
         case nilLiteral:
-            writer.write({
-                .opcode = OP_OCONST_NIL
-            });
+            writer.write(Bytecode(OP_OCONST_NIL, -1)
+            );
             break;
         default:
             assert(false);
@@ -140,27 +124,14 @@ void IRGen::emit(const VarDecl::Ptr& node) {
 
     switch (symbol->flag) {
         case SymbolFlag::var:
-            writer.write({
-                .opcode = OP_ISTORE,
-                .value = symbol->locationInParent
-            });
+            writer.write(Bytecode(OP_ISTORE, symbol->locationInParent));
             break;
         case SymbolFlag::field: {
             if(symbol->isStatic) {
-                writer.write({
-                    .opcode = OP_PUTSTATIC,
-                    .pair = {
-                            .val1 = symbol->parentTypeSlot,
-                            .val2 = symbol->locationInParent
-                    }});
-                return;
+                writer.write(Bytecode(OP_PUTSTATIC, symbol->parentTypeSlot, symbol->locationInParent));
             } else {
-                writer.write({
-                    .opcode = OP_OLOAD
-                 });
+                writer.write(Bytecode(OP_OLOAD, -1));
             }
-
-
         }
             break;
         default:
@@ -173,9 +144,7 @@ void IRGen::emit(const PrefixExpr::Ptr& node) {
     assert(node->expr != nullptr);
     emit(node->expr);
     if(node->op->token->rawValue == Operators::MINUS) {
-        writer.write({
-            .opcode = OP_INEG
-        });
+        writer.write(Bytecode(OP_INEG, -1));
     } else {
         assert(false);
     }
@@ -193,18 +162,12 @@ void IRGen::emit(const IdentifierExpr::Ptr& node) {
         auto typeOfVariable = context->compiler->getType(symbol->typeSlot);
         switch (typeOfVariable->kind) {
             case ValueType::Int: {
-                writer.write({
-                    .opcode = OP_ILOAD,
-                    .value = symbol->locationInParent
-                });
+                writer.write(Bytecode(OP_ILOAD, symbol->locationInParent));
             }
                 break;
             case ValueType::Any:
             case ValueType::Class: {
-                writer.write({
-                    .opcode = OP_OLOAD,
-                    .value = symbol->locationInParent
-                });
+                writer.write(Bytecode(OP_OLOAD, symbol->locationInParent));
             }
                 break;
             default:
@@ -225,13 +188,7 @@ void IRGen::emit(const IdentifierExpr::Ptr& node) {
             // static field
             assert(symbol->parentTypeSlot != -1);
             assert(symbol->locationInParent != -1);
-            writer.write({
-                                 .opcode = OP_GETSTATIC,
-                                 .pair = {
-                                         .val1 = symbol->parentTypeSlot,
-                                         .val2 = symbol->locationInParent
-                                 }
-                         });
+            writer.write(Bytecode(OP_GETSTATIC, symbol->parentTypeSlot, symbol->locationInParent));
             return;
         }
     }
@@ -251,13 +208,7 @@ void IRGen::emit(const AssignExpr::Ptr& node) {
             assert(symbol->parentTypeSlot != -1);
             assert(symbol->locationInParent != -1);
             if(symbol->isStatic) {
-                writer.write({
-                             .opcode = OP_PUTSTATIC,
-                             .pair = {
-                                     .val1 = symbol->parentTypeSlot,
-                                     .val2 = symbol->locationInParent
-                                     }
-                     });
+                writer.write(Bytecode(OP_PUTSTATIC, symbol->parentTypeSlot, symbol->locationInParent));
             } else {
                 assert(false);
             }
@@ -268,10 +219,7 @@ void IRGen::emit(const AssignExpr::Ptr& node) {
         
         auto function = context->curFuncType();
         
-        writer.write({
-            .opcode = OP_OLOAD,
-            .value = (int32_t)(function->paramTypes.size() - 1)      // last parameter is the self object
-        });
+        writer.write(Bytecode(OP_OLOAD, (int32_t)(function->paramTypes.size() - 1)));      // last parameter is the self object
         
 //        auto addressOfField = selfExpr->identifier->symbol->addressOfField;
 //        writer.write({
@@ -297,10 +245,7 @@ void IRGen::emit(const AssignExpr::Ptr& node) {
 
         // check identifier's symbol's kind
         if(subscriptExpr->identifier->typeSlot == compiler->getType(BuildIns::Object_Array)->slot ) {
-            writer.write({
-                .opcode = OP_INVOKE,
-                .value = (int)BuildIns::Object_Array_Func_set
-            });
+            writer.write(Bytecode(OP_INVOKE , compiler->getType(BuildIns::Object_Array_Func_set)->slot));
             return;
         }
 //        } else if(subscriptExpr->identifier->symbol->addressOfType == JrObjectMap::Type->addressOfType) {
@@ -382,9 +327,7 @@ void IRGen::emit(const OperatorExpr::Ptr& node) {
     
     assert(imaps.find(node->token->rawValue) != imaps.end());
     
-    writer.write({
-        .opcode = imaps[node->token->rawValue],
-    });
+    writer.write(Bytecode(imaps[node->token->rawValue], -1));
 }
 
 void IRGen::emit(const ParenthesizedExpr::Ptr& node) {
@@ -394,29 +337,26 @@ void IRGen::emit(const ParenthesizedExpr::Ptr& node) {
 void IRGen::emit(const IfStmt::Ptr& node) {
     IRGen gen(context);
     gen.emit(node->ifCodeBlock);
-    auto instructions = gen.writer.instructions;
-    
-    std::vector<Instruction> elseInstructions;
+    auto ifBlockWriter = gen.writer;
+    BytecodeWriter* elseBlockWriter = nullptr;
+
     if(node->elseCodeBlock != nullptr) {
         IRGen elseBlockGenerator(context);
         elseBlockGenerator.emit(node->elseCodeBlock);
-        elseInstructions = elseBlockGenerator.writer.instructions;
+        elseBlockWriter = &elseBlockGenerator.writer;
         
         // insert an goto instruction in ifInstructions;
-        instructions.push_back({
-            .opcode = OP_GOTO,
-            .value = static_cast<int32_t>(elseInstructions.size())
-        });
+        ifBlockWriter.write(Bytecode(OP_GOTO, elseBlockWriter->size()));
     }
     
     emit(node->condition);
 
-    writer.write({
-        .opcode = OP_IFNE,
-        .value = static_cast<int32_t>(instructions.size())
-    });
-    writer.write(instructions);
-    writer.write(elseInstructions);
+    writer.write(Bytecode(OP_IFNE, ifBlockWriter.size()));
+    writer.write(ifBlockWriter.getBytecodes());
+    if(elseBlockWriter) {
+        writer.write(elseBlockWriter->getBytecodes());
+    }
+
     
 }
 
@@ -427,18 +367,11 @@ void IRGen::emit(const WhileStmt::Ptr& node) {
     IRGen conditionGen(context);
     conditionGen.emit(node->expr);
     
-    auto position = writer.instructions.size();
-    writer.write(conditionGen.writer.instructions);
-    writer.write({
-        .opcode = OP_IFLE,
-        .value = static_cast<int32_t>(gen.writer.instructions.size() + 1)
-    });
-    writer.write(gen.writer.instructions);
-    writer.write({
-        .opcode = OP_GOTO,
-        .value = static_cast<int32_t>(position - writer.instructions.size() - 1)
-    });
-    
+    auto position = writer.size();
+    writer.write(conditionGen.writer.getBytecodes());
+    writer.write(Bytecode(OP_IFLE, gen.writer.size() + 1));
+    writer.write(gen.writer.getBytecodes());
+    writer.write(Bytecode(OP_GOTO, position - writer.size() - 1));
 }
 
 void IRGen::emit(const StmtsBlock::Ptr& node) {
@@ -459,10 +392,10 @@ void IRGen::emit(const FuncDecl::Ptr& node) {
         generator.emit(node->codeBlock);
     });
 
-    auto instructions = generator.writer.instructions;
+    auto bytecodes = generator.writer.getBytecodes();
     
-    assert(function != nullptr && function->instructions.empty());
-    function->instructions = instructions;
+    assert(function != nullptr && function->bytecodes  == nullptr);
+    function->bytecodes = bytecodes;
 }
 
 void IRGen::emit(const ReturnStmt::Ptr& node) {
@@ -472,9 +405,7 @@ void IRGen::emit(const ReturnStmt::Ptr& node) {
         op = OP_IRETURN;
     }
     
-    writer.write({
-        .opcode = op
-    });
+    writer.write(Bytecode(op, -1));
 }
 
 void IRGen::emit(const ArrayLiteralExpr::Ptr& node) {
@@ -482,16 +413,9 @@ void IRGen::emit(const ArrayLiteralExpr::Ptr& node) {
         emit(item);
     }
     
-    writer.write({
-        .opcode = OP_ICONST,
-        .value = static_cast<int32_t>(node->items.size())
-    });
+    writer.write(Bytecode(OP_ICONST, node->items.size()));
     
-    writer.write({
-        .opcode = OP_ONEWARRAY,
-        .value = context->compiler->getType(BuildIns::Object_Array)->slot
-    });
-
+    writer.write(Bytecode(OP_ONEWARRAY, compiler->getType(BuildIns::Object_Array)->slot));
 }
 
 void IRGen::emit(const DictLiteralExpr::Ptr& node) {
@@ -542,10 +466,7 @@ void IRGen::emit(const SubscriptExpr::Ptr& node) {
 
     auto typeSlot = node->identifier->typeSlot;
     if(typeSlot == context->compiler->getType(BuildIns::Object_Array)->slot) {
-        writer.write({
-            .opcode = OP_INVOKE,
-            .value = context->compiler->getType(BuildIns::Object_Array_Func_get)->slot
-        });
+        writer.write(Bytecode(OP_INVOKE, compiler->getType(BuildIns::Object_Array_Func_get)->slot));
     } else {
         assert(false);
     }

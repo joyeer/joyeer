@@ -6,10 +6,11 @@
 #define __joyeer_compiler_typedef_h__
 
 #include "joyeer/runtime/types.h"
-#include "joyeer/compiler/opcode.h"
+#include "joyeer/runtime/bytecode.h"
 
 #include <string>
 #include <utility>
+#include <vector>
 
 enum AccessFlag : uint32_t {
     Public = 0x0001,
@@ -121,7 +122,7 @@ struct FuncType : Type {
     std::vector<Variable::Ptr> paramTypes;
     std::vector<Variable::Ptr> localVars;
     int returnTypeSlot = -1;
-    std::vector<Instruction> instructions {};
+    Bytecodes* bytecodes = nullptr;
 
     explicit FuncType(const std::string& name);
 
@@ -139,7 +140,7 @@ struct ModuleType : BlockType {
     using Ptr = std::shared_ptr<ModuleType>;
 
     // File initialize instructions
-    std::vector<Instruction> instructions;
+    Bytecodes* bytecodes  = nullptr;
 
     [[nodiscard]] std::vector<Variable::Ptr> getVariables() const {
         return localVars;

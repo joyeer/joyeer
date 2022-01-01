@@ -3,7 +3,7 @@
 //
 
 #include "joyeer/vm/interpreter.h"
-#include "joyeer/compiler/opcode.h"
+#include "joyeer/runtime/bytecode.h"
 #include "joyeer/runtime/types.h"
 
 struct Interpreter;
