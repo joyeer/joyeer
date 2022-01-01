@@ -2,11 +2,10 @@
 // Created by Qing Xu on 2021/11/13.
 //
 
-#ifndef __joyeer_vm_memory_h__
-#define __joyeer_vm_memory_h__
+#ifndef __joyeer_runtime_memory_h__
+#define __joyeer_runtime_memory_h__
 
-
-#include "joyeer/vm/types.h"
+#include "joyeer/runtime/types.h"
 
 class MemoryBuffer {
 public:
@@ -18,7 +17,7 @@ public:
         std::free(buffer);
     }
 
-    void write(Byte byte) {
+    void write(int8_t byte) {
         tryResizeIfNeed(pos + kByteSize);
         *(Byte*)(buffer + pos) = byte;
         pos += kBoolSize;
@@ -49,4 +48,4 @@ protected:
 };
 
 
-#endif //__joyeer_vm_memory_h__
+#endif //__joyeer_runtime_memory_h__

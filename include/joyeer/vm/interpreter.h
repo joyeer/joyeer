@@ -7,7 +7,7 @@
 
 #include "joyeer/vm/isolate.h"
 #include "joyeer/vm/frame.h"
-#include "joyeer/vm/bytecode.h"
+#include "joyeer/runtime/bytecode.h"
 
 constexpr int kStackMaxSize = 1024 * 1024 * 4; // 4M intptr_t;
 

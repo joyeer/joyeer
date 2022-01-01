@@ -2,7 +2,7 @@
 // Created by Qing Xu on 2021/11/7.
 //
 
-#include "joyeer/vm/bytecode.h"
+#include "joyeer/runtime/bytecode.h"
 #include "joyeer/vm/loader.h"
 #include "joyeer/vm/types.h"
 

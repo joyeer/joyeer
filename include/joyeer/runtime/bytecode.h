@@ -2,6 +2,8 @@
 #define __joyeer_runtime_bytecode_h__
 
 #include <cstdint>
+#include "joyeer/runtime/types.h"
+#include "joyeer/runtime/memory.h"
 
 enum Opcode : uint8_t {
     OP_NOP = 0x00,
@@ -99,6 +101,23 @@ struct Bytecode {
 
 #define VAL1_FROM_BYTECODE(bytecode) (int32_t)((bytecode).format2.value1)
 #define VAL2_FROM_BYTECODE(bytecode) (int32_t)((bytecode).format2.value2)
+
+
+struct Bytecodes {
+    Bytecodes(Byte* bytes, int length);
+    ~Bytecodes();
+
+    Byte *bytecodes;
+    Int size{};
+};
+
+class BytecodeWriter {
+public:
+    void write(Bytecode bytecode);
+    [[nodiscard]] Bytecodes* getBytecodes() const;
+private:
+    MemoryBuffer buffer {};
+};
 
 
 #endif

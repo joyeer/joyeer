@@ -2,7 +2,8 @@
 // Created by Qing Xu on 2021/11/15.
 //
 
-#include "joyeer/vm/memory.h"
+#include "joyeer/runtime/memory.h"
+#include <new>
 
 
 void MemoryBuffer::resize(size_t newSize) {
