@@ -59,7 +59,7 @@ Symbol::Ptr CompileContext::lookup(const std::string &name) {
     return nullptr;
 }
 
-Type::Ptr CompileContext::curDeclType() const {
+Type* CompileContext::curDeclType() const {
     for (auto iterator = types.rbegin(); iterator != types.rend(); iterator ++) {
         auto typeSlot = *iterator;
         auto type = compiler->getType(typeSlot);
@@ -72,31 +72,31 @@ Type::Ptr CompileContext::curDeclType() const {
     return nullptr;
 }
 
-BlockType::Ptr CompileContext::curBlockType() const {
+BlockType* CompileContext::curBlockType() const {
     for (auto iterator = types.rbegin(); iterator != types.rend(); iterator ++) {
         auto typeSlot = *iterator;
         auto type = compiler->getType(typeSlot);
         if(type->kind == ValueType::Block) {
-            return std::static_pointer_cast<BlockType>(type);
+            return (BlockType*)(type);
         }
     }
     return nullptr;
 }
 
-FuncType::Ptr CompileContext::curFuncType() const {
+FuncType* CompileContext::curFuncType() const {
     for (auto iterator = types.rbegin(); iterator != types.rend(); iterator ++) {
         auto typeSlot = *iterator;
         auto type = compiler->getType(typeSlot);
         if(type->kind == ValueType::Func) {
-            return std::static_pointer_cast<FuncType>(type);
+            return (FuncType*)(type);
         }
     }
 
     return nullptr;
 }
 
-ModuleType::Ptr CompileContext::curModuleType() const {
+ModuleType* CompileContext::curModuleType() const {
     auto type = compiler->getType(types[0]);
     assert(type->kind == ValueType::Module);
-    return std::static_pointer_cast<ModuleType>(type);
+    return (ModuleType*)(type);
 }

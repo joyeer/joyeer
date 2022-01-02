@@ -21,7 +21,7 @@ CompilerService::CompilerService(CommandLineArguments::Ptr opts):
     initializeTypes();
 }
 
-ModuleType::Ptr CompilerService::run(const std::string& inputFile) {
+ModuleType* CompilerService::run(const std::string& inputFile) {
     auto sourcefile = findSourceFile(inputFile);
     return compile(sourcefile);
 }
@@ -46,7 +46,7 @@ SourceFile::Ptr CompilerService::findSourceFile(const std::string &path, const s
 }
 
 
-ModuleType::Ptr CompilerService::compile(const SourceFile::Ptr& sourcefile) {
+ModuleType* CompilerService::compile(const SourceFile::Ptr& sourcefile) {
     
     auto context= std::make_shared<CompileContext>(options, globalSymbols);
     context->sourcefile = sourcefile;
@@ -83,28 +83,28 @@ ModuleType::Ptr CompilerService::compile(const SourceFile::Ptr& sourcefile) {
 
     // debug print the typedefs
     TypeDefDebugPrinter typedefPrinter(sourcefile->getAbstractLocation() + ".typedef.debug.yml");
-    typedefPrinter.print(types);
+    typedefPrinter.print(types->types);
     typedefPrinter.close();
 
     return sourcefile->moduleClass;
 }
 
-int CompilerService::declare(const Type::Ptr& type) {
-    type->slot = static_cast<int32_t>(types.size());
-    types.push_back(type);
+int CompilerService::declare(Type* type) {
+    type->slot = static_cast<int32_t>(types->types.size());
+    types->types.push_back(type);
     return type->slot;
 }
 
-Type::Ptr CompilerService::getType(int address) {
-    return types[address];
+Type* CompilerService::getType(int address) {
+    return const_cast<Type *>((*types)[address]);
 }
 
-Type::Ptr CompilerService::getType(ValueType valueType) {
-    return types[static_cast<int>(valueType)];
+Type* CompilerService::getType(ValueType valueType) {
+    return (*types)[static_cast<int>(valueType)];
 }
 
-Type::Ptr CompilerService::getType(BuildIns buildIn) {
-    return types[static_cast<int>(buildIn)];
+Type* CompilerService::getType(BuildIns buildIn) {
+    return (*types)[static_cast<int>(buildIn)];
 }
 
 SymbolTable::Ptr CompilerService::getExportingSymbolTable(int typeSlot) {
@@ -123,13 +123,13 @@ void CompilerService::debugPrint(const Node::Ptr& node, const std::string &debug
 void CompilerService::initializeTypes() {
 
 #define DECLARE_TYPE(type, TypeClass) \
-    declare(std::make_shared<TypeClass>()); \
-    assert((type) == types.back()->kind);  \
-    assert((size_t)(type) == (types.size() - 1));
+    declare(new TypeClass()); \
+    assert((type) == types->types.back()->kind);  \
+    assert((size_t)(type) == (types->types.size() - 1));
 
 #define DECLARE_FUNC(type, param, typeSlot) \
     { \
-        auto func = std::make_shared<FuncType>(param); \
+        auto func = new FuncType(param); \
         func->funcKind = FuncTypeKind::C_Func;         \
         func->returnTypeSlot = (int)typeSlot; \
         declare(func); \
@@ -138,14 +138,14 @@ void CompilerService::initializeTypes() {
 #define BEGIN_DECLARE_CLASS(type, name) \
     {                                   \
         auto symtable = std::make_shared<SymbolTable>(); \
-        auto classAddress = declare(std::make_shared<ClassType>(name)); \
+        auto classAddress = declare(new ClassType(name)); \
         globalSymbols->insert(std::make_shared<Symbol>(SymbolFlag::klass, name, classAddress)); \
         assert((size_t)(type) == classAddress); \
         exportingSymbolTableOfClasses.insert({ classAddress, symtable });
 
 #define DECLARE_CLASS_FUNC(name, typeSlot) \
     { \
-        auto func = std::make_shared<FuncType>(name); \
+        auto func = new FuncType(name); \
         func->funcKind = FuncTypeKind::C_Func;        \
         func->returnTypeSlot = (int)(typeSlot);  \
         auto funcAddress = declare(func); \

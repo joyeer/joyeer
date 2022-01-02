@@ -172,7 +172,7 @@ loop:
         auto fieldOffset = VAL2_FROM_BYTECODE(bytecode); // field variable position
         auto value = pop();
 
-        auto klass = (*isolateVm->classes)[classSlotId];
+        auto klass = (ClassType*)(*isolateVm->types)[classSlotId];
         GC::write(klass->staticArea, value, fieldOffset);
     }
 
@@ -181,7 +181,7 @@ loop:
         auto classSlotId = VAL1_FROM_BYTECODE(bytecode);    // slot id of class
         auto fieldOffset = VAL2_FROM_BYTECODE(bytecode);
 
-        auto klass = (*isolateVm->classes)[classSlotId];
+        auto klass = (ClassType*)(*isolateVm->types)[classSlotId];
         auto value = GC::read(klass->staticArea, fieldOffset);
 
         push(value);
@@ -361,16 +361,18 @@ loop:
     inline void Handle_INVOKE(Bytecode bytecode) {
         assert(OP_FROM_BYTECODE(bytecode) == OP_INVOKE);
         auto methodSlot = VALUE_FROM_BYTECODE(bytecode);
-        auto method = (*isolateVm->methods)[methodSlot];
-        switch(method->kind) {
-            case MethodKind::C_Method: {
-                auto cMethod = dynamic_cast<const CMethod*>(method);
-                executor->execute(cMethod);
+        auto method = (FuncType*)(*isolateVm->types)[methodSlot];
+        switch(method->funcKind) {
+            case FuncTypeKind::C_Func: {
+//                auto cMethod = dynamic_cast<const CMethod*>(method);
+//                executor->execute(cMethod);
+                assert(false);
             }
                 break;
-            case MethodKind::VM_Method: {
-                auto vMethod = dynamic_cast<const VMethod*>(method);
-                executor->execute(vMethod);
+            case FuncTypeKind::VM_Func: {
+//                auto vMethod = dynamic_cast<const VMethod*>(method);
+//                executor->execute(vMethod);
+                assert(false);
             }
                 break;
         }
@@ -405,8 +407,9 @@ void Executor::execute(const ModuleClass *module) {
     ModuleEntryFrame::set(frame, {.intValue = 0}, module->slot);
 
     push(savedFP, ModuleEntryFrame::size());
-    auto method = (*isolateVM->methods)[module->initializerSlot];
-    execute(method);
+    auto method = (FuncType*)(*isolateVM->types)[module->initializerSlot];
+//    execute(method);
+    assert(false);
     pop(savedFP);
 }
 

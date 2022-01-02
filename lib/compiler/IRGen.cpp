@@ -47,9 +47,9 @@ void IRGen::emit(const Node::Ptr& node) {
     }
 }
 
-ModuleType::Ptr IRGen::emit(const ModuleDecl::Ptr& decl) {
+ModuleType* IRGen::emit(const ModuleDecl::Ptr& decl) {
 
-    auto moduleType = std::static_pointer_cast<ModuleType>(compiler->getType(decl->typeSlot));
+    auto moduleType = (ModuleType*)(compiler->getType(decl->typeSlot));
     context->visit(CompileStage::visitModule, decl, [this, decl]() {
         for(const auto& member: decl->statements) {
             emit(member);
@@ -71,7 +71,7 @@ void IRGen::emit(const FuncCallExpr::Ptr& funcCallExpr) {
         }
 
         assert(funcCallExpr->funcTypeSlot != -1);
-        auto funcType = std::static_pointer_cast<FuncType>(context->compiler->getType(funcCallExpr->funcTypeSlot));
+        auto funcType = (FuncType*)(compiler->getType(funcCallExpr->funcTypeSlot));
         assert(funcType != nullptr);
         if(funcCallExpr->identifier->kind == SyntaxKind::memberAccessExpr) {
             emit(funcCallExpr->identifier);
@@ -101,7 +101,7 @@ void IRGen::emit(const LiteralExpr::Ptr& node) {
             writer.write(Bytecode(OP_ICONST, node->literal->intValue));
             break;
         case stringLiteral: {
-            auto stringSlot = compiler->registerStringResource(node->literal->rawValue);
+            auto stringSlot = compiler->strings->import(node->literal->rawValue);
             writer.write(Bytecode(OP_SCONST, stringSlot));
         }
             break;
@@ -384,7 +384,7 @@ void IRGen::emit(const StmtsBlock::Ptr& node) {
 
 void IRGen::emit(const FuncDecl::Ptr& node) {
 
-    auto function = std::static_pointer_cast<FuncType>(compiler->getType(node->typeSlot));
+    auto function = (FuncType*)compiler->getType(node->typeSlot);
 
     IRGen generator(context);
 

@@ -21,24 +21,24 @@ Node::Ptr Binder::visit(const Node::Ptr& node) {
     return NodeVisitor::visit(node);
 }
 
-Node::Ptr Binder::visit(const ModuleDecl::Ptr& module) {
+Node::Ptr Binder::visit(const ModuleDecl::Ptr& decl) {
     // register Module
 
-    auto moduleType = std::make_shared<ModuleType>(module->getSimpleName());
-    context->compiler->declare(moduleType);
-    module->typeSlot = moduleType->slot;
+    auto module = new ModuleType(decl->getSimpleName());
+    context->compiler->declare(module);
+    decl->typeSlot = module->slot;
 
-    module->recursiveUpdate();
+    decl->recursiveUpdate();
 
-    context->visit(CompileStage::visitModule, module, [module, this]() {
+    context->visit(CompileStage::visitModule, decl, [decl, this]() {
         auto statements = std::vector<Node::Ptr>();
-        for(const auto& statement : module->statements) {
+        for(const auto& statement : decl->statements) {
             statements.push_back(NodeVisitor::visit(statement));
         }
-        module->statements = statements;
+        decl->statements = statements;
     });
     
-    return module;
+    return decl;
 }
 
 Node::Ptr Binder::visit(const ClassDecl::Ptr& decl) {
@@ -50,7 +50,7 @@ Node::Ptr Binder::visit(const ClassDecl::Ptr& decl) {
         Diagnostics::reportError("[Error] duplicate class name");
     }
 
-    auto objectType = std::make_shared<ClassType>(name);
+    auto objectType = new ClassType(name);
     context->compiler->declare(objectType);
 
     auto symbol = std::make_shared<Symbol>(SymbolFlag::klass, name, objectType->slot);
@@ -79,8 +79,8 @@ Node::Ptr Binder::visit(const FuncDecl::Ptr& decl) {
     }
 
     // define FuncType
-    auto funcType = std::make_shared<FuncType>(funcSimpleName);
-    context->compiler->declare(funcType);
+    auto funcType = new FuncType(funcSimpleName);
+    compiler->declare(funcType);
     decl->typeSlot = funcType->slot;
 
     // prepare the symbol, register the symbol into parentTypeSlot
@@ -411,7 +411,7 @@ Node::Ptr Binder::visit(const WhileStmt::Ptr& decl) {
 Node::Ptr Binder::visit(const StmtsBlock::Ptr& decl) {
 
     // generate a BlockType
-    auto blockType = std::make_shared<BlockType>();
+    auto blockType = new BlockType();
     context->compiler->declare(blockType);
     decl->typeSlot = blockType->slot;
 

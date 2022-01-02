@@ -5,37 +5,34 @@
 #ifndef __joyeer_vm_isolate_h__
 #define __joyeer_vm_isolate_h__
 
-#include "joyeer/vm/loader.h"
-#include "joyeer/vm/res+table.h"
 #include "joyeer/vm/gc.h"
 #include "joyeer/vm/stdlib.h"
+#include "joyeer/runtime/res+table.h"
+#include "joyeer/compiler/compiler+service.h"
 
 struct ArrayClass;
 
 struct IsolateVM {
 
-    StringTable* strings {new StringTable() };
-    ClassResTable* classes {new ClassResTable() };
-    MethodResTable* methods {new MethodResTable() };
+    StringResTable* strings = nullptr;
+    TypeResTable* types = nullptr;
 
     GC* gc;
 
-    explicit IsolateVM() ;
+    explicit IsolateVM(CompilerService* compiler) ;
     ~IsolateVM();
 
-    void run(const ModuleType::Ptr& module, CompilerService* compilerService);
-    void run(const ModuleClass* moduleClass);
-
-    // import ModuleClass, prepare the memory for module class
-    void import(ModuleClass* moduleClass);
+    void run(const ModuleType* module);
 
 private:
     friend class Interpreter;
     friend class Array_$$_get;
     friend class Array_$$_size;
 
+    CompilerService* compiler;
+
     // initialize the std library
-    void initStdlib(CompilerService* compiler);
+    void initStdlib();
 
     // std library classes
     Global_$_print* printFunc = nullptr;

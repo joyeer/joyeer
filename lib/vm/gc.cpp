@@ -4,12 +4,14 @@
 
 #include "joyeer/vm/gc.h"
 
-intptr_t GC::allocate(MemoryArea area, Class *klass) {
+intptr_t GC::allocate(MemoryArea area, Type *klass) {
     if(area == MemoryArea::Permanent) {
-        return allocateForStatic(klass);
+//        return allocateForStatic(klass);
     } else {
-        return reinterpret_cast<intptr_t>(allocateForDynamic(klass));
+//        return reinterpret_cast<intptr_t>(allocateForDynamic(klass));
     }
+
+    assert(false);
 }
 
 intptr_t GC::allocate(Class *klass, size_t size) {

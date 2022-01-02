@@ -37,16 +37,16 @@ public:
     SymbolTable::Ptr curSymTable() ;
 
     // Return the Top declarations Types - ModuleType/FuncType/ClassType
-    [[nodiscard]] Type::Ptr  curDeclType() const ;
+    [[nodiscard]] Type*  curDeclType() const ;
 
     // return the current FuncType in the stack
-    [[nodiscard]] FuncType::Ptr curFuncType() const;
+    [[nodiscard]] FuncType* curFuncType() const;
 
     // return the current BlockType in the stack
-    [[nodiscard]] BlockType::Ptr curBlockType() const;
+    [[nodiscard]] BlockType* curBlockType() const;
 
     // return the current ModuleType in the stack
-    [[nodiscard]] ModuleType::Ptr curModuleType() const;
+    [[nodiscard]] ModuleType* curModuleType() const;
 
     // the current parsing source file
     SourceFile::Ptr sourcefile = nullptr;

@@ -42,30 +42,30 @@ protected:
     Node::Ptr visit(const ArrayType::Ptr& decl) override;
     Node::Ptr visit(const ImportStmt::Ptr& decl) override;
 
-    Type::Ptr typeOf(const Node::Ptr& node);
-    Type::Ptr typeOf(const Expr::Ptr& node);
-    Type::Ptr typeOf(const LiteralExpr::Ptr& node);
-    Type::Ptr typeOf(const FuncCallExpr::Ptr& node);
-    Type::Ptr typeOf(const ParenthesizedExpr::Ptr& node);
-    Type::Ptr typeOf(const SelfExpr::Ptr& node);
-    Type::Ptr typeOf(const Pattern::Ptr& node);
-    Type::Ptr typeOf(const TypeIdentifier::Ptr& node);
-    Type::Ptr typeOf(const ArrayLiteralExpr::Ptr& node);
-    Type::Ptr typeOf(const DictLiteralExpr::Ptr& node);
-    Type::Ptr typeOf(const MemberAccessExpr::Ptr& node);
-    Type::Ptr typeOf(const MemberFuncCallExpr::Ptr& node);
-    Type::Ptr typeOf(const SubscriptExpr::Ptr& node);
-    Type::Ptr typeOf(const ArrayType::Ptr& node);
-    Type::Ptr typeOf(const PrefixExpr::Ptr& node);
+    Type* typeOf(const Node::Ptr& node);
+    Type* typeOf(const Expr::Ptr& node);
+    Type* typeOf(const LiteralExpr::Ptr& node);
+    Type* typeOf(const FuncCallExpr::Ptr& node);
+    Type* typeOf(const ParenthesizedExpr::Ptr& node);
+    Type* typeOf(const SelfExpr::Ptr& node);
+    Type* typeOf(const Pattern::Ptr& node);
+    Type* typeOf(const TypeIdentifier::Ptr& node);
+    Type* typeOf(const ArrayLiteralExpr::Ptr& node);
+    Type* typeOf(const DictLiteralExpr::Ptr& node);
+    Type* typeOf(const MemberAccessExpr::Ptr& node);
+    Type* typeOf(const MemberFuncCallExpr::Ptr& node);
+    Type* typeOf(const SubscriptExpr::Ptr& node);
+    Type* typeOf(const ArrayType::Ptr& node);
+    Type* typeOf(const PrefixExpr::Ptr& node);
     
     // Get Code-Block's return kind
     void verifyReturnStatement(const StmtsBlock::Ptr& node);
     void verifyReturnStatement(std::vector<Node::Ptr>& statements);
-    Type::Ptr returnTypeOf(const Node::Ptr& node);
-    Type::Ptr returnTypeOf(const IfStmt::Ptr& node);
-    Type::Ptr returnTypeOf(const StmtsBlock::Ptr& node);
-    Type::Ptr returnTypeOf(const FuncCallExpr::Ptr& node);
-    Type::Ptr returnTypeOf(const WhileStmt::Ptr& node);
+    Type* returnTypeOf(const Node::Ptr& node);
+    Type* returnTypeOf(const IfStmt::Ptr& node);
+    Type* returnTypeOf(const StmtsBlock::Ptr& node);
+    Type* returnTypeOf(const FuncCallExpr::Ptr& node);
+    Type* returnTypeOf(const WhileStmt::Ptr& node);
     
     CompileContext::Ptr context;
     CompilerService* compiler;

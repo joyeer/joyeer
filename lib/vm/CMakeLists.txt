@@ -5,9 +5,7 @@ add_joyeer_library(JoyeerVM STATIC
         heaps.cpp
         interpreter.cpp
         isolate.cpp
-        loader.cpp
         object.cpp
-        res+table.cpp
         stdlib.cpp
         types.cpp
         )

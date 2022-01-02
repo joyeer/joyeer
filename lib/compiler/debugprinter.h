@@ -504,7 +504,7 @@ struct TypeDefDebugPrinter : YMLPrinter {
     explicit TypeDefDebugPrinter(const std::string& filename):
             YMLPrinter(filename) {}
 
-    void print(const std::vector<Type::Ptr> typedefs) {
+    void print(const std::vector<Type*> typedefs) {
         output << "types:";
         DEBUG_BLOCK_START
         auto i = 0;
@@ -517,7 +517,7 @@ struct TypeDefDebugPrinter : YMLPrinter {
                 case ValueType::Module:
                     output << "kind: Module" ;
                     newline();
-                    print(std::static_pointer_cast<ModuleType>(tf));
+                    print((ModuleType*)(tf));
                     break;
                 case ValueType::Nil:
                     output << "kind: Nil" ;
@@ -540,12 +540,12 @@ struct TypeDefDebugPrinter : YMLPrinter {
                 case ValueType::Block:
                     output << "kind: Block";
                     newline();
-                    print(std::static_pointer_cast<BlockType>(tf));
+                    print((BlockType*)tf);
                     break;
                 case ValueType::Func:
                     output << "kind: Func";
                     newline();
-                    print(std::static_pointer_cast<FuncType>(tf));
+                    print((FuncType*)(tf));
                     break;
                 case ValueType::Unspecified:
                     output << "kind: Unspecified";
@@ -562,7 +562,7 @@ struct TypeDefDebugPrinter : YMLPrinter {
         DEBUG_BLOCK_END
     }
 
-    void print(const FuncType::Ptr& func) {
+    void print(FuncType* func) {
         output<< "name: " << func->name;
         if(func->funcKind == VM_Func && func->bytecodes->size > 0 ) {
             newline();
@@ -579,7 +579,7 @@ struct TypeDefDebugPrinter : YMLPrinter {
         }
     }
 
-    void print(const ModuleType::Ptr& module) {
+    void print(ModuleType* module) {
         output << "name: " << module->name;
         newline();
         output << "bytecodes:";
@@ -594,7 +594,7 @@ struct TypeDefDebugPrinter : YMLPrinter {
         DEBUG_BLOCK_END
     }
 
-    void print(const BlockType::Ptr& block) {
+    void print(BlockType* block) {
         output << "variables:";
         DEBUG_BLOCK_START
         auto i = 0;

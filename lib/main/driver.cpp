@@ -2,10 +2,10 @@
 
 Driver::Driver(CommandLineArguments::Ptr arguments):arguments(arguments) {
     compiler = new CompilerService(arguments);
-    isolateVM = new IsolateVM();
 }
 
 void Driver::run() {
     auto fileModule = compiler->run(arguments->inputfile);
-    isolateVM->run(fileModule, compiler);
+    isolateVM = new IsolateVM(compiler);
+    isolateVM->run(fileModule);
 }

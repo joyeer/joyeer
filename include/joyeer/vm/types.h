@@ -14,7 +14,6 @@ struct Arguments;
 #include <vector>
 
 #include "joyeer/runtime/types.h"
-#include "joyeer/vm/heaps.h"
 
 // Class's field description
 struct Field {
@@ -26,8 +25,6 @@ struct Field {
     [[nodiscard]] size_t getSize() const {
         return kIntSize;
     }
-
-#undef DECLARE_TYPE
 };
 
 enum class MethodKind: intptr_t {
@@ -120,16 +117,5 @@ private:
     // result size should be (power of 2 + kArrayDataOffset)
     static size_t calculateArrayCapacitySize(int size);
 };
-
-
-//
-struct IntClass : public Class {
-    constexpr static int kIntValueOffset = 0;
-    explicit IntClass(): Class() {
-        instanceFields.emplace_back(ValueType::Int);
-    }
-};
-
-
 
 #endif //__joyeer_vm_metadata_h__

@@ -51,7 +51,7 @@ Node::Ptr TypeChecker::visit(const FuncDecl::Ptr& decl) {
         auto parameterClause = std::static_pointer_cast<ParameterClause>(decl->parameterClause);
         for(const auto& parameter: parameterClause->parameters) {
             auto parameterName = parameter->getSimpleName();
-            auto variable = std::make_shared<Variable>(parameterName);
+            auto variable = new Variable(parameterName);
             funcType->paramTypes.push_back(variable);
         }
 
@@ -105,7 +105,7 @@ Node::Ptr TypeChecker::visit(const FuncCallExpr::Ptr& node) {
     }
 
     node->funcTypeSlot = symbol->typeSlot;
-    auto funcType = std::static_pointer_cast<FuncType>(compiler->getType(node->funcTypeSlot));
+    auto funcType = (FuncType*)compiler->getType(node->funcTypeSlot);
     assert(funcType != nullptr && funcType->returnTypeSlot != -1);
     node->typeSlot = funcType->returnTypeSlot;
 
@@ -135,7 +135,7 @@ Node::Ptr TypeChecker::visit(const MemberFuncCallExpr::Ptr& node) {
         Diagnostics::reportError("[Error]Cannot find the function");
     }
 
-    auto funcType = std::static_pointer_cast<FuncType>(compiler->getType(symbol->typeSlot));
+    auto funcType = (FuncType*)(compiler->getType(symbol->typeSlot));
     assert(funcType != nullptr && funcType->returnTypeSlot);
     node->typeSlot = funcType->returnTypeSlot;
     funcCallExpr->funcTypeSlot = funcType->slot;
@@ -177,18 +177,18 @@ Node::Ptr TypeChecker::visit(const VarDecl::Ptr& decl) {
     symbol->typeSlot = decl->typeSlot;
 
     auto declType = context->curDeclType();
-    auto variableType = std::make_shared<Variable>(simpleName);
+    auto variableType = new Variable(simpleName);
     variableType->typeSlot = symbol->typeSlot;
     variableType->parentSlot = declType->slot;
     switch (declType->kind) {
         case ValueType::Func: {
-            auto funcType = std::static_pointer_cast<FuncType>(declType);
+            auto funcType = (FuncType*)declType;
             symbol->locationInParent = funcType->paramTypes.size() + funcType->localVars.size();
             funcType->localVars.push_back(variableType);
         }
             break;
         case ValueType::Module: {
-            auto moduleType = std::static_pointer_cast<ModuleType>(declType);
+            auto moduleType = (ModuleType*)declType;
             symbol->locationInParent = moduleType->localVars.size();
             symbol->locationInParent = moduleType->localVars.size();
             moduleType->localVars.push_back(variableType);
@@ -450,7 +450,7 @@ Node::Ptr TypeChecker::visit(const OperatorExpr::Ptr& decl) {
     return decl;
 }
 
-Type::Ptr TypeChecker::typeOf(const Node::Ptr& node) {
+Type* TypeChecker::typeOf(const Node::Ptr& node) {
     switch (node->kind) {
         case SyntaxKind::identifierExpr:
             assert(node->typeSlot != -1);
@@ -488,7 +488,7 @@ Type::Ptr TypeChecker::typeOf(const Node::Ptr& node) {
     }
 }
 
-Type::Ptr TypeChecker::typeOf(const Expr::Ptr& node) {
+Type* TypeChecker::typeOf(const Expr::Ptr& node) {
     assert(node->binaries.empty());
     assert(node->prefix == nullptr);
     
@@ -496,7 +496,7 @@ Type::Ptr TypeChecker::typeOf(const Expr::Ptr& node) {
         return compiler->getType(node->typeSlot);
     }
     
-    std::stack<Type::Ptr> stack;
+    std::stack<Type*> stack;
     for (const auto &n: node->nodes)
         if (n->kind == SyntaxKind::operatorExpr) {
             auto leftType = stack.top();
@@ -519,7 +519,7 @@ Type::Ptr TypeChecker::typeOf(const Expr::Ptr& node) {
     return stack.top();
 }
 
-Type::Ptr TypeChecker::typeOf(const LiteralExpr::Ptr& node) {
+Type* TypeChecker::typeOf(const LiteralExpr::Ptr& node) {
     switch(node->literal->kind) {
         case booleanLiteral:
             return context->compiler->getType(ValueType::Bool);
@@ -534,47 +534,47 @@ Type::Ptr TypeChecker::typeOf(const LiteralExpr::Ptr& node) {
     }
 }
 
-Type::Ptr TypeChecker::typeOf(const FuncCallExpr::Ptr& node) {
+Type* TypeChecker::typeOf(const FuncCallExpr::Ptr& node) {
     auto funcName = node->getSimpleName();
     auto symbol = context->lookup(funcName);
     assert(symbol->flag == SymbolFlag::func);
-    return context->compiler->getType(symbol->typeSlot);
+    return compiler->getType(symbol->typeSlot);
 }
 
-Type::Ptr TypeChecker::typeOf(const MemberFuncCallExpr::Ptr& node) {
+Type* TypeChecker::typeOf(const MemberFuncCallExpr::Ptr& node) {
     assert(node->funcTypeSlot != -1);
-    auto funcType = std::static_pointer_cast<FuncType>( compiler->getType(node->funcTypeSlot));
+    auto funcType = (FuncType*)( compiler->getType(node->funcTypeSlot));
     auto type = compiler->getType(funcType->returnTypeSlot);
     assert(type != nullptr);
     return type;
 }
 
-Type::Ptr TypeChecker::typeOf(const ParenthesizedExpr::Ptr& node) {
+Type* TypeChecker::typeOf(const ParenthesizedExpr::Ptr& node) {
     return typeOf(node->expr);
 }
 
-Type::Ptr TypeChecker::typeOf(const SelfExpr::Ptr& node) {
+Type* TypeChecker::typeOf(const SelfExpr::Ptr& node) {
     return typeOf(node->identifier);
 }
 
-Type::Ptr TypeChecker::typeOf(const Pattern::Ptr& node) {
+Type* TypeChecker::typeOf(const Pattern::Ptr& node) {
     if(node->typeSlot == -1) {
         return compiler->getType(ValueType::Any);
     }
     return typeOf(node->typeExpr);
 }
 
-Type::Ptr TypeChecker::typeOf(const TypeIdentifier::Ptr& node) {
+Type* TypeChecker::typeOf(const TypeIdentifier::Ptr& node) {
     assert(node->typeSlot != -1);
     return compiler->getType(node->typeSlot);
 }
 
-Type::Ptr TypeChecker::typeOf(const DictLiteralExpr::Ptr& node) {
+Type* TypeChecker::typeOf(const DictLiteralExpr::Ptr& node) {
     assert(false);
 }
 
-Type::Ptr TypeChecker::typeOf(const ArrayLiteralExpr::Ptr& node) {
-    Type::Ptr previousType = nullptr;
+Type* TypeChecker::typeOf(const ArrayLiteralExpr::Ptr& node) {
+    Type* previousType = nullptr;
     for(const auto& item: node->items) {
         auto type = typeOf(item);
         if(previousType != nullptr) {
@@ -590,15 +590,15 @@ Type::Ptr TypeChecker::typeOf(const ArrayLiteralExpr::Ptr& node) {
     return previousType;
 }
 
-Type::Ptr TypeChecker::typeOf(const MemberAccessExpr::Ptr& node) {
+Type* TypeChecker::typeOf(const MemberAccessExpr::Ptr& node) {
     return typeOf(node->member);
 }
 
-Type::Ptr TypeChecker::typeOf(const SubscriptExpr::Ptr& node) {
+Type* TypeChecker::typeOf(const SubscriptExpr::Ptr& node) {
     return typeOf(node->identifier);
 }
 
-Type::Ptr TypeChecker::typeOf(const ArrayType::Ptr& node) {
+Type* TypeChecker::typeOf(const ArrayType::Ptr& node) {
 //    auto kind = typeOf(node->kind);
 //    if(kind == JrPrimaryType::Int) {
 //        return JrObjectArray::Type;
@@ -607,7 +607,7 @@ Type::Ptr TypeChecker::typeOf(const ArrayType::Ptr& node) {
     assert(false);
 }
 
-Type::Ptr TypeChecker::typeOf(const PrefixExpr::Ptr& node) {
+Type* TypeChecker::typeOf(const PrefixExpr::Ptr& node) {
     return typeOf(node->expr);
 }
 
@@ -626,7 +626,7 @@ void TypeChecker::verifyReturnStatement(std::vector<Node::Ptr>& statements) {
     }
 }
 
-Type::Ptr TypeChecker::returnTypeOf(const StmtsBlock::Ptr& node) {
+Type* TypeChecker::returnTypeOf(const StmtsBlock::Ptr& node) {
     if(node->statements.empty()) {
         return nullptr;
     }
@@ -635,7 +635,7 @@ Type::Ptr TypeChecker::returnTypeOf(const StmtsBlock::Ptr& node) {
     return returnTypeOf(n);
 }
 
-Type::Ptr TypeChecker::returnTypeOf(const IfStmt::Ptr& node) {
+Type* TypeChecker::returnTypeOf(const IfStmt::Ptr& node) {
     auto ifBlock = returnTypeOf(node->ifCodeBlock);
     if(ifBlock == nullptr || node->elseCodeBlock == nullptr) {
         return ifBlock;
@@ -649,16 +649,16 @@ Type::Ptr TypeChecker::returnTypeOf(const IfStmt::Ptr& node) {
     return ifBlock;
 }
 
-Type::Ptr TypeChecker::returnTypeOf(const WhileStmt::Ptr& node) {
+Type* TypeChecker::returnTypeOf(const WhileStmt::Ptr& node) {
     return returnTypeOf(node->codeBlock);
 }
 
-Type::Ptr TypeChecker::returnTypeOf(const FuncCallExpr::Ptr& node) {
+Type* TypeChecker::returnTypeOf(const FuncCallExpr::Ptr& node) {
     assert(node->typeSlot !=  -1);
     return compiler->getType(node->typeSlot);
 }
 
-Type::Ptr TypeChecker::returnTypeOf(const Node::Ptr& node) {
+Type* TypeChecker::returnTypeOf(const Node::Ptr& node) {
     switch (node->kind) {
         case SyntaxKind::stmtsBlock:
             return returnTypeOf(std::static_pointer_cast<StmtsBlock>(node));
