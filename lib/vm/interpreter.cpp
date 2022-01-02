@@ -172,7 +172,7 @@ loop:
         auto fieldOffset = VAL2_FROM_BYTECODE(bytecode); // field variable position
         auto value = pop();
 
-        auto klass = (ClassType*)(*isolateVm->types)[classSlotId];
+        auto klass = (Class*)(*isolateVm->types)[classSlotId];
         GC::write(klass->staticArea, value, fieldOffset);
     }
 
@@ -181,7 +181,7 @@ loop:
         auto classSlotId = VAL1_FROM_BYTECODE(bytecode);    // slot id of class
         auto fieldOffset = VAL2_FROM_BYTECODE(bytecode);
 
-        auto klass = (ClassType*)(*isolateVm->types)[classSlotId];
+        auto klass = (Class*)(*isolateVm->types)[classSlotId];
         auto value = GC::read(klass->staticArea, fieldOffset);
 
         push(value);
@@ -407,7 +407,7 @@ void Executor::execute(const ModuleClass *module) {
     ModuleEntryFrame::set(frame, {.intValue = 0}, module->slot);
 
     push(savedFP, ModuleEntryFrame::size());
-    auto method = (FuncType*)(*isolateVM->types)[module->initializerSlot];
+    auto method = (FuncType*)(*isolateVM->types)[module->staticInitializerSlot];
 //    execute(method);
     assert(false);
     pop(savedFP);

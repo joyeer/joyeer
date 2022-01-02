@@ -24,7 +24,7 @@ Node::Ptr Binder::visit(const Node::Ptr& node) {
 Node::Ptr Binder::visit(const ModuleDecl::Ptr& decl) {
     // register Module
 
-    auto module = new ModuleType(decl->getSimpleName());
+    auto module = new ModuleClass(decl->getSimpleName());
     context->compiler->declare(module);
     decl->typeSlot = module->slot;
 
@@ -50,7 +50,7 @@ Node::Ptr Binder::visit(const ClassDecl::Ptr& decl) {
         Diagnostics::reportError("[Error] duplicate class name");
     }
 
-    auto objectType = new ClassType(name);
+    auto objectType = new Class(name);
     context->compiler->declare(objectType);
 
     auto symbol = std::make_shared<Symbol>(SymbolFlag::klass, name, objectType->slot);
@@ -141,7 +141,7 @@ Node::Ptr Binder::visit(const VarDecl::Ptr& decl) {
         Diagnostics::reportError("[Error] duplicate variable name");
     }
 
-    // if the closest declaration type, is the ModuleType/ClassType,
+    // if the closest declaration type, is the ModuleClass/Class,
     // the variable will be treated as field in Symbol
     auto declType = context->curDeclType();
     auto flag = SymbolFlag::var;

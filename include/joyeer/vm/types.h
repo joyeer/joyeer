@@ -57,41 +57,6 @@ struct VMethod : Method {
     Bytecodes* bytecodes;
 };
 
-// Class description
-struct Class {
-
-    constexpr static int kObjectHeadOffset = 0;
-
-    Slot slot = -1;         // memory slot slot
-    intptr_t staticArea{};  // static member area
-
-    std::vector<Field> instanceFields {};
-    std::vector<Field> staticFields {};
-
-    std::vector<FuncPtr> instanceMethods {};
-    std::vector<FuncPtr> staticMethods {};
-
-    virtual size_t getSize() const {
-        size_t size = 0;
-        for(const auto& field: instanceFields) {
-            size += field.getSize();
-        }
-        return size;
-    }
-
-    [[nodiscard]] size_t getStaticSize() const {
-        size_t size = 0;
-        for(const auto& field: staticFields) {
-            size += field.getSize();
-        }
-        return size;
-    }
-
-};
-
-struct ModuleClass : public Class {
-    Slot initializerSlot = -1; // slotId of the initializer method
-};
 
 // Array Object class
 struct ArrayClass : public Class {

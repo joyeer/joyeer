@@ -60,12 +60,12 @@ int FuncType::getLocalVarCount() const {
     return localVars.size();
 }
 
-ClassType::ClassType(const std::string &name) :
+Class::Class(const std::string &name) :
         BlockType() {
     this->name = name;
 }
 
-ModuleType::ModuleType(const std::string &name) :
-        ClassType(name) {
+ModuleClass::ModuleClass(const std::string &name) :
+        Class(name) {
     kind = ValueType::Module;
 }

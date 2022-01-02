@@ -22,7 +22,7 @@ struct IsolateVM {
     explicit IsolateVM(CompilerService* compiler) ;
     ~IsolateVM();
 
-    void run(const ModuleType* module);
+    void run(const ModuleClass* module);
 
 private:
     friend class Interpreter;

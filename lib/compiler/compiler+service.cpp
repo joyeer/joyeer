@@ -21,7 +21,7 @@ CompilerService::CompilerService(CommandLineArguments::Ptr opts):
     initializeTypes();
 }
 
-ModuleType* CompilerService::run(const std::string& inputFile) {
+ModuleClass* CompilerService::run(const std::string& inputFile) {
     auto sourcefile = findSourceFile(inputFile);
     return compile(sourcefile);
 }
@@ -46,7 +46,7 @@ SourceFile::Ptr CompilerService::findSourceFile(const std::string &path, const s
 }
 
 
-ModuleType* CompilerService::compile(const SourceFile::Ptr& sourcefile) {
+ModuleClass* CompilerService::compile(const SourceFile::Ptr& sourcefile) {
     
     auto context= std::make_shared<CompileContext>(options, globalSymbols);
     context->sourcefile = sourcefile;
@@ -138,7 +138,7 @@ void CompilerService::initializeTypes() {
 #define BEGIN_DECLARE_CLASS(type, name) \
     {                                   \
         auto symtable = std::make_shared<SymbolTable>(); \
-        auto classAddress = declare(new ClassType(name)); \
+        auto classAddress = declare(new Class(name)); \
         globalSymbols->insert(std::make_shared<Symbol>(SymbolFlag::klass, name, classAddress)); \
         assert((size_t)(type) == classAddress); \
         exportingSymbolTableOfClasses.insert({ classAddress, symtable });

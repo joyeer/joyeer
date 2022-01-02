@@ -95,8 +95,8 @@ FuncType* CompileContext::curFuncType() const {
     return nullptr;
 }
 
-ModuleType* CompileContext::curModuleType() const {
+ModuleClass* CompileContext::curModuleType() const {
     auto type = compiler->getType(types[0]);
     assert(type->kind == ValueType::Module);
-    return (ModuleType*)(type);
+    return (ModuleClass*)(type);
 }

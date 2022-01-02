@@ -188,7 +188,7 @@ Node::Ptr TypeChecker::visit(const VarDecl::Ptr& decl) {
         }
             break;
         case ValueType::Module: {
-            auto moduleType = (ModuleType*)declType;
+            auto moduleType = (ModuleClass*)declType;
             symbol->locationInParent = moduleType->localVars.size();
             symbol->locationInParent = moduleType->localVars.size();
             moduleType->localVars.push_back(variableType);

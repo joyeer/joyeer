@@ -11,7 +11,7 @@ public:
     explicit CompilerService(CommandLineArguments::Ptr options);
 
     // return the entry file module
-    ModuleType* run(const std::string& inputFile);
+    ModuleClass* run(const std::string& inputFile);
 
     // register a kind
     int declare(Type* type);
@@ -32,7 +32,7 @@ private:
     friend class IsolateVM;
 
     // Compile an SourceFile
-    ModuleType* compile(const SourceFile::Ptr& sourcefile);
+    ModuleClass* compile(const SourceFile::Ptr& sourcefile);
 
     SourceFile::Ptr findSourceFile(const std::string& path, const std::string& relativeFolder = "");
     
@@ -51,7 +51,7 @@ private:
     StringResTable* strings { new StringResTable() };
 
     // the exporting symtable of classes, used to export functions/fields inside a class
-    // The first key is the slot of ClassType
+    // The first key is the slot of Class
     std::unordered_map<int, SymbolTable::Ptr> exportingSymbolTableOfClasses;
 
 };

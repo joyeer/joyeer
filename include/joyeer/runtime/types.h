@@ -102,13 +102,13 @@ struct UnspecifiedType: Type {
 };
 
 // Variable for Field/LocalVariable declarations
-// will be used in ClassType/ModuleType/FuncType
+// will be used in Class/ModuleClass/FuncType
 struct Variable {
 
     // the debugger name's variable/field
     const std::string name;
 
-    int parentSlot = -1; // Variable's parentTypeSlot Type, e.g. ClassType/ModuleType/FuncType
+    int parentSlot = -1; // Variable's parentTypeSlot Type, e.g. Class/ModuleClass/FuncType
     int typeSlot = -1; // Variable's type
     int loc = -1;
 
@@ -124,6 +124,10 @@ struct Variable {
     }
 
     explicit Variable(std::string  name): name(std::move(name)) {}
+
+    int getSize() {
+        return kValueSize;
+    }
 };
 
 // Represent Int kind
@@ -138,7 +142,9 @@ struct BoolType : Type {
 
 // Represent Statement Block Type
 struct BlockType : Type {
+
     std::vector<Variable*> localVars; // local-variables
+
 
     BlockType();
 };
@@ -148,6 +154,11 @@ enum FuncTypeKind : uint8_t {
     VM_Func
 };
 
+struct Executor;
+struct Argument;
+
+typedef Value (*CFunction)(Executor* executor, Argument* argument);
+
 // Represent Function kind (include class's function kind)
 struct FuncType : Type {
 
@@ -156,27 +167,47 @@ struct FuncType : Type {
     std::vector<Variable*> paramTypes;
     std::vector<Variable*> localVars;
     int returnTypeSlot = -1;
-    Bytecodes* bytecodes = nullptr;
+
+    union {
+        Bytecodes* bytecodes = nullptr;
+        CFunction* cFunction;
+    };
 
     explicit FuncType(const std::string& name);
 
     int getLocalVarCount() const ;
 };
 
-struct ClassType : BlockType {
-    using Ptr = std::shared_ptr<ClassType>;
+struct Class : BlockType {
+    constexpr static int kObjectHeadOffset = 0;
 
+    // Class static memory area in GC heap
     intptr_t staticArea = -1;
-    explicit ClassType(const std::string& name);
+
+    // static initializer slot
+    Slot staticInitializerSlot = -1;
+
+    std::vector<Variable*> staticFields {};
+    std::vector<Variable*> instanceFields {};
+
+    explicit Class(const std::string& name);
+
+    // get static fields size
+    [[nodiscard]] size_t getStaticSize() const {
+        size_t size = 0;
+        for(const auto& fields: staticFields) {
+            size += fields->getSize();
+        }
+        return size;
+    }
 };
 
-struct ModuleType : ClassType {
-    using Ptr = std::shared_ptr<ModuleType>;
+struct ModuleClass : public Class {
 
     // File initialize instructions
     Bytecodes* bytecodes  = nullptr;
 
-    explicit ModuleType(const std::string& name);
+    explicit ModuleClass(const std::string& name);
 };
 
 #endif //__joyeer_runtime_types_h__

@@ -517,7 +517,7 @@ struct TypeDefDebugPrinter : YMLPrinter {
                 case ValueType::Module:
                     output << "kind: Module" ;
                     newline();
-                    print((ModuleType*)(tf));
+                    print((ModuleClass*)(tf));
                     break;
                 case ValueType::Nil:
                     output << "kind: Nil" ;
@@ -579,7 +579,7 @@ struct TypeDefDebugPrinter : YMLPrinter {
         }
     }
 
-    void print(ModuleType* module) {
+    void print(ModuleClass* module) {
         output << "name: " << module->name;
         newline();
         output << "bytecodes:";
