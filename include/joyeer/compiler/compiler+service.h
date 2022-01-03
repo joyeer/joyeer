@@ -52,7 +52,7 @@ private:
 
     // the exporting symtable of classes, used to export functions/fields inside a class
     // The first key is the slot of Class
-    std::unordered_map<int, SymbolTable::Ptr> exportingSymbolTableOfClasses;
+    std::unordered_map<Slot, SymbolTable::Ptr> exportingSymbolTableOfClasses;
 
 };
 #endif

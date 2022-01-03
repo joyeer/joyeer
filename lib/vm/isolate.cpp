@@ -4,7 +4,6 @@
 
 #include "joyeer/vm/isolate.h"
 #include "joyeer/vm/interpreter.h"
-#include "joyeer/vm/stdlib.h"
 
 
 
