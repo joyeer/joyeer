@@ -7,18 +7,6 @@
 #include "joyeer/vm/stdlib.h"
 
 
-IsolateVM::IsolateVM(CompilerService* compilerService) {
-    gc = new GC();
-}
-
-IsolateVM::~IsolateVM() {
-    delete gc;
-}
-
-void IsolateVM::run(const ModuleClass* module) {
-    initStdlib();
-//    module->staticArea = gc->allocate(MemoryArea::Permanent, module);
-}
 
 //void IsolateVM::import(ModuleClass *module) {
 //    module->staticArea = gc->allocate(MemoryArea::Permanent, module);

@@ -2,7 +2,7 @@
 // Created by Qing Xu on 2021/11/15.
 //
 
-#include "joyeer/vm/heaps.h"
+#include "joyeer/runtime/heaps.h"
 
 intptr_t Page::allocate(size_t size) {
     if(used + size > kPageSize) {

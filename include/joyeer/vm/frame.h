@@ -5,7 +5,7 @@
 #ifndef __joyeer_vm_frames_h__
 #define __joyeer_vm_frames_h__
 
-#include "joyeer/vm/types.h"
+#include "joyeer/runtime/types.h"
 
 struct ModuleEntryFrame;
 

@@ -5,8 +5,7 @@
 #ifndef __joyeer_vm_gc_h__
 #define __joyeer_vm_gc_h__
 
-#include "joyeer/vm/heaps.h"
-#include "joyeer/vm/object.h"
+#include "heaps.h"
 
 enum MemoryArea : uint8_t {
     Permanent,
@@ -21,7 +20,6 @@ public:
     static Value read(intptr_t memory, int offset);
 private:
     intptr_t allocateForStatic(Class* klass);
-    Object* allocateForDynamic(Class* klass);
 private:
     Heap* heap { new Heap() };
 };

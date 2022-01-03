@@ -6,7 +6,7 @@
 #define __joyeer_vm_object_h__
 
 #include <cstdint>
-#include "joyeer/vm/types.h"
+#include "joyeer/runtime/types.h"
 
 struct ObjectHead {
     int klassSlot: 20;

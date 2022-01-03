@@ -2,8 +2,8 @@
 // Created by Qing Xu on 2021/11/15.
 //
 
-#ifndef __joyeer_vm_heaps_h__
-#define __joyeer_vm_heaps_h__
+#ifndef __joyeer_runtime_heaps_h__
+#define __joyeer_runtime_heaps_h__
 
 #include <vector>
 #include "joyeer/runtime/types.h"

@@ -2,7 +2,7 @@
 // Created by Qing Xu on 2021/11/18.
 //
 
-#include "joyeer/vm/heaps.h"
+#include "joyeer/runtime/heaps.h"
 #include "gtest/gtest.h"
 
 TEST(PageTest, Page) {

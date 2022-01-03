@@ -1,9 +1,8 @@
 //
-// Created by Qing Xu on 2021/12/1.
+// Created by Qing Xu on 2022/1/3.
 //
 
-#include "joyeer/vm/stdlib.h"
-#include "joyeer/vm/interpreter.h"
+#include "joyeer/runtime/sys.h"
 
 Value Global_$_print::operator()(Executor* executor, Arguments *args) const {
     auto value =args->getArgument(0);

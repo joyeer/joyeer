@@ -3,4 +3,5 @@
 //
 
 #include "joyeer/vm/object.h"
+#include "joyeer/vm/isolate.h"
 
