@@ -21,7 +21,10 @@ struct StringResTable {
 
 
 struct TypeResTable {
+
+    int import(Type* type);
     Type* operator[] (int index);
+
     std::vector<Type*> types {};
 };
 

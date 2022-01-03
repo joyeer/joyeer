@@ -1,11 +1,14 @@
 #include "joyeer/compiler/compiler+service.h"
+
 #include "joyeer/compiler/lexparser.h"
-#include "joyeer/runtime/diagnostic.h"
 #include "joyeer/compiler/binder.h"
 #include "joyeer/compiler/typecheck.h"
 #include "joyeer/compiler/syntaxparser.h"
 #include "joyeer/compiler/IRGen.h"
 #include "debugprinter.h"
+#include "joyeer/runtime/diagnostic.h"
+#include "joyeer/runtime/types.h"
+
 #include <utility>
 
 
@@ -16,9 +19,7 @@
 
 CompilerService::CompilerService(CommandLineArguments::Ptr opts):
         options(std::move(opts)) {
-
     globalSymbols = std::make_shared<SymbolTable>();
-    initializeTypes();
 }
 
 ModuleClass* CompilerService::run(const std::string& inputFile) {
@@ -120,8 +121,6 @@ void CompilerService::debugPrint(const Node::Ptr& node, const std::string &debug
     }
 }
 
-void CompilerService::initializeTypes() {
-
 #define DECLARE_TYPE(type, TypeClass) \
     declare(new TypeClass()); \
     assert((type) == types->types.back()->kind);  \
@@ -135,13 +134,14 @@ void CompilerService::initializeTypes() {
         declare(func); \
     }
 
-#define BEGIN_DECLARE_CLASS(type, name) \
-    {                                   \
+#define BEGIN_DECLARE_CLASS(type, TypeClass) \
+    { \
         auto symtable = std::make_shared<SymbolTable>(); \
-        auto classAddress = declare(new Class(name)); \
-        globalSymbols->insert(std::make_shared<Symbol>(SymbolFlag::klass, name, classAddress)); \
-        assert((size_t)(type) == classAddress); \
-        exportingSymbolTableOfClasses.insert({ classAddress, symtable });
+        auto typeClass = new TypeClass(); \
+        declare(typeClass); \
+        globalSymbols->insert(std::make_shared<Symbol>(SymbolFlag::klass, typeClass->name, typeClass->slot)); \
+        assert((size_t)(type) == typeClass->slot); \
+        exportingSymbolTableOfClasses.insert({ typeClass->slot, symtable });
 
 #define DECLARE_CLASS_FUNC(name, typeSlot) \
     { \
@@ -155,6 +155,8 @@ void CompilerService::initializeTypes() {
 #define END_DECLARE_CLASS(type) \
     }
 
+void CompilerService::bootstrap() {
+
     DECLARE_TYPE(ValueType::Void, VoidType)
     DECLARE_TYPE(ValueType::Int, IntType)
     DECLARE_TYPE(ValueType::Bool, BoolType)
@@ -165,7 +167,7 @@ void CompilerService::initializeTypes() {
     DECLARE_FUNC(BuildIns::Func_Print, "print(message:)", ValueType::Void)
 
     // Declare build-in classes and its members
-    BEGIN_DECLARE_CLASS(BuildIns::Object_Array, "Array")
+    BEGIN_DECLARE_CLASS(BuildIns::Object_Array, ArrayClass)
         DECLARE_CLASS_FUNC("append(content:)", ValueType::Void)
         DECLARE_CLASS_FUNC("size()", ValueType::Int)
         DECLARE_CLASS_FUNC("get(index:)", ValueType::Any)

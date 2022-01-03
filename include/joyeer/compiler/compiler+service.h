@@ -10,6 +10,9 @@ public:
 
     explicit CompilerService(CommandLineArguments::Ptr options);
 
+    // initialize the pre-define TypeDefs
+    void bootstrap();
+
     // return the entry file module
     ModuleClass* run(const std::string& inputFile);
 
@@ -30,6 +33,7 @@ private:
 
     friend class IRGen;
     friend class IsolateVM;
+    friend class Driver;
 
     // Compile an SourceFile
     ModuleClass* compile(const SourceFile::Ptr& sourcefile);
@@ -38,17 +42,15 @@ private:
     
     void debugPrint(const Node::Ptr& node, const std::string& debugFilePath);
 
-    // initialize the pre-define TypeDefs
-    void initializeTypes();
-
     CommandLineArguments::Ptr options;
     std::unordered_map<std::string, SourceFile::Ptr> sourceFiles;
     
     // global symbols
-    SymbolTable::Ptr globalSymbols;
+    SymbolTable::Ptr globalSymbols = nullptr;
 
-    TypeResTable* types { new TypeResTable() };
-    StringResTable* strings { new StringResTable() };
+    // resource tables
+    TypeResTable* types = nullptr;
+    StringResTable* strings = nullptr;
 
     // the exporting symtable of classes, used to export functions/fields inside a class
     // The first key is the slot of Class

@@ -14,17 +14,17 @@ struct IsolateVM {
     IsolateVM();
     virtual ~IsolateVM();
 
-    StringResTable* strings = nullptr;
-    TypeResTable* types = nullptr;
+    void bootstrap();
+
+    StringResTable* strings { new StringResTable() };
+    TypeResTable* types { new TypeResTable() };
+
     GC* gc;
 
     // std library classes
     Global_$_print* printFunc = nullptr;
     ArrayClass* arrayClass = nullptr;
     Array_$$_get* arrayGetFunc = nullptr;
-
-    // initialize the std library
-    void initStdlib();
 
 
 };

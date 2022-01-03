@@ -4,11 +4,14 @@
 
 #include "joyeer/runtime/isolate+vm.h"
 
-
 IsolateVM::IsolateVM() {
     gc = new GC();
 }
 
 IsolateVM::~IsolateVM() {
     delete gc;
+}
+
+void IsolateVM::bootstrap() {
+
 }

@@ -250,6 +250,8 @@ struct ArrayClass : public Class {
     constexpr static int kArrayLengthOffset = kArrayCapacityOffset + kIntSize;
     constexpr static int kArrayDataOffset = kArrayLengthOffset + kIntSize;
 
+    explicit ArrayClass();
+
     intptr_t allocate(IsolateVM* isolateVm, int capacity);
 
     void setCapacity(intptr_t object, Value capacity);

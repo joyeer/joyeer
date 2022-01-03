@@ -13,7 +13,7 @@ public:
 
 private:
     CompilerService* compiler;
-    IsolateVM* isolateVM;
+    IsolateVM* vm;
     CommandLineArguments::Ptr arguments;
 };
 

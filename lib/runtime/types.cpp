@@ -91,6 +91,11 @@ Value VMethod::operator()(Executor* executor, Arguments *args) const {
 ////////////////////////////////////////////////
 // ArrayClass implementation
 ////////////////////////////////////////////////
+ArrayClass::ArrayClass():
+Class(std::string("Array")) {
+}
+
+
 intptr_t ArrayClass::allocate(IsolateVM* vm, int capacity) {
     size_t adjustedCapacity = calculateArrayCapacitySize(capacity) * kIntSize;
     size_t size = adjustedCapacity + kArrayDataOffset;
