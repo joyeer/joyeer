@@ -6,6 +6,8 @@
 #include <vector>
 #include <memory>
 
+#include "joyeer/runtime/types.h"
+
 struct CommandLineArguments {
     using Ptr = std::shared_ptr<CommandLineArguments>;
     
@@ -18,17 +20,24 @@ struct CommandLineArguments {
     
     bool vmDebug = true;
     bool accepted = false;
-    
+
     CommandLineArguments(int argc, char** argv);
-    
     // print compiler usage
     static void printUsage();
-    
-private:
+
     void parse(std::vector<std::string>& arguments);
-    
-    // according to the input file , analyse the working directory
-    void parseInputFile(const std::string& inputpath);
+    void parseInputFile(const std::string &inputpath);
 };
+
+struct Executor;
+
+struct Arguments {
+    explicit Arguments(Executor* executor);
+    Value getArgument(Slot slot);
+
+private:
+    Executor* executor;
+};
+
 
 #endif

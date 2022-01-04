@@ -8,26 +8,13 @@
 #include "joyeer/vm/isolate.h"
 #include "joyeer/vm/frame.h"
 #include "joyeer/runtime/bytecode.h"
+#include "joyeer/runtime/executor.h"
 
-constexpr int kStackMaxSize = 1024 * 1024 * 4; // 4M intptr_t;
 
-struct Executor;
 
-struct Arguments {
-    explicit Arguments(Executor* executor);
-    Value getArgument(Slot slot);
+struct InterpretedExecutor : public Executor {
 
-private:
-    Executor* executor;
-};
-
-struct Executor {
-
-    intptr_t fp = 0;
-    intptr_t sp = 0;
-    IsolateVM* isolateVM;
-
-    explicit Executor(IsolateVM* isolateVM);
+    explicit InterpretedExecutor(IsolateVM* vm);
 
     // execute a Module
     void execute(const ModuleClass* module);
@@ -51,8 +38,6 @@ private:
     void push(Value value);
     Value pop();
 
-    std::vector<Slot> frames {};
-    char stack[kStackMaxSize] {};
 };
 
 

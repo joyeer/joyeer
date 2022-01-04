@@ -1,5 +1,6 @@
 #include "joyeer/runtime/arguments.h"
 #include "joyeer/runtime/diagnostic.h"
+#include "joyeer/runtime/executor.h"
 #include <iostream>
 
 CommandLineArguments::CommandLineArguments(int argc, char** argv) {
@@ -51,4 +52,14 @@ void CommandLineArguments::parseInputFile(const std::string &inputpath) {
         // using input file as working directory
         workingDirectory = inputfile.parent_path();
     }
+}
+
+
+Arguments::Arguments(Executor *executor):
+        executor(executor) {
+}
+
+Value Arguments::getArgument(Slot slot) {
+    auto pValue = (Value*)(executor->stack + executor->fp - kValueSize - slot * kValueSize);
+    return *pValue;
 }

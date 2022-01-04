@@ -42,11 +42,9 @@ void BytecodeWriter::write(Bytecode bytecode) {
 
 void BytecodeWriter::write(Bytecodes *bytecodes) {
     for(auto i = 0; i < bytecodes->size; i ++ ) {
-        auto bytecode = bytecodes[i];
-        buffer.write(*(int64_t*)&bytecode);
+        auto bytecode = ((Bytecode*)bytecodes->bytecodes)[i];
+        buffer.write(*(Int*)&bytecode);
     }
-
-    free(bytecodes);
 }
 
 Bytecodes *BytecodeWriter::getBytecodes() const {

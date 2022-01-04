@@ -171,7 +171,7 @@ struct Function : Type {
 
     union {
         Bytecodes* bytecodes = nullptr;
-        CFunction* cFunction;
+        CFunction cFunction;
     };
 
     explicit Function(const std::string& name);

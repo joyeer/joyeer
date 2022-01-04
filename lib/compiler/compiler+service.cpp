@@ -8,6 +8,7 @@
 #include "debugprinter.h"
 #include "joyeer/runtime/diagnostic.h"
 #include "joyeer/runtime/types.h"
+#include "joyeer/runtime/sys.h"
 
 #include <utility>
 
@@ -127,10 +128,11 @@ void CompilerService::debugPrint(const Node::Ptr& node, const std::string &debug
     assert((type) == types->types.back()->kind);  \
     assert((size_t)(type) == (types->types.size() - 1));
 
-#define DECLARE_FUNC(type, param, typeSlot) \
+#define DECLARE_FUNC(type, param, typeSlot, cFuncImpl) \
     { \
         auto func = new Function(param); \
         func->funcKind = FuncTypeKind::C_Func;         \
+        func->cFunction = cFuncImpl; \
         func->returnTypeSlot = (int)typeSlot; \
         declare(func); \
     }
@@ -165,7 +167,8 @@ void CompilerService::bootstrap() {
     DECLARE_TYPE(ValueType::Unspecified, UnspecifiedType)
     DECLARE_TYPE(ValueType::Any, AnyType)
 
-    DECLARE_FUNC(BuildIns::Func_Print, "print(message:)", ValueType::Void)
+    auto print2 = &Global_$_print;
+    DECLARE_FUNC(BuildIns::Func_Print, "print(message:)", ValueType::Void, (CFunction)print2)
 
     // Declare build-in classes and its members
     BEGIN_DECLARE_CLASS(BuildIns::Object_Array, ArrayClass)

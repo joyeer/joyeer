@@ -343,26 +343,23 @@ void IRGen::emit(const ParenthesizedExpr::Ptr& node) {
 void IRGen::emit(const IfStmt::Ptr& node) {
     IRGen gen(context);
     gen.emit(node->ifCodeBlock);
-    auto ifBlockWriter = gen.writer;
-    BytecodeWriter* elseBlockWriter = nullptr;
+    Bytecodes* elseBytecodes = nullptr;
 
     if(node->elseCodeBlock != nullptr) {
         IRGen elseBlockGenerator(context);
         elseBlockGenerator.emit(node->elseCodeBlock);
-        elseBlockWriter = &elseBlockGenerator.writer;
-        
-        // insert an goto instruction in ifInstructions;
-        ifBlockWriter.write(Bytecode(OP_GOTO, elseBlockWriter->size()));
+        elseBytecodes = elseBlockGenerator.writer.getBytecodes();
+                // insert an goto instruction in ifInstructions;
+        gen.writer.write(Bytecode(OP_GOTO, elseBlockGenerator.writer.size() ));
     }
     
     emit(node->condition);
 
-    writer.write(Bytecode(OP_IFNE, ifBlockWriter.size()));
-    writer.write(ifBlockWriter.getBytecodes());
-    if(elseBlockWriter) {
-        writer.write(elseBlockWriter->getBytecodes());
+    writer.write(Bytecode(OP_IFNE, gen.writer.size()));
+    writer.write(gen.writer.getBytecodes());
+    if(elseBytecodes) {
+        writer.write(elseBytecodes);
     }
-
     
 }
 

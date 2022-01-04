@@ -10,5 +10,6 @@ add_joyeer_library(JoyeerRuntime STATIC
         loader.cpp
         memory.cpp
         res+table.cpp
+        sys.cpp
         types.cpp
 )

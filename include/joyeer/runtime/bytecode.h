@@ -118,7 +118,7 @@ public:
     [[nodiscard]] Bytecodes* getBytecodes() const;
 
     [[nodiscard]] int size() const {
-        return buffer.pos;
+        return buffer.pos / kValueSize;
     };
 private:
     MemoryBuffer buffer {};

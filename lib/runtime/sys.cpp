@@ -3,7 +3,8 @@
 //
 
 #include "joyeer/runtime/sys.h"
-#include ""
+#include "joyeer/runtime/arguments.h"
+#include "joyeer/runtime/executor.h"
 
 Value Global_$_print(Executor* executor, Arguments *args) {
     auto value = args->getArgument(0);

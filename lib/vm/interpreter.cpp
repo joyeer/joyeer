@@ -8,15 +8,6 @@
 
 struct Interpreter;
 
-Arguments::Arguments(Executor *executor):
-executor(executor) {
-}
-
-Value Arguments::getArgument(Slot slot) {
-    auto pValue = (Value*)(executor->stack + executor->fp - kValueSize - slot * kValueSize);
-    return *pValue;
-}
-
 #define HANDLE_BYTECODE(OP) \
         case OP_##OP: \
             Handle_##OP(bytecode); \
@@ -29,11 +20,11 @@ Value Arguments::getArgument(Slot slot) {
 
 struct Interpreter {
     intptr_t cp = 0;
-    Executor* executor;
+    InterpretedExecutor* executor;
     IsolateVM* isolateVm;
     Bytecodes* bytecodes;
 
-    Interpreter(Executor* executor, Bytecodes* bytecodes) :
+    Interpreter(InterpretedExecutor* executor, Bytecodes* bytecodes) :
             executor(executor),
             bytecodes(bytecodes) {
         isolateVm = executor->isolateVM;
@@ -362,20 +353,7 @@ loop:
         assert(OP_FROM_BYTECODE(bytecode) == OP_INVOKE);
         auto methodSlot = VALUE_FROM_BYTECODE(bytecode);
         auto method = (Function*)(*isolateVm->types)[methodSlot];
-        switch(method->funcKind) {
-            case FuncTypeKind::C_Func: {
-//                auto cMethod = dynamic_cast<const CMethod*>(method);
-//                executor->execute(cMethod);
-                assert(false);
-            }
-                break;
-            case FuncTypeKind::VM_Func: {
-//                auto vMethod = dynamic_cast<const VMethod*>(method);
-//                executor->execute(vMethod);
-                assert(false);
-            }
-                break;
-        }
+        executor->execute(method);
     }
 
     inline void Handle_DUP(Bytecode bytecode) {
@@ -397,11 +375,11 @@ loop:
 };
 
 
-Executor::Executor(IsolateVM *isolateVM):
-isolateVM(isolateVM) {
+InterpretedExecutor::InterpretedExecutor(IsolateVM *vm) {
+    this->isolateVM = vm;
 }
 
-void Executor::execute(const ModuleClass *module) {
+void InterpretedExecutor::execute(const ModuleClass *module) {
     auto savedFP = sp;
     auto frame = &stack[sp];
     ModuleEntryFrame::set(frame, {.intValue = 0}, module->slot);
@@ -412,7 +390,7 @@ void Executor::execute(const ModuleClass *module) {
     pop(savedFP);
 }
 
-void Executor::execute(const Function *function) {
+void InterpretedExecutor::execute(const Function *function) {
     auto savedFP = sp;
 
     push(savedFP, FuncCallFrame::size());
@@ -432,11 +410,11 @@ void Executor::execute(const Function *function) {
     sp += kValueSize;
 }
 
-FramePtr Executor::getCurrentFrame() const {
+FramePtr InterpretedExecutor::getCurrentFrame() const {
     return (FramePtr )(stack + fp);
 }
 
-void Executor::invokeVFunction(const Function *function){
+void InterpretedExecutor::invokeVFunction(const Function *function){
     // prepare the variable
     Arguments arguments(this);
 
@@ -452,7 +430,7 @@ void Executor::invokeVFunction(const Function *function){
     interpreter.run();
 }
 
-void  Executor::invokeCFunction(const Function *function) {
+void  InterpretedExecutor::invokeCFunction(const Function *function) {
     Arguments arguments(this);
 
     auto cFunction = *(function->cFunction);
@@ -460,25 +438,25 @@ void  Executor::invokeCFunction(const Function *function) {
     FuncCallFrame::setReturnValue(getCurrentFrame(), cReturnValue);
 }
 
-void Executor::push(Slot frame, int size) {
+void InterpretedExecutor::push(Slot frame, int size) {
     frames.push_back(frame);
     sp += size;
     fp = frame;
 }
 
-void Executor::pop(Slot frame) {
+void InterpretedExecutor::pop(Slot frame) {
     assert(frames.back() == frame);
     frames.pop_back();
     sp = frame;
     fp = frames.back();
 }
 
-void Executor::push(Value value) {
+void InterpretedExecutor::push(Value value) {
     *(Int *)(stack + sp) = value.intValue;
     sp += kValueSize;
 }
 
-Value Executor::pop() {
+Value InterpretedExecutor::pop() {
     sp -= kValueSize;
     auto result = *(Int *)(stack + sp);
 
