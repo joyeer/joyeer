@@ -53,6 +53,7 @@ Node::Ptr TypeChecker::visit(const FuncDecl::Ptr& decl) {
             auto parameterName = parameter->getSimpleName();
             auto variable = new Variable(parameterName);
             funcType->paramTypes.push_back(variable);
+            funcType->localVars.push_back(variable);
         }
 
         decl->codeBlock = visit(decl->codeBlock);

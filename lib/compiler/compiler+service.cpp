@@ -132,7 +132,7 @@ void CompilerService::debugPrint(const Node::Ptr& node, const std::string &debug
     { \
         auto func = new Function(param); \
         func->funcKind = FuncTypeKind::C_Func;         \
-        func->cFunction = cFuncImpl; \
+        func->cFunction = (CFunction)&cFuncImpl; \
         func->returnTypeSlot = (int)typeSlot; \
         declare(func); \
     }
@@ -146,11 +146,12 @@ void CompilerService::debugPrint(const Node::Ptr& node, const std::string &debug
         assert((size_t)(type) == typeClass->slot); \
         exportingSymbolTableOfClasses.insert({ typeClass->slot, symtable });
 
-#define DECLARE_CLASS_FUNC(name, typeSlot) \
+#define DECLARE_CLASS_FUNC(name, typeSlot, cFuncImpl) \
     { \
         auto func = new Function(name); \
-        func->funcKind = FuncTypeKind::C_Func;        \
-        func->returnTypeSlot = (int)(typeSlot);  \
+        func->funcKind = FuncTypeKind::C_Func; \
+        func->cFunction = (CFunction)&cFuncImpl; \
+        func->returnTypeSlot = (int)(typeSlot); \
         auto funcAddress = declare(func); \
         symtable->insert(std::make_shared<Symbol>(SymbolFlag::func, name, funcAddress)); \
     }
@@ -167,15 +168,13 @@ void CompilerService::bootstrap() {
     DECLARE_TYPE(ValueType::Unspecified, UnspecifiedType)
     DECLARE_TYPE(ValueType::Any, AnyType)
 
-    auto print2 = &Global_$_print;
-    DECLARE_FUNC(BuildIns::Func_Print, "print(message:)", ValueType::Void, (CFunction)print2)
+    DECLARE_FUNC(BuildIns::Func_Print, "print(message:)", ValueType::Void, Global_$_print)
 
     // Declare build-in classes and its members
     BEGIN_DECLARE_CLASS(BuildIns::Object_Array, ArrayClass)
-        DECLARE_CLASS_FUNC("append(content:)", ValueType::Void)
-        DECLARE_CLASS_FUNC("size()", ValueType::Int)
-        DECLARE_CLASS_FUNC("get(index:)", ValueType::Any)
-        DECLARE_CLASS_FUNC("set(index:value:)", ValueType::Void)
+        DECLARE_CLASS_FUNC("size()", ValueType::Int, Array_$$_size)
+        DECLARE_CLASS_FUNC("get(index:)", ValueType::Any, Array_$$_get)
+        DECLARE_CLASS_FUNC("set(index:value:)", ValueType::Void, Array_$$_set)
     END_DECLARE_CLASS("Array")
 
     auto print = getType(BuildIns::Func_Print);

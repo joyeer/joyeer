@@ -53,7 +53,6 @@ enum class BuildIns : uint16_t {
     Func_Print = static_cast<size_t>(ValueType::RESOLVED_PRIMARY_TYPE_COUNT) - 1,
 
     Object_Array,
-    Object_Array_Func_append,
     Object_Array_Func_size,
     Object_Array_Func_get,
     Object_Array_Func_set
