@@ -545,7 +545,7 @@ struct TypeDefDebugPrinter : YMLPrinter {
                 case ValueType::Func:
                     output << "kind: Func";
                     newline();
-                    print((FuncType*)(tf));
+                    print((Function*)(tf));
                     break;
                 case ValueType::Unspecified:
                     output << "kind: Unspecified";
@@ -562,7 +562,7 @@ struct TypeDefDebugPrinter : YMLPrinter {
         DEBUG_BLOCK_END
     }
 
-    void print(FuncType* func) {
+    void print(Function* func) {
         output<< "name: " << func->name;
         if(func->funcKind == VM_Func && func->bytecodes->size > 0 ) {
             newline();
@@ -572,7 +572,7 @@ struct TypeDefDebugPrinter : YMLPrinter {
                 if(i > 0){
                     newline();
                 }
-                auto bytecode = (Bytecode*)&func->bytecodes[i];
+                auto bytecode = &((Bytecode*)(func->bytecodes->bytecodes))[i];
                 output << "- " << i++ << ": " << debugPrint(bytecode);
             }
             DEBUG_BLOCK_END
@@ -582,16 +582,7 @@ struct TypeDefDebugPrinter : YMLPrinter {
     void print(ModuleClass* module) {
         output << "name: " << module->name;
         newline();
-        output << "bytecodes:";
-        DEBUG_BLOCK_START
-        for(auto i = 0 ; i < module->bytecodes->size; i ++) {
-            if(i > 0){
-                newline();
-            }
-            auto bytecode = (Bytecode*)&module->bytecodes[i];
-            output << "- " << i++ << ": " << debugPrint(bytecode);
-        }
-        DEBUG_BLOCK_END
+        output << "staticInitializer: " << module->staticInitializerSlot;
     }
 
     void print(BlockType* block) {

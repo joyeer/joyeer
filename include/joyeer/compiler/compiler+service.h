@@ -4,10 +4,8 @@
 #include "joyeer/compiler/context.h"
 #include "joyeer/runtime/res+table.h"
 
-class CompilerService : public std::enable_shared_from_this<CompilerService> {
+class CompilerService {
 public:
-    using Ptr = std::shared_ptr<CompilerService>;
-
     explicit CompilerService(CommandLineArguments::Ptr options);
 
     // initialize the pre-define TypeDefs

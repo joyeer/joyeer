@@ -52,40 +52,25 @@ BlockType::BlockType() :
         Type("Block", ValueType::Block),
         localVars() {}
 
-FuncType::FuncType(const std::string &name) :
+Function::Function(const std::string &name) :
         Type(name, ValueType::Func),
-        funcKind(FuncTypeKind::VM_Func),
-        paramTypes() {}
+        funcKind(FuncTypeKind::VM_Func){}
 
-int FuncType::getLocalVarCount() const {
+int Function::getLocalVarCount() const {
     return localVars.size();
+}
+
+int Function::getParamsCount() const {
+    return paramTypes.size();
 }
 
 Class::Class(const std::string &name):
     Type(name, ValueType::Class){
-    this->name = name;
 }
 
 ModuleClass::ModuleClass(const std::string &name) :
         Class(name) {
     kind = ValueType::Module;
-}
-
-
-VMethod::VMethod(Bytecodes* bytecodes, int paramCount, int localVarCount):
-        Method(MethodKind::VM_Method),
-        paramCount(paramCount),
-        localVarCount(localVarCount),
-        bytecodes(bytecodes) {
-}
-
-VMethod::~VMethod() {
-    delete(bytecodes);
-}
-
-Value VMethod::operator()(Executor* executor, Arguments *args) const {
-    Value result;
-    return result;
 }
 
 ////////////////////////////////////////////////

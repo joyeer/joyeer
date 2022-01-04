@@ -361,7 +361,7 @@ loop:
     inline void Handle_INVOKE(Bytecode bytecode) {
         assert(OP_FROM_BYTECODE(bytecode) == OP_INVOKE);
         auto methodSlot = VALUE_FROM_BYTECODE(bytecode);
-        auto method = (FuncType*)(*isolateVm->types)[methodSlot];
+        auto method = (Function*)(*isolateVm->types)[methodSlot];
         switch(method->funcKind) {
             case FuncTypeKind::C_Func: {
 //                auto cMethod = dynamic_cast<const CMethod*>(method);
@@ -407,23 +407,22 @@ void Executor::execute(const ModuleClass *module) {
     ModuleEntryFrame::set(frame, {.intValue = 0}, module->slot);
 
     push(savedFP, ModuleEntryFrame::size());
-    auto method = (FuncType*)(*isolateVM->types)[module->staticInitializerSlot];
-//    execute(method);
-    assert(false);
+    auto function = (Function*)(*isolateVM->types)[module->staticInitializerSlot];
+    execute(function);
     pop(savedFP);
 }
 
-void Executor::execute(const Method *method) {
+void Executor::execute(const Function *function) {
     auto savedFP = sp;
 
     push(savedFP, FuncCallFrame::size());
 
-    switch (method->kind) {
-        case MethodKind::C_Method:
-            invoke(dynamic_cast<const CMethod*>(method));
+    switch (function->funcKind) {
+        case FuncTypeKind::C_Func:
+            invokeCFunction(function);
             break;
-        case MethodKind::VM_Method:
-            invoke(dynamic_cast<const VMethod*>(method));
+        case FuncTypeKind::VM_Func:
+            invokeVFunction(function);
             break;
         default:
             assert(false);
@@ -437,28 +436,28 @@ FramePtr Executor::getCurrentFrame() const {
     return (FramePtr )(stack + fp);
 }
 
-void Executor::invoke(const VMethod *method) {
+void Executor::invokeVFunction(const Function *function){
     // prepare the variable
     Arguments arguments(this);
 
-    for(int i = 0; i < method->localVarCount; i ++ ) {
-        if(i < method->paramCount) {
-            auto argument = arguments.getArgument(method->paramCount - i - 1);
+    for(int i = 0; i < function->getLocalVarCount(); i ++ ) {
+        if(i < function->getParamsCount()) {
+            auto argument = arguments.getArgument(function->getParamsCount() - i - 1);
             push(argument);
         } else {
             push({.intValue = 0});
         }
     }
-    Interpreter interpreter(this, method->bytecodes);
+    Interpreter interpreter(this, function->bytecodes);
     interpreter.run();
-
 }
 
-void  Executor::invoke(const CMethod *method) {
+void  Executor::invokeCFunction(const Function *function) {
     Arguments arguments(this);
-    auto value = (*method)(this, &arguments);
 
-    FuncCallFrame::setReturnValue(getCurrentFrame(), value);
+    auto cFunction = *(function->cFunction);
+    auto cReturnValue = cFunction(this, reinterpret_cast<Argument *>(&arguments));
+    FuncCallFrame::setReturnValue(getCurrentFrame(), cReturnValue);
 }
 
 void Executor::push(Slot frame, int size) {

@@ -49,7 +49,7 @@ void IRGen::emit(const Node::Ptr& node) {
 
 ModuleClass* IRGen::emit(const ModuleDecl::Ptr& decl) {
 
-    auto moduleType = (ModuleClass*)(compiler->getType(decl->typeSlot));
+    auto module = (ModuleClass*)(compiler->getType(decl->typeSlot));
     context->visit(CompileStage::visitModule, decl, [this, decl]() {
         for(const auto& member: decl->statements) {
             emit(member);
@@ -57,9 +57,15 @@ ModuleClass* IRGen::emit(const ModuleDecl::Ptr& decl) {
     });
 
     writer.write(Bytecode(OP_RETURN,0));
-    moduleType->bytecodes = writer.getBytecodes();
 
-    return moduleType;
+    // wrap module initializer code into a V Function
+    auto moduleInitializer = new Function(decl->getSimpleName());
+    moduleInitializer->funcKind = FuncTypeKind::VM_Func;
+    moduleInitializer->bytecodes = writer.getBytecodes();
+    compiler->declare(moduleInitializer);
+
+    module->staticInitializerSlot = moduleInitializer->slot;
+    return module;
 }
 
 void IRGen::emit(const FuncCallExpr::Ptr& funcCallExpr) {
@@ -71,7 +77,7 @@ void IRGen::emit(const FuncCallExpr::Ptr& funcCallExpr) {
         }
 
         assert(funcCallExpr->funcTypeSlot != -1);
-        auto funcType = (FuncType*)(compiler->getType(funcCallExpr->funcTypeSlot));
+        auto funcType = (Function*)(compiler->getType(funcCallExpr->funcTypeSlot));
         assert(funcType != nullptr);
         if(funcCallExpr->identifier->kind == SyntaxKind::memberAccessExpr) {
             emit(funcCallExpr->identifier);
@@ -384,7 +390,7 @@ void IRGen::emit(const StmtsBlock::Ptr& node) {
 
 void IRGen::emit(const FuncDecl::Ptr& node) {
 
-    auto function = (FuncType*)compiler->getType(node->typeSlot);
+    auto function = (Function*)compiler->getType(node->typeSlot);
 
     IRGen generator(context);
 

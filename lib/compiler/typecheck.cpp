@@ -105,7 +105,7 @@ Node::Ptr TypeChecker::visit(const FuncCallExpr::Ptr& node) {
     }
 
     node->funcTypeSlot = symbol->typeSlot;
-    auto funcType = (FuncType*)compiler->getType(node->funcTypeSlot);
+    auto funcType = (Function*)compiler->getType(node->funcTypeSlot);
     assert(funcType != nullptr && funcType->returnTypeSlot != -1);
     node->typeSlot = funcType->returnTypeSlot;
 
@@ -135,7 +135,7 @@ Node::Ptr TypeChecker::visit(const MemberFuncCallExpr::Ptr& node) {
         Diagnostics::reportError("[Error]Cannot find the function");
     }
 
-    auto funcType = (FuncType*)(compiler->getType(symbol->typeSlot));
+    auto funcType = (Function*)(compiler->getType(symbol->typeSlot));
     assert(funcType != nullptr && funcType->returnTypeSlot);
     node->typeSlot = funcType->returnTypeSlot;
     funcCallExpr->funcTypeSlot = funcType->slot;
@@ -182,7 +182,7 @@ Node::Ptr TypeChecker::visit(const VarDecl::Ptr& decl) {
     variableType->parentSlot = declType->slot;
     switch (declType->kind) {
         case ValueType::Func: {
-            auto funcType = (FuncType*)declType;
+            auto funcType = (Function*)declType;
             symbol->locationInParent = funcType->paramTypes.size() + funcType->localVars.size();
             funcType->localVars.push_back(variableType);
         }
@@ -542,7 +542,7 @@ Type* TypeChecker::typeOf(const FuncCallExpr::Ptr& node) {
 
 Type* TypeChecker::typeOf(const MemberFuncCallExpr::Ptr& node) {
     assert(node->funcTypeSlot != -1);
-    auto funcType = (FuncType*)( compiler->getType(node->funcTypeSlot));
+    auto funcType = (Function*)( compiler->getType(node->funcTypeSlot));
     auto type = compiler->getType(funcType->returnTypeSlot);
     assert(type != nullptr);
     return type;

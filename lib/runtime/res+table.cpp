@@ -10,10 +10,12 @@ int StringResTable::import(const std::string &string) {
 }
 
 const std::string &StringResTable::operator[](int index) {
+    assert(index > -1 && index < strings.size());
     return strings[index];
 }
 
 Type* TypeResTable::operator[](int index) {
+    assert(index > -1 && index < types.size());
     return types[index];
 }
 

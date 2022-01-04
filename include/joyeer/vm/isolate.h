@@ -14,7 +14,7 @@
 struct ArrayClass;
 
 struct InterpretedIsolatedVM : public IsolateVM {
-
+    void run(ModuleClass* module);
 };
 
 #endif //__joyeer_vm_isolate_h__

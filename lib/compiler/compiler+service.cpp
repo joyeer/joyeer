@@ -97,15 +97,16 @@ int CompilerService::declare(Type* type) {
 }
 
 Type* CompilerService::getType(int address) {
-    return const_cast<Type *>((*types)[address]);
+    assert(address >= 0 && address < types->types.size());
+    return (*types)[address];
 }
 
 Type* CompilerService::getType(ValueType valueType) {
-    return (*types)[static_cast<int>(valueType)];
+    return getType(static_cast<int>(valueType));
 }
 
 Type* CompilerService::getType(BuildIns buildIn) {
-    return (*types)[static_cast<int>(buildIn)];
+    return getType(static_cast<int>(buildIn));
 }
 
 SymbolTable::Ptr CompilerService::getExportingSymbolTable(int typeSlot) {
@@ -128,7 +129,7 @@ void CompilerService::debugPrint(const Node::Ptr& node, const std::string &debug
 
 #define DECLARE_FUNC(type, param, typeSlot) \
     { \
-        auto func = new FuncType(param); \
+        auto func = new Function(param); \
         func->funcKind = FuncTypeKind::C_Func;         \
         func->returnTypeSlot = (int)typeSlot; \
         declare(func); \
@@ -145,7 +146,7 @@ void CompilerService::debugPrint(const Node::Ptr& node, const std::string &debug
 
 #define DECLARE_CLASS_FUNC(name, typeSlot) \
     { \
-        auto func = new FuncType(name); \
+        auto func = new Function(name); \
         func->funcKind = FuncTypeKind::C_Func;        \
         func->returnTypeSlot = (int)(typeSlot);  \
         auto funcAddress = declare(func); \

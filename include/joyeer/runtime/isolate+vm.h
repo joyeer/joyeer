@@ -21,12 +21,7 @@ struct IsolateVM {
 
     GC* gc;
 
-    // std library classes
-    Global_$_print* printFunc = nullptr;
     ArrayClass* arrayClass = nullptr;
-    Array_$$_get* arrayGetFunc = nullptr;
-
-
 };
 
 

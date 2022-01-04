@@ -3,16 +3,17 @@
 //
 
 #include "joyeer/runtime/sys.h"
+#include ""
 
-Value Global_$_print::operator()(Executor* executor, Arguments *args) const {
-    auto value =args->getArgument(0);
+Value Global_$_print(Executor* executor, Arguments *args) {
+    auto value = args->getArgument(0);
     printf("%lld\n", value.intValue);
     return {
             .intValue = 0,
     };
 }
 
-Value Array_$$_get::operator()(Executor* executor, Arguments *args) const {
+Value Array_$$_get(Executor* executor, Arguments *args) {
     auto objValue = args->getArgument(0);
     auto indexValue = args->getArgument(1);
 
@@ -22,13 +23,13 @@ Value Array_$$_get::operator()(Executor* executor, Arguments *args) const {
     return itemValue;
 }
 
-Value Array_$$_size::operator()(Executor *executor, Arguments *args) const {
+Value Array_$$_size(Executor *executor, Arguments *args) {
     auto objValue = args->getArgument(0);
     auto arrayClass = executor->isolateVM->arrayClass;
     return arrayClass->getLength(objValue.intValue);
 }
 
-Value Array_$$_set::operator()(Executor *executor, Arguments *args) const {
+Value Array_$$_set(Executor *executor, Arguments *args) {
     Value result;
     return result;
 }

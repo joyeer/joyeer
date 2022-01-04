@@ -78,8 +78,8 @@ Node::Ptr Binder::visit(const FuncDecl::Ptr& decl) {
         return nullptr;
     }
 
-    // define FuncType
-    auto funcType = new FuncType(funcSimpleName);
+    // define Function
+    auto funcType = new Function(funcSimpleName);
     compiler->declare(funcType);
     decl->typeSlot = funcType->slot;
 

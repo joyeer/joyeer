@@ -83,12 +83,12 @@ BlockType* CompileContext::curBlockType() const {
     return nullptr;
 }
 
-FuncType* CompileContext::curFuncType() const {
+Function* CompileContext::curFuncType() const {
     for (auto iterator = types.rbegin(); iterator != types.rend(); iterator ++) {
         auto typeSlot = *iterator;
         auto type = compiler->getType(typeSlot);
         if(type->kind == ValueType::Func) {
-            return (FuncType*)(type);
+            return (Function*)(type);
         }
     }
 

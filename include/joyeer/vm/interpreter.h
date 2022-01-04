@@ -33,16 +33,16 @@ struct Executor {
     void execute(const ModuleClass* module);
 
     // execute a Method
-    void execute(const Method* method);
+    void execute(const Function* method);
 
 private:
     friend class Interpreter;
     friend class Arguments;
-    friend class Array_$$_get;
 
     FramePtr getCurrentFrame() const;
-    void invoke(const CMethod* method);
-    void invoke(const VMethod* method);
+
+    void invokeVFunction(const Function* method);
+    void invokeCFunction(const Function* method);
 
     void push(Slot frame, int size);
     void pop(Slot frame);

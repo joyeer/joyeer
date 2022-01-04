@@ -7,21 +7,10 @@
 
 #include "joyeer/runtime/types.h"
 
-struct Global_$_print : public  CMethod {
-    Value operator () (Executor* executor, Arguments* args) const override;
-};
-
-struct Array_$$_get: public CMethod {
-    Value operator () (Executor* executor, Arguments* args) const override;
-};
-
-struct Array_$$_set: public CMethod {
-    Value operator () (Executor* executor, Arguments* args) const override;
-};
-
-struct Array_$$_size: public CMethod {
-    Value operator () (Executor* executor, Arguments* args) const override;
-};
+Value Global_$_print(Executor* executor, Arguments* args);
+Value Array_$$_get(Executor* executor, Arguments* args);
+Value Array_$$_set(Executor* executor, Arguments* args);
+Value Array_$$_size(Executor* executor, Arguments* args);
 
 
 #endif //__joyeer_runtime_sys_h__

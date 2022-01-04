@@ -15,4 +15,5 @@ Driver::Driver(CommandLineArguments::Ptr arguments):arguments(arguments) {
 
 void Driver::run() {
     auto module = compiler->run(arguments->inputfile);
+    ((InterpretedIsolatedVM*)vm)->run(module);
 }
