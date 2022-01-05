@@ -46,13 +46,13 @@ Node::Ptr TypeChecker::visit(const FuncDecl::Ptr& decl) {
             decl->parameterClause = visit(decl->parameterClause);
         });
 
-        assert(funcType->paramTypes.empty());
+        assert(funcType->paramCount == 0);
 
         auto parameterClause = std::static_pointer_cast<ParameterClause>(decl->parameterClause);
         for(const auto& parameter: parameterClause->parameters) {
             auto parameterName = parameter->getSimpleName();
             auto variable = new Variable(parameterName);
-            funcType->paramTypes.push_back(variable);
+            funcType->paramCount ++;
             funcType->localVars.push_back(variable);
         }
 
@@ -184,7 +184,7 @@ Node::Ptr TypeChecker::visit(const VarDecl::Ptr& decl) {
     switch (declType->kind) {
         case ValueType::Func: {
             auto funcType = (Function*)declType;
-            symbol->locationInParent = funcType->paramTypes.size() + funcType->localVars.size();
+            symbol->locationInParent = funcType->paramCount + funcType->getLocalVarCount();
             funcType->localVars.push_back(variableType);
         }
             break;

@@ -27,7 +27,7 @@ struct Interpreter {
     Interpreter(InterpretedExecutor* executor, Bytecodes* bytecodes) :
             executor(executor),
             bytecodes(bytecodes) {
-        isolateVm = executor->isolateVM;
+        isolateVm = executor->vm;
     }
 
     [[maybe_unused]] void run() {
@@ -116,7 +116,7 @@ loop:
         assert(OP_FROM_BYTECODE(bytecode) == OP_SCONST);
         auto value = VALUE_FROM_BYTECODE(bytecode);
 
-        auto stringValue = executor->isolateVM->strings[value];
+        auto stringValue = executor->vm->strings[value];
         assert(false);
     }
 
@@ -130,7 +130,9 @@ loop:
 
     inline void Handle_OLOAD(Bytecode bytecode) {
         assert(OP_FROM_BYTECODE(bytecode) == OP_OLOAD);
-        assert(false);
+        auto value = VALUE_FROM_BYTECODE(bytecode);
+        auto objValue = FuncCallFrame::getLocalVar(executor->getCurrentFrame(), value);
+        push(objValue);
     }
 
     inline void Handle_ILOAD(Bytecode bytecode) {
@@ -204,7 +206,13 @@ loop:
 
     inline void Handle_ICMP_L(Bytecode bytecode) {
         assert(OP_FROM_BYTECODE(bytecode) == OP_ICMP_L);
-        assert(false);
+        auto rightValue = pop();
+        auto leftValue = pop();
+        if(leftValue.intValue < rightValue.intValue ) {
+            push({.intValue = 1});
+        } else {
+            push({.intValue = 0});
+        }
     }
 
     inline void Handle_ICMP_LE(Bytecode bytecode) {
@@ -307,7 +315,6 @@ loop:
         if(value.intValue <= 0 ) {
             cp += offset * kIntSize;
         }
-
     }
 
     inline void Handle_IFGT(Bytecode bytecode) {
@@ -376,7 +383,7 @@ loop:
 
 
 InterpretedExecutor::InterpretedExecutor(IsolateVM *vm) {
-    this->isolateVM = vm;
+    this->vm = vm;
 }
 
 void InterpretedExecutor::execute(const ModuleClass *module) {
@@ -385,12 +392,15 @@ void InterpretedExecutor::execute(const ModuleClass *module) {
     ModuleEntryFrame::set(frame, {.intValue = 0}, module->slot);
 
     push(savedFP, ModuleEntryFrame::size());
-    auto function = (Function*)(*isolateVM->types)[module->staticInitializerSlot];
+    auto function = (Function*)(*vm->types)[module->staticInitializerSlot];
     execute(function);
     pop(savedFP);
 }
 
 void InterpretedExecutor::execute(const Function *function) {
+
+    auto paramCount = function->paramCount;
+
     auto savedFP = sp;
 
     push(savedFP, FuncCallFrame::size());
@@ -405,9 +415,14 @@ void InterpretedExecutor::execute(const Function *function) {
         default:
             assert(false);
     }
+
+    auto resultValue = FuncCallFrame::getReturnValue(getCurrentFrame());
+
     pop(savedFP);
 
-    sp += kValueSize;
+    sp -= paramCount * kValueSize - function->isStatic ? 0 : kValueSize;
+
+    push(resultValue);
 }
 
 FramePtr InterpretedExecutor::getCurrentFrame() const {
@@ -419,8 +434,8 @@ void InterpretedExecutor::invokeVFunction(const Function *function){
     Arguments arguments(this);
 
     for(int i = 0; i < function->getLocalVarCount(); i ++ ) {
-        if(i < function->getParamsCount()) {
-            auto argument = arguments.getArgument(function->getParamsCount() - i - 1);
+        if(i < function->paramCount) {
+            auto argument = arguments.getArgument(function->paramCount - i - 1);
             push(argument);
         } else {
             push({.intValue = 0});

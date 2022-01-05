@@ -4,13 +4,13 @@
 Driver::Driver(CommandLineArguments::Ptr arguments):arguments(arguments) {
 
     vm = new InterpretedIsolatedVM();
-    vm->bootstrap();
 
     compiler = new CompilerService(arguments);
     compiler->strings = vm->strings;
     compiler->types = vm->types;
-    compiler->bootstrap();
 
+    compiler->bootstrap();
+    vm->bootstrap();
 }
 
 void Driver::run() {

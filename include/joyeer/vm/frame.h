@@ -73,6 +73,10 @@ struct FuncCallFrame : public StackFrame {
     static void setReturnValue(FramePtr frame, Value newValue) {
         *(Value*)(frame + kReturnValueOffset) = newValue;
     }
+
+    static Value getReturnValue(FramePtr frame) {
+        return *(Value*)(frame + kReturnValueOffset) ;
+    }
 };
 
 /**

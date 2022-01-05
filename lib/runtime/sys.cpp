@@ -10,7 +10,7 @@ Value Global_$_print(Executor* executor, Arguments *args) {
     auto value = args->getArgument(0);
     printf("%lld\n", value.intValue);
     return {
-            .intValue = 0,
+        .intValue = 0,
     };
 }
 
@@ -18,7 +18,8 @@ Value Array_$$_get(Executor* executor, Arguments *args) {
     auto objValue = args->getArgument(0);
     auto indexValue = args->getArgument(1);
 
-    auto arrayClass = executor->isolateVM->arrayClass;
+    auto arrayClass = executor->vm->arrayClass;
+    assert(arrayClass != nullptr);
 
     auto itemValue = arrayClass->get(objValue.intValue, indexValue);
     return itemValue;
@@ -26,11 +27,22 @@ Value Array_$$_get(Executor* executor, Arguments *args) {
 
 Value Array_$$_size(Executor *executor, Arguments *args) {
     auto objValue = args->getArgument(0);
-    auto arrayClass = executor->isolateVM->arrayClass;
-    return arrayClass->getLength(objValue.intValue);
+    auto arrayClass = executor->vm->arrayClass;
+    assert(arrayClass != nullptr);
+    auto resultValue = arrayClass->getLength(objValue.intValue);
+    return resultValue;
 }
 
 Value Array_$$_set(Executor *executor, Arguments *args) {
-    Value result;
-    return result;
+    auto objValue = args->getArgument(0);
+    auto indexValue = args->getArgument(1);
+    auto newValue = args->getArgument(2);
+
+    auto arrayClass = executor->vm->arrayClass;
+    arrayClass->set(objValue.intValue, indexValue, newValue);
+    assert(arrayClass != nullptr);
+
+    return {
+        .intValue = 0
+    };
 }

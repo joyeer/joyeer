@@ -79,9 +79,13 @@ Node::Ptr Binder::visit(const FuncDecl::Ptr& decl) {
     }
 
     // define Function
-    auto funcType = new Function(funcSimpleName);
+    auto funcType = new Function(funcSimpleName, false);
     compiler->declare(funcType);
     decl->typeSlot = funcType->slot;
+
+    if( context->curDeclType()->kind == ValueType::Module) {
+        funcType->isStatic = true;
+    }
 
     // prepare the symbol, register the symbol into parentTypeSlot
     auto symbol = std::make_shared<Symbol>(SymbolFlag::func, funcSimpleName, funcType->slot);

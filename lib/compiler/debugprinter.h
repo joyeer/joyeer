@@ -573,7 +573,7 @@ struct TypeDefDebugPrinter : YMLPrinter {
                     newline();
                 }
                 auto bytecode = &((Bytecode*)(func->bytecodes->bytecodes))[i];
-                output << "- " << i++ << ": " << debugPrint(bytecode);
+                output << "- " << i << ": " << debugPrint(bytecode);
             }
             DEBUG_BLOCK_END
         }

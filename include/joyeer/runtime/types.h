@@ -164,20 +164,20 @@ struct Function : Type {
 
     FuncTypeKind funcKind;
     BlockType* block = nullptr;
-    std::vector<Variable*> paramTypes {};
+    int paramCount = 0;
     std::vector<Variable*> localVars = {};
     int returnTypeSlot = -1;
+    bool isStatic = false;
 
     union {
         Bytecodes* bytecodes = nullptr;
         CFunction cFunction;
     };
 
-    explicit Function(const std::string& name);
+    explicit Function(const std::string& name, bool isStatic);
 
     // return the number of total local variable count;
     [[nodiscard]] int getLocalVarCount() const ;
-    [[nodiscard]] int getParamsCount() const;
 };
 
 struct Class : public Type {

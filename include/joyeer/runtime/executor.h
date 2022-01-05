@@ -13,7 +13,7 @@ struct Executor {
 
     intptr_t fp = 0;
     intptr_t sp = 0;
-    IsolateVM *isolateVM;
+    IsolateVM *vm = nullptr;
 
     std::vector<Slot> frames {};
     char stack[kStackMaxSize] {};

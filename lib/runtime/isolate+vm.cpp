@@ -13,5 +13,5 @@ IsolateVM::~IsolateVM() {
 }
 
 void IsolateVM::bootstrap() {
-
+    arrayClass = static_cast<ArrayClass *>((*types)[(int) BuildIns::Object_Array]);
 }

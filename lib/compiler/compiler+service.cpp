@@ -128,13 +128,14 @@ void CompilerService::debugPrint(const Node::Ptr& node, const std::string &debug
     assert((type) == types->types.back()->kind);  \
     assert((size_t)(type) == (types->types.size() - 1));
 
-#define DECLARE_FUNC(type, param, typeSlot, cFuncImpl) \
-    { \
-        auto func = new Function(param); \
-        func->funcKind = FuncTypeKind::C_Func;         \
-        func->cFunction = (CFunction)&cFuncImpl; \
-        func->returnTypeSlot = (int)typeSlot; \
-        declare(func); \
+#define DECLARE_FUNC(type, param, typeSlot, cParamCount, cFuncImpl) \
+    {                                                               \
+        auto func = new Function(param, true);                      \
+        func->funcKind = FuncTypeKind::C_Func;                      \
+        func->paramCount = cParamCount;                             \
+        func->cFunction = (CFunction)&cFuncImpl;                    \
+        func->returnTypeSlot = (int)typeSlot;                       \
+        declare(func);                                              \
     }
 
 #define BEGIN_DECLARE_CLASS(type, TypeClass) \
@@ -146,13 +147,14 @@ void CompilerService::debugPrint(const Node::Ptr& node, const std::string &debug
         assert((size_t)(type) == typeClass->slot); \
         exportingSymbolTableOfClasses.insert({ typeClass->slot, symtable });
 
-#define DECLARE_CLASS_FUNC(name, typeSlot, cFuncImpl) \
-    { \
-        auto func = new Function(name); \
-        func->funcKind = FuncTypeKind::C_Func; \
-        func->cFunction = (CFunction)&cFuncImpl; \
-        func->returnTypeSlot = (int)(typeSlot); \
-        auto funcAddress = declare(func); \
+#define DECLARE_CLASS_FUNC(name, typeSlot, cParamCount, cFuncImpl) \
+    {                                                              \
+        auto func = new Function(name, false);                     \
+        func->funcKind = FuncTypeKind::C_Func;                     \
+        func->paramCount = cParamCount;                            \
+        func->cFunction = (CFunction)&cFuncImpl;                   \
+        func->returnTypeSlot = (int)(typeSlot);                    \
+        auto funcAddress = declare(func);                          \
         symtable->insert(std::make_shared<Symbol>(SymbolFlag::func, name, funcAddress)); \
     }
 
@@ -168,13 +170,13 @@ void CompilerService::bootstrap() {
     DECLARE_TYPE(ValueType::Unspecified, UnspecifiedType)
     DECLARE_TYPE(ValueType::Any, AnyType)
 
-    DECLARE_FUNC(BuildIns::Func_Print, "print(message:)", ValueType::Void, Global_$_print)
+    DECLARE_FUNC(BuildIns::Func_Print, "print(message:)", ValueType::Void, 1, Global_$_print)
 
     // Declare build-in classes and its members
     BEGIN_DECLARE_CLASS(BuildIns::Object_Array, ArrayClass)
-        DECLARE_CLASS_FUNC("size()", ValueType::Int, Array_$$_size)
-        DECLARE_CLASS_FUNC("get(index:)", ValueType::Any, Array_$$_get)
-        DECLARE_CLASS_FUNC("set(index:value:)", ValueType::Void, Array_$$_set)
+        DECLARE_CLASS_FUNC("size()", ValueType::Int, 0, Array_$$_size)
+        DECLARE_CLASS_FUNC("get(index:)", ValueType::Any, 1, Array_$$_get)
+        DECLARE_CLASS_FUNC("set(index:value:)", ValueType::Void, 2, Array_$$_set)
     END_DECLARE_CLASS("Array")
 
     auto print = getType(BuildIns::Func_Print);

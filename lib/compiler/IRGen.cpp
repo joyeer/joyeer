@@ -59,7 +59,7 @@ ModuleClass* IRGen::emit(const ModuleDecl::Ptr& decl) {
     writer.write(Bytecode(OP_RETURN,0));
 
     // wrap module initializer code into a V Function
-    auto moduleInitializer = new Function(decl->getSimpleName());
+    auto moduleInitializer = new Function(decl->getSimpleName(), true);
     moduleInitializer->funcKind = FuncTypeKind::VM_Func;
     moduleInitializer->bytecodes = writer.getBytecodes();
     compiler->declare(moduleInitializer);
@@ -225,7 +225,7 @@ void IRGen::emit(const AssignExpr::Ptr& node) {
         
         auto function = context->curFuncType();
         
-        writer.write(Bytecode(OP_OLOAD, (int32_t)(function->paramTypes.size() - 1)));      // last parameter is the self object
+        writer.write(Bytecode(OP_OLOAD, (int32_t)(function->paramCount - 1)));      // last parameter is the self object
         
 //        auto addressOfField = selfExpr->identifier->symbol->addressOfField;
 //        writer.write({
@@ -245,9 +245,9 @@ void IRGen::emit(const AssignExpr::Ptr& node) {
     } else if(node->left->kind == SyntaxKind::subscriptExpr) {
         
         auto subscriptExpr = std::static_pointer_cast<SubscriptExpr>(node->left);
-        emit(subscriptExpr->identifier);
-        emit(subscriptExpr->indexExpr);
         emit(node->expr);
+        emit(subscriptExpr->indexExpr);
+        emit(subscriptExpr->identifier);
 
         // check identifier's symbol's kind
         if(subscriptExpr->identifier->typeSlot == compiler->getType(BuildIns::Object_Array)->slot ) {

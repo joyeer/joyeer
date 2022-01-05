@@ -52,17 +52,16 @@ BlockType::BlockType() :
         Type("Block", ValueType::Block),
         localVars() {}
 
-Function::Function(const std::string &name) :
+Function::Function(const std::string &name, bool isStatic) :
         Type(name, ValueType::Func),
-        funcKind(FuncTypeKind::VM_Func){}
+        isStatic(isStatic),
+        funcKind(FuncTypeKind::VM_Func) {
+}
 
 int Function::getLocalVarCount() const {
     return localVars.size();
 }
 
-int Function::getParamsCount() const {
-    return paramTypes.size();
-}
 
 Class::Class(const std::string &name):
     Type(name, ValueType::Class){
