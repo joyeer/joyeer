@@ -184,7 +184,7 @@ Node::Ptr TypeChecker::visit(const VarDecl::Ptr& decl) {
     switch (declType->kind) {
         case ValueType::Func: {
             auto funcType = (Function*)declType;
-            symbol->locationInParent = funcType->paramCount + funcType->getLocalVarCount();
+            symbol->locationInParent = funcType->getLocalVarCount();
             funcType->localVars.push_back(variableType);
         }
             break;

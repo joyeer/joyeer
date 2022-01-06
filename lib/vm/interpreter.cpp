@@ -201,7 +201,13 @@ loop:
 
     inline void Handle_ICMP_GE(Bytecode bytecode) {
         assert(OP_FROM_BYTECODE(bytecode) == OP_ICMP_GE);
-        assert(false);
+        auto rightValue = pop();
+        auto leftValue = pop();
+        if(leftValue.intValue >= rightValue.intValue ) {
+            push({.intValue = 1});
+        } else {
+            push({.intValue = 0});
+        }
     }
 
     inline void Handle_ICMP_L(Bytecode bytecode) {
@@ -217,17 +223,35 @@ loop:
 
     inline void Handle_ICMP_LE(Bytecode bytecode) {
         assert(OP_FROM_BYTECODE(bytecode) == OP_ICMP_LE);
-        assert(false);
+        auto rightValue = pop();
+        auto leftValue = pop();
+        if(leftValue.intValue <= rightValue.intValue ) {
+            push({.intValue = 1});
+        } else {
+            push({.intValue = 0});
+        }
     }
 
     inline void Handle_ICMP_NE(Bytecode bytecode) {
         assert(OP_FROM_BYTECODE(bytecode) == OP_ICMP_NE);
-        assert(false);
+        auto rightValue = pop();
+        auto leftValue = pop();
+        if(leftValue.intValue != rightValue.intValue ) {
+            push({.intValue = 1});
+        } else {
+            push({.intValue = 0});
+        }
     }
 
     inline void Handle_ICMP_EQ(Bytecode bytecode) {
         assert(OP_FROM_BYTECODE(bytecode) == OP_ICMP_EQ);
-        assert(false);
+        auto rightValue = pop();
+        auto leftValue = pop();
+        if(leftValue.intValue == rightValue.intValue ) {
+            push({.intValue = 1});
+        } else {
+            push({.intValue = 0});
+        }
     }
 
     inline void Handle_IADD(Bytecode bytecode) {
@@ -401,6 +425,7 @@ void InterpretedExecutor::execute(const Function *function) {
 
     auto paramCount = function->paramCount;
 
+//    printf("current sp: %d\n", sp);
     auto savedFP = sp;
 
     push(savedFP, FuncCallFrame::size());
@@ -420,7 +445,7 @@ void InterpretedExecutor::execute(const Function *function) {
 
     pop(savedFP);
 
-    sp -= paramCount * kValueSize - function->isStatic ? 0 : kValueSize;
+    sp = sp - paramCount * kValueSize - (function->isStatic ? 0 : kValueSize);
 
     push(resultValue);
 }

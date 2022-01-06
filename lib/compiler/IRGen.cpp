@@ -218,6 +218,8 @@ void IRGen::emit(const AssignExpr::Ptr& node) {
             } else {
                 assert(false);
             }
+        } else {
+            writer.write(Bytecode(OP_ISTORE, symbol->locationInParent));
         }
     } else if( node->left->kind == SyntaxKind::selfExpr ) {
         emit(node->expr);
