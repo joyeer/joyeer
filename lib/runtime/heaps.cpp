@@ -6,10 +6,12 @@
 
 intptr_t Page::allocate(size_t size) {
     if(used + size > kPageSize) {
+        assert(false);
         return kInvalid;
     }
 
     intptr_t r = used;
     used += static_cast<intptr_t>(size);
+    memset(&data[r], 0, size);
     return reinterpret_cast<intptr_t>(&data[r]);
 }

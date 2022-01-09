@@ -133,18 +133,18 @@ void CompilerService::debugPrint(const Node::Ptr& node, const std::string &debug
         auto func = new Function(param, true);                      \
         func->funcKind = FuncTypeKind::C_Func;                      \
         func->paramCount = cParamCount;                             \
-        func->cFunction = (CFunction)&cFuncImpl;                    \
-        func->returnTypeSlot = (int)typeSlot;                       \
+        func->cFunction = (CFunction)&(cFuncImpl);                  \
+        func->returnTypeSlot = (int)(typeSlot);                     \
         declare(func);                                              \
     }
 
 #define BEGIN_DECLARE_CLASS(type, TypeClass) \
-    { \
+    {                                        \
         auto symtable = std::make_shared<SymbolTable>(); \
-        auto typeClass = new TypeClass(); \
-        declare(typeClass); \
+        auto typeClass = new TypeClass();    \
+        declare(typeClass);                  \
         globalSymbols->insert(std::make_shared<Symbol>(SymbolFlag::klass, typeClass->name, typeClass->slot)); \
-        assert((size_t)(type) == typeClass->slot); \
+        assert((size_t)(type) == typeClass->slot);       \
         exportingSymbolTableOfClasses.insert({ typeClass->slot, symtable });
 
 #define DECLARE_CLASS_FUNC(name, typeSlot, cParamCount, cFuncImpl) \
@@ -152,7 +152,7 @@ void CompilerService::debugPrint(const Node::Ptr& node, const std::string &debug
         auto func = new Function(name, false);                     \
         func->funcKind = FuncTypeKind::C_Func;                     \
         func->paramCount = cParamCount;                            \
-        func->cFunction = (CFunction)&cFuncImpl;                   \
+        func->cFunction = (CFunction)&(cFuncImpl);                 \
         func->returnTypeSlot = (int)(typeSlot);                    \
         auto funcAddress = declare(func);                          \
         symtable->insert(std::make_shared<Symbol>(SymbolFlag::func, name, funcAddress)); \
@@ -177,7 +177,16 @@ void CompilerService::bootstrap() {
         DECLARE_CLASS_FUNC("size()", ValueType::Int, 0, Array_$$_size)
         DECLARE_CLASS_FUNC("get(index:)", ValueType::Any, 1, Array_$$_get)
         DECLARE_CLASS_FUNC("set(index:value:)", ValueType::Void, 2, Array_$$_set)
-    END_DECLARE_CLASS("Array")
+    END_DECLARE_CLASS(BuildIns::Object_Array)
+
+    BEGIN_DECLARE_CLASS(BuildIns::Object_Dict, DictClass)
+        DECLARE_CLASS_FUNC("insert(key:value:)", ValueType::Void, 2, Dict_$$_insert)
+        DECLARE_CLASS_FUNC("get(key:)", ValueType::Any, 1, Dict_$$_get)
+    END_DECLARE_CLASS(BuildIns::Object_Dict)
+
+    BEGIN_DECLARE_CLASS(BuildIns::Object_DictEntry, DictEntry)
+    END_DECLARE_CLASS(BuildIns::Object_Dict)
+
 
     auto print = getType(BuildIns::Func_Print);
     globalSymbols->insert(std::make_shared<Symbol>(SymbolFlag::func, print->name, print->slot));

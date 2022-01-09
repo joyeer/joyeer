@@ -390,6 +390,7 @@ Node::Ptr TypeChecker::visit(const ArrayLiteralExpr::Ptr& node) {
 }
 
 Node::Ptr TypeChecker::visit(const DictLiteralExpr::Ptr& node) {
+    node->typeSlot = compiler->getType(BuildIns::Object_Dict)->slot;
     auto items = std::vector<std::tuple<Node::Ptr, Node::Ptr>>();
     for(auto item: node->items) {
         items.emplace_back(
@@ -421,7 +422,9 @@ Node::Ptr TypeChecker::visit(const SubscriptExpr::Ptr& node) {
 
     auto simpleName = node->identifier->getSimpleName();
     auto symbol = context->lookup(simpleName);
-    assert(symbol->typeSlot == compiler->getType(BuildIns::Object_Array)->slot);
+
+    assert(symbol->typeSlot == compiler->getType(BuildIns::Object_Array)->slot ||
+        symbol->typeSlot == compiler ->getType(BuildIns::Object_Dict)->slot);
 
     node->typeSlot = compiler->getType(ValueType::Any)->slot;
     return node;
@@ -599,11 +602,6 @@ Type* TypeChecker::typeOf(const SubscriptExpr::Ptr& node) {
 }
 
 Type* TypeChecker::typeOf(const ArrayType::Ptr& node) {
-//    auto kind = typeOf(node->kind);
-//    if(kind == JrPrimaryType::Int) {
-//        return JrObjectArray::Type;
-//    }
-    
     assert(false);
 }
 

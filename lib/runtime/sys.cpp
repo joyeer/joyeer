@@ -46,3 +46,21 @@ Value Array_$$_set(Executor *executor, Arguments *args) {
         .intValue = 0
     };
 }
+
+Value Dict_$$_insert(Executor* executor, Arguments* args) {
+    auto value = args->getArgument(0);
+    auto keyValue = args->getArgument(1);
+    auto objValue = args->getArgument(2);
+
+    auto dictClass = executor->vm->dictClass;
+    dictClass->insert(objValue.intValue, keyValue, value);
+    return { .intValue = 0 };
+}
+
+Value Dict_$$_get(Executor* executor, Arguments* args) {
+    assert(false);
+    return {
+        .intValue = 0
+    };
+}
+

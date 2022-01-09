@@ -37,6 +37,7 @@ private:
     // Push Value into Stack
     void push(Value value);
     Value pop();
+    Value top() const;
 
 };
 

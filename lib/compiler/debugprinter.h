@@ -429,7 +429,24 @@ protected:
 
     Node::Ptr visit(const DictLiteralExpr::Ptr& decl) override {
         output << "dictLiteralExpr:";
-        assert(false);
+        DEBUG_BLOCK_START
+        output << "items:";
+        auto i = 0;
+        for(const auto& item : decl->items) {
+            output << "- " << i ++ << ": ";
+            DEBUG_BLOCK_START
+            NodeVisitor::visit(std::get<0>(item));
+            output << ": ";
+            NodeVisitor::visit(std::get<1>(item));
+            if(i < decl->items.size()) {
+                newline();
+            }
+            DEBUG_BLOCK_END
+            if(i < decl->items.size()) {
+                newline();
+            }
+        }
+        DEBUG_BLOCK_START
         return decl;
     }
 

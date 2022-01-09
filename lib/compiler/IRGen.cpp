@@ -224,7 +224,6 @@ void IRGen::emit(const AssignExpr::Ptr& node) {
     } else if( node->left->kind == SyntaxKind::selfExpr ) {
         emit(node->expr);
         auto selfExpr = std::static_pointer_cast<SelfExpr>(node->left);
-        
         auto function = context->curFuncType();
         
         writer.write(Bytecode(OP_OLOAD, (int32_t)(function->paramCount - 1)));      // last parameter is the self object
@@ -254,17 +253,11 @@ void IRGen::emit(const AssignExpr::Ptr& node) {
         // check identifier's symbol's kind
         if(subscriptExpr->identifier->typeSlot == compiler->getType(BuildIns::Object_Array)->slot ) {
             writer.write(Bytecode(OP_INVOKE , compiler->getType(BuildIns::Object_Array_Func_set)->slot));
-            return;
+        } else if(subscriptExpr->identifier->typeSlot == compiler->getType(BuildIns::Object_Dict)->slot) {
+            writer.write(Bytecode(OP_INVOKE, compiler->getType(BuildIns::Object_Dict_Func_get)->slot));
+        } else {
+            assert(false);
         }
-//        } else if(subscriptExpr->identifier->symbol->addressOfType == JrObjectMap::Type->addressOfType) {
-//            writer.write({
-//                .opcode = OP_INVOKE,
-//                .value = JrObjectMap_Insert::Func->addressOfFunc
-//            });
-//        } else {
-//            assert(false);
-//        }
-        assert(false);
     } else {
         assert(false);
     }
@@ -424,25 +417,16 @@ void IRGen::emit(const ArrayLiteralExpr::Ptr& node) {
 }
 
 void IRGen::emit(const DictLiteralExpr::Ptr& node) {
-//    writer.write({
-//        .opcode = OP_NEW,
-//        .value = JrObjectMap::Constructor->addressOfFunc
-//    });
-//
-//    for(auto item: node->items) {
-//        writer.write({
-//           .opcode = OP_DUP
-//        });
-//
-//        emit(std::get<0>(item));
-//        emit(std::get<1>(item));
-//
-//        writer.write({
-//            .opcode = OP_INVOKE,
-//            .value = JrObjectMap_Insert::Func->addressOfFunc
-//        });
-//    }
-    assert(false);
+    writer.write(Bytecode(OP_NEW, compiler->getType(BuildIns::Object_Dict)->slot));
+
+    for(auto item: node->items) {
+        writer.write(Bytecode(OP_DUP, -1));
+
+        emit(std::get<0>(item));
+        emit(std::get<1>(item));
+
+        writer.write(Bytecode(OP_INVOKE, compiler->getType(BuildIns::Object_Dict_Func_insert)->slot));
+    }
 }
 
 void IRGen::emit(const ClassDecl::Ptr& node) {
@@ -472,17 +456,11 @@ void IRGen::emit(const SubscriptExpr::Ptr& node) {
     auto typeSlot = node->identifier->typeSlot;
     if(typeSlot == context->compiler->getType(BuildIns::Object_Array)->slot) {
         writer.write(Bytecode(OP_INVOKE, compiler->getType(BuildIns::Object_Array_Func_get)->slot));
+    } else if(typeSlot == compiler->getType(BuildIns::Object_Dict)->slot){
+        writer.write(Bytecode(OP_INVOKE, compiler->getType(BuildIns::Object_Dict_Func_insert)->slot));
     } else {
         assert(false);
     }
-
-//    assert(node->identifier->symbol != nullptr);
-    
-//    if (node->identifier->symbol->addressOfType == JrObjectMap::Type->addressOfType) {
-//        writer.write({
-//            .opcode = OP_INVOKE,
-//            .value = JrObjectMap_Get::Func->addressOfFunc
-//        });
 
 }
 

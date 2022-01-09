@@ -21,10 +21,12 @@ typedef uintptr_t       Any;
 typedef intptr_t        Slot;
 typedef const char*     FramePtr;
 
-union Value {
-    Int         intValue;
-    Bool        boolValue;
-    Slot        slotValue;
+struct Value {
+    union {
+        Int         intValue;
+        Bool        boolValue;
+        Slot        slotValue;
+    };
 };
 
 // Constants
@@ -55,7 +57,13 @@ enum class BuildIns : uint16_t {
     Object_Array,
     Object_Array_Func_size,
     Object_Array_Func_get,
-    Object_Array_Func_set
+    Object_Array_Func_set,
+
+    Object_Dict,
+    Object_Dict_Func_insert,
+    Object_Dict_Func_get,
+
+    Object_DictEntry
 };
 
 
@@ -189,10 +197,14 @@ struct Class : public Type {
     // static initializer slot
     Slot staticInitializerSlot = -1;
 
+    IsolateVM* vm = nullptr;
+
     std::vector<Variable*> staticFields {};
     std::vector<Variable*> instanceFields {};
 
     explicit Class(const std::string& name);
+
+    virtual intptr_t allocate(IsolateVM* vm);
 
     // get static fields size
     [[nodiscard]] size_t getStaticSize() const {
@@ -237,5 +249,69 @@ private:
     static size_t calculateArrayCapacitySize(int size);
 };
 
+
+/*
+ * Dict object Memory alignment
+ * +-------------+
+ * | Object Head |
+ * +-------------+
+ * | Dict Size   |
+ * +-------------+
+ * | Space Size  |  array of Dict bucket
+ * +-------------+
+ * | Array ...   |
+ * | .....       |
+ * +-------------+
+ *
+ *  Dict buckets are an array contains object
+ */
+struct DictClass : public Class {
+
+    constexpr static int kDictCapacityOffset = kObjectHeadOffset + kIntSize;
+    constexpr static int kDictSizeOffset = kDictCapacityOffset + kIntSize;
+    constexpr static int kDictSpaceSizeOffset = kDictSizeOffset + kIntSize;
+    constexpr static int kDefaultDictSize = 32; // default size
+
+    explicit DictClass();
+
+    intptr_t allocate(IsolateVM* vm) override;
+
+    Value capacity(intptr_t object);
+    void setCapacity(intptr_t object, Value capacity);
+
+    // Dict space size
+    Value getSpaceSize(intptr_t object);
+    void setSpaceSize(intptr_t object, Value size);
+
+    // Each space slot contains a dict bucket(Array)
+    Value getSpaceSlot(intptr_t object, Slot slot);
+    void setSpaceSlot(intptr_t object, Slot slot, Value value);
+
+    Value size(intptr_t object);
+    void setSize(intptr_t object, Value value);
+
+    Value resize(intptr_t object);
+
+    void insert(intptr_t object, Value key, Value value);
+
+    Value get(intptr_t object, Value key);
+};
+
+
+struct DictEntry : public Class {
+    constexpr static int kDictEntryKeyOffset = kObjectHeadOffset + kIntSize;
+    constexpr static int kDictEntryValueOffset = kDictEntryKeyOffset + kIntSize;
+
+    explicit DictEntry();
+
+    intptr_t allocate(IsolateVM* vm) override;
+
+    Value getKey(intptr_t object);
+    void setKey(intptr_t object, Value keyValue);
+
+    Value getValue(intptr_t object);
+    void setValue(intptr_t object, Value valueValue);
+
+};
 
 #endif //__joyeer_runtime_types_h__

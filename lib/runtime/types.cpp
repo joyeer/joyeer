@@ -5,6 +5,7 @@
 #include "joyeer/runtime/isolate+vm.h"
 
 #include <sstream>
+#include <functional>
 
 std::string debugAccessFlag(AccessFlag flag) {
     bool one = false;
@@ -62,19 +63,31 @@ int Function::getLocalVarCount() const {
     return localVars.size();
 }
 
+//------------------------------------------------
+// Class implementation
+//------------------------------------------------
 
 Class::Class(const std::string &name):
     Type(name, ValueType::Class){
 }
+
+intptr_t Class::allocate(IsolateVM *vm) {
+    assert(false);
+    return 0;
+}
+
+//------------------------------------------------
+// Class implementation
+//------------------------------------------------
 
 ModuleClass::ModuleClass(const std::string &name) :
         Class(name) {
     kind = ValueType::Module;
 }
 
-////////////////////////////////////////////////
+//------------------------------------------------
 // ArrayClass implementation
-////////////////////////////////////////////////
+//------------------------------------------------
 ArrayClass::ArrayClass():
 Class(std::string("Array")) {
 }
@@ -133,4 +146,131 @@ Value ArrayClass::get(intptr_t object, Value index) {
 void ArrayClass::set(intptr_t object, Value index, Value value) {
     char* objPtr = reinterpret_cast<char *>(object);
     *(Value*)(objPtr + kArrayDataOffset + kIntSize * (index.intValue)) = value;
+}
+
+//------------------------------------------------
+// DictClass implementation
+//------------------------------------------------
+
+DictClass::DictClass():
+Class(std::string("Array")) {
+
+}
+
+intptr_t DictClass::allocate(IsolateVM *vm) {
+    this->vm = vm;
+    int defaultSize = kDictSpaceSizeOffset + kDefaultDictSize / 4 * kIntSize;
+    auto objPtr= vm->gc->allocate(this, defaultSize);
+    setCapacity(objPtr, {.intValue = kDefaultDictSize} );
+    setSize(objPtr, {.intValue = 0});
+    return objPtr;
+}
+
+Value DictClass::capacity(intptr_t object) {
+    char* objPtr = reinterpret_cast<char *>(object);
+    return *(Value*)(objPtr + kDictCapacityOffset);
+}
+
+void DictClass::setCapacity(intptr_t object, Value capacity) {
+    char* objPtr = reinterpret_cast<char *>(object);
+    *(Value*)(objPtr + kDictCapacityOffset) = capacity;
+}
+
+Value DictClass::getSpaceSize(intptr_t object) {
+    char* objPtr = reinterpret_cast<char *>(object);
+    return *(Value*)(objPtr + kDictCapacityOffset);
+}
+
+Value DictClass::getSpaceSlot(intptr_t object, Slot slot) {
+    char* objPtr = reinterpret_cast<char *>(object);
+    return ((Value*)(objPtr + kDictSpaceSizeOffset))[slot];
+}
+
+void DictClass::setSpaceSlot(intptr_t object, Slot slot, Value value) {
+    char* objPtr = reinterpret_cast<char *>(object);
+    ((Value*)(objPtr + kDictSpaceSizeOffset))[slot] = value;
+}
+
+Value DictClass::size(intptr_t object) {
+    char* objPtr = reinterpret_cast<char *>(object);
+    return *(Value*)(objPtr + kDictSizeOffset);
+}
+
+void DictClass::setSize(intptr_t object, Value value) {
+    char* objPtr = reinterpret_cast<char *>(object);
+    *(Value*)(objPtr + kDictSizeOffset) = value;
+}
+
+void DictClass::insert(intptr_t object, Value key, Value value) {
+    auto hash = std::hash<Int>{}(key.intValue);
+    auto capacityValue = capacity(object);
+    auto spaceSize = getSpaceSize(object);
+    auto pos = (hash % spaceSize.intValue);
+
+    auto spaceSlot = getSpaceSlot(object, (Slot)pos);
+
+    if(spaceSlot.intValue == 0){
+        // slot is empty, let's create a bucket
+        auto bucket = vm->arrayClass->allocate(vm, 4);
+        setSpaceSlot(object, spaceSlot.intValue, {.intValue = bucket} );
+    }
+
+    auto bucket = getSpaceSlot(object, spaceSlot.slotValue);
+    auto countOfItemBucket = vm->arrayClass->getLength(bucket.intValue);
+    bool founded = false;
+    for(auto i = 0; i < countOfItemBucket.intValue; i ++ ) {
+        auto itemEntryObj = vm->arrayClass->get(bucket.intValue, {.intValue = i});
+        auto entryKey = vm->dictEntryClass->getKey(itemEntryObj.intValue);
+
+        if(entryKey.intValue == key.intValue) {
+            founded = true;
+            vm->dictEntryClass->setValue(itemEntryObj.intValue, value);
+        }
+    }
+
+    if(!founded) {
+        // create entry in bucket
+        auto entryObj = vm->dictEntryClass->allocate(vm);
+        vm->dictEntryClass->setKey(entryObj, key);
+        vm->dictEntryClass->setValue(entryObj, value);
+        vm->arrayClass->append(bucket.intValue,{.intValue = entryObj });
+    }
+
+}
+
+Value DictClass::get(intptr_t object, Value key) {
+    assert(false);
+}
+
+//------------------------------------------------
+// DictEntry implementation
+//------------------------------------------------
+
+DictEntry::DictEntry():
+Class(std::string("DictEntry")) {
+}
+
+intptr_t DictEntry::allocate(IsolateVM *vm) {
+    intptr_t object = vm->gc->allocate(this, kDictEntryValueOffset );
+    return object;
+}
+
+Value DictEntry::getKey(intptr_t object) {
+    char* objPtr = reinterpret_cast<char *>(object);
+    return *(Value*)(objPtr + kDictEntryKeyOffset);
+}
+
+void DictEntry::setKey(intptr_t object, Value keyValue) {
+    char* objPtr = reinterpret_cast<char *>(object);
+    *(Value*)(objPtr + kDictEntryKeyOffset) = keyValue;
+}
+
+Value DictEntry::getValue(intptr_t object) {
+    char* objPtr = reinterpret_cast<char *>(object);
+    return *(Value*)(objPtr + kDictEntryValueOffset);
+}
+
+void DictEntry::setValue(intptr_t object, Value valueValue) {
+    char* objPtr = reinterpret_cast<char *>(object);
+    *(Value*)(objPtr + kDictEntryValueOffset) = valueValue;
 }

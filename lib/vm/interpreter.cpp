@@ -96,6 +96,10 @@ loop:
         return executor->pop();
     }
 
+    inline Value top() {
+        return executor->top();
+    }
+
     inline void Handle_NOP(Bytecode bytecode) {
         assert(OP_FROM_BYTECODE(bytecode) == OP_NOP);
         assert(false);
@@ -145,7 +149,11 @@ loop:
 
     inline void Handle_NEW(Bytecode bytecode) {
         assert(OP_FROM_BYTECODE(bytecode) == OP_NEW);
-        assert(false);
+
+        auto classTypeSlot = VALUE_FROM_BYTECODE(bytecode);
+        auto klass = static_cast<Class*>((*executor->vm->types)[classTypeSlot]);
+        auto obj = klass->allocate(executor->vm);
+        push({.intValue = obj});
     }
 
     inline void Handle_PUTFIELD(Bytecode bytecode) {
@@ -389,7 +397,8 @@ loop:
 
     inline void Handle_DUP(Bytecode bytecode) {
         assert(OP_FROM_BYTECODE(bytecode) == OP_DUP);
-        assert(false);
+        auto r = top();
+        push(r);
     }
 
     inline void Handle_GOTO(Bytecode bytecode) {
@@ -404,7 +413,6 @@ loop:
         assert(false);
     }
 };
-
 
 InterpretedExecutor::InterpretedExecutor(IsolateVM *vm) {
     this->vm = vm;
@@ -503,3 +511,7 @@ Value InterpretedExecutor::pop() {
     return {.intValue = result };
 }
 
+Value InterpretedExecutor::top() const {
+    auto r = *(Int *)(stack + sp - kValueSize);
+    return {.intValue = r};
+}
