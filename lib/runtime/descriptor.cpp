@@ -2,7 +2,7 @@
 #include <sstream>
 #include <filesystem>
 
-PatternDescriptor::PatternDescriptor(Descriptor::Ptr label, Descriptor::Ptr type) {
+PatternDescriptor::PatternDescriptor(const Descriptor::Ptr& label, const Descriptor::Ptr& type) {
     // full descriptor name
     std::stringstream ss;
     ss << label->getRawDescriptor() << DescriptorConstants::Colon << type->getRawDescriptor();
@@ -10,13 +10,13 @@ PatternDescriptor::PatternDescriptor(Descriptor::Ptr label, Descriptor::Ptr type
     rawDescriptor = ss.str();
 }
 
-FunctionDescriptor::FunctionDescriptor(Descriptor::Ptr parent, const std::string& funcName, std::vector<PatternDescriptor::Ptr> parameters) {
+FunctionDescriptor::FunctionDescriptor(const Descriptor::Ptr& parent, const std::string& funcName, const std::vector<PatternDescriptor::Ptr>& parameters) {
     // full descriptor name
     std::stringstream ss;
     ss << parent->getRawDescriptor() << DescriptorConstants::Separator << DescriptorConstants::FuncPrefix << funcName;
     
     ss << DescriptorConstants::ParenthesisOpen;
-    for(auto parameter : parameters) {
+    for(const auto& parameter : parameters) {
         ss << parameter->getRawDescriptor();
     }
     ss << DescriptorConstants::ParenthesisClose;
@@ -34,7 +34,7 @@ ModuleDescriptor::ModuleDescriptor(const std::string& filename) {
     rawDescriptor = ss.str();
 }
 
-ModuleInitializerDescriptor::ModuleInitializerDescriptor(ModuleDescriptor::Ptr parent):
+ModuleInitializerDescriptor::ModuleInitializerDescriptor(const ModuleDescriptor::Ptr& parent):
         module(parent),
         FunctionDescriptor(parent, std::string { DescriptorConstants::ModuleInitializer }, {}){
     

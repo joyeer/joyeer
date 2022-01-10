@@ -15,8 +15,8 @@ Value Global_$_print(Executor* executor, Arguments *args) {
 }
 
 Value Array_$$_get(Executor* executor, Arguments *args) {
-    auto objValue = args->getArgument(0);
-    auto indexValue = args->getArgument(1);
+    auto indexValue = args->getArgument(0);
+    auto objValue = args->getArgument(1);
 
     auto arrayClass = executor->vm->arrayClass;
     assert(arrayClass != nullptr);
@@ -34,9 +34,9 @@ Value Array_$$_size(Executor *executor, Arguments *args) {
 }
 
 Value Array_$$_set(Executor *executor, Arguments *args) {
-    auto objValue = args->getArgument(0);
+    auto newValue = args->getArgument(0);
     auto indexValue = args->getArgument(1);
-    auto newValue = args->getArgument(2);
+    auto objValue = args->getArgument(2);
 
     auto arrayClass = executor->vm->arrayClass;
     arrayClass->set(objValue.intValue, indexValue, newValue);
@@ -58,8 +58,8 @@ Value Dict_$$_insert(Executor* executor, Arguments* args) {
 }
 
 Value Dict_$$_get(Executor* executor, Arguments* args) {
-    auto objValue = args->getArgument(0);
-    auto keyValue = args->getArgument(1);
+    auto keyValue = args->getArgument(0);
+    auto objValue = args->getArgument(1);
 
     auto dictClass = executor->vm->dictClass;
     auto value = dictClass->get(objValue.intValue, keyValue);

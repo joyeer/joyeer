@@ -246,9 +246,9 @@ void IRGen::emit(const AssignExpr::Ptr& node) {
     } else if(node->left->kind == SyntaxKind::subscriptExpr) {
         
         auto subscriptExpr = std::static_pointer_cast<SubscriptExpr>(node->left);
-        emit(node->expr);
-        emit(subscriptExpr->indexExpr);
         emit(subscriptExpr->identifier);
+        emit(subscriptExpr->indexExpr);
+        emit(node->expr);
 
         // check identifier's symbol's kind
         if(subscriptExpr->identifier->typeSlot == compiler->getType(BuildIns::Object_Array)->slot ) {
@@ -450,8 +450,8 @@ void IRGen::emit(const MemberAccessExpr::Ptr& node) {
 void IRGen::emit(const SubscriptExpr::Ptr& node) {
     
     // handle the index expr of array access
-    emit(node->indexExpr);
     emit(node->identifier);
+    emit(node->indexExpr);
 
     auto typeSlot = node->identifier->typeSlot;
     if(typeSlot == context->compiler->getType(BuildIns::Object_Array)->slot) {

@@ -93,7 +93,7 @@ class PatternDescriptor: public Descriptor {
 public:
     using Ptr = std::shared_ptr<PatternDescriptor>;
 public:
-    PatternDescriptor(Descriptor::Ptr label, Descriptor::Ptr type);
+    PatternDescriptor(const Descriptor::Ptr& label, const Descriptor::Ptr& type);
     
     Descriptor::Ptr label;
     Descriptor::Ptr type;
@@ -102,7 +102,7 @@ public:
 // Function descriptor
 class FunctionDescriptor: public Descriptor {
 public:
-    FunctionDescriptor(Descriptor::Ptr parent, const std::string& funcName, std::vector<PatternDescriptor::Ptr> parameters);
+    FunctionDescriptor(const Descriptor::Ptr& parent, const std::string& funcName, const std::vector<PatternDescriptor::Ptr>& parameters);
 };
 
 
@@ -131,7 +131,7 @@ class ModuleInitializerDescriptor: public FunctionDescriptor {
 public:
     using Ptr = std::shared_ptr<ModuleInitializerDescriptor>();
 public:
-    explicit ModuleInitializerDescriptor(ModuleDescriptor::Ptr parent);
+    explicit ModuleInitializerDescriptor(const ModuleDescriptor::Ptr& parent);
     
     ModuleDescriptor::Ptr module;
 };
