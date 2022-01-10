@@ -58,9 +58,12 @@ Value Dict_$$_insert(Executor* executor, Arguments* args) {
 }
 
 Value Dict_$$_get(Executor* executor, Arguments* args) {
-    assert(false);
-    return {
-        .intValue = 0
-    };
+    auto objValue = args->getArgument(0);
+    auto keyValue = args->getArgument(1);
+
+    auto dictClass = executor->vm->dictClass;
+    auto value = dictClass->get(objValue.intValue, keyValue);
+
+    return value;
 }
 

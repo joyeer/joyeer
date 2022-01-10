@@ -12,6 +12,9 @@ intptr_t Page::allocate(size_t size) {
 
     intptr_t r = used;
     used += static_cast<intptr_t>(size);
+    for(int i = 0 ; i < size ; i ++) {
+        assert(data[r + i] == 0);
+    }
     memset(&data[r], 0, size);
     return reinterpret_cast<intptr_t>(&data[r]);
 }

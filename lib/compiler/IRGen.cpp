@@ -254,7 +254,7 @@ void IRGen::emit(const AssignExpr::Ptr& node) {
         if(subscriptExpr->identifier->typeSlot == compiler->getType(BuildIns::Object_Array)->slot ) {
             writer.write(Bytecode(OP_INVOKE , compiler->getType(BuildIns::Object_Array_Func_set)->slot));
         } else if(subscriptExpr->identifier->typeSlot == compiler->getType(BuildIns::Object_Dict)->slot) {
-            writer.write(Bytecode(OP_INVOKE, compiler->getType(BuildIns::Object_Dict_Func_get)->slot));
+            writer.write(Bytecode(OP_INVOKE, compiler->getType(BuildIns::Object_Dict_Func_insert)->slot));
         } else {
             assert(false);
         }
@@ -457,7 +457,7 @@ void IRGen::emit(const SubscriptExpr::Ptr& node) {
     if(typeSlot == context->compiler->getType(BuildIns::Object_Array)->slot) {
         writer.write(Bytecode(OP_INVOKE, compiler->getType(BuildIns::Object_Array_Func_get)->slot));
     } else if(typeSlot == compiler->getType(BuildIns::Object_Dict)->slot){
-        writer.write(Bytecode(OP_INVOKE, compiler->getType(BuildIns::Object_Dict_Func_insert)->slot));
+        writer.write(Bytecode(OP_INVOKE, compiler->getType(BuildIns::Object_Dict_Func_get)->slot));
     } else {
         assert(false);
     }

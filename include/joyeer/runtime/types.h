@@ -257,19 +257,22 @@ private:
  * +-------------+
  * | Dict Size   |
  * +-------------+
- * | Space Size  |  array of Dict bucket
+ * | Bucket Size |  array of Dict bucket
  * +-------------+
- * | Array ...   |
- * | .....       |
+ * | bucket 1.   |
+ * | bucket 2.   |
+ * | bucket 3.   |
+ * | ....        |
  * +-------------+
  *
  *  Dict buckets are an array contains object
  */
 struct DictClass : public Class {
 
-    constexpr static int kDictCapacityOffset = kObjectHeadOffset + kIntSize;
-    constexpr static int kDictSizeOffset = kDictCapacityOffset + kIntSize;
-    constexpr static int kDictSpaceSizeOffset = kDictSizeOffset + kIntSize;
+    constexpr static int kDictCapacityOffset = kObjectHeadOffset + kValueSize;
+    constexpr static int kDictSizeOffset = kDictCapacityOffset + kValueSize;
+    constexpr static int kDictBucketCountOffset = kDictSizeOffset + kValueSize;
+    constexpr static int kDictBucketSlotOffset = kDictBucketCountOffset + kValueSize;
     constexpr static int kDefaultDictSize = 32; // default size
 
     explicit DictClass();
@@ -279,13 +282,13 @@ struct DictClass : public Class {
     Value capacity(intptr_t object);
     void setCapacity(intptr_t object, Value capacity);
 
-    // Dict space size
-    Value getSpaceSize(intptr_t object);
-    void setSpaceSize(intptr_t object, Value size);
+    // Dict Bucket count
+    Value getBucketCount(intptr_t object);
+    void setBucketCount(intptr_t object, Value count);
 
     // Each space slot contains a dict bucket(Array)
-    Value getSpaceSlot(intptr_t object, Slot slot);
-    void setSpaceSlot(intptr_t object, Slot slot, Value value);
+    Value getBucketBySlot(intptr_t object, Slot slot);
+    void setBucketBySlot(intptr_t object, Slot slot, Value value);
 
     Value size(intptr_t object);
     void setSize(intptr_t object, Value value);
