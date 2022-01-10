@@ -25,4 +25,4 @@ func twoSum(nums:[Int], target: Int): [Int] {
 var sums = [12, 24, 11, 9, 7]
 
 var result = twoSum(nums: sums, target: 22)
-print(object: result)
+print(message: result)
