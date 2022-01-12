@@ -72,17 +72,6 @@ Type* CompileContext::curDeclType() const {
     return nullptr;
 }
 
-BlockType* CompileContext::curBlockType() const {
-    for (auto iterator = types.rbegin(); iterator != types.rend(); iterator ++) {
-        auto typeSlot = *iterator;
-        auto type = compiler->getType(typeSlot);
-        if(type->kind == ValueType::Block) {
-            return (BlockType*)(type);
-        }
-    }
-    return nullptr;
-}
-
 Function* CompileContext::curFuncType() const {
     for (auto iterator = types.rbegin(); iterator != types.rend(); iterator ++) {
         auto typeSlot = *iterator;
@@ -93,10 +82,4 @@ Function* CompileContext::curFuncType() const {
     }
 
     return nullptr;
-}
-
-ModuleClass* CompileContext::curModuleType() const {
-    auto type = compiler->getType(types[0]);
-    assert(type->kind == ValueType::Module);
-    return (ModuleClass*)(type);
 }

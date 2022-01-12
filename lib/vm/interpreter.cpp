@@ -445,6 +445,7 @@ void InterpretedExecutor::execute(const Function *function) {
 
     switch (function->funcKind) {
         case FuncTypeKind::C_Func:
+        case FuncTypeKind::C_CInit:
             invokeCFunction(function);
             break;
         case FuncTypeKind::VM_Func:

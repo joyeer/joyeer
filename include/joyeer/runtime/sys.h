@@ -14,6 +14,7 @@ Value Array_$$_get(Executor* executor, Arguments* args);
 Value Array_$$_set(Executor* executor, Arguments* args);
 Value Array_$$_size(Executor* executor, Arguments* args);
 
+Value Dict_$_init(Executor* executor, Arguments* args);
 Value Dict_$$_insert(Executor* executor, Arguments* args);
 Value Dict_$$_get(Executor* executor, Arguments* args);
 

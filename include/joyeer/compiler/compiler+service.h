@@ -37,8 +37,6 @@ private:
     ModuleClass* compile(const SourceFile::Ptr& sourcefile);
 
     SourceFile::Ptr findSourceFile(const std::string& path, const std::string& relativeFolder = "");
-    
-    void debugPrint(const Node::Ptr& node, const std::string& debugFilePath);
 
     CommandLineArguments::Ptr options;
     std::unordered_map<std::string, SourceFile::Ptr> sourceFiles;

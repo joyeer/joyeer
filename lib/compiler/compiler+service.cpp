@@ -49,7 +49,10 @@ SourceFile::Ptr CompilerService::findSourceFile(const std::string &path, const s
 
 
 ModuleClass* CompilerService::compile(const SourceFile::Ptr& sourcefile) {
-    
+
+    auto debugfile = sourcefile->getAbstractLocation() + ".dump.yml";
+    NodeDebugPrinter debugPrinter(debugfile);
+
     auto context= std::make_shared<CompileContext>(options, globalSymbols);
     context->sourcefile = sourcefile;
     context->compiler = this;
@@ -62,20 +65,19 @@ ModuleClass* CompilerService::compile(const SourceFile::Ptr& sourcefile) {
     // syntax analyze
     SyntaxParser syntaxParser(sourcefile);
     auto block = syntaxParser.parse();
-    block->filename = sourcefile->getAbstractLocation();
-    debugPrint(block, block->filename + ".parser.debug.yml");
+    debugPrinter.print("compiler-parse-stage", block);
     CHECK_ERROR_RETURN_NULL
     
     // Detect for kind creating
     Binder binder(context);
     binder.visit(block);
-    debugPrint(block, block->filename + ".binder.debug.yml");
+    debugPrinter.print("compiler-binding-stage", block);
     CHECK_ERROR_RETURN_NULL
     
     // verify the types
     TypeChecker typeChecker(context);
     typeChecker.visit(std::static_pointer_cast<Node>(block));
-    debugPrint(block, sourcefile->getAbstractLocation() + ".typechecker.debug.yml");
+    debugPrinter.print("compiler-typechecker-stage", block);
     CHECK_ERROR_RETURN_NULL
 
     // generate IR code
@@ -83,10 +85,10 @@ ModuleClass* CompilerService::compile(const SourceFile::Ptr& sourcefile) {
     sourcefile->moduleClass = irGen.emit(block);
     CHECK_ERROR_RETURN_NULL
 
-    // debug print the typedefs
-    TypeDefDebugPrinter typedefPrinter(sourcefile->getAbstractLocation() + ".typedef.debug.yml");
-    typedefPrinter.print(types->types);
-    typedefPrinter.close();
+    // debug print the types after IR code generated
+    debugPrinter.print("compiler-IRGEN-stage", types->types);
+
+    debugPrinter.close();
 
     return sourcefile->moduleClass;
 }
@@ -113,14 +115,6 @@ Type* CompilerService::getType(BuildIns buildIn) {
 SymbolTable::Ptr CompilerService::getExportingSymbolTable(int typeSlot) {
     assert(typeSlot != -1);
     return exportingSymbolTableOfClasses[typeSlot];
-}
-
-void CompilerService::debugPrint(const Node::Ptr& node, const std::string &debugFilePath) {
-    if(options->vmDebug) {
-        NodeDebugPrinter syntaxDebugger(debugFilePath);
-        syntaxDebugger.print(node);
-        syntaxDebugger.close();
-    }
 }
 
 #define DECLARE_TYPE(type, TypeClass) \
@@ -158,6 +152,17 @@ void CompilerService::debugPrint(const Node::Ptr& node, const std::string &debug
         symtable->insert(std::make_shared<Symbol>(SymbolFlag::func, name, funcAddress)); \
     }
 
+#define DECLARE_CLASS_INIT(name, typeSlot, cParamCount, cFuncImpl) \
+    {                                                              \
+        auto func = new Function(name, false);                     \
+        func->funcKind = FuncTypeKind::C_CInit;                    \
+        func->paramCount = cParamCount;                            \
+        func->cFunction = (CFunction)&(cFuncImpl);                 \
+        func->returnTypeSlot = (int)(typeSlot);                    \
+        auto funcAddress = declare(func);                          \
+        symtable->insert(std::make_shared<Symbol>(SymbolFlag::func, name, funcAddress)); \
+    }
+
 #define END_DECLARE_CLASS(type) \
     }
 
@@ -180,6 +185,7 @@ void CompilerService::bootstrap() {
     END_DECLARE_CLASS(BuildIns::Object_Array)
 
     BEGIN_DECLARE_CLASS(BuildIns::Object_Dict, DictClass)
+        DECLARE_CLASS_INIT("Dict()", BuildIns::Object_Dict, 0, Dict_$_init)
         DECLARE_CLASS_FUNC("insert(key:value:)", ValueType::Void, 2, Dict_$$_insert)
         DECLARE_CLASS_FUNC("get(key:)", ValueType::Any, 1, Dict_$$_get)
     END_DECLARE_CLASS(BuildIns::Object_Dict)

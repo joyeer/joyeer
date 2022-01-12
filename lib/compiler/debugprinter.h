@@ -39,8 +39,21 @@ struct NodeDebugPrinter : public NodeVisitor, public YMLPrinter {
     explicit NodeDebugPrinter(const std::string& filename);
 
     // print AST into debug file
-    void print(const Node::Ptr& node) {
-        NodeVisitor::visit(node);
+    void print(const std::string& stage, const Node::Ptr& node) {
+        output << stage << ":";
+        DEBUG_BLOCK_START
+            NodeVisitor::visit(node);
+        DEBUG_BLOCK_END
+        size = 0;
+        newline();
+        output << "########################################################" << std::endl;
+    }
+
+    void print(const std::string& stage, const std::vector<Type*>& types) {
+        output << stage << ":";
+        DEBUG_BLOCK_START
+        print(types);
+        DEBUG_BLOCK_END
     }
 
     /// escaping c string for debug display
@@ -69,19 +82,15 @@ struct NodeDebugPrinter : public NodeVisitor, public YMLPrinter {
 
     void print(const SymbolTable::Ptr& symtable) {
         output << "symbol-table:";
-        DEBUG_BLOCK_START
-        int index = 0;
         for(auto &symbol : symtable->symbols) {
-            if(index > 0) {
-                newline();
-            }
-            output << "- " << symbol.second->name <<":";
+            newline();
+            output << "- symbol:";
             DEBUG_BLOCK_START
-                output << "flag: " << debugStringOfSymbolFlag(symbol.second->flag);
+            output << "name: \"" << symbol.second->name << "\"";
+            newline();
+            output << "flag: " << debugStringOfSymbolFlag(symbol.second->flag);
             DEBUG_BLOCK_END
-            index ++;
         }
-        DEBUG_BLOCK_END
     }
 
 protected:
@@ -92,15 +101,15 @@ protected:
         output << "simple-name: " << escapeString(decl->getSimpleName());
         newline();
         print(decl->symtable);
-        newline();
-        output << "members:";
-        DEBUG_BLOCK_START
-        for(const auto& member : decl->statements) {
+        if(decl->statements.size() > 0) {
             newline();
-            output << "- ";
-            NodeVisitor::visit(member);
+            output << "members:";
+            for(const auto& member : decl->statements) {
+                newline();
+                output << "- ";
+                NodeVisitor::visit(member);
+            }
         }
-        DEBUG_BLOCK_END
         DEBUG_BLOCK_END
         
         return decl;
@@ -127,17 +136,16 @@ protected:
 
     Node::Ptr visit(const TypeIdentifier::Ptr& decl) override {
         output << "kind:";
-        incTab();
-        newline();
-        NodeVisitor::visit(decl->identifier);
-        decTab();
+        DEBUG_BLOCK_START
+            NodeVisitor::visit(decl->identifier);
+        DEBUG_BLOCK_END
         return decl;
     }
 
     Node::Ptr visit(const FuncCallExpr::Ptr& decl) override {
         output << "funcCallExpr:";
         DEBUG_BLOCK_START
-            output << "callee-func-simple-name: " << decl->getCalleeFuncSimpleName();
+            output << "callee-func-simple-name: \"" << decl->getCalleeFuncSimpleName() << "\"";
             newline();
             output << "identifier:";
             DEBUG_BLOCK_START
@@ -209,22 +217,20 @@ protected:
     Node::Ptr visit(const Expr::Ptr& decl) override {
         output << "expr:";
         DEBUG_BLOCK_START
-        if(decl->prefix != nullptr) {
-            output << "prefix:";
-            DEBUG_BLOCK_START
-                NodeVisitor::visit(decl->prefix);
-            DEBUG_BLOCK_END
-        }
+            if(decl->prefix != nullptr) {
+                output << "prefix:";
+                DEBUG_BLOCK_START
+                    NodeVisitor::visit(decl->prefix);
+                DEBUG_BLOCK_END
+            }
 
-        newline();
-        output << "binaries:";
-        DEBUG_BLOCK_START
+            newline();
+            output << "binaries:";
             for(const auto& param: decl->binaries) {
+                newline();
                 output << "- ";
                 NodeVisitor::visit(param);
-                newline();
             }
-        DEBUG_BLOCK_END
         DEBUG_BLOCK_END
         return decl;
     }
@@ -238,16 +244,13 @@ protected:
             NodeVisitor::visit(decl->expr);
             DEBUG_BLOCK_END
         }
-
-        newline();
         if(decl->left != nullptr) {
+            newline();
             output << "left:";
             DEBUG_BLOCK_START
             NodeVisitor::visit(decl->left);
             DEBUG_BLOCK_END
         }
-
-
         DEBUG_BLOCK_END
         return decl;
     }
@@ -271,7 +274,7 @@ protected:
     Node::Ptr visit(const OperatorExpr::Ptr& decl) override {
         output << "operatorExpr:";
         DEBUG_BLOCK_START
-        output << "token: " << decl->token->rawValue;
+        output << "token: \"" << decl->token->rawValue << "\"";
         DEBUG_BLOCK_END
         return decl;
     }
@@ -431,22 +434,22 @@ protected:
         output << "dictLiteralExpr:";
         DEBUG_BLOCK_START
         output << "items:";
-        auto i = 0;
         for(const auto& item : decl->items) {
-            output << "- " << i ++ << ": ";
+            newline();
+            output << "-";
             DEBUG_BLOCK_START
-            NodeVisitor::visit(std::get<0>(item));
-            output << ": ";
-            NodeVisitor::visit(std::get<1>(item));
-            if(i < decl->items.size()) {
+                output << "key:";
+                    DEBUG_BLOCK_START
+                    NodeVisitor::visit(std::get<0>(item));
+                    DEBUG_BLOCK_END
                 newline();
-            }
+                output << "value:";
+                    DEBUG_BLOCK_START
+                    NodeVisitor::visit(std::get<1>(item));
+                    DEBUG_BLOCK_END
             DEBUG_BLOCK_END
-            if(i < decl->items.size()) {
-                newline();
-            }
         }
-        DEBUG_BLOCK_START
+        DEBUG_BLOCK_END
         return decl;
     }
 
@@ -513,23 +516,17 @@ protected:
         assert(false);
         return decl;
     }
-};
 
-
-struct TypeDefDebugPrinter : YMLPrinter {
-
-    explicit TypeDefDebugPrinter(const std::string& filename):
-            YMLPrinter(filename) {}
-
-    void print(const std::vector<Type*> typedefs) {
+    void print(const std::vector<Type*> types) {
         output << "types:";
-        DEBUG_BLOCK_START
+
         auto i = 0;
-        for(const auto& tf : typedefs) {
-            output << "- type:";
+        for(const auto& tf : types) {
+            newline();
+            output << "-";
             DEBUG_BLOCK_START
-                output << "index: " << i;
-                newline();
+            output << "slot: " << i;
+            newline();
             switch (tf->kind) {
                 case ValueType::Module:
                     output << "kind: Module" ;
@@ -566,17 +563,14 @@ struct TypeDefDebugPrinter : YMLPrinter {
                     break;
                 case ValueType::Unspecified:
                     output << "kind: Unspecified";
-                    newline();
                     break;
                 default:
                     assert(false);
             }
 
             DEBUG_BLOCK_END
-            newline();
             i ++ ;
         }
-        DEBUG_BLOCK_END
     }
 
     void print(Function* func) {
@@ -610,7 +604,7 @@ struct TypeDefDebugPrinter : YMLPrinter {
             if (i > 0) {
                 newline();
             }
-//            output << "- variable: " << variable->typeSlot;
+            output << "- variable: " << variable->typeSlot;
             i ++;
         }
         DEBUG_BLOCK_END

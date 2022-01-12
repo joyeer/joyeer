@@ -60,6 +60,7 @@ enum class BuildIns : uint16_t {
     Object_Array_Func_set,
 
     Object_Dict,
+    Object_Dict_Init,
     Object_Dict_Func_insert,
     Object_Dict_Func_get,
 
@@ -159,7 +160,9 @@ struct BlockType : Type {
 
 enum FuncTypeKind : uint8_t {
     C_Func, // function implemented in C native
-    VM_Func // function implemented in VM bytecodes
+    C_CInit, // class constructor implemented in C native
+    VM_Func, // function implemented in VM bytecodes
+    VM_CInit, // class constructor implemented in VM bytecodes
 };
 
 struct Executor;

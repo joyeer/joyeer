@@ -70,20 +70,25 @@ ModuleClass* IRGen::emit(const ModuleDecl::Ptr& decl) {
 
 void IRGen::emit(const FuncCallExpr::Ptr& funcCallExpr) {
 
-    context->visit(CompileStage::visitFuncCall, funcCallExpr, [this, funcCallExpr](){
+    assert(funcCallExpr->funcTypeSlot != -1);
+    auto func = (Function*)(compiler->getType(funcCallExpr->funcTypeSlot));
+    assert(func != nullptr);
+    if(func->funcKind == FuncTypeKind::C_CInit) {
+        writer.write(Bytecode(OP_NEW, func->returnTypeSlot));
+    }
+
+    context->visit(CompileStage::visitFuncCall, funcCallExpr, [this, funcCallExpr, func](){
         
         for(const auto& argument : funcCallExpr->arguments) {
             emit(argument);
         }
 
-        assert(funcCallExpr->funcTypeSlot != -1);
-        auto funcType = (Function*)(compiler->getType(funcCallExpr->funcTypeSlot));
-        assert(funcType != nullptr);
+
         if(funcCallExpr->identifier->kind == SyntaxKind::memberAccessExpr) {
             emit(funcCallExpr->identifier);
         }
 
-        writer.write(Bytecode(OP_INVOKE, funcType->slot));
+        writer.write(Bytecode(OP_INVOKE, func->slot));
 
     });
 }

@@ -47,6 +47,11 @@ Value Array_$$_set(Executor *executor, Arguments *args) {
     };
 }
 
+Value Dict_$_init(Executor* executor, Arguments* args) {
+    auto obj = args->getArgument(0);
+    return obj;
+}
+
 Value Dict_$$_insert(Executor* executor, Arguments* args) {
     auto value = args->getArgument(0);
     auto keyValue = args->getArgument(1);

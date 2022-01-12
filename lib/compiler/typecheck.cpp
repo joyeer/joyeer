@@ -76,15 +76,23 @@ Node::Ptr TypeChecker::visit(const FuncCallExpr::Ptr& node) {
             auto item = dictLiteral->items[0];
             auto key = std::get<0>(item);
             auto value = std::get<1>(item);
-//            if(key->symbol->flag == SymbolFlag::typeSymbol && key->symbol->flag == SymbolFlag::typeSymbol) {
-//                auto dictType = std::make_shared<DictType>(key, value);
-//                node->identifier = dictType;
-//            }
-            assert(false);
+
+            auto keySymbol = context->lookup(key->getSimpleName());
+            if(keySymbol->flag != SymbolFlag::klass) {
+                Diagnostics::reportError("[Error] Dictionary Key is not a class");
+                return node;
+            }
+            auto valueSymbol = context->lookup(value->getSimpleName());
+            if(valueSymbol->flag != SymbolFlag::klass) {
+                Diagnostics::reportError("[Error] Dictionary Value is not a class");
+                return node;
+            }
+
+            node->typeSlot = compiler->getType(BuildIns::Object_Dict)->slot;
+            node->funcTypeSlot = compiler->getType(BuildIns::Object_Dict_Init)->slot;
+
         }
-    }
-    
-    if(node->identifier->kind == SyntaxKind::arrayLiteralExpr) {
+    } else if(node->identifier->kind == SyntaxKind::arrayLiteralExpr) {
         visit(node->identifier);
         auto arrayLiteral = std::static_pointer_cast<ArrayLiteralExpr>(node->identifier);
         if(arrayLiteral->items.size() == 1) {
@@ -96,19 +104,21 @@ Node::Ptr TypeChecker::visit(const FuncCallExpr::Ptr& node) {
 
             assert(false);
         }
+    } else {
+        auto name = node->getCalleeFuncSimpleName();
+        symbol = context->lookup(name);
+
+        if(symbol == nullptr) {
+            Diagnostics::reportError("[Error]Cannot find the function");
+        }
+
+        node->funcTypeSlot = symbol->typeSlot;
+        auto funcType = (Function*)compiler->getType(node->funcTypeSlot);
+        assert(funcType != nullptr && funcType->returnTypeSlot != -1);
+        node->typeSlot = funcType->returnTypeSlot;
+
     }
 
-    auto name = node->getCalleeFuncSimpleName();
-    symbol = context->lookup(name);
-
-    if(symbol == nullptr) {
-        Diagnostics::reportError("[Error]Cannot find the function");
-    }
-
-    node->funcTypeSlot = symbol->typeSlot;
-    auto funcType = (Function*)compiler->getType(node->funcTypeSlot);
-    assert(funcType != nullptr && funcType->returnTypeSlot != -1);
-    node->typeSlot = funcType->returnTypeSlot;
 
     for(const auto& argument: node->arguments) {
         visit(argument);
@@ -317,6 +327,9 @@ Node::Ptr TypeChecker::visit(const LiteralExpr::Ptr& node) {
             break;
         case TokenKind::booleanLiteral:
             node->typeSlot = compiler->getType(ValueType::Bool)->slot;
+            break;
+        case TokenKind::nilLiteral:
+            node->typeSlot = compiler->getType(ValueType::Nil)->slot;
             break;
         default:
             assert(false);
