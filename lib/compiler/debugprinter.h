@@ -551,11 +551,6 @@ protected:
                 case ValueType::Class:
                     output << "kind: Class";
                     break;
-                case ValueType::Block:
-                    output << "kind: Block";
-                    newline();
-                    print((BlockType*)tf);
-                    break;
                 case ValueType::Func:
                     output << "kind: Func";
                     newline();
@@ -594,20 +589,6 @@ protected:
         output << "name: " << module->name;
         newline();
         output << "staticInitializer: " << module->staticInitializerSlot;
-    }
-
-    void print(BlockType* block) {
-        output << "variables:";
-        DEBUG_BLOCK_START
-        auto i = 0;
-        for(const auto& variable : block->localVars) {
-            if (i > 0) {
-                newline();
-            }
-            output << "- variable: " << variable->typeSlot;
-            i ++;
-        }
-        DEBUG_BLOCK_END
     }
 };
 

@@ -414,11 +414,6 @@ Node::Ptr Binder::visit(const WhileStmt::Ptr& decl) {
 
 Node::Ptr Binder::visit(const StmtsBlock::Ptr& decl) {
 
-    // generate a BlockType
-    auto blockType = new BlockType();
-    context->compiler->declare(blockType);
-    decl->typeSlot = blockType->slot;
-
     // start to process code block
     context->visit(CompileStage::visitCodeBlock, decl,[decl, this]() {
         std::vector<Node::Ptr> statements;

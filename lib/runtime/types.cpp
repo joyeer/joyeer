@@ -49,10 +49,6 @@ IntType::IntType() :
 BoolType::BoolType() :
         Type("Bool", ValueType::Bool) {}
 
-BlockType::BlockType() :
-        Type("Block", ValueType::Block),
-        localVars() {}
-
 Function::Function(const std::string &name, bool isStatic) :
         Type(name, ValueType::Func),
         isStatic(isStatic),

@@ -47,7 +47,6 @@ enum class ValueType : uint8_t {
     RESOLVED_PRIMARY_TYPE_COUNT [[maybe_unused]],
     Module,
     Class,
-    Block,
     Func
 };
 
@@ -89,6 +88,16 @@ protected:
             kind(kind),
             slot(-1) {
     }
+};
+
+// Represent Int kind
+struct IntType : Type {
+    IntType();
+};
+
+// Represent Bool kind
+struct BoolType : Type {
+    BoolType();
 };
 
 // represent Nil kind
@@ -140,23 +149,6 @@ struct Variable {
     }
 };
 
-// Represent Int kind
-struct IntType : Type {
-    IntType();
-};
-
-// Represent Bool kind
-struct BoolType : Type {
-    BoolType();
-};
-
-// Represent Statement Block Type
-struct BlockType : Type {
-
-    std::vector<Variable*> localVars; // local-variables
-
-    BlockType();
-};
 
 enum FuncTypeKind : uint8_t {
     C_Func, // function implemented in C native
@@ -174,7 +166,6 @@ typedef Value (*CFunction)(Executor* executor, Argument* argument);
 struct Function : Type {
 
     FuncTypeKind funcKind;
-    BlockType* block = nullptr;
     int paramCount = 0;
     std::vector<Variable*> localVars = {};
     int returnTypeSlot = -1;
@@ -282,25 +273,25 @@ struct DictClass : public Class {
 
     intptr_t allocate(IsolateVM* vm) override;
 
-    Value capacity(intptr_t object);
-    void setCapacity(intptr_t object, Value capacity);
+    Value capacity(intptr_t thisObj);
+    void setCapacity(intptr_t thisObj, Value capacity);
 
     // Dict Bucket count
-    Value getBucketCount(intptr_t object);
-    void setBucketCount(intptr_t object, Value count);
+    Value getBucketCount(intptr_t thisObj);
+    void setBucketCount(intptr_t thisObj, Value count);
 
     // Each space slot contains a dict bucket(Array)
-    Value getBucketBySlot(intptr_t object, Slot slot);
-    void setBucketBySlot(intptr_t object, Slot slot, Value value);
+    Value getBucketBySlot(intptr_t thisObj, Slot slot);
+    void setBucketBySlot(intptr_t thisObj, Slot slot, Value value);
 
-    Value size(intptr_t object);
-    void setSize(intptr_t object, Value value);
+    Value size(intptr_t thisObj);
+    void setSize(intptr_t thisObj, Value value);
 
-    Value resize(intptr_t object);
+    Value resize(intptr_t thisObj);
 
-    void insert(intptr_t object, Value key, Value value);
+    void insert(intptr_t thisObj, Value key, Value value);
 
-    Value get(intptr_t object, Value key);
+    Value get(intptr_t thisObj, Value key);
 };
 
 
