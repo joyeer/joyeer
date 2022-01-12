@@ -29,6 +29,18 @@ struct Value {
     };
 };
 
+struct ObjectHead {
+    int klassSlot: 20;
+    int refCount: 12;
+    int reversed: 32;
+};
+
+struct Object {
+    ObjectHead head;
+    Byte data[];
+};
+
+
 // Constants
 constexpr int kValueSize = sizeof(Value);
 constexpr int kByteSize = sizeof(Byte);
