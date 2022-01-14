@@ -118,7 +118,7 @@ loop:
     inline void Handle_ICONST(Bytecode bytecode) {
         assert(OP_FROM_BYTECODE(bytecode) == OP_ICONST);
         auto value = VALUE_FROM_BYTECODE(bytecode);
-        push({ .intValue = value });
+        push(value);
     }
 
     inline void Handle_SCONST(Bytecode bytecode) {
@@ -158,7 +158,7 @@ loop:
         auto classTypeSlot = VALUE_FROM_BYTECODE(bytecode);
         auto klass = static_cast<Class*>((*executor->vm->types)[classTypeSlot]);
         auto obj = klass->allocate(executor->vm);
-        push({.intValue = obj});
+        push(obj);
     }
 
     inline void Handle_PUTFIELD(Bytecode bytecode) {
@@ -198,17 +198,17 @@ loop:
         auto rightValue = pop();
         auto leftValue = pop();
 
-        push({.intValue = leftValue.intValue > 0 && rightValue.intValue > 0} );
+        push(leftValue > 0 && rightValue > 0 );
     }
 
     inline void Handle_ICMP_G(Bytecode bytecode) {
         assert(OP_FROM_BYTECODE(bytecode) == OP_ICMP_G);
         auto rightValue = pop();
         auto leftValue = pop();
-        if(leftValue.intValue > rightValue.intValue ) {
-            push({.intValue = 1});
+        if(leftValue > rightValue ) {
+            push(1);
         } else {
-            push({.intValue = 0});
+            push(0);
         }
     }
 
@@ -216,10 +216,10 @@ loop:
         assert(OP_FROM_BYTECODE(bytecode) == OP_ICMP_GE);
         auto rightValue = pop();
         auto leftValue = pop();
-        if(leftValue.intValue >= rightValue.intValue ) {
-            push({.intValue = 1});
+        if(leftValue >= rightValue ) {
+            push(1);
         } else {
-            push({.intValue = 0});
+            push(0);
         }
     }
 
@@ -227,10 +227,10 @@ loop:
         assert(OP_FROM_BYTECODE(bytecode) == OP_ICMP_L);
         auto rightValue = pop();
         auto leftValue = pop();
-        if(leftValue.intValue < rightValue.intValue ) {
-            push({.intValue = 1});
+        if(leftValue < rightValue ) {
+            push(1);
         } else {
-            push({.intValue = 0});
+            push(0);
         }
     }
 
@@ -238,10 +238,10 @@ loop:
         assert(OP_FROM_BYTECODE(bytecode) == OP_ICMP_LE);
         auto rightValue = pop();
         auto leftValue = pop();
-        if(leftValue.intValue <= rightValue.intValue ) {
-            push({.intValue = 1});
+        if(leftValue <= rightValue) {
+            push(1);
         } else {
-            push({.intValue = 0});
+            push(0);
         }
     }
 
@@ -249,10 +249,10 @@ loop:
         assert(OP_FROM_BYTECODE(bytecode) == OP_ICMP_NE);
         auto rightValue = pop();
         auto leftValue = pop();
-        if(leftValue.intValue != rightValue.intValue ) {
-            push({.intValue = 1});
+        if(leftValue != rightValue ) {
+            push(1);
         } else {
-            push({.intValue = 0});
+            push(0);
         }
     }
 
@@ -260,10 +260,10 @@ loop:
         assert(OP_FROM_BYTECODE(bytecode) == OP_ICMP_EQ);
         auto rightValue = pop();
         auto leftValue = pop();
-        if(leftValue.intValue == rightValue.intValue ) {
-            push({.intValue = 1});
+        if(leftValue == rightValue ) {
+            push(1);
         } else {
-            push({.intValue = 0});
+            push(0);
         }
     }
 
@@ -273,8 +273,8 @@ loop:
         auto value1 = pop();
         auto value2 = pop();
 
-        auto result = value2.intValue + value1.intValue;
-        push({ .intValue = result});
+        auto result = value2 + value1;
+        push(result);
     }
 
     inline void Handle_ISUB(Bytecode bytecode) {
@@ -282,8 +282,8 @@ loop:
         auto value1 = pop();
         auto value2 = pop();
 
-        auto result = value2.intValue - value1.intValue;
-        push({ .intValue = result});
+        auto result = value2 - value1;
+        push(result);
     }
 
     inline void Handle_IMUL(Bytecode bytecode) {
@@ -291,8 +291,8 @@ loop:
         auto value1 = pop();
         auto value2 = pop();
 
-        auto result = value2.intValue * value1.intValue;
-        push({.intValue = result});
+        auto result = value2 * value1;
+        push(result);
     }
 
     inline void Handle_IDIV(Bytecode bytecode) {
@@ -300,8 +300,8 @@ loop:
         auto value1 = pop();
         auto value2 = pop();
 
-        auto result = value2.intValue / value1.intValue;
-        push({ .intValue = result} );
+        auto result = value2 / value1;
+        push(result );
     }
 
     inline void Handle_IREM(Bytecode bytecode) {
@@ -309,8 +309,8 @@ loop:
         auto value1 = pop();
         auto value2 = pop();
 
-        auto result = value2.intValue % value1.intValue;
-        push({ .intValue = result});
+        auto result = value2 % value1;
+        push(result);
     }
 
     inline void Handle_INEG(Bytecode bytecode) {
@@ -319,8 +319,8 @@ loop:
         auto value1 = pop();
         auto value2 = pop();
 
-        auto result = value2.intValue % value1.intValue;
-        push({.intValue = result});
+        auto result = value2 % value1;
+        push(result);
         assert(false);
     }
 
@@ -334,7 +334,7 @@ loop:
         auto value = pop();
         auto offset = VALUE_FROM_BYTECODE(bytecode);
 
-        if (value.intValue == 0) {
+        if (value == 0) {
             cp += offset * kIntSize;
         }
     }
@@ -349,7 +349,7 @@ loop:
         auto value = pop();
         auto offset = VALUE_FROM_BYTECODE(bytecode);
 
-        if(value.intValue <= 0 ) {
+        if(value <= 0 ) {
             cp += offset * kIntSize;
         }
     }
@@ -384,13 +384,13 @@ loop:
         assert(OP_FROM_BYTECODE(bytecode) == OP_ONEWARRAY);
         auto arrayClass = isolateVm->arrayClass;
         auto value = pop();
-        auto arrayObj = arrayClass->allocate(isolateVm, value.intValue);
-        for(int i = 0 ; i < value.intValue; i ++ ) {
+        auto arrayObj = arrayClass->allocate(isolateVm, value);
+        for(int i = 0 ; i < value; i ++ ) {
             auto popValue = pop();
-            arrayClass->set(arrayObj, {.intValue = value.intValue - i - 1}, popValue);
+            arrayClass->set(arrayObj, value - i - 1, popValue);
         }
         arrayClass->setLength(arrayObj, value);
-        push({.intValue = arrayObj});
+        push(arrayObj);
     }
 
     inline void Handle_INVOKE(Bytecode bytecode) {
@@ -426,7 +426,7 @@ InterpretedExecutor::InterpretedExecutor(IsolateVM *vm) {
 void InterpretedExecutor::execute(const ModuleClass *module) {
     auto savedFP = sp;
     auto frame = &stack[sp];
-    ModuleEntryFrame::set(frame, {.intValue = 0}, module->slot);
+    ModuleEntryFrame::set(frame, 0, module->slot);
 
     push(savedFP, ModuleEntryFrame::size());
     auto function = (Function*)(*vm->types)[module->staticInitializerSlot];
@@ -480,7 +480,7 @@ void InterpretedExecutor::invokeVFunction(const Function *function){
             auto argument = arguments.getArgument(function->paramCount - i - 1);
             push(argument);
         } else {
-            push({.intValue = 0});
+            push(0);
         }
     }
     Interpreter interpreter(this, function->bytecodes);
@@ -509,7 +509,7 @@ void InterpretedExecutor::pop(Slot frame) {
 }
 
 void InterpretedExecutor::push(Value value) {
-    *(Int *)(stack + sp) = value.intValue;
+    *(Int *)(stack + sp) = value;
     sp += kValueSize;
 }
 
@@ -517,10 +517,10 @@ Value InterpretedExecutor::pop() {
     sp -= kValueSize;
     auto result = *(Int *)(stack + sp);
 
-    return {.intValue = result };
+    return result;
 }
 
 Value InterpretedExecutor::top() const {
     auto r = *(Int *)(stack + sp - kValueSize);
-    return {.intValue = r};
+    return r;
 }

@@ -94,7 +94,7 @@ intptr_t ArrayClass::allocate(IsolateVM* vm, int capacity) {
     size_t size = adjustedCapacity + kArrayDataOffset;
 
     intptr_t object = vm->gc->allocate(this, size);
-    setCapacity(object, {.intValue = static_cast<Int>(adjustedCapacity) });
+    setCapacity(object, adjustedCapacity);
 
     return object;
 }
@@ -130,18 +130,18 @@ Value ArrayClass::getLength(intptr_t object) {
 void ArrayClass::append(intptr_t object, Value value) {
     char* objPtr = reinterpret_cast<char *>(object);
     auto lengthValue = getLength(object);
-    *(Value*)(objPtr + kArrayDataOffset + kIntSize * (lengthValue.intValue)) = value;
-    setLength(object, {.intValue = lengthValue.intValue + 1});
+    *(Value*)(objPtr + kArrayDataOffset + kValueSize * lengthValue) = value;
+    setLength(object, lengthValue + 1);
 }
 
 Value ArrayClass::get(intptr_t object, Value index) {
     char* objPtr = reinterpret_cast<char *>(object);
-    return *(Value*)(objPtr + kArrayDataOffset + kIntSize * (index.intValue));
+    return *(Value*)(objPtr + kArrayDataOffset + kValueSize * index);
 }
 
 void ArrayClass::set(intptr_t object, Value index, Value value) {
     char* objPtr = reinterpret_cast<char *>(object);
-    *(Value*)(objPtr + kArrayDataOffset + kIntSize * (index.intValue)) = value;
+    *(Value*)(objPtr + kArrayDataOffset + kValueSize * index) = value;
 }
 
 //------------------------------------------------
@@ -157,9 +157,9 @@ intptr_t DictClass::allocate(IsolateVM *vm) {
     this->vm = vm;
     int defaultSize = kDictBucketSlotOffset + kDefaultDictSize / 4 * kIntSize;
     auto objPtr= vm->gc->allocate(this, defaultSize);
-    setCapacity(objPtr, {.intValue = kDefaultDictSize} );
-    setSize(objPtr, {.intValue = 0});
-    setBucketCount(objPtr, {.intValue = kDefaultDictSize / 4});
+    setCapacity(objPtr, kDefaultDictSize);
+    setSize(objPtr, 0);
+    setBucketCount(objPtr, kDefaultDictSize / 4);
     return objPtr;
 }
 
@@ -204,29 +204,29 @@ void DictClass::setSize(intptr_t object, Value value) {
 }
 
 void DictClass::insert(intptr_t object, Value key, Value value) {
-    auto hash = std::hash<Int>{}(key.intValue);
+    auto hash = std::hash<Int>{}(key);
     auto capacityValue = capacity(object);
-    auto bucketCount = getBucketCount(object).intValue;
+    auto bucketCount = getBucketCount(object);
     auto pos = (hash % bucketCount);
 
     auto bucket = getBucketBySlot(object, (Slot) pos);
 
-    if(bucket.intValue == 0){
+    if(bucket == 0){
         // slot is empty, let's create a bucket
         auto bucketObj = vm->arrayClass->allocate(vm, 4);
-        setBucketBySlot(object, pos, {.intValue = bucketObj});
+        setBucketBySlot(object, pos, bucketObj);
     }
 
     bucket = getBucketBySlot(object, pos);
-    auto countOfItemBucket = vm->arrayClass->getLength(bucket.intValue);
+    auto countOfItemBucket = vm->arrayClass->getLength(bucket);
     bool founded = false;
-    for(auto i = 0; i < countOfItemBucket.intValue; i ++ ) {
-        auto itemEntryObj = vm->arrayClass->get(bucket.intValue, {.intValue = i});
-        auto entryKey = vm->dictEntryClass->getKey(itemEntryObj.intValue);
+    for(auto i = 0; i < countOfItemBucket; i ++ ) {
+        auto itemEntryObj = vm->arrayClass->get(bucket, i);
+        auto entryKey = vm->dictEntryClass->getKey(itemEntryObj);
 
-        if(entryKey.intValue == key.intValue) {
+        if(entryKey == key) {
             founded = true;
-            vm->dictEntryClass->setValue(itemEntryObj.intValue, value);
+            vm->dictEntryClass->setValue(itemEntryObj, value);
             break;
         }
     }
@@ -236,33 +236,32 @@ void DictClass::insert(intptr_t object, Value key, Value value) {
         auto entryObj = vm->dictEntryClass->allocate(vm);
         vm->dictEntryClass->setKey(entryObj, key);
         vm->dictEntryClass->setValue(entryObj, value);
-        vm->arrayClass->append(bucket.intValue,{.intValue = entryObj });
+        vm->arrayClass->append(bucket,entryObj);
     }
 
 }
 
 Value DictClass::get(intptr_t object, Value key) {
-    char* objPtr = reinterpret_cast<char *>(object);
-    auto hash = std::hash<Int>{}(key.intValue);
+    auto hash = std::hash<Int>{}(key);
 
     auto spaceSize = getBucketCount(object);
-    auto pos = (hash % spaceSize.intValue);
+    auto pos = (hash % spaceSize);
 
     auto bucket = getBucketBySlot(object, (Slot) pos);
-    if(bucket.intValue != 0) {
-        auto countOfItemBucket = vm->arrayClass->getLength(bucket.intValue);
+    if(bucket != 0) {
+        auto countOfItemBucket = vm->arrayClass->getLength(bucket);
 
-        for(auto i = 0; i < countOfItemBucket.intValue; i ++ ) {
-            auto itemEntryObj = vm->arrayClass->get(bucket.intValue, {.intValue = i});
-            auto entryKey = vm->dictEntryClass->getKey(itemEntryObj.intValue);
-            auto entryValue = vm->dictEntryClass->getValue(itemEntryObj.intValue);
-            if(entryKey.intValue == key.intValue) {
+        for(auto i = 0; i < countOfItemBucket; i ++ ) {
+            auto itemEntryObj = vm->arrayClass->get(bucket, i);
+            auto entryKey = vm->dictEntryClass->getKey(itemEntryObj);
+            auto entryValue = vm->dictEntryClass->getValue(itemEntryObj);
+            if(entryKey == key) {
                 return entryValue;
             }
         }
 
     }
-    return { .intValue = 0 };
+    return 0;
 }
 
 //------------------------------------------------

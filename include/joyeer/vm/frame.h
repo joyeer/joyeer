@@ -57,8 +57,8 @@ struct FuncCallFrame : public StackFrame {
 
     static void set(FramePtr frame, Value returnValue, Slot methodSlot) {
         *(Value*)(frame + kReturnValueOffset) = returnValue;
-        *(Value*)(frame + kFrameTypeOffset) = { .intValue = StackFrame::Type::FUNC_CALL } ;
-        *(Value*)(frame + kMethodSlotOffset) = { .slotValue = methodSlot };
+        *(Value*)(frame + kFrameTypeOffset) = StackFrame::Type::FUNC_CALL ;
+        *(Value*)(frame + kMethodSlotOffset) = methodSlot ;
     }
 
     // Return the local variable in stack
@@ -99,8 +99,8 @@ struct ModuleEntryFrame : public StackFrame {
 
     static void set(FramePtr frame, Value returnValue, Slot moduleSlot) {
         *(Value*)(frame + kReturnValueOffset) = returnValue;
-        *(Value*)(frame + kFrameTypeOffset) = { .intValue = StackFrame::Type::MODULE } ;
-        *(Value*)(frame + kModuleSlotOffset) = { .slotValue = moduleSlot };
+        *(Value*)(frame + kFrameTypeOffset) = StackFrame::Type::MODULE ;
+        *(Value*)(frame + kModuleSlotOffset) = moduleSlot ;
     }
 
     static Value getReturnValue(FramePtr frame) {
@@ -108,7 +108,7 @@ struct ModuleEntryFrame : public StackFrame {
     }
 
     static StackFrame::Type getFrameType(FramePtr frame) {
-        return (StackFrame::Type)(*(Value*)(frame + kFrameTypeOffset)).intValue;
+        return (StackFrame::Type)(*(Value*)(frame + kFrameTypeOffset));
     }
 
     static StackFrame::Type getFrameType() {

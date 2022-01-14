@@ -19,20 +19,19 @@ typedef bool            Bool;
 typedef uintptr_t       FuncPtr;
 typedef uintptr_t       Any;
 typedef intptr_t        Slot;
+typedef intptr_t        Value;
 typedef const char*     FramePtr;
 
-struct Value {
-    union {
-        Int         intValue;
-        Bool        boolValue;
-        Slot        slotValue;
-    };
-};
-
+/**
+ * ObjectHead for Object's head or Optional Wrappred Value's head
+ */
 struct ObjectHead {
-    int klassSlot: 20;
-    int refCount: 12;
-    int reversed: 32;
+    int8_t wrapped:     1 = 0;  // for Optional type 1, else 0
+    int8_t absent:      1;      // only available for Optional type
+    int8_t reserved:    6;      // reserved for future usage
+    int typeSlot:       20;
+    int refCount:       12;
+    int reserved_2:     24;     // reserved for future usage
 };
 
 struct Object {
@@ -127,10 +126,11 @@ struct AnyType : Type {
     AnyType(): Type("Any", ValueType::Any) {}
 };
 
-// Represent types are not unspecified
+// Represent a type are not unspecified, which only available in compiler stage
 struct UnspecifiedType: Type {
     UnspecifiedType(): Type("Unspecified", ValueType::Unspecified) {}
 };
+;
 
 // Variable for Field/LocalVariable declarations
 // will be used in Class/ModuleClass/Function
@@ -194,6 +194,27 @@ struct Function : Type {
     [[nodiscard]] int getLocalVarCount() const ;
 };
 
+/*
+ * A type that represents a wrapped value or nil, absence
+ *
+ * Optional Memory Layout
+ * +--------------+
+ * | Wrapped Head |
+ * +--------------+
+ * | wrappedValue |
+ * +--------------+
+ */
+
+struct Optional : public Type {
+    struct DataMap {
+        ObjectHead head;
+        Value wrappedValue;
+    };
+
+    int wrappedTypeSlot = -1; // the wrapped Type's slot
+};
+
+
 struct Class : public Type {
     constexpr static int kObjectHeadOffset = 0;
 
@@ -228,11 +249,20 @@ struct ModuleClass : public Class {
 };
 
 
+struct IntClass: public Class {
+    constexpr static int kIntDataOffset = kObjectHeadOffset + kValueSize;
+
+    explicit IntClass();
+
+    // static method, Int.valueOf()
+    intptr_t valueOf(Int value);
+};
+
 // Array Object class
 struct ArrayClass : public Class {
-    constexpr static int kArrayCapacityOffset = kObjectHeadOffset + kIntSize;
-    constexpr static int kArrayLengthOffset = kArrayCapacityOffset + kIntSize;
-    constexpr static int kArrayDataOffset = kArrayLengthOffset + kIntSize;
+    constexpr static int kArrayCapacityOffset = kObjectHeadOffset + kValueSize;
+    constexpr static int kArrayLengthOffset = kArrayCapacityOffset + kValueSize;
+    constexpr static int kArrayDataOffset = kArrayLengthOffset + kValueSize;
 
     explicit ArrayClass();
 

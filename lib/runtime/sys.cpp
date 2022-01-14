@@ -8,10 +8,8 @@
 
 Value Global_$_print(Executor* executor, Arguments *args) {
     auto value = args->getArgument(0);
-    printf("%lld\n", value.intValue);
-    return {
-        .intValue = 0,
-    };
+    printf("%ld\n", value);
+    return 0;
 }
 
 Value Array_$$_get(Executor* executor, Arguments *args) {
@@ -21,7 +19,7 @@ Value Array_$$_get(Executor* executor, Arguments *args) {
     auto arrayClass = executor->vm->arrayClass;
     assert(arrayClass != nullptr);
 
-    auto itemValue = arrayClass->get(objValue.intValue, indexValue);
+    auto itemValue = arrayClass->get(objValue, indexValue);
     return itemValue;
 }
 
@@ -29,7 +27,7 @@ Value Array_$$_size(Executor *executor, Arguments *args) {
     auto objValue = args->getArgument(0);
     auto arrayClass = executor->vm->arrayClass;
     assert(arrayClass != nullptr);
-    auto resultValue = arrayClass->getLength(objValue.intValue);
+    auto resultValue = arrayClass->getLength(objValue);
     return resultValue;
 }
 
@@ -39,12 +37,10 @@ Value Array_$$_set(Executor *executor, Arguments *args) {
     auto objValue = args->getArgument(2);
 
     auto arrayClass = executor->vm->arrayClass;
-    arrayClass->set(objValue.intValue, indexValue, newValue);
+    arrayClass->set(objValue, indexValue, newValue);
     assert(arrayClass != nullptr);
 
-    return {
-        .intValue = 0
-    };
+    return 0;
 }
 
 Value Dict_$_init(Executor* executor, Arguments* args) {
@@ -58,8 +54,8 @@ Value Dict_$$_insert(Executor* executor, Arguments* args) {
     auto objValue = args->getArgument(2);
 
     auto dictClass = executor->vm->dictClass;
-    dictClass->insert(objValue.intValue, keyValue, value);
-    return { .intValue = 0 };
+    dictClass->insert(objValue, keyValue, value);
+    return 0;
 }
 
 Value Dict_$$_get(Executor* executor, Arguments* args) {
@@ -67,7 +63,7 @@ Value Dict_$$_get(Executor* executor, Arguments* args) {
     auto objValue = args->getArgument(1);
 
     auto dictClass = executor->vm->dictClass;
-    auto value = dictClass->get(objValue.intValue, keyValue);
+    auto value = dictClass->get(objValue, keyValue);
 
     return value;
 }
