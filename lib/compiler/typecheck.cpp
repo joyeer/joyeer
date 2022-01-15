@@ -65,70 +65,83 @@ Node::Ptr TypeChecker::visit(const FuncDecl::Ptr& decl) {
     return decl;
 }
 
-Node::Ptr TypeChecker::visit(const FuncCallExpr::Ptr& node) {
-    
-    Symbol::Ptr symbol = nullptr;
-    
-    if(node->identifier->kind == SyntaxKind::dictLiteralExpr) {
-        node->identifier = visit(node->identifier);
-        auto dictLiteral = std::static_pointer_cast<DictLiteralExpr>(node->identifier);
-        if( dictLiteral->items.size() == 1) {
-            auto item = dictLiteral->items[0];
-            auto key = std::get<0>(item);
-            auto value = std::get<1>(item);
+Node::Ptr TypeChecker::visit(const FuncCallExpr::Ptr& decl) {
 
-            auto keySymbol = context->lookup(key->getSimpleName());
-            if(keySymbol->flag != SymbolFlag::klass) {
-                Diagnostics::reportError("[Error] Dictionary Key is not a class");
-                return node;
-            }
-            auto valueSymbol = context->lookup(value->getSimpleName());
-            if(valueSymbol->flag != SymbolFlag::klass) {
-                Diagnostics::reportError("[Error] Dictionary Value is not a class");
-                return node;
-            }
+    if (decl->identifier->kind == SyntaxKind::dictLiteralExpr) {
+        return visitDictFuncCallExpr(decl);
+    } else if (decl->identifier->kind == SyntaxKind::arrayLiteralExpr) {
+        return visitArrayFuncCallExpr(decl);
+    } else {
+        return visitFuncCallExpr(decl);
+    }
+}
 
-            node->typeSlot = compiler->getType(BuildIns::Object_Dict)->slot;
-            node->funcTypeSlot = compiler->getType(BuildIns::Object_Dict_Init)->slot;
-
-        }
-    } else if(node->identifier->kind == SyntaxKind::arrayLiteralExpr) {
-        visit(node->identifier);
-        auto arrayLiteral = std::static_pointer_cast<ArrayLiteralExpr>(node->identifier);
-        if(arrayLiteral->items.size() == 1) {
-            auto type = arrayLiteral->items[0];
+Node::Ptr TypeChecker::visitArrayFuncCallExpr(const FuncCallExpr::Ptr &decl) {
+    assert(decl->identifier->kind == SyntaxKind::arrayLiteralExpr);
+    visit(decl->identifier);
+    auto arrayLiteral = std::static_pointer_cast<ArrayLiteralExpr>(decl->identifier);
+    if (arrayLiteral->items.size() == 1) {
+        auto type = arrayLiteral->items[0];
 //            if(kind->symbol->flag == SymbolFlag::typeSymbol) {
 //                auto arrayType = std::make_shared<ArrayType>(kind);
 //                node->identifier = arrayType;
 //            }
 
-            assert(false);
-        }
-    } else {
-        auto name = node->getCalleeFuncSimpleName();
-        symbol = context->lookup(name);
+        assert(false);
+    }
+    return decl;
+}
 
-        if(symbol == nullptr) {
-            Diagnostics::reportError("[Error]Cannot ");
+Node::Ptr TypeChecker::visitDictFuncCallExpr(const FuncCallExpr::Ptr &decl) {
+    assert(decl->identifier->kind == SyntaxKind::dictLiteralExpr);
+    decl->identifier = visit(decl->identifier);
+    auto dictLiteral = std::static_pointer_cast<DictLiteralExpr>(decl->identifier);
+    if( dictLiteral->items.size() == 1) {
+        auto item = dictLiteral->items[0];
+        auto key = std::get<0>(item);
+        auto value = std::get<1>(item);
+
+        auto keySymbol = context->lookup(key->getSimpleName());
+        if(keySymbol->flag != SymbolFlag::klass) {
+            Diagnostics::reportError("[Error] Dictionary Key is not a class");
+            return decl;
+        }
+        auto valueSymbol = context->lookup(value->getSimpleName());
+        if(valueSymbol->flag != SymbolFlag::klass) {
+            Diagnostics::reportError("[Error] Dictionary Value is not a class");
+            return decl;
         }
 
-        node->funcTypeSlot = symbol->typeSlot;
-        auto funcType = (Function*)compiler->getType(node->funcTypeSlot);
-        assert(funcType != nullptr && funcType->returnTypeSlot != -1);
-        node->typeSlot = funcType->returnTypeSlot;
+        decl->typeSlot = compiler->getType(BuildIns::Object_Dict)->slot;
+        decl->funcTypeSlot = compiler->getType(BuildIns::Object_Dict_Init)->slot;
 
     }
+    return decl;
+}
+
+Node::Ptr TypeChecker::visitFuncCallExpr(const FuncCallExpr::Ptr &decl) {
+    assert(decl->identifier->kind != SyntaxKind::dictLiteralExpr);
+    assert(decl->identifier->kind != SyntaxKind::arrayLiteralExpr);
+
+    auto name = decl->getCalleeFuncSimpleName();
+    auto symbol = context->lookup(name);
+
+    if(symbol == nullptr) {
+        Diagnostics::reportError("[Error]Cannot ");
+    }
+
+    decl->funcTypeSlot = symbol->typeSlot;
+    auto funcType = (Function*)compiler->getType(decl->funcTypeSlot);
+    assert(funcType != nullptr && funcType->returnTypeSlot != -1);
+    decl->typeSlot = funcType->returnTypeSlot;
 
     // visit the param
-    for(const auto& argument: node->arguments) {
+    for(const auto& argument: decl->arguments) {
         visit(argument);
     }
 
-
-
-    return node;
+    return decl;
 }
-
 
 
 Node::Ptr TypeChecker::visit(const MemberFuncCallExpr::Ptr& node) {
@@ -521,7 +534,7 @@ Type* TypeChecker::typeOf(const Expr::Ptr& node) {
             stack.pop();
             auto rightType = stack.top();
             stack.pop();
-            if (leftType->kind == rightType->kind) {
+            if(leftType->kind == rightType->kind) {
                 stack.push(leftType);
             } else {
                 stack.push(leftType);
@@ -623,3 +636,4 @@ Type* TypeChecker::typeOf(const ArrayType::Ptr& node) {
 Type* TypeChecker::typeOf(const PrefixExpr::Ptr& node) {
     return typeOf(node->expr);
 }
+

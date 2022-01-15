@@ -16,7 +16,13 @@ protected:
     Node::Ptr visit(const VarDecl::Ptr& varDecl) override;
     Node::Ptr visit(const TypeIdentifier::Ptr& decl) override;
     Node::Ptr visit(const FuncCallExpr::Ptr& decl) override;
+
+    // FuncCallExpr visitor
     Node::Ptr visit(const MemberFuncCallExpr::Ptr& decl) override;
+    Node::Ptr visitDictFuncCallExpr(const FuncCallExpr::Ptr& decl);
+    Node::Ptr visitArrayFuncCallExpr(const FuncCallExpr::Ptr& decl);
+    Node::Ptr visitFuncCallExpr(const FuncCallExpr::Ptr& decl);
+
     Node::Ptr visit(const ArguCallExpr::Ptr& decl) override;
     Node::Ptr visit(const LiteralExpr::Ptr& decl) override;
     Node::Ptr visit(const PrefixExpr::Ptr& decl) override;
