@@ -57,15 +57,7 @@ protected:
     Type* typeOf(const SubscriptExpr::Ptr& node);
     Type* typeOf(const ArrayType::Ptr& node);
     Type* typeOf(const PrefixExpr::Ptr& node);
-    
-    // Get Code-Block's return kind
-    void verifyReturnStatement(const StmtsBlock::Ptr& node);
-    void verifyReturnStatement(std::vector<Node::Ptr>& statements);
-    Type* returnTypeOf(const Node::Ptr& node);
-    Type* returnTypeOf(const IfStmt::Ptr& node);
-    Type* returnTypeOf(const StmtsBlock::Ptr& node);
-    Type* returnTypeOf(const FuncCallExpr::Ptr& node);
-    Type* returnTypeOf(const WhileStmt::Ptr& node);
+
     
     CompileContext::Ptr context;
     CompilerService* compiler;

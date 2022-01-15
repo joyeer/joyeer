@@ -109,7 +109,7 @@ Node::Ptr TypeChecker::visit(const FuncCallExpr::Ptr& node) {
         symbol = context->lookup(name);
 
         if(symbol == nullptr) {
-            Diagnostics::reportError("[Error]Cannot find the function");
+            Diagnostics::reportError("[Error]Cannot ");
         }
 
         node->funcTypeSlot = symbol->typeSlot;
@@ -119,10 +119,12 @@ Node::Ptr TypeChecker::visit(const FuncCallExpr::Ptr& node) {
 
     }
 
-
+    // visit the param
     for(const auto& argument: node->arguments) {
         visit(argument);
     }
+
+
 
     return node;
 }
@@ -199,9 +201,9 @@ Node::Ptr TypeChecker::visit(const VarDecl::Ptr& decl) {
         }
             break;
         case ValueType::Module: {
-            auto moduleType = (ModuleClass*)declType;
-            symbol->locationInParent = moduleType->staticFields.size();
-            moduleType->staticFields.push_back(variableType);
+            auto module = (ModuleClass*)declType;
+            symbol->locationInParent = module->staticFields.size();
+            module->staticFields.push_back(variableType);
         }
             break;
         default:
@@ -620,83 +622,4 @@ Type* TypeChecker::typeOf(const ArrayType::Ptr& node) {
 
 Type* TypeChecker::typeOf(const PrefixExpr::Ptr& node) {
     return typeOf(node->expr);
-}
-
-void TypeChecker::verifyReturnStatement(const StmtsBlock::Ptr& node) {
-    verifyReturnStatement(node->statements);
-}
-
-void TypeChecker::verifyReturnStatement(std::vector<Node::Ptr>& statements) {
-    if(statements.empty()) {
-        statements.push_back(std::make_shared<ReturnStmt>(nullptr));
-    }
-    auto lastStatement = statements.back();
-    auto returnType = returnTypeOf(lastStatement);
-    if(returnType == nullptr) {
-        statements.push_back(std::make_shared<ReturnStmt>(nullptr));
-    }
-}
-
-Type* TypeChecker::returnTypeOf(const StmtsBlock::Ptr& node) {
-    if(node->statements.empty()) {
-        return nullptr;
-    }
-    
-    auto n = node->statements.back();
-    return returnTypeOf(n);
-}
-
-Type* TypeChecker::returnTypeOf(const IfStmt::Ptr& node) {
-    auto ifBlock = returnTypeOf(node->ifCodeBlock);
-    if(ifBlock == nullptr || node->elseCodeBlock == nullptr) {
-        return ifBlock;
-    }
-    
-    auto elseBlock = returnTypeOf(node->elseCodeBlock);
-    if(elseBlock == nullptr) {
-        return nullptr; // else block don't have return statement
-    }
-    assert(ifBlock->kind == elseBlock->kind);
-    return ifBlock;
-}
-
-Type* TypeChecker::returnTypeOf(const WhileStmt::Ptr& node) {
-    return returnTypeOf(node->codeBlock);
-}
-
-Type* TypeChecker::returnTypeOf(const FuncCallExpr::Ptr& node) {
-    assert(node->typeSlot !=  -1);
-    return compiler->getType(node->typeSlot);
-}
-
-Type* TypeChecker::returnTypeOf(const Node::Ptr& node) {
-    switch (node->kind) {
-        case SyntaxKind::stmtsBlock:
-            return returnTypeOf(std::static_pointer_cast<StmtsBlock>(node));
-        case SyntaxKind::returnStmt: {
-            auto returnStatement = std::static_pointer_cast<ReturnStmt>(node);
-            if(returnStatement->expr == nullptr) {
-                return context->compiler->getType(ValueType::Void);;
-            } else {
-                return typeOf(returnStatement->expr);
-            }
-        }
-        case SyntaxKind::ifStmt:
-            return returnTypeOf(std::static_pointer_cast<IfStmt>(node));
-        case SyntaxKind::funcCallExpr:
-            return returnTypeOf(std::static_pointer_cast<FuncCallExpr>(node));
-        case SyntaxKind::whileStmt:
-            return returnTypeOf(std::static_pointer_cast<WhileStmt>(node));
-        case SyntaxKind::assignExpr:
-        case SyntaxKind::identifierExpr:
-        case SyntaxKind::arrayLiteralExpr:
-        case SyntaxKind::varDecl:
-        case SyntaxKind::memberAccessExpr:
-        case SyntaxKind::memberFuncCallExpr:
-        case SyntaxKind::funcDecl:
-        case SyntaxKind::importStmt:
-            return nullptr;
-        default:
-            assert(false);
-    }
 }

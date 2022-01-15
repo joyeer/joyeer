@@ -27,7 +27,7 @@ public:
     
     CompileContext(CommandLineArguments::Ptr options, const SymbolTable::Ptr& globalSymTable);
 
-    void visit(CompileStage stage, const Node::Ptr& nodde, const std::function<void(void)>& visit);
+    void visit(CompileStage stage, const Node::Ptr& node, const std::function<void(void)>& visit);
 
     [[nodiscard]] CompileStage curStage() const;
     

@@ -136,8 +136,6 @@ struct OperatorExpr : Node {
 
     Token::Ptr token;
     OperatorPriority priority;
-    Type *leftType;
-    Type *rightType;
 
     explicit OperatorExpr(Token::Ptr token);
 
