@@ -7,9 +7,43 @@
 #include "joyeer/runtime/executor.h"
 
 Value Global_$_print(Executor* executor, Arguments *args) {
-    auto value = args->getArgument(0);
-    printf("%ld\n", value);
+    auto wrappedObj = args->getArgument(0);
+    auto optionalClass = executor->vm->optionalClass;
+    auto typeSlot = optionalClass->valueType(wrappedObj);
+    auto type = executor->vm->types->operator[](typeSlot);
+    switch (type->kind) {
+        case ValueType::Int: {
+            auto value = optionalClass->intValue(wrappedObj);
+            printf("%lld\n", value);
+        }
+            break;
+        case ValueType::Bool: {
+            auto value = optionalClass->boolValue(wrappedObj);
+            if(value) {
+                printf("true\n");
+            } else {
+                printf("false\n");
+            }
+        }
+            break;
+        default:
+            assert(false);
+    }
     return 0;
+}
+
+Value Global_$_autoWrapping_Int(Executor* executor, Arguments* args) {
+    auto value = args->getArgument(0);
+
+    auto wrapped = executor->vm->optionalClass->allocate(executor->vm,(Int)value);
+    return wrapped;
+}
+
+Value Global_$_autoWrapping_Bool(Executor* executor, Arguments* args) {
+    auto value = args->getArgument(0);
+
+    auto wrapped = executor->vm->optionalClass->allocate(executor->vm, (Bool)value);
+    return wrapped;
 }
 
 Value Array_$$_get(Executor* executor, Arguments *args) {

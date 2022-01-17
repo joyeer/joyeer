@@ -122,14 +122,26 @@ SymbolTable::Ptr CompilerService::getExportingSymbolTable(int typeSlot) {
     assert((type) == types->types.back()->kind);  \
     assert((size_t)(type) == (types->types.size() - 1));
 
-#define DECLARE_FUNC(type, param, typeSlot, cParamCount, cFuncImpl) \
-    {                                                               \
-        auto func = new Function(param, true);                      \
-        func->funcKind = FuncTypeKind::C_Func;                      \
-        func->paramCount = cParamCount;                             \
-        func->cFunction = (CFunction)&(cFuncImpl);                  \
-        func->returnTypeSlot = (int)(typeSlot);                     \
-        declare(func);                                              \
+#define BEGIN_DECLARE_FUNC(type, descriptor, retTypeSlot, cFuncImpl) \
+    {                                                                \
+        auto func = new Function(descriptor, true);                  \
+        declare(func);                                               \
+        func->funcKind = FuncTypeKind::C_Func;                       \
+        func->cFunction = (CFunction)&(cFuncImpl);                   \
+        func->returnTypeSlot = (int)(retTypeSlot);                   \
+        func->paramCount = 0;
+
+#define DECLARE_FUNC_PARM(name, type) \
+    {                                 \
+        auto variable = new Variable(name); \
+        variable->parentSlot = func->slot;  \
+        variable->typeSlot = (int)(type);   \
+        variable->loc = func->paramCount;   \
+        func->localVars.push_back(variable);\
+        func->paramCount ++;          \
+    }
+
+#define END_DECLARE_FUNC() \
     }
 
 #define BEGIN_DECLARE_CLASS(type, TypeClass) \
@@ -175,7 +187,20 @@ void CompilerService::bootstrap() {
     DECLARE_TYPE(ValueType::Unspecified, UnspecifiedType)
     DECLARE_TYPE(ValueType::Any, AnyType)
 
-    DECLARE_FUNC(BuildIns::Func_Print, "print(message:)", ValueType::Void, 1, Global_$_print)
+    BEGIN_DECLARE_FUNC(BuildIns::Func_Print, "print(message:)", ValueType::Void, Global_$_print)
+        DECLARE_FUNC_PARM("message", ValueType::Any)
+    END_DECLARE_FUNC()
+
+    BEGIN_DECLARE_FUNC(BuildIns::Func_AutoWrapping_Int, "autoWrapping(int:)", ValueType::Any, Global_$_autoWrapping_Int)
+        DECLARE_FUNC_PARM("int", ValueType::Int)
+    END_DECLARE_FUNC()
+
+    BEGIN_DECLARE_FUNC(BuildIns::Func_AutoWrapping_Bool, "autoWrapping(bool:)", ValueType::Any, Global_$_autoWrapping_Bool)
+        DECLARE_FUNC_PARM("bool", ValueType::Bool)
+    END_DECLARE_FUNC()
+
+    BEGIN_DECLARE_CLASS(BuildIns::Object_Optional, Optional)
+    END_DECLARE_CLASS(BuildIns::Object_Optional)
 
     // Declare build-in classes and its members
     BEGIN_DECLARE_CLASS(BuildIns::Object_Array, ArrayClass)

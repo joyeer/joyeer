@@ -52,12 +52,66 @@ BoolType::BoolType() :
 Function::Function(const std::string &name, bool isStatic) :
         Type(name, ValueType::Func),
         isStatic(isStatic),
+        cFunction(nullptr),
         funcKind(FuncTypeKind::VM_Func) {
 }
 
 int Function::getLocalVarCount() const {
-    return localVars.size();
+    return (int)localVars.size();
 }
+
+Variable *Function::getParamByIndex(int index) {
+    return localVars[index];
+}
+
+
+//------------------------------------------------
+// Optional implementation
+//------------------------------------------------
+
+Optional::Optional():
+Type("Optional", ValueType::Any) {
+}
+
+intptr_t Optional::allocate(IsolateVM *vm, Int value) {
+    auto objAddr = vm->gc->allocate(this, sizeof(DataMap));
+    auto objPtr = reinterpret_cast<DataMap*>(objAddr);
+    objPtr->head.wrapped = true;
+    objPtr->head.absent = false;
+    objPtr->head.typeSlot = (*vm->types)[ValueType::Int]->slot;
+    objPtr->wrappedValue = value;
+
+    return objAddr;
+}
+
+intptr_t Optional::allocate(IsolateVM *vm, Bool value) {
+    auto objAddr = vm->gc->allocate(this, sizeof(DataMap));
+    auto objPtr = reinterpret_cast<DataMap*>(objAddr);
+    objPtr->head.wrapped = true;
+    objPtr->head.absent = false;
+    objPtr->head.typeSlot = (*vm->types)[ValueType::Bool]->slot;
+    objPtr->wrappedValue = value;
+    return objAddr;
+}
+
+Slot Optional::valueType(intptr_t objAddr) {
+    auto optionalObj = reinterpret_cast<DataMap*>(objAddr);
+    return optionalObj->head.typeSlot;
+}
+
+Int Optional::intValue(intptr_t object) {
+    auto optionalObj = reinterpret_cast<DataMap*>(object);
+    assert(optionalObj->head.typeSlot == (Int)ValueType::Int);
+    return optionalObj->wrappedValue;
+}
+
+Bool Optional::boolValue(intptr_t objAddr) {
+    auto optionalObj = reinterpret_cast<DataMap*>(objAddr);
+    assert(optionalObj->head.typeSlot == (Int)ValueType::Bool);
+    return optionalObj->wrappedValue;
+}
+
+
 
 //------------------------------------------------
 // Class implementation

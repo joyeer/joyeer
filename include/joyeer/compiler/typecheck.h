@@ -64,6 +64,8 @@ protected:
     Type* typeOf(const ArrayType::Ptr& node);
     Type* typeOf(const PrefixExpr::Ptr& node);
 
+    // wrap or unwrap expr value
+    Node::Ptr wrapOrUnwrapExprValue(const Node::Ptr& expr, int targetTypeSlot);
     
     CompileContext::Ptr context;
     CompilerService* compiler;

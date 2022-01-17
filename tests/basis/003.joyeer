@@ -12,3 +12,5 @@ if a {
 } else {
     print(message: 10)
 }
+
+print(message: false)

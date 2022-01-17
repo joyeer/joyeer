@@ -10,7 +10,7 @@
 struct Interpreter;
 
 #define DEBUG_PRINT(bytecode) \
-    std::cout << ">" << debugPrint(&bytecode) << std::endl;
+    std::cout << ">" << debugPrint(&(bytecode)) << std::endl;
 
 #define HANDLE_BYTECODE(OP) \
         case OP_##OP: \

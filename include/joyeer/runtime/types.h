@@ -15,23 +15,25 @@ struct IsolateVM;
 
 typedef char            Byte;
 typedef int64_t         Int;
+typedef uint64_t        UInt;
+typedef int32_t         Int32;
+typedef int16_t         Int16;
 typedef bool            Bool;
-typedef uintptr_t       FuncPtr;
 typedef uintptr_t       Any;
 typedef intptr_t        Slot;
 typedef intptr_t        Value;
 typedef const char*     FramePtr;
 
 /**
- * ObjectHead for Object's head or Optional Wrappred Value's head
+ * ObjectHead for Object's head or Optional Wrapped Value's head
  */
 struct ObjectHead {
-    int8_t wrapped:     1 = 0;  // for Optional type 1, else 0
-    int8_t absent:      1;      // only available for Optional type
-    int8_t reserved:    6;      // reserved for future usage
-    int typeSlot:       20;
-    int refCount:       12;
-    int reserved_2:     24;     // reserved for future usage
+    bool wrapped:     1 = 0;        // for Optional type 1, else 0
+    bool absent:      1 = 0;        // only available for Optional type
+    bool reserved:    6 = 0;        // reserved for future usage
+    int typeSlot:     20  = -1;
+    int refCount:     12 = 0;
+    int reserved_2:   24 = 0;       // reserved for future usage
 };
 
 struct Object {
@@ -63,6 +65,10 @@ enum class ValueType : uint8_t {
 
 enum class BuildIns : uint16_t {
     Func_Print = static_cast<size_t>(ValueType::RESOLVED_PRIMARY_TYPE_COUNT) - 1,
+    Func_AutoWrapping_Int,
+    Func_AutoWrapping_Bool,
+
+    Object_Optional,
 
     Object_Array,
     Object_Array_Func_size,
@@ -91,7 +97,7 @@ std::string debugAccessFlag(AccessFlag flag);
 struct Type {
     std::string name;
     ValueType kind;
-    int32_t slot;
+    int slot;
 
 protected:
     Type(std::string  name, ValueType kind):
@@ -178,6 +184,8 @@ typedef Value (*CFunction)(Executor* executor, Argument* argument);
 struct Function : Type {
 
     FuncTypeKind funcKind;
+
+    // localVars contains all function params at begin of the array
     int paramCount = 0;
     std::vector<Variable*> localVars = {};
     int returnTypeSlot = -1;
@@ -192,6 +200,9 @@ struct Function : Type {
 
     // return the number of total local variable count;
     [[nodiscard]] int getLocalVarCount() const ;
+
+    // get param decl
+    Variable* getParamByIndex(int index);
 };
 
 /*
@@ -207,11 +218,20 @@ struct Function : Type {
 
 struct Optional : public Type {
     struct DataMap {
-        ObjectHead head;
-        Value wrappedValue;
+        ObjectHead head {};
+        Value wrappedValue {};
     };
 
-    int wrappedTypeSlot = -1; // the wrapped Type's slot
+    explicit Optional();
+
+    intptr_t allocate(IsolateVM* vm, Int value);
+    intptr_t allocate(IsolateVM* vm, Bool value);
+
+    // return the wrapped Object's type slot
+    Slot valueType(intptr_t objAddr);
+
+    Int intValue(intptr_t objAddr);
+    Bool boolValue(intptr_t objAddr);
 };
 
 
@@ -248,15 +268,6 @@ struct ModuleClass : public Class {
     explicit ModuleClass(const std::string& name);
 };
 
-
-struct IntClass: public Class {
-    constexpr static int kIntDataOffset = kObjectHeadOffset + kValueSize;
-
-    explicit IntClass();
-
-    // static method, Int.valueOf()
-    intptr_t valueOf(Int value);
-};
 
 // Array Object class
 struct ArrayClass : public Class {

@@ -36,6 +36,9 @@ protected:
     void emit(const DictLiteralExpr::Ptr& node);
     void emit(const SubscriptExpr::Ptr& node);
     void emit(const ImportStmt::Ptr& node);
+
+    // auto wrapping source type -> destine type;
+    void autoWrapping(int srcTypeSlot, int destTypeSlot);
     
 private:
     BytecodeWriter writer;

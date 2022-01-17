@@ -390,6 +390,8 @@ Node::Ptr TypeChecker::visit(const WhileStmt::Ptr& node) {
 
 Node::Ptr TypeChecker::visit(const ArguCallExpr::Ptr& node) {
     node->expr = visit(node->expr);
+    node->typeSlot = node->expr->typeSlot;
+    assert(node->typeSlot > -1);
     return node;
 }
 

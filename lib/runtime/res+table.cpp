@@ -19,6 +19,10 @@ Type* TypeResTable::operator[](int index) {
     return types[index];
 }
 
+Type *TypeResTable::operator[](ValueType valueType) {
+    return operator[]((int)valueType);
+}
+
 int TypeResTable::import(Type *type) {
     assert(type->slot == -1);
     types.push_back(type);

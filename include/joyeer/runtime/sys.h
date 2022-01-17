@@ -8,7 +8,8 @@
 #include "joyeer/runtime/types.h"
 
 Value Global_$_print(Executor* executor, Arguments* args);
-
+Value Global_$_autoWrapping_Int(Executor* executor, Arguments* args);
+Value Global_$_autoWrapping_Bool(Executor* executor, Arguments* args);
 
 Value Array_$$_get(Executor* executor, Arguments* args);
 Value Array_$$_set(Executor* executor, Arguments* args);

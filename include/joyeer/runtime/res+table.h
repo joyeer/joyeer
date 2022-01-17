@@ -23,7 +23,9 @@ struct StringResTable {
 struct TypeResTable {
 
     int import(Type* type);
+
     Type* operator[] (int index);
+    Type* operator[] (ValueType valueType);
 
     std::vector<Type*> types {};
 };

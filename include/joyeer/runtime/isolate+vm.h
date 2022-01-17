@@ -24,6 +24,8 @@ struct IsolateVM {
     ArrayClass* arrayClass = nullptr;
     DictClass* dictClass = nullptr;
     DictEntry* dictEntryClass = nullptr;
+
+    Optional* optionalClass = nullptr;
 };
 
 

@@ -78,9 +78,16 @@ void IRGen::emit(const FuncCallExpr::Ptr& funcCallExpr) {
     }
 
     context->visit(CompileStage::visitFuncCall, funcCallExpr, [this, funcCallExpr, func](){
-        
+
+        int index = 0;
+
         for(const auto& argument : funcCallExpr->arguments) {
+            // emit the passing param argument variable
             emit(argument);
+            assert(argument->typeSlot != -1);
+            // auto wrapping the passing variable if necessary
+            autoWrapping(argument->typeSlot, func->getParamByIndex(index)->typeSlot);
+            index ++;
         }
 
 
@@ -471,4 +478,23 @@ void IRGen::emit(const SubscriptExpr::Ptr& node) {
 
 void IRGen::emit(const ImportStmt::Ptr& node) {
     
+}
+
+void IRGen::autoWrapping(int srcTypeSlot, int destTypeSlot) {
+    if(destTypeSlot == compiler->getType(ValueType::Any)->slot) {
+        auto srcType = compiler->getType(srcTypeSlot);
+        switch (srcType->kind) {
+            case ValueType::Int:
+                writer.write(Bytecode(OP_INVOKE, compiler->getType(BuildIns::Func_AutoWrapping_Int)->slot));
+                break;
+            case ValueType::Bool:
+                writer.write(Bytecode(OP_INVOKE, compiler->getType(BuildIns::Func_AutoWrapping_Bool)->slot));
+                break;
+            case ValueType::Any:
+                // if source type is Any, not wrapping occurring.
+                break;
+            default:
+                assert(false);
+        }
+    }
 }
