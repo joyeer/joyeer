@@ -13,8 +13,9 @@ IsolateVM::~IsolateVM() {
 }
 
 void IsolateVM::bootstrap() {
-    arrayClass = static_cast<ArrayClass *>((*types)[(int) BuildIns::Object_Array]);
-    dictClass = static_cast<DictClass*>((*types)[(int) BuildIns::Object_Dict]);
-    dictEntryClass = static_cast<DictEntry*>((*types)[(int) BuildIns::Object_DictEntry]);
-    optionalClass = static_cast<Optional*>((*types)[(int) BuildIns::Object_Optional]);
+    arrayClass = (ArrayClass*)((*types)[(int) BuildIns::Object_Array]);
+    dictClass = (DictClass*)((*types)[(int) BuildIns::Object_Dict]);
+    dictEntryClass = (DictEntry*)((*types)[(int) BuildIns::Object_DictEntry]);
+    optionalClass = (Optional*)((*types)[(int) BuildIns::Object_Optional]);
+    stringClass = (StringClass*)((*types)[(int) ValueType::String]);
 }

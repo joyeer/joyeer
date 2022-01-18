@@ -186,6 +186,7 @@ void CompilerService::bootstrap() {
     DECLARE_TYPE(ValueType::Nil, NilType)
     DECLARE_TYPE(ValueType::Unspecified, UnspecifiedType)
     DECLARE_TYPE(ValueType::Any, AnyType)
+    DECLARE_TYPE(ValueType::String, StringClass)
 
     BEGIN_DECLARE_FUNC(BuildIns::Func_Print, "print(message:)", ValueType::Void, Global_$_print)
         DECLARE_FUNC_PARM("message", ValueType::Any)

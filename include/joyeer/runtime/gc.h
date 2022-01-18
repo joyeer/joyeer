@@ -15,8 +15,7 @@ enum MemoryArea : uint8_t {
 class GC {
 public:
     intptr_t allocate(MemoryArea area, Class* klass);
-    intptr_t allocate(Class* klass, size_t size);
-    intptr_t allocate(Optional* optional, size_t size);
+    intptr_t allocate(Type* type, size_t size);
     static void write(intptr_t memory, Value value, int offset);
     static Value read(intptr_t memory, int offset);
 private:

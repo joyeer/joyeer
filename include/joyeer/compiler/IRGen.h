@@ -39,6 +39,7 @@ protected:
 
     // auto wrapping source type -> destine type;
     void autoWrapping(int srcTypeSlot, int destTypeSlot);
+    void autoUnwrapping(int srcTypeSlot, int destTypeSlot);
     
 private:
     BytecodeWriter writer;

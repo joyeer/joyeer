@@ -468,6 +468,8 @@ Node::Ptr TypeChecker::visit(const ArrayType::Ptr& node) {
 
 Node::Ptr TypeChecker::visit(const PrefixExpr::Ptr& node) {
     node->expr = visit(node->expr);
+    node->typeSlot = node->expr->typeSlot;
+    assert(node->typeSlot > -1);
     return node;
 }
 

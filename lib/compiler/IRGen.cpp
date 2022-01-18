@@ -84,9 +84,9 @@ void IRGen::emit(const FuncCallExpr::Ptr& funcCallExpr) {
         for(const auto& argument : funcCallExpr->arguments) {
             // emit the passing param argument variable
             emit(argument);
-            assert(argument->typeSlot != -1);
+            assert(argument->expr->typeSlot != -1);
             // auto wrapping the passing variable if necessary
-            autoWrapping(argument->typeSlot, func->getParamByIndex(index)->typeSlot);
+            autoWrapping(argument->expr->typeSlot, func->getParamByIndex(index)->typeSlot);
             index ++;
         }
 
@@ -264,8 +264,10 @@ void IRGen::emit(const AssignExpr::Ptr& node) {
 
         // check identifier's symbol's kind
         if(subscriptExpr->identifier->typeSlot == compiler->getType(BuildIns::Object_Array)->slot ) {
+            autoWrapping(node->expr->typeSlot, (int)ValueType::Any);
             writer.write(Bytecode(OP_INVOKE , compiler->getType(BuildIns::Object_Array_Func_set)->slot));
         } else if(subscriptExpr->identifier->typeSlot == compiler->getType(BuildIns::Object_Dict)->slot) {
+            autoWrapping(node->expr->typeSlot, (int)ValueType::Any);
             writer.write(Bytecode(OP_INVOKE, compiler->getType(BuildIns::Object_Dict_Func_insert)->slot));
         } else {
             assert(false);
@@ -421,6 +423,7 @@ void IRGen::emit(const ReturnStmt::Ptr& node) {
 void IRGen::emit(const ArrayLiteralExpr::Ptr& node) {
     for(const auto& item: node->items) {
         emit(item);
+        autoWrapping(item->typeSlot, (int)ValueType::Any);
     }
     
     writer.write(Bytecode(OP_ICONST, node->items.size()));
@@ -436,7 +439,7 @@ void IRGen::emit(const DictLiteralExpr::Ptr& node) {
 
         emit(std::get<0>(item));
         emit(std::get<1>(item));
-
+        autoWrapping(std::get<1>(item)->typeSlot, (int)ValueType::Any);
         writer.write(Bytecode(OP_INVOKE, compiler->getType(BuildIns::Object_Dict_Func_insert)->slot));
     }
 }
@@ -477,7 +480,7 @@ void IRGen::emit(const SubscriptExpr::Ptr& node) {
 }
 
 void IRGen::emit(const ImportStmt::Ptr& node) {
-    
+
 }
 
 void IRGen::autoWrapping(int srcTypeSlot, int destTypeSlot) {
@@ -490,6 +493,8 @@ void IRGen::autoWrapping(int srcTypeSlot, int destTypeSlot) {
             case ValueType::Bool:
                 writer.write(Bytecode(OP_INVOKE, compiler->getType(BuildIns::Func_AutoWrapping_Bool)->slot));
                 break;
+            case ValueType::String:
+            case ValueType::Class:
             case ValueType::Any:
                 // if source type is Any, not wrapping occurring.
                 break;

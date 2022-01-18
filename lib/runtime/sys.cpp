@@ -26,6 +26,11 @@ Value Global_$_print(Executor* executor, Arguments *args) {
             }
         }
             break;
+        case ValueType::String: {
+            auto string = executor->vm->stringClass->toString(wrappedObj);
+            printf("%s\n", string.c_str());
+        }
+            break;
         default:
             assert(false);
     }

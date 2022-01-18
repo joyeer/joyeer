@@ -47,6 +47,7 @@ struct NodeDebugPrinter : public NodeVisitor, public YMLPrinter {
         size = 0;
         newline();
         output << "########################################################" << std::endl;
+        output.flush();
     }
 
     void print(const std::string& stage, const std::vector<Type*>& types) {
@@ -558,6 +559,9 @@ protected:
                     break;
                 case ValueType::Unspecified:
                     output << "kind: Unspecified";
+                    break;
+                case ValueType::String:
+                    output << "kind: String";
                     break;
                 default:
                     assert(false);

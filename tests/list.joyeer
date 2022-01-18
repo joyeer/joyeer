@@ -10,7 +10,7 @@ class ListNode {
 	}
 }
 
-let root = ListNode(previous: nil, next: nil, value: 10)
+var root = ListNode(previous: nil, next: nil, value: 10)
 
 class List {
 	var root: ListNode? = nil

@@ -111,8 +111,6 @@ Bool Optional::boolValue(intptr_t objAddr) {
     return optionalObj->wrappedValue;
 }
 
-
-
 //------------------------------------------------
 // Class implementation
 //------------------------------------------------
@@ -127,13 +125,35 @@ intptr_t Class::allocate(IsolateVM *vm) {
 }
 
 //------------------------------------------------
-// Class implementation
+// Module implementation
 //------------------------------------------------
 
 ModuleClass::ModuleClass(const std::string &name) :
         Class(name) {
     kind = ValueType::Module;
 }
+
+//------------------------------------------------
+// StringClass implementation
+//------------------------------------------------
+
+intptr_t StringClass::allocate(IsolateVM *vm, int typeSlot) {
+
+    auto rawString = (*vm->strings)[typeSlot];
+    auto objAddr = vm->gc->allocate(this, (int)(rawString.size() + kIntSize + sizeof(ObjectHead)));
+    auto stringObj = reinterpret_cast<StringData*>(objAddr);
+    stringObj->head.typeSlot = (Int)ValueType::String;
+    stringObj->length = static_cast<Int>(rawString.size());
+    memcpy(stringObj->data, rawString.c_str(), stringObj->length);
+
+    return objAddr;
+}
+
+std::string StringClass::toString(intptr_t objAddr) {
+    auto stringObj = reinterpret_cast<StringData*>(objAddr);
+    return {stringObj->data, (size_t )stringObj->length };
+}
+
 
 //------------------------------------------------
 // ArrayClass implementation

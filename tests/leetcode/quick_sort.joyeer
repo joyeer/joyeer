@@ -1,54 +1,4 @@
-print(message: 1000)
-print(message: 100)
 
-var maximumNumberOfLoginAttempts = 10
-var currentLoginAttempt = 0
-
-print(message: maximumNumberOfLoginAttempts)
-print(message: currentLoginAttempt)
-
-var b = 11
-var a = 13
-
-print(message: a)
-a = b 
-print(message: a)
-
-a = 24 / 2 - 23 % 2 * 2 - 14 + 4 * 4 - 14 / 3
-print(message: a)
-
-a = 24 / (8 - 2) + 300 / (24 * (3 + 2))
-print(message: a)
-
-a = true
-if a {
-    print(message: a)
-} else {
-    print(message: 10)
-}
-
-print(message: 100)
-
-func add(left:Int, right: Int): Int {
-    var i = left + right
-    return i
-}
-
-a = add(left:10, right:12)
-print(message: a)
-
-var array:[Int] = [1, 2, 3]
-var j = array[2]
-print(message: j)
-
-var i = 10
-while i > 0 && i > 0 {
-    print(message: i)
-    i = i - 1
-}
-
-var size = array.size()
-print(message:size)
 
 func partitionSort(array:[Int], start:Int, end:Int) {
     var startIndex = start
@@ -65,11 +15,11 @@ func partitionSort(array:[Int], start:Int, end:Int) {
             while array[endIndex] > num {
                 endIndex = endIndex - 1
             }
-
             if startIndex < endIndex {
                 var temp:Int = array[startIndex]
                 array[startIndex] = array[endIndex]
                 array[endIndex] = temp
+
             } 
             startIndex = startIndex + 1
             endIndex = endIndex - 1
@@ -87,13 +37,8 @@ func quickSort(array:[Int]): [Int] {
 }
 
 var result = quickSort(array: [8, 6, 1, 2, 1, 12, 3, 4, 34])
-print(object: result)
-
-var dict = [12: "1234", 13: 12]
-print(message: dict[12])
-dict[12] = "4555"
-print(message: dict[12])
-
-var dict2 = [Int:Int]()
-dict2[12] = "123123"
-print(message: dict2[12])
+var index = 0
+while index < result.size() {
+    print(message: result[index])
+    index  = index + 1
+}

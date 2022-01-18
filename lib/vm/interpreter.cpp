@@ -125,8 +125,9 @@ loop:
         assert(OP_FROM_BYTECODE(bytecode) == OP_SCONST);
         auto value = VALUE_FROM_BYTECODE(bytecode);
 
-        auto stringValue = executor->vm->strings[value];
-        assert(false);
+
+        auto stringObj = isolateVm->stringClass->allocate(isolateVm, value);
+        push(stringObj);
     }
 
     inline void Handle_ISTORE(Bytecode bytecode) {

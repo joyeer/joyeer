@@ -14,16 +14,10 @@ intptr_t GC::allocate(MemoryArea area, Class *klass) {
     assert(false);
 }
 
-intptr_t GC::allocate(Class *klass, size_t size) {
+intptr_t GC::allocate(Type *type, size_t size) {
     auto address = heap->allocate(size + kIntSize);
     return address;
 }
-
-intptr_t GC::allocate(Optional *optional, size_t size) {
-    auto address = heap->allocate(size);
-    return address;
-}
-
 
 intptr_t GC::allocateForStatic(Class *klass) {
     size_t size = klass->getStaticSize();

@@ -1,0 +1,4 @@
+print(message: "hello world")
+
+var string = "hello world2"
+print(message: string)

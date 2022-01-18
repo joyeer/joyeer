@@ -64,7 +64,7 @@ enum class ValueType : uint8_t {
 };
 
 enum class BuildIns : uint16_t {
-    Func_Print = static_cast<size_t>(ValueType::RESOLVED_PRIMARY_TYPE_COUNT) - 1,
+    Func_Print = static_cast<size_t>(ValueType::RESOLVED_PRIMARY_TYPE_COUNT) ,
     Func_AutoWrapping_Int,
     Func_AutoWrapping_Bool,
 
@@ -205,6 +205,7 @@ struct Function : Type {
     Variable* getParamByIndex(int index);
 };
 
+
 /*
  * A type that represents a wrapped value or nil, absence
  *
@@ -267,6 +268,36 @@ struct ModuleClass : public Class {
 
     explicit ModuleClass(const std::string& name);
 };
+
+
+/*
+ * A type that represents a string
+ *
+ * StringClass Memory Layout
+ * +--------------+
+ * | Head         |
+ * +--------------+
+ * | length       |
+ * +--------------+
+ * | chars        |
+ * +--------------+
+ */
+
+struct StringClass : Type {
+
+    struct StringData {
+        ObjectHead head {};
+        Int length = 0;
+        char data[0];
+    };
+
+    StringClass(): Type("String", ValueType::String) {}
+
+    intptr_t allocate(IsolateVM* vm, int typeSlot);
+
+    std::string toString(intptr_t objAddr);
+};
+
 
 
 // Array Object class
