@@ -95,7 +95,8 @@ std::string debugPrint(Bytecode* bytecode) {
             { OP_GOTO, "goto"},
             { OP_DEBUG, "debug"},
             { OP_ONEWARRAY, "new.array.object"},
-            { OP_DUP, "dup" }
+            { OP_DUP, "dup" },
+            { OP_POP, "pop"}
     };
 
 

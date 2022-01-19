@@ -51,6 +51,7 @@ enum Opcode : uint8_t {
 
     OP_INVOKE,
     OP_DUP,
+    OP_POP,
     OP_GOTO,
 
     OP_DEBUG,
@@ -87,12 +88,6 @@ struct Bytecode {
 
     Bytecode(int8_t op, int32_t value1, int32_t value2) ;
 };
-
-#define DEF_BYTECODE(op, value) \
-    Bytecode((int8_t)(op), (int64_t)(value))
-
-#define DEF_BYTECODE_2(op, value1, value2) \
-    Bytecode((int8_t)(op), (int32_t)(value1), (int32_t)(value2))
 
 #define OP_FROM_BYTECODE(bytecode) (int8_t)((bytecode).format1.op)
 

@@ -15,7 +15,7 @@ intptr_t GC::allocate(MemoryArea area, Class *klass) {
 }
 
 intptr_t GC::allocate(Type *type, size_t size) {
-    auto address = heap->allocate(size + kIntSize);
+    auto address = heap->allocate(size);
     return address;
 }
 

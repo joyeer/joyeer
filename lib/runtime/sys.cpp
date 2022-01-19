@@ -31,6 +31,10 @@ Value Global_$_print(Executor* executor, Arguments *args) {
             printf("%s\n", string.c_str());
         }
             break;
+        case ValueType::Nil: {
+            printf("nil\n");
+        }
+            break;
         default:
             assert(false);
     }

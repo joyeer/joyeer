@@ -127,8 +127,7 @@ void IRGen::emit(const LiteralExpr::Ptr& node) {
             writer.write(Bytecode(OP_ICONST, node->literal->rawValue == Literals::TRUE ? 1 : 0));
             break;
         case nilLiteral:
-            writer.write(Bytecode(OP_OCONST_NIL, -1)
-            );
+            writer.write(Bytecode(OP_OCONST_NIL, -1));
             break;
         default:
             assert(false);
@@ -296,7 +295,7 @@ void IRGen::emit(const Expr::Ptr& node) {
                 emit(n);
 
                 writer.write(Bytecode(OP_INVOKE, (int)BuildIns::Object_StringBuilder_Func_append));
-
+                writer.write(Bytecode(OP_POP, 0));
             }
         }
         writer.write(Bytecode(OP_INVOKE, (int)BuildIns::Object_StringBuilder_Func_toString));
@@ -376,6 +375,14 @@ void IRGen::emit(const StmtsBlock::Ptr& node) {
     context->visit(CompileStage::visitCodeBlock, node, [this, node]() {
         for(const auto& statement: node->statements) {
             emit(statement);
+            // if the func-call statement's return value is not consumed,
+            // we will inject a pop bytecode
+            if(statement->kind == SyntaxKind::funcCallExpr) {
+                auto funcCall = std::static_pointer_cast<FuncCallExpr>(statement);
+                if(funcCall->typeSlot != compiler->getType(ValueType::Void)->slot) {
+                    writer.write(Bytecode(OP_POP, 0));
+                }
+            }
         }
     });
 }

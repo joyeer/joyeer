@@ -79,6 +79,7 @@ loop:
             HANDLE_BYTECODE(ONEWARRAY)
             HANDLE_BYTECODE(INVOKE)
             HANDLE_BYTECODE(DUP)
+            HANDLE_BYTECODE(POP)
             HANDLE_BYTECODE(GOTO)
             HANDLE_BYTECODE(DEBUG)
             default:
@@ -112,7 +113,7 @@ loop:
 
     inline void Handle_OCONST_NIL(Bytecode bytecode) {
         assert(OP_FROM_BYTECODE(bytecode) == OP_OCONST_NIL);
-        assert(false);
+        push(0);
     }
 
     inline void Handle_ICONST(Bytecode bytecode) {
@@ -322,7 +323,6 @@ loop:
 
         auto result = value2 % value1;
         push(result);
-        assert(false);
     }
 
     inline void Handle_IFEQ(Bytecode bytecode) {
@@ -407,6 +407,11 @@ loop:
         push(r);
     }
 
+    void Handle_POP(Bytecode bytecode) {
+        assert(OP_FROM_BYTECODE(bytecode) == OP_POP);
+        pop();
+    }
+
     inline void Handle_GOTO(Bytecode bytecode) {
         assert(OP_FROM_BYTECODE(bytecode) == OP_GOTO);
 
@@ -439,7 +444,6 @@ void InterpretedExecutor::execute(const Function *function) {
 
     auto paramCount = function->paramCount;
 
-//    printf("current sp: %d\n", sp);
     auto savedFP = sp;
 
     push(savedFP, FuncCallFrame::size());

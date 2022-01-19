@@ -96,6 +96,9 @@ intptr_t Optional::allocate(IsolateVM *vm, Bool value) {
 
 Slot Optional::valueType(intptr_t objAddr) {
     auto optionalObj = reinterpret_cast<DataMap*>(objAddr);
+    if(optionalObj == nullptr) {
+        return (Slot)ValueType::Nil;
+    }
     return optionalObj->head.typeSlot;
 }
 
@@ -140,7 +143,7 @@ ModuleClass::ModuleClass(const std::string &name) :
 intptr_t StringClass::allocate(IsolateVM *vm, int typeSlot) {
 
     auto rawString = (*vm->strings)[typeSlot];
-    auto objAddr = vm->gc->allocate(this, (int)(rawString.size() + kIntSize + sizeof(ObjectHead)));
+    auto objAddr = vm->gc->allocate(this, (int)(rawString.size() + kIntSize + sizeof(ObjectHead) + kIntSize));
     auto stringObj = reinterpret_cast<StringData*>(objAddr);
     stringObj->head.typeSlot = (Int)ValueType::String;
     stringObj->length = static_cast<Int>(rawString.size());
@@ -150,7 +153,7 @@ intptr_t StringClass::allocate(IsolateVM *vm, int typeSlot) {
 }
 
 intptr_t StringClass::allocateWithLength(IsolateVM *vm, int size) {
-    auto objAddr = vm->gc->allocate(this, (int)(size + kIntSize + sizeof(ObjectHead)));
+    auto objAddr = vm->gc->allocate(this, (int)(size + kIntSize + sizeof(ObjectHead) + kIntSize));
     auto stringObj = reinterpret_cast<StringData*>(objAddr);
     stringObj->head.typeSlot = (Int)ValueType::String;
     stringObj->length = (Int)size;
@@ -229,7 +232,7 @@ intptr_t ArrayClass::allocate(IsolateVM* vm, int capacity) {
     size_t adjustedCapacity = calculateArrayCapacitySize(capacity) * kIntSize;
     size_t size = adjustedCapacity + kArrayDataOffset;
 
-    intptr_t object = vm->gc->allocate(this, size);
+    intptr_t object = vm->gc->allocate(this, size + kIntSize);
     setCapacity(object, (Value)adjustedCapacity);
 
     return object;
@@ -292,7 +295,7 @@ Class(std::string("Array")) {
 intptr_t DictClass::allocate(IsolateVM *vm) {
     this->vm = vm;
     int defaultSize = kDictBucketSlotOffset + kDefaultDictSize / 4 * kIntSize;
-    auto objPtr= vm->gc->allocate(this, defaultSize);
+    auto objPtr= vm->gc->allocate(this, defaultSize + kIntSize) ;
     setCapacity(objPtr, kDefaultDictSize);
     setSize(objPtr, 0);
     setBucketCount(objPtr, kDefaultDictSize / 4);
@@ -409,7 +412,7 @@ Class(std::string("DictEntry")) {
 }
 
 intptr_t DictEntry::allocate(IsolateVM *vm) {
-    intptr_t object = vm->gc->allocate(this, kDictEntryValueOffset );
+    intptr_t object = vm->gc->allocate(this, kDictEntryValueOffset + kIntSize);
     return object;
 }
 
