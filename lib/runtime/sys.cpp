@@ -8,17 +8,17 @@
 
 Value Global_$_print(Executor* executor, Arguments *args) {
     auto wrappedObj = args->getArgument(0);
-    auto optionalClass = executor->vm->optionalClass;
-    auto typeSlot = optionalClass->valueType(wrappedObj);
-    auto type = executor->vm->types->operator[](typeSlot);
+    auto head = reinterpret_cast<ObjectHead*>(wrappedObj);
+    auto type = executor->vm->types->operator[](head->typeSlot);
     switch (type->kind) {
         case ValueType::Int: {
-            auto value = optionalClass->intValue(wrappedObj);
+
+            auto value = executor->vm->optionalClass->intValue(wrappedObj);
             printf("%lld\n", value);
         }
             break;
         case ValueType::Bool: {
-            auto value = optionalClass->boolValue(wrappedObj);
+            auto value = executor->vm->optionalClass->boolValue(wrappedObj);
             if(value) {
                 printf("true\n");
             } else {

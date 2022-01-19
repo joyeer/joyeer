@@ -203,7 +203,18 @@ protected:
     }
 
     Node::Ptr visit(const PrefixExpr::Ptr& decl) override {
-        assert(false);
+        output << "prefixExpr:";
+        DEBUG_BLOCK_START
+            output << "op:";
+            DEBUG_BLOCK_START
+                visit(decl->op);
+            DEBUG_BLOCK_END
+            newline();
+            output << "expr:";
+            DEBUG_BLOCK_START
+                NodeVisitor::visit(decl->expr);
+            DEBUG_BLOCK_END
+        DEBUG_BLOCK_END
         return decl;
     }
 

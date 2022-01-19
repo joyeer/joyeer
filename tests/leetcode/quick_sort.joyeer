@@ -15,6 +15,7 @@ func partitionSort(array:[Int], start:Int, end:Int) {
             while array[endIndex] > num {
                 endIndex = endIndex - 1
             }
+
             if startIndex < endIndex {
                 var temp:Int = array[startIndex]
                 array[startIndex] = array[endIndex]

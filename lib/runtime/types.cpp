@@ -229,17 +229,17 @@ Class(std::string("Array")) {
 
 
 intptr_t ArrayClass::allocate(IsolateVM* vm, int capacity) {
-    size_t adjustedCapacity = calculateArrayCapacitySize(capacity) * kIntSize;
-    size_t size = adjustedCapacity + kArrayDataOffset;
+    Int adjustedCapacity = calculateArrayCapacitySize(capacity) * kValueSize;
+    intptr_t object = vm->gc->allocate(this, sizeof(ArrayData) + adjustedCapacity);
 
-    intptr_t object = vm->gc->allocate(this, size + kIntSize);
-    setCapacity(object, (Value)adjustedCapacity);
+    auto arrayObj = reinterpret_cast<ArrayData*>(object);
+    arrayObj->capacity = adjustedCapacity;
 
     return object;
 }
 
-size_t ArrayClass::calculateArrayCapacitySize(int size) {
-    size_t result = 2;
+Int ArrayClass::calculateArrayCapacitySize(int size) {
+    Int result = 2;
     while(result < size) {
         result *= 2;
     }
@@ -247,40 +247,40 @@ size_t ArrayClass::calculateArrayCapacitySize(int size) {
 }
 
 void ArrayClass::setCapacity(intptr_t object, Value capacity) {
-    char* objPtr = reinterpret_cast<char *>(object);
-    *(Value*)(objPtr + kArrayCapacityOffset) = capacity;
+    auto arrayObj = reinterpret_cast<ArrayData*>(object);
+    arrayObj->capacity = capacity;
 }
 
 Value ArrayClass::getCapacity(intptr_t object) {
-    char* objPtr = reinterpret_cast<char *>(object);
-    return *(Value*)(objPtr + kArrayCapacityOffset);
+    auto arrayObj = reinterpret_cast<ArrayData*>(object);
+    return arrayObj->capacity;
 }
 
 void ArrayClass::setLength(intptr_t object, Value length) {
-    char* objPtr = reinterpret_cast<char *>(object);
-    *(Value*)(objPtr + kArrayLengthOffset) = length;
+    auto arrayObj = reinterpret_cast<ArrayData*>(object);
+    arrayObj->length = length;
 }
 
 Value ArrayClass::getLength(intptr_t object) {
-    char* objPtr = reinterpret_cast<char *>(object);
-    return *(Value*)(objPtr + kArrayLengthOffset);
+    auto arrayObj = reinterpret_cast<ArrayData*>(object);
+    return arrayObj->length;
 }
 
 void ArrayClass::append(intptr_t object, Value value) {
-    char* objPtr = reinterpret_cast<char *>(object);
+    auto arrayObj = reinterpret_cast<ArrayData*>(object);
     auto lengthValue = getLength(object);
-    *(Value*)(objPtr + kArrayDataOffset + kValueSize * lengthValue) = value;
-    setLength(object, lengthValue + 1);
+    arrayObj->data[lengthValue] = value;
+    arrayObj->length = lengthValue + 1;
 }
 
 Value ArrayClass::get(intptr_t object, Value index) {
-    char* objPtr = reinterpret_cast<char *>(object);
-    return *(Value*)(objPtr + kArrayDataOffset + kValueSize * index);
+    auto arrayObj = reinterpret_cast<ArrayData*>(object);
+    return arrayObj->data[index];
 }
 
 void ArrayClass::set(intptr_t object, Value index, Value value) {
-    char* objPtr = reinterpret_cast<char *>(object);
-    *(Value*)(objPtr + kArrayDataOffset + kValueSize * index) = value;
+    auto arrayObj = reinterpret_cast<ArrayData*>(object);
+    arrayObj->data[index] = value;
 }
 
 //------------------------------------------------
@@ -294,8 +294,8 @@ Class(std::string("Array")) {
 
 intptr_t DictClass::allocate(IsolateVM *vm) {
     this->vm = vm;
-    int defaultSize = kDictBucketSlotOffset + kDefaultDictSize / 4 * kIntSize;
-    auto objPtr= vm->gc->allocate(this, defaultSize + kIntSize) ;
+    int bucketCount = kDefaultBulkSize / 4 ;
+    auto objPtr= vm->gc->allocate(this, sizeof(DictData) + bucketCount * kValueSize ) ;
     setCapacity(objPtr, kDefaultDictSize);
     setSize(objPtr, 0);
     setBucketCount(objPtr, kDefaultDictSize / 4);
@@ -412,7 +412,7 @@ Class(std::string("DictEntry")) {
 }
 
 intptr_t DictEntry::allocate(IsolateVM *vm) {
-    intptr_t object = vm->gc->allocate(this, kDictEntryValueOffset + kIntSize);
+    intptr_t object = vm->gc->allocate(this, sizeof(DictEntryData));
     return object;
 }
 

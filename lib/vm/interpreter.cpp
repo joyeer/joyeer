@@ -318,10 +318,9 @@ loop:
     inline void Handle_INEG(Bytecode bytecode) {
         assert(OP_FROM_BYTECODE(bytecode) == OP_INEG);
 
-        auto value1 = pop();
-        auto value2 = pop();
+        auto value = pop();
 
-        auto result = value2 % value1;
+        auto result = 0 - value;
         push(result);
     }
 

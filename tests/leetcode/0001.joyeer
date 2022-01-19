@@ -13,16 +13,17 @@ func twoSum(nums:[Int], target: Int): [Int] {
         var num = target - nums[index]
         var found = dict[num]
         if found != nil && found != index {
+            print(message: "found")
             return [index, found]
         }
 
         index = index + 1
     }
-
     return [-1, -1]
 }
 
 var sums = [12, 24, 11, 9, 7]
 
 var result = twoSum(nums: sums, target: 22)
-print(message: result)
+print(message: result[0])
+print(message: result[1])

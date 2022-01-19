@@ -5,3 +5,7 @@ print(message: j)
 
 print(message: 1000)
 print(message: 100)
+
+var array = [-1, -2]
+print(message: array[0])
+print(message: array[1])

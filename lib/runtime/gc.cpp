@@ -16,6 +16,9 @@ intptr_t GC::allocate(MemoryArea area, Class *klass) {
 
 intptr_t GC::allocate(Type *type, size_t size) {
     auto address = heap->allocate(size);
+    auto head = reinterpret_cast<ObjectHead*>(address);
+    head->absent = false;
+    head->typeSlot = type->slot;
     return address;
 }
 

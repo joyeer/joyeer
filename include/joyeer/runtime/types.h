@@ -311,9 +311,12 @@ struct StringClass : Type {
 
 // Array Object class
 struct ArrayClass : public Class {
-    constexpr static int kArrayCapacityOffset = kObjectHeadOffset + kValueSize;
-    constexpr static int kArrayLengthOffset = kArrayCapacityOffset + kValueSize;
-    constexpr static int kArrayDataOffset = kArrayLengthOffset + kValueSize;
+    struct ArrayData {
+        ObjectHead head {};
+        Int capacity {};
+        Int length {};
+        Value data[0];
+    };
 
     explicit ArrayClass();
 
@@ -333,7 +336,7 @@ struct ArrayClass : public Class {
 private:
     // calculate array object size based on capacity
     // result size should be (power of 2 + kArrayDataOffset)
-    static size_t calculateArrayCapacitySize(int size);
+    static Int calculateArrayCapacitySize(int size);
 };
 
 /*
@@ -371,7 +374,7 @@ struct StringBuilderClass : public Class {
  * +-------------+
  * | Object Head |
  * +-------------+
- * | Dict Size   |
+ * | Bulk Size   |
  * +-------------+
  * | Bucket Size |  array of Dict bucket
  * +-------------+
@@ -385,11 +388,21 @@ struct StringBuilderClass : public Class {
  */
 struct DictClass : public Class {
 
+    constexpr static int kDefaultBulkSize = 32; // default size
+    constexpr static int kBucketItem
+    struct DictData {
+        ObjectHead head {};
+        Int capacity = 0;
+        Int count = 0;
+        Int bucketSize = 0;
+        Value buckets[0];
+    };
+
     constexpr static int kDictCapacityOffset = kObjectHeadOffset + kValueSize;
     constexpr static int kDictSizeOffset = kDictCapacityOffset + kValueSize;
     constexpr static int kDictBucketCountOffset = kDictSizeOffset + kValueSize;
     constexpr static int kDictBucketSlotOffset = kDictBucketCountOffset + kValueSize;
-    constexpr static int kDefaultDictSize = 32; // default size
+
 
     explicit DictClass();
 
@@ -409,8 +422,6 @@ struct DictClass : public Class {
     Value size(intptr_t thisObj);
     void setSize(intptr_t thisObj, Value value);
 
-    Value resize(intptr_t thisObj);
-
     void insert(intptr_t thisObj, Value key, Value value);
 
     Value get(intptr_t thisObj, Value key);
@@ -418,6 +429,12 @@ struct DictClass : public Class {
 
 
 struct DictEntry : public Class {
+
+    struct DictEntryData {
+        ObjectHead head {};
+        Value key = -1;
+        Value value = -1;
+    };
     constexpr static int kDictEntryKeyOffset = kObjectHeadOffset + kIntSize;
     constexpr static int kDictEntryValueOffset = kDictEntryKeyOffset + kIntSize;
 
