@@ -294,52 +294,53 @@ Class(std::string("Array")) {
 
 intptr_t DictClass::allocate(IsolateVM *vm) {
     this->vm = vm;
-    int bucketCount = kDefaultBulkSize / 4 ;
+    int bucketCount = kDefaultCapacitySize / kDefaultPerBucketItem ;
     auto objPtr= vm->gc->allocate(this, sizeof(DictData) + bucketCount * kValueSize ) ;
-    setCapacity(objPtr, kDefaultDictSize);
-    setSize(objPtr, 0);
-    setBucketCount(objPtr, kDefaultDictSize / 4);
+    auto dictObj = reinterpret_cast<DictData*>(objPtr);
+    dictObj->capacity= kDefaultCapacitySize;
+    dictObj->bucketSize = bucketCount;
+    dictObj->count = 0;
     return objPtr;
 }
 
 Value DictClass::capacity(intptr_t object) {
-    char* objPtr = reinterpret_cast<char *>(object);
-    return *(Value*)(objPtr + kDictCapacityOffset);
+    auto dictObj = reinterpret_cast<DictData*>(object);
+    return dictObj->capacity;
 }
 
 void DictClass::setCapacity(intptr_t object, Value capacity) {
-    char* objPtr = reinterpret_cast<char *>(object);
-    *(Value*)(objPtr + kDictCapacityOffset) = capacity;
+    auto dictObj = reinterpret_cast<DictData*>(object);
+    dictObj->capacity = capacity;
 }
 
 Value DictClass::getBucketCount(intptr_t object) {
-    char* objPtr = reinterpret_cast<char *>(object);
-    return *(Value*)(objPtr + kDictBucketCountOffset);
+    auto dictObj = reinterpret_cast<DictData*>(object);
+    return dictObj->bucketSize;
 }
 
 void DictClass::setBucketCount(intptr_t object, Value size) {
-    char* objPtr = reinterpret_cast<char *>(object);
-    *(Value*)(objPtr + kDictBucketCountOffset) = size;
+    auto dictObj = reinterpret_cast<DictData*>(object);
+    dictObj->bucketSize = size;
 }
 
 Value DictClass::getBucketBySlot(intptr_t object, Slot slot) {
-    char* objPtr = reinterpret_cast<char *>(object);
-    return ((Value*)(objPtr + kDictBucketSlotOffset))[slot];
+    auto dictObj = reinterpret_cast<DictData*>(object);
+    return dictObj->buckets[slot];
 }
 
 void DictClass::setBucketBySlot(intptr_t object, Slot slot, Value value) {
-    char* objPtr = reinterpret_cast<char *>(object);
-    ((Value*)(objPtr + kDictBucketSlotOffset))[slot] = value;
+    auto dictObj = reinterpret_cast<DictData*>(object);
+    dictObj->buckets[slot] = value;
 }
 
 Value DictClass::size(intptr_t object) {
-    char* objPtr = reinterpret_cast<char *>(object);
-    return *(Value*)(objPtr + kDictSizeOffset);
+    auto dictObj = reinterpret_cast<DictData*>(object);
+    return dictObj->count;
 }
 
 void DictClass::setSize(intptr_t object, Value value) {
-    char* objPtr = reinterpret_cast<char *>(object);
-    *(Value*)(objPtr + kDictSizeOffset) = value;
+    auto dictObj = reinterpret_cast<DictData*>(object);
+    dictObj->count = value;
 }
 
 void DictClass::insert(intptr_t object, Value key, Value value) {
@@ -400,7 +401,7 @@ Value DictClass::get(intptr_t object, Value key) {
         }
 
     }
-    return 0;
+    return NilType::nilValue();
 }
 
 //------------------------------------------------

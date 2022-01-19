@@ -28,10 +28,12 @@ typedef const char*     FramePtr;
  * ObjectHead for Object's head or Optional Wrapped Value's head
  */
 struct ObjectHead {
+    explicit ObjectHead() = default;
+
     bool wrapped:     1 = 0;        // for Optional type 1, else 0
     bool absent:      1 = 0;        // only available for Optional type
     bool reserved:    6 = 0;        // reserved for future usage
-    int typeSlot:     20  = -1;
+    int typeSlot:     20  = 0;
     int refCount:     12 = 0;
     int reserved_2:   24 = 0;       // reserved for future usage
 };
@@ -50,10 +52,10 @@ constexpr int kBoolSize = sizeof (Bool);
 
 // Value Types
 enum class ValueType : uint8_t {
-    Void = 0x00,
+    Nil = 0x00,
+    Void,
     Int,
     Bool,
-    Nil,
     Unspecified,
     Any,
     String,
@@ -121,8 +123,15 @@ struct BoolType : Type {
     BoolType();
 };
 
+
 // represent Nil kind
 struct NilType : Type {
+    constexpr static ObjectHead Nil {};
+
+    static Value nilValue() {
+        return (Value) &Nil;
+    }
+
     NilType();
 };
 
@@ -388,8 +397,9 @@ struct StringBuilderClass : public Class {
  */
 struct DictClass : public Class {
 
-    constexpr static int kDefaultBulkSize = 32; // default size
-    constexpr static int kBucketItem
+    constexpr static int kDefaultCapacitySize = 32; // default size
+    constexpr static int kDefaultPerBucketItem = 4; // default size
+
     struct DictData {
         ObjectHead head {};
         Int capacity = 0;

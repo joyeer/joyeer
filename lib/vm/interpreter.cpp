@@ -113,7 +113,7 @@ loop:
 
     inline void Handle_OCONST_NIL(Bytecode bytecode) {
         assert(OP_FROM_BYTECODE(bytecode) == OP_OCONST_NIL);
-        push(0);
+        push(NilType::nilValue());
     }
 
     inline void Handle_ICONST(Bytecode bytecode) {
