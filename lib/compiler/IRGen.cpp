@@ -281,44 +281,30 @@ void IRGen::emit(const AssignExpr::Ptr& node) {
 void IRGen::emit(const Expr::Ptr& node) {
     assert(node->prefix == nullptr);
     assert(node->binaries.empty());
-//    if(node->kind == JrObjectString::Type) {
-//
-//        writer.write({
-//            .opcode = OP_NEW,
-//            .value = JrObjectStringBuilder::Type->addressOfType
-//        });
-//
-//        // Use the StringBuilder to append the string content
-//        for(std::vector<Node::Ptr>::const_reverse_iterator iterator = node->nodes.rbegin(); iterator != node->nodes.rend(); iterator ++ ) {
-//            auto n = *iterator;
-//            if(n->kind == SyntaxKind::operatorExpr) {
-//                auto operatorExpr = std::static_pointer_cast<OperatorExpr>(n);
-//                assert(operatorExpr->token->rawValue == "+");
-//            } else {
-//                writer.write({
-//                    .opcode = OP_DUP
-//                });
-//
-//                emit(n);
-//
-//                writer.write({
-//                    .opcode = OP_INVOKE,
-//                    .value = JrObjectStringBuilder_Append::Func->addressOfFunc
-//                });
-//            }
-//        }
-//
-//        writer.write({
-//            .opcode = OP_INVOKE,
-//            .value = JrObjectStringBuilder_toString::Func->addressOfFunc
-//        });
-//
-//
-//    } else {
+    if(node->typeSlot == (int)ValueType::String) {
+        writer.write(Bytecode(OP_NEW, (int)BuildIns::Object_StringBuilder));
+
+        // Use the StringBuilder to append the string content
+        for(auto iterator = node->nodes.rbegin(); iterator != node->nodes.rend(); iterator ++ ) {
+            auto n = *iterator;
+            if(n->kind == SyntaxKind::operatorExpr) {
+                auto operatorExpr = std::static_pointer_cast<OperatorExpr>(n);
+                assert(operatorExpr->token->rawValue == "+");
+            } else {
+                writer.write(Bytecode(OP_DUP, 0));
+
+                emit(n);
+
+                writer.write(Bytecode(OP_INVOKE, (int)BuildIns::Object_StringBuilder_Func_append));
+
+            }
+        }
+        writer.write(Bytecode(OP_INVOKE, (int)BuildIns::Object_StringBuilder_Func_toString));
+    } else {
         for(const auto& n: node->nodes) {
             emit(n);
         }
-//    }
+    }
 }
 
 void IRGen::emit(const OperatorExpr::Ptr& node) {

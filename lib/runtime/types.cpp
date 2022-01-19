@@ -149,11 +149,73 @@ intptr_t StringClass::allocate(IsolateVM *vm, int typeSlot) {
     return objAddr;
 }
 
+intptr_t StringClass::allocateWithLength(IsolateVM *vm, int size) {
+    auto objAddr = vm->gc->allocate(this, (int)(size + kIntSize + sizeof(ObjectHead)));
+    auto stringObj = reinterpret_cast<StringData*>(objAddr);
+    stringObj->head.typeSlot = (Int)ValueType::String;
+    stringObj->length = (Int)size;
+
+    return objAddr;
+}
+
 std::string StringClass::toString(intptr_t objAddr) {
     auto stringObj = reinterpret_cast<StringData*>(objAddr);
     return {stringObj->data, (size_t )stringObj->length };
 }
 
+int StringClass::getLength(intptr_t thisAddr) {
+    auto stringObj = reinterpret_cast<StringData*>(thisAddr);
+    return stringObj->length;
+}
+
+intptr_t StringClass::c_str(intptr_t thisAddr) {
+    auto stringObj = reinterpret_cast<StringData*>(thisAddr);
+    return reinterpret_cast<intptr_t>(stringObj->data);
+}
+
+//------------------------------------------------
+// StringBuilderClass implementation
+//------------------------------------------------
+intptr_t StringBuilderClass::allocate(IsolateVM *vm) {
+    auto sbAddr = vm->gc->allocate(this, sizeof(StringBuilderData));
+    auto sbObj = reinterpret_cast<StringBuilderData*>(sbAddr);
+    auto arrayObj = vm->arrayClass->allocate(vm, 8);
+    sbObj->head.typeSlot = (int)BuildIns::Object_StringBuilder;
+    sbObj->stringArray = arrayObj;
+
+    return sbAddr;
+}
+
+intptr_t StringBuilderClass::append(intptr_t thisAddr, intptr_t stringAddr) {
+    auto thisObj = reinterpret_cast<StringBuilderData*>(thisAddr);;
+    vm->arrayClass->append(thisObj->stringArray, stringAddr);
+    return thisAddr;
+}
+
+intptr_t StringBuilderClass::toString(intptr_t thisAddr) {
+    auto thisObj = reinterpret_cast<StringBuilderData*>(thisAddr);
+    int stringLength = 0;
+    auto arrayLength = vm->arrayClass->getLength(thisObj->stringArray);
+    for(int i = 0 ; i < arrayLength; i ++) {
+        auto arrayObj =  vm->arrayClass->get(thisObj->stringArray, i);
+        auto length = vm->stringClass->getLength(arrayObj);
+        stringLength += length;
+    }
+
+    auto resultStringAddr = vm->stringClass->allocateWithLength(vm, stringLength);
+    auto resultStringObj = reinterpret_cast<StringClass::StringData*>(resultStringAddr);
+    auto startIndex = 0;
+    for(int i = 0 ; i < arrayLength; i ++) {
+        auto srcStringObj =  vm->arrayClass->get(thisObj->stringArray, arrayLength - i - 1);
+
+        auto cStr = vm->stringClass->c_str(srcStringObj);
+        auto srcLen = vm->stringClass->getLength(srcStringObj);
+        memcpy((char*)(resultStringObj->data + startIndex), (char*)cStr, srcLen);
+        startIndex += srcLen;
+    }
+
+    return resultStringAddr;
+}
 
 //------------------------------------------------
 // ArrayClass implementation
@@ -168,7 +230,7 @@ intptr_t ArrayClass::allocate(IsolateVM* vm, int capacity) {
     size_t size = adjustedCapacity + kArrayDataOffset;
 
     intptr_t object = vm->gc->allocate(this, size);
-    setCapacity(object, adjustedCapacity);
+    setCapacity(object, (Value)adjustedCapacity);
 
     return object;
 }

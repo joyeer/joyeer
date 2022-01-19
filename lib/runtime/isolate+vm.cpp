@@ -18,4 +18,6 @@ void IsolateVM::bootstrap() {
     dictEntryClass = (DictEntry*)((*types)[(int) BuildIns::Object_DictEntry]);
     optionalClass = (Optional*)((*types)[(int) BuildIns::Object_Optional]);
     stringClass = (StringClass*)((*types)[(int) ValueType::String]);
+    stringBuilderClass = (StringBuilderClass*)((*types)[(int) BuildIns::Object_StringBuilder]);
+    stringBuilderClass->vm = this;
 }

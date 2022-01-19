@@ -80,7 +80,11 @@ enum class BuildIns : uint16_t {
     Object_Dict_Func_insert,
     Object_Dict_Func_get,
 
-    Object_DictEntry
+    Object_DictEntry,
+
+    Object_StringBuilder,
+    Object_StringBuilder_Func_append,
+    Object_StringBuilder_Func_toString,
 };
 
 
@@ -294,8 +298,13 @@ struct StringClass : Type {
     StringClass(): Type("String", ValueType::String) {}
 
     intptr_t allocate(IsolateVM* vm, int typeSlot);
+    intptr_t allocateWithLength(IsolateVM* vm, int size);
 
-    std::string toString(intptr_t objAddr);
+    std::string toString(intptr_t thisAddr);
+
+    int getLength(intptr_t thisAddr);
+
+    intptr_t c_str(intptr_t thisAddr);
 };
 
 
@@ -325,6 +334,35 @@ private:
     // calculate array object size based on capacity
     // result size should be (power of 2 + kArrayDataOffset)
     static size_t calculateArrayCapacitySize(int size);
+};
+
+/*
+ * A type that represents a StringBuilder class
+ *
+ * StringBuilderClass Memory Layout
+ * +---------------+
+ * | Head          |
+ * +---------------+
+ * | array address |
+ * +---------------+
+ *
+ */
+
+struct StringBuilderClass : public Class {
+
+    struct StringBuilderData {
+        ObjectHead head {};
+        intptr_t stringArray = -1;
+    };
+
+    explicit StringBuilderClass(): Class("StringBuilder") {}
+
+    intptr_t allocate(IsolateVM* vm) override;
+
+    // append a String
+    intptr_t append(intptr_t thisAddr, intptr_t stringAddr);
+
+    intptr_t toString(intptr_t thisAddr);
 };
 
 

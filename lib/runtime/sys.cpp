@@ -107,3 +107,18 @@ Value Dict_$$_get(Executor* executor, Arguments* args) {
     return value;
 }
 
+Value StringBuilder_$$_append(Executor* executor, Arguments* args) {
+    auto value = args->getArgument(0);
+    auto objValue = args->getArgument(1);
+
+    auto stringBuilderClass = executor->vm->stringBuilderClass;
+    stringBuilderClass->append(objValue, value);
+    return objValue;
+}
+
+Value StringBuilder_$$_toString(Executor* executor, Arguments* args) {
+    auto objValue = args->getArgument(0);
+    auto stringBuilderClass = executor->vm->stringBuilderClass;
+    return stringBuilderClass->toString(objValue);
+}
+

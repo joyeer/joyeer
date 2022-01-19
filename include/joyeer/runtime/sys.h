@@ -19,4 +19,7 @@ Value Dict_$_init(Executor* executor, Arguments* args);
 Value Dict_$$_insert(Executor* executor, Arguments* args);
 Value Dict_$$_get(Executor* executor, Arguments* args);
 
+Value StringBuilder_$$_append(Executor* executor, Arguments* args);
+Value StringBuilder_$$_toString(Executor* executor, Arguments* args);
+
 #endif //__joyeer_runtime_sys_h__

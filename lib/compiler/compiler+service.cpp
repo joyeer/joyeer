@@ -219,6 +219,11 @@ void CompilerService::bootstrap() {
     BEGIN_DECLARE_CLASS(BuildIns::Object_DictEntry, DictEntry)
     END_DECLARE_CLASS(BuildIns::Object_Dict)
 
+    BEGIN_DECLARE_CLASS(BuildIns::Object_StringBuilder, StringBuilderClass)
+        DECLARE_CLASS_FUNC("append(string:)", BuildIns::Object_StringBuilder, 1, StringBuilder_$$_append)
+        DECLARE_CLASS_FUNC("toString()", ValueType::String, 0, StringBuilder_$$_toString)
+    END_DECLARE_CLASS(BuildIns::Object_StringBuilder)
+
 
     auto print = getType(BuildIns::Func_Print);
     globalSymbols->insert(std::make_shared<Symbol>(SymbolFlag::func, print->name, print->slot));
