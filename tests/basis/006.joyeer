@@ -9,4 +9,4 @@ print(message: array[0])
 print(message: array[1])
 
 var size = array.size()
-print(message:size)
+print(message: size)

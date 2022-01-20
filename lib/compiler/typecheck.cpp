@@ -456,7 +456,14 @@ Node::Ptr TypeChecker::visit(const SubscriptExpr::Ptr& node) {
     assert(symbol->typeSlot == compiler->getType(BuildIns::Object_Array)->slot ||
         symbol->typeSlot == compiler ->getType(BuildIns::Object_Dict)->slot);
 
-    node->typeSlot = compiler->getType(ValueType::Any)->slot;  // TODO: get the right ValueType
+    if(symbol->typeSlot == compiler->getType(BuildIns::Object_Array)->slot) {
+        node->typeSlot = compiler->getType(ValueType::Int)->slot;  // TODO: get the right ValueType
+    } else if(symbol->typeSlot == compiler ->getType(BuildIns::Object_Dict)->slot){
+        node->typeSlot = compiler->getType(ValueType::Any)->slot;  // TODO: get the right ValueType
+    } else {
+        assert(false);
+    }
+
     return node;
 }
 

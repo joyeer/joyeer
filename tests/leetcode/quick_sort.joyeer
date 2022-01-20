@@ -4,14 +4,15 @@ func partitionSort(array:[Int], start:Int, end:Int) {
     var startIndex = start
     var endIndex = end
 
+
     if startIndex < endIndex {
-        var num = array[(start + end) / 2]
+        var num = array[(startIndex + endIndex) / 2]
 
         while startIndex < endIndex {
             while array[startIndex] < num {
                 startIndex = startIndex + 1
             }
-            
+
             while array[endIndex] > num {
                 endIndex = endIndex - 1
             }

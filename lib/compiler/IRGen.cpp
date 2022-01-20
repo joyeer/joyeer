@@ -274,7 +274,6 @@ void IRGen::emit(const AssignExpr::Ptr& node) {
 
         // check identifier's symbol's kind
         if(subscriptExpr->identifier->typeSlot == compiler->getType(BuildIns::Object_Array)->slot ) {
-            autoWrapping(node->expr->typeSlot, (int)ValueType::Any);
             writer.write(Bytecode(OP_INVOKE , compiler->getType(BuildIns::Object_Array_Func_set)->slot));
         } else if(subscriptExpr->identifier->typeSlot == compiler->getType(BuildIns::Object_Dict)->slot) {
             autoWrapping(node->expr->typeSlot, (int)ValueType::Any);
@@ -427,7 +426,6 @@ void IRGen::emit(const ReturnStmt::Ptr& node) {
 void IRGen::emit(const ArrayLiteralExpr::Ptr& node) {
     for(const auto& item: node->items) {
         emit(item);
-        autoWrapping(item->typeSlot, (int)ValueType::Any);
     }
     
     writer.write(Bytecode(OP_ICONST, node->items.size()));
