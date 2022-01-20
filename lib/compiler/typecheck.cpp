@@ -456,7 +456,7 @@ Node::Ptr TypeChecker::visit(const SubscriptExpr::Ptr& node) {
     assert(symbol->typeSlot == compiler->getType(BuildIns::Object_Array)->slot ||
         symbol->typeSlot == compiler ->getType(BuildIns::Object_Dict)->slot);
 
-    node->typeSlot = compiler->getType(ValueType::Any)->slot;
+    node->typeSlot = compiler->getType(ValueType::Any)->slot;  // TODO: get the right ValueType
     return node;
 }
 
@@ -470,6 +470,16 @@ Node::Ptr TypeChecker::visit(const PrefixExpr::Ptr& node) {
     node->expr = visit(node->expr);
     node->typeSlot = node->expr->typeSlot;
     assert(node->typeSlot > -1);
+    return node;
+}
+
+Node::Ptr TypeChecker::visit(const PostfixExpr::Ptr &node) {
+    node->expr = visit(node->expr);
+    if(node->op->token->rawValue == "!") {
+        node->typeSlot = node->expr->typeSlot;
+    } else {
+        assert(false);
+    };
     return node;
 }
 
@@ -518,6 +528,8 @@ Type* TypeChecker::typeOf(const Node::Ptr& node) {
             return typeOf(std::static_pointer_cast<ArrayType>(node));
         case SyntaxKind::prefixExpr:
             return typeOf(std::static_pointer_cast<PrefixExpr>(node));
+        case SyntaxKind::postfixExpr:
+            return typeOf(std::static_pointer_cast<PostfixExpr>(node));
         default:
             assert(false);
     }
@@ -641,3 +653,6 @@ Type* TypeChecker::typeOf(const PrefixExpr::Ptr& node) {
     return typeOf(node->expr);
 }
 
+Type* TypeChecker::typeOf(const PostfixExpr::Ptr& node) {
+    return typeOf(node->expr);
+}

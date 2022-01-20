@@ -55,6 +55,11 @@ Value Global_$_autoWrapping_Bool(Executor* executor, Arguments* args) {
     return wrapped;
 }
 
+Value Global_$_autoUnwrapping_Int(Executor* executor, Arguments* args) {
+    auto value = args->getArgument(0);
+    return executor->vm->optionalClass->intValue(value);
+}
+
 Value Array_$$_get(Executor* executor, Arguments *args) {
     auto indexValue = args->getArgument(0);
     auto objValue = args->getArgument(1);

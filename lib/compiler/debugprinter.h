@@ -218,6 +218,22 @@ protected:
         return decl;
     }
 
+    Node::Ptr visit(const PostfixExpr::Ptr& decl) override {
+        output << "postfixExpr:";
+        DEBUG_BLOCK_START
+            output << "op:";
+            DEBUG_BLOCK_START
+                visit(decl->op);
+            DEBUG_BLOCK_END
+            newline();
+            output << "expr:";
+            DEBUG_BLOCK_START
+                NodeVisitor::visit(decl->expr);
+            DEBUG_BLOCK_END
+        DEBUG_BLOCK_END
+        return decl;
+    }
+
     Node::Ptr visit(const IdentifierExpr::Ptr& decl) override {
         output << "identifierExpr:";
         DEBUG_BLOCK_START

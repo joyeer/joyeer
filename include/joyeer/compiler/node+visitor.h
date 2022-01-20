@@ -14,6 +14,7 @@ protected:
     virtual Node::Ptr visit(const ArguCallExpr::Ptr& decl) = 0;
     virtual Node::Ptr visit(const LiteralExpr::Ptr& decl) = 0;
     virtual Node::Ptr visit(const PrefixExpr::Ptr& decl) = 0;
+    virtual Node::Ptr visit(const PostfixExpr::Ptr& decl) = 0;
     virtual Node::Ptr visit(const IdentifierExpr::Ptr& decl) = 0;
     virtual Node::Ptr visit(const AssignExpr::Ptr& decl) = 0;
     virtual Node::Ptr visit(const BinaryExpr::Ptr& decl) = 0;

@@ -219,6 +219,12 @@ Node::Ptr Binder::visit(const PrefixExpr::Ptr& decl) {
     return decl;
 }
 
+Node::Ptr Binder::visit(const PostfixExpr::Ptr& decl) {
+    decl->op = std::static_pointer_cast<OperatorExpr>(visit(decl->op));
+    decl->expr = visit(decl->expr);
+    return decl;
+}
+
 Node::Ptr Binder::visit(const IdentifierExpr::Ptr& decl) {
     auto name = decl->getSimpleName();
 

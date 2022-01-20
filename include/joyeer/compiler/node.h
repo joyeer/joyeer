@@ -135,7 +135,6 @@ struct OperatorExpr : Node {
     using Ptr = std::shared_ptr<OperatorExpr>;
 
     Token::Ptr token;
-    OperatorPriority priority;
 
     explicit OperatorExpr(Token::Ptr token);
 

@@ -69,6 +69,7 @@ enum class BuildIns : uint16_t {
     Func_Print = static_cast<size_t>(ValueType::RESOLVED_PRIMARY_TYPE_COUNT) ,
     Func_AutoWrapping_Int,
     Func_AutoWrapping_Bool,
+    Func_AutoUnwrapping_Int,
 
     Object_Optional,
 

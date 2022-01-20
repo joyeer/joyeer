@@ -201,6 +201,10 @@ void CompilerService::bootstrap() {
         DECLARE_FUNC_PARM("bool", ValueType::Bool)
     END_DECLARE_FUNC()
 
+    BEGIN_DECLARE_FUNC(BuildIns::Func_AutoUnwrapping_Int, "autoUnwrapping(int:)", ValueType::Int, Global_$_autoUnwrapping_Int)
+        DECLARE_FUNC_PARM("int", BuildIns::Object_Optional)
+    END_DECLARE_FUNC()
+
     BEGIN_DECLARE_CLASS(BuildIns::Object_Optional, Optional)
     END_DECLARE_CLASS(BuildIns::Object_Optional)
 

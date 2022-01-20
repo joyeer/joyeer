@@ -27,6 +27,7 @@ protected:
     Node::Ptr visit(const ArguCallExpr::Ptr& decl) override;
     Node::Ptr visit(const LiteralExpr::Ptr& decl) override;
     Node::Ptr visit(const PrefixExpr::Ptr& decl) override;
+    Node::Ptr visit(const PostfixExpr::Ptr& decl) override;
     Node::Ptr visit(const IdentifierExpr::Ptr& decl) override;
     Node::Ptr visit(const Expr::Ptr& decl) override;
     Node::Ptr visit(const AssignExpr::Ptr& decl) override;

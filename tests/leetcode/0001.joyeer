@@ -3,17 +3,16 @@ func twoSum(nums:[Int], target: Int): [Int] {
     var length = nums.size()
     var index = 0
     while index < length  {
-        var num = nums[index]
+        var num = nums[index]!
         dict[num] = index
         index = index + 1
     }
 
     index = 0
     while index < length {
-        var num = target - nums[index]
+        var num = target - nums[index]!
         var found = dict[num]
         if found != nil && found != index {
-            print(message: "found")
             return [index, found]
         }
 
@@ -24,6 +23,6 @@ func twoSum(nums:[Int], target: Int): [Int] {
 
 var sums = [12, 24, 11, 9, 7]
 
-var result = twoSum(nums: sums, target: 22)
+var result = twoSum(nums: sums, target: 16)
 print(message: result[0])
 print(message: result[1])

@@ -1,0 +1,7 @@
+var dict = [Int:Int]()
+dict[12] = 1
+print(message: dict[12])
+
+var i = dict[12]! + 12
+
+print(message: i)

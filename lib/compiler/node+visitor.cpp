@@ -23,6 +23,7 @@ Node::Ptr NodeVisitor::visit(const Node::Ptr& node) {
         NODE_VISITOR(SyntaxKind::expr,                  Expr)
         NODE_VISITOR(SyntaxKind::selfExpr,              SelfExpr)
         NODE_VISITOR(SyntaxKind::prefixExpr,            PrefixExpr)
+        NODE_VISITOR(SyntaxKind::postfixExpr,           PostfixExpr)
         NODE_VISITOR(SyntaxKind::identifierExpr,        IdentifierExpr)
         NODE_VISITOR(SyntaxKind::parenthesizedExpr,     ParenthesizedExpr)
         NODE_VISITOR(SyntaxKind::arguCallExpr,          ArguCallExpr)

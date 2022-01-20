@@ -26,6 +26,7 @@ protected:
     Node::Ptr visit(const ArguCallExpr::Ptr& decl) override;
     Node::Ptr visit(const LiteralExpr::Ptr& decl) override;
     Node::Ptr visit(const PrefixExpr::Ptr& decl) override;
+    Node::Ptr visit(const PostfixExpr::Ptr& decl) override;
     Node::Ptr visit(const IdentifierExpr::Ptr& decl) override;
     Node::Ptr visit(const Expr::Ptr& decl) override;
     Node::Ptr visit(const AssignExpr::Ptr& decl) override;
@@ -63,10 +64,8 @@ protected:
     Type* typeOf(const SubscriptExpr::Ptr& node);
     Type* typeOf(const ArrayType::Ptr& node);
     Type* typeOf(const PrefixExpr::Ptr& node);
+    Type* typeOf(const PostfixExpr::Ptr& node);
 
-    // wrap or unwrap expr value
-    Node::Ptr wrapOrUnwrapExprValue(const Node::Ptr& expr, int targetTypeSlot);
-    
     CompileContext::Ptr context;
     CompilerService* compiler;
 };

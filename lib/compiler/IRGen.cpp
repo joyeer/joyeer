@@ -28,6 +28,7 @@ void IRGen::emit(const Node::Ptr& node) {
         NODE_EMIT(SyntaxKind::ifStmt, IfStmt)
         NODE_EMIT(SyntaxKind::expr, Expr)
         NODE_EMIT(SyntaxKind::prefixExpr, PrefixExpr)
+        NODE_EMIT(SyntaxKind::postfixExpr, PostfixExpr)
         NODE_EMIT(SyntaxKind::identifierExpr, IdentifierExpr)
         NODE_EMIT(SyntaxKind::parenthesizedExpr, ParenthesizedExpr)
         NODE_EMIT(SyntaxKind::arguCallExpr, ArguCallExpr)
@@ -42,6 +43,7 @@ void IRGen::emit(const Node::Ptr& node) {
         NODE_EMIT(SyntaxKind::subscriptExpr, SubscriptExpr)
         NODE_EMIT(SyntaxKind::whileStmt, WhileStmt)
         NODE_EMIT(SyntaxKind::importStmt, ImportStmt)
+
         default:
             assert(false);
     }
@@ -165,6 +167,15 @@ void IRGen::emit(const PrefixExpr::Ptr& node) {
     } else {
         assert(false);
     }
+}
+
+void IRGen::emit(const PostfixExpr::Ptr& decl) {
+    if(decl->op->token->rawValue == Operators::POINT) {
+        emit(decl->expr);
+        writer.write(Bytecode(OP_INVOKE, compiler->getType(BuildIns::Func_AutoUnwrapping_Int)->slot));
+        return;
+    }
+    assert(false);
 }
 
 void IRGen::emit(const IdentifierExpr::Ptr& node) {
