@@ -1,7 +1,7 @@
 #include "joyeer/compiler/context.h"
 #include "joyeer/compiler/symtable.h"
 #include "joyeer/compiler/compiler+service.h"
-#include "joyeer/runtime/diagnostic.h"
+#include "joyeer/diagnostic/diagnostic.h"
 #include <cassert>
 #include <memory>
 #include <utility>

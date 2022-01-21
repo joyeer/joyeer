@@ -1,5 +1,5 @@
 #include "joyeer/runtime/arguments.h"
-#include "joyeer/runtime/diagnostic.h"
+#include "joyeer/diagnostic/diagnostic.h"
 #include "joyeer/runtime/executor.h"
 #include <iostream>
 

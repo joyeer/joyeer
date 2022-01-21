@@ -1,7 +1,8 @@
-#ifndef __joyeer_compiler_diagnostic_h__
-#define __joyeer_compiler_diagnostic_h__
+#ifndef __joyeer_diagnostic_diagnostic_h__
+#define __joyeer_diagnostic_diagnostic_h__
 
 #include <string>
+#include <vector>
 
 enum ErrorLevel {
     none,
@@ -21,17 +22,22 @@ struct ErrorMessage {
 #define DIAGNOSTICS_ERROR_MESSAGE(name, message) static constexpr const char* name = message;
 
 struct Diagnostics {
-    
-    // `fileimport` should be presented at the begin of source file
+
+    /**
+     * Lex error
+     */
+
+    /**
+     * Syntax errors
+     */
     DIAGNOSTICS_ERROR_MESSAGE(errorFileImportShouldAtTopOfSourceFile,           "`import` should be presented at the begin of source file")
     DIAGNOSTICS_ERROR_MESSAGE(errorNoSuchFileOrDirectory,                       "no such file or directory:")
-    DIAGNOSTICS_ERROR_MESSAGE(success,                                          "message")
-    
-    static ErrorLevel errorLevel;
-    
-    static void reportError(const char* error);
-    static void reportError(ErrorLevel level, const char* error, ...);
+    DIAGNOSTICS_ERROR_MESSAGE(success,                                          "success!")
+
+    void reportError(ErrorLevel level, int lineAt, int columnAt, const char* error, ...);
+
+    std::vector<ErrorMessage> errors {};
     
 };
 
-#endif
+#endif // __joyeer_diagnostic_diagnostic_h__

@@ -1,5 +1,5 @@
 #include "joyeer/compiler/symtable.h"
-#include "joyeer/runtime/diagnostic.h"
+#include "joyeer/diagnostic/diagnostic.h"
 #include <utility>
 
 

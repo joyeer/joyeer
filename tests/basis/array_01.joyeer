@@ -1,0 +1,2 @@
+var array = [Int]()
+var stringArray = [String]()

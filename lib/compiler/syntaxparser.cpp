@@ -1,5 +1,5 @@
 #include "joyeer/compiler/syntaxparser.h"
-#include "joyeer/runtime/diagnostic.h"
+#include "joyeer/diagnostic/diagnostic.h"
 #include <cassert>
 
 SyntaxParser::SyntaxParser(const SourceFile::Ptr& sourcefile):

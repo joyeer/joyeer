@@ -1,5 +1,5 @@
 #include "joyeer/compiler/IRGen.h"
-#include "joyeer/runtime/diagnostic.h"
+#include "joyeer/diagnostic/diagnostic.h"
 #include "joyeer/compiler/compiler+service.h"
 
 ////////////////////////////////////////////////////////

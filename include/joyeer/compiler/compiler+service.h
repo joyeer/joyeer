@@ -28,7 +28,6 @@ public:
     SymbolTable::Ptr getExportingSymbolTable(int typeSlot);
 
 private:
-
     friend class IRGen;
     friend class IsolateVM;
     friend class Driver;

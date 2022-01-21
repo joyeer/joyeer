@@ -6,7 +6,7 @@
 #include "joyeer/compiler/syntaxparser.h"
 #include "joyeer/compiler/IRGen.h"
 #include "debugprinter.h"
-#include "joyeer/runtime/diagnostic.h"
+#include "joyeer/diagnostic/diagnostic.h"
 #include "joyeer/runtime/types.h"
 #include "joyeer/runtime/sys.h"
 
