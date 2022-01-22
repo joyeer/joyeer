@@ -46,6 +46,7 @@ private:
     BytecodeWriter writer;
     CompileContext::Ptr context;
     CompilerService* compiler;
+    Diagnostics* diagnostics;
 };
 
 #endif

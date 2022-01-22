@@ -6,7 +6,6 @@
 #include "joyeer/compiler/syntaxparser.h"
 #include "joyeer/compiler/IRGen.h"
 #include "debugprinter.h"
-#include "joyeer/diagnostic/diagnostic.h"
 #include "joyeer/runtime/types.h"
 #include "joyeer/runtime/sys.h"
 
@@ -14,13 +13,14 @@
 
 
 #define CHECK_ERROR_RETURN_NULL \
-    if(Diagnostics::errorLevel != none) { \
+    if(diagnostics->errors.size() != 0) { \
         return nullptr; \
     }
 
-CompilerService::CompilerService(CommandLineArguments::Ptr opts):
+CompilerService::CompilerService(Diagnostics* diagnostics, CommandLineArguments::Ptr opts):
         options(std::move(opts)) {
     globalSymbols = std::make_shared<SymbolTable>();
+    this->diagnostics = diagnostics;
 }
 
 ModuleClass* CompilerService::run(const std::string& inputFile) {
@@ -53,17 +53,17 @@ ModuleClass* CompilerService::compile(const SourceFile::Ptr& sourcefile) {
     auto debugfile = sourcefile->getAbstractLocation() + ".dump.yml";
     NodeDebugPrinter debugPrinter(debugfile);
 
-    auto context= std::make_shared<CompileContext>(options, globalSymbols);
+    auto context= std::make_shared<CompileContext>(diagnostics, options, globalSymbols);
     context->sourcefile = sourcefile;
     context->compiler = this;
     
     // lex structure analyze
-    LexParser lexParser;
+    LexParser lexParser(context);
     lexParser.parse(sourcefile);
     CHECK_ERROR_RETURN_NULL
     
     // syntax analyze
-    SyntaxParser syntaxParser(sourcefile);
+    SyntaxParser syntaxParser(context, sourcefile);
     auto block = syntaxParser.parse();
     debugPrinter.print("compiler-parse-stage", block);
     CHECK_ERROR_RETURN_NULL

@@ -3,6 +3,7 @@
 
 #include "joyeer/runtime/arguments.h"
 #include "joyeer/compiler/sourcefile.h"
+#include "joyeer/diagnostic/diagnostic.h"
 
 class CompilerService;
 
@@ -25,7 +26,7 @@ class CompileContext {
 public:
     typedef std::shared_ptr<CompileContext> Ptr;
     
-    CompileContext(CommandLineArguments::Ptr options, const SymbolTable::Ptr& globalSymTable);
+    CompileContext(Diagnostics* diagnostics, CommandLineArguments::Ptr options, const SymbolTable::Ptr& globalSymTable);
 
     void visit(CompileStage stage, const Node::Ptr& node, const std::function<void(void)>& visit);
 
@@ -47,7 +48,9 @@ public:
     
     // The global compiler service
     CompilerService* compiler;
-    
+
+    Diagnostics* diagnostics;
+
 protected:
     // Symbol Tables in parsing stack, basics, once dive into next AST, will push symbol table into stack
     std::vector<SymbolTable::Ptr> symbols;

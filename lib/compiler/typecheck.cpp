@@ -8,6 +8,7 @@
 TypeChecker::TypeChecker(CompileContext::Ptr context):
 context(std::move(context)) {
     compiler = this->context->compiler;
+    diagnostics = this->context->diagnostics;
 }
 
 Node::Ptr TypeChecker::visit(const Node::Ptr& node) {
@@ -103,12 +104,12 @@ Node::Ptr TypeChecker::visitDictFuncCallExpr(const FuncCallExpr::Ptr &decl) {
 
         auto keySymbol = context->lookup(key->getSimpleName());
         if(keySymbol->flag != SymbolFlag::klass) {
-            Diagnostics::reportError("[Error] Dictionary Key is not a class");
+            diagnostics->reportError(ErrorLevel::failure, "[Error] Dictionary Key is not a class");
             return decl;
         }
         auto valueSymbol = context->lookup(value->getSimpleName());
         if(valueSymbol->flag != SymbolFlag::klass) {
-            Diagnostics::reportError("[Error] Dictionary Value is not a class");
+            diagnostics->reportError(ErrorLevel::failure, "[Error] Dictionary Value is not a class");
             return decl;
         }
 
@@ -127,7 +128,7 @@ Node::Ptr TypeChecker::visitFuncCallExpr(const FuncCallExpr::Ptr &decl) {
     auto symbol = context->lookup(name);
 
     if(symbol == nullptr) {
-        Diagnostics::reportError("[Error]Cannot ");
+        diagnostics->reportError(ErrorLevel::failure, "[Error]Cannot ");
     }
 
     decl->funcTypeSlot = symbol->typeSlot;
@@ -158,7 +159,7 @@ Node::Ptr TypeChecker::visit(const MemberFuncCallExpr::Ptr& node) {
     auto symbol = symtable->find(name);
 
     if(symbol == nullptr) {
-        Diagnostics::reportError("[Error]Cannot find the function");
+        diagnostics->reportError(ErrorLevel::failure, "[Error]Cannot find the function");
     }
 
     auto funcType = (Function*)(compiler->getType(symbol->typeSlot));
@@ -267,7 +268,7 @@ Node::Ptr TypeChecker::visit(const IdentifierExpr::Ptr& node) {
         case CompileStage::visitMemberAccess: {
             auto symbol = context->lookup(name);
             if(symbol == nullptr) {
-                Diagnostics::reportError(ErrorLevel::failure, "[TODO][Error] Cannot find variable");
+                diagnostics->reportError(ErrorLevel::failure, "[TODO][Error] Cannot find variable");
             }
             assert(symbol->typeSlot != -1);
             assert(node->typeSlot == -1);
@@ -289,7 +290,7 @@ Node::Ptr TypeChecker::visit(const TypeIdentifier::Ptr& node) {
     auto simpleName = node->getSimpleName();
     auto symbol = context->lookup(simpleName);
     if(symbol == nullptr) {
-        Diagnostics::reportError("[Error]Cannot find type");
+        diagnostics->reportError(ErrorLevel::failure, "[Error]Cannot find type");
     } else {
         node->typeSlot = symbol->typeSlot;
     }

@@ -9,6 +9,7 @@
 IRGen::IRGen(CompileContext::Ptr context):
 context(std::move(context)) {
     compiler = this->context->compiler;
+    diagnostics = this->context->diagnostics;
 }
 
 void IRGen::emit(const Node::Ptr& node) {
@@ -181,7 +182,7 @@ void IRGen::emit(const PostfixExpr::Ptr& decl) {
 void IRGen::emit(const IdentifierExpr::Ptr& node) {
     auto symbol = context->lookup(node->getSimpleName());
     if(symbol == nullptr) {
-        Diagnostics::reportError("[Error][GenCode]");
+        diagnostics->reportError(ErrorLevel::failure, "[Error][GenCode]");
         return;
     }
 

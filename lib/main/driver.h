@@ -4,11 +4,11 @@
 #include "joyeer/runtime/arguments.h"
 #include "joyeer/compiler/compiler+service.h"
 #include "joyeer/vm/isolate.h"
-
+#include "joyeer/diagnostic/diagnostic.h"
 
 class Driver {
 public:
-    explicit Driver(CommandLineArguments::Ptr arguments);
+    Driver(Diagnostics* diagnostics, CommandLineArguments::Ptr arguments);
     void run();
 
 private:

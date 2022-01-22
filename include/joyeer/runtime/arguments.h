@@ -7,6 +7,7 @@
 #include <memory>
 
 #include "joyeer/runtime/types.h"
+#include "joyeer/diagnostic/diagnostic.h"
 
 struct CommandLineArguments {
     using Ptr = std::shared_ptr<CommandLineArguments>;
@@ -21,7 +22,9 @@ struct CommandLineArguments {
     bool vmDebug = true;
     bool accepted = false;
 
-    CommandLineArguments(int argc, char** argv);
+    Diagnostics* diagnostics;
+
+    CommandLineArguments(Diagnostics* diagnostics, int argc, char** argv);
     // print compiler usage
     static void printUsage();
 

@@ -6,7 +6,7 @@
 
 class CompilerService {
 public:
-    explicit CompilerService(CommandLineArguments::Ptr options);
+    explicit CompilerService(Diagnostics* diagnostics, CommandLineArguments::Ptr options);
 
     // initialize the pre-define TypeDefs
     void bootstrap();
@@ -51,5 +51,6 @@ private:
     // The first key is the slot of Class
     std::unordered_map<Slot, SymbolTable::Ptr> exportingSymbolTableOfClasses;
 
+    Diagnostics* diagnostics;
 };
 #endif

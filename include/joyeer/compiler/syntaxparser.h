@@ -3,11 +3,12 @@
 
 #include "joyeer/compiler/node.h"
 #include "joyeer/compiler/sourcefile.h"
+#include "joyeer/compiler/context.h"
 
 class SyntaxParser
 {
 public:
-    explicit SyntaxParser(const SourceFile::Ptr& sourcefile);
+    SyntaxParser(CompileContext::Ptr context, const SourceFile::Ptr& sourcefile);
     ModuleDecl::Ptr parse();
 
 private:
@@ -99,7 +100,6 @@ private:
     // dictionary-literal-item -> expression: expression
     Node::Ptr tryParseLiteralExpr();
     Node::Ptr tryParseArrayOrDictLiteralExpr();
-    Node::Ptr tryParseDictItemPairExpr();
 
     // parenthesized-expression -> `(` expression `)`
     Node::Ptr tryParseParenthesizedExpr();
@@ -128,6 +128,8 @@ private:
     SourceFile::Ptr sourcefile;
     std::vector<Token::Ptr>::const_iterator iterator;
     std::vector<Token::Ptr>::const_iterator endIterator;
+
+    Diagnostics* diagnostics;
 };
 
 #endif

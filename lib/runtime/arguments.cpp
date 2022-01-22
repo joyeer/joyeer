@@ -3,7 +3,8 @@
 #include "joyeer/runtime/executor.h"
 #include <iostream>
 
-CommandLineArguments::CommandLineArguments(int argc, char** argv) {
+CommandLineArguments::CommandLineArguments(Diagnostics* diagnostics, int argc, char** argv) {
+    this->diagnostics = diagnostics;
     std::vector<std::string> arguments;
     for(int i = 0 ; i < argc; i ++) {
         arguments.emplace_back(argv[i]);
@@ -31,7 +32,7 @@ void CommandLineArguments::parse(std::vector<std::string>& arguments) {
     }
     
     if(!std::filesystem::exists(inputfile)) {
-        Diagnostics::reportError(failure, Diagnostics::errorNoSuchFileOrDirectory);
+        diagnostics->reportError(ErrorLevel::failure, Diagnostics::errorNoSuchFileOrDirectory);
     }
     
     if(!inputfile.empty()) {

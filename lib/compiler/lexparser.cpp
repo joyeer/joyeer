@@ -1,6 +1,10 @@
 #include "joyeer/compiler/lexparser.h"
 #include "joyeer/diagnostic/diagnostic.h"
 
+LexParser::LexParser(CompileContext::Ptr context) {
+    this->diagnostics = context->diagnostics;
+}
+
 void LexParser::parse(const SourceFile::Ptr& sourceFile) {
     
     this->sourcefile = sourceFile;
@@ -46,7 +50,7 @@ void LexParser::parse(const SourceFile::Ptr& sourceFile) {
                         break;
                         parseOctalLiteral(iterator);
                     case '8': case '9':
-                        Diagnostics::reportError("Octal number only contains 0,1,2,3,4,5,6,7");
+                        diagnostics->reportError(ErrorLevel::failure, "Octal number only contains 0,1,2,3,4,5,6,7");
                         break;
                     default:
                         auto token = std::make_shared<Token>(TokenKind::decimalLiteral, "0", lineNumber, iterator - lineStartAtPosition);
@@ -184,7 +188,7 @@ void LexParser::parseOctalLiteral(std::string::const_iterator startAt) {
             case '0': case '1': case '2': case '3': case '4': case '5': case '6': case '7':
                 break;
             case '8': case '9':
-                Diagnostics::reportError("Octal number only contains 0,1,2,3,4,5,6,7");
+                diagnostics->reportError(ErrorLevel::failure, "Octal number only contains 0,1,2,3,4,5,6,7");
                 goto label;
             default:
                 goto label;
@@ -299,7 +303,7 @@ void LexParser::parseStringLiteral() {
         if(*iterator == '\\') {
             iterator ++;
             if(iterator == endIterator) {
-                Diagnostics::reportError("[Error] except character after \"");
+                diagnostics->reportError(ErrorLevel::failure, "[Error] except character after \"");
                 return;
             }
         } else if (*iterator == '\"') {

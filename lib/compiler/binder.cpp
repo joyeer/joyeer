@@ -15,6 +15,7 @@ Binder::Binder(CompileContext::Ptr context):
         NodeVisitor(),
         context(std::move(context)) {
     compiler = this->context->compiler;
+    diagnostics = this->context->diagnostics;
 }
 
 Node::Ptr Binder::visit(const Node::Ptr& node) {
@@ -47,7 +48,7 @@ Node::Ptr Binder::visit(const ClassDecl::Ptr& decl) {
     auto name = decl->getSimpleName();
     
     if(symtable->find(name) != nullptr) {
-        Diagnostics::reportError("[Error] duplicate class name");
+        diagnostics->reportError(ErrorLevel::failure, "[Error] duplicate class name");
     }
 
     auto objectType = new Class(name);
@@ -74,7 +75,7 @@ Node::Ptr Binder::visit(const FuncDecl::Ptr& decl) {
     
     // check if the function name duplicated
     if(symtable->find(funcSimpleName) != nullptr) {
-        Diagnostics::reportError("[Error] Duplicate function name");
+        diagnostics->reportError(ErrorLevel::failure, "[Error] Duplicate function name");
         return nullptr;
     }
 
@@ -142,7 +143,7 @@ Node::Ptr Binder::visit(const VarDecl::Ptr& decl) {
     auto name = pattern->identifier->getSimpleName();
     
     if(symtable->find(name) != nullptr) {
-        Diagnostics::reportError("[Error] duplicate variable name");
+        diagnostics->reportError(ErrorLevel::failure, "[Error] duplicate variable name");
     }
 
     // if the closest declaration type, is the ModuleClass/Class,
@@ -233,7 +234,7 @@ Node::Ptr Binder::visit(const IdentifierExpr::Ptr& decl) {
             // verify the func declaration's parameter duplicated name
             auto table = context->curSymTable();
             if(table->find(name) != nullptr) {
-                Diagnostics::reportError("[Error] duplicate variable declaration in function");
+                diagnostics->reportError(ErrorLevel::failure, "[Error] duplicate variable declaration in function");
                 return nullptr;
             }
             return decl;
@@ -242,7 +243,7 @@ Node::Ptr Binder::visit(const IdentifierExpr::Ptr& decl) {
         case CompileStage::visitCodeBlock: {
             auto symbol = context->lookup(name);
             if(symbol == nullptr) {
-                Diagnostics::reportError("[Error] cannot find variable declaration in function");
+                diagnostics->reportError(ErrorLevel::failure, "[Error] cannot find variable declaration in function");
             }
         }
             return decl;
@@ -285,7 +286,7 @@ Node::Ptr Binder::visit(const Expr::Ptr& decl) {
             assignmentExpr->left = subscriptExpr;
             return assignmentExpr;
         }
-        Diagnostics::reportError("[Error] left of assignment expression must be a variable");
+        diagnostics->reportError(ErrorLevel::failure, "[Error] left of assignment expression must be a variable");
         return decl;
         
     }
@@ -309,7 +310,7 @@ Node::Ptr Binder::visit(const Expr::Ptr& decl) {
     
     for(const auto& node: decl->binaries) {
         if(node->kind != SyntaxKind::binaryExpr) {
-            Diagnostics::reportError("[Error] Except an binary expression");
+            diagnostics->reportError(ErrorLevel::failure, "[Error] Except an binary expression");
             return decl;
         }
         
@@ -318,8 +319,8 @@ Node::Ptr Binder::visit(const Expr::Ptr& decl) {
         nodes.push_back(bn->expr);
     }
     
-    std::deque<Node::Ptr> temps;
-    std::deque<OperatorExpr::Ptr> operators;
+    std::deque<Node::Ptr> temps {};
+    std::deque<OperatorExpr::Ptr> operators {};
     
     
     for(auto iterator = nodes.begin(); iterator != nodes.end(); iterator ++ ) {
@@ -337,14 +338,14 @@ Node::Ptr Binder::visit(const Expr::Ptr& decl) {
         
         // for high priority operator
         if(temps.size() == 0) {
-            Diagnostics::reportError("[Error] Except");
+            diagnostics->reportError(ErrorLevel::failure, "[Error] Except");
         }
         
         auto l = temps.back();
         temps.pop_back();
         iterator ++;
         if(iterator == nodes.end()) {
-            Diagnostics::reportError("[Error] Except");
+            diagnostics->reportError(ErrorLevel::failure, "[Error] Except");
         }
         auto r = *iterator;
         
@@ -459,7 +460,7 @@ Node::Ptr Binder::visit(const Pattern::Ptr& decl) {
         auto typeSimpleName = decl->typeExpr->getSimpleName();
         auto symbol = context->lookup(typeSimpleName);
         if(symbol == nullptr) {
-            Diagnostics::reportError("[Bind][Error]cannot find pattern name");
+            diagnostics->reportError(ErrorLevel::failure, "[Bind][Error]cannot find pattern name");
         }
     }
     return decl;
@@ -527,7 +528,7 @@ Node::Ptr Binder::visit(const ArrayType::Ptr& decl) {
 
 Node::Ptr Binder::visit(const ImportStmt::Ptr& decl) {
     if(context->curStage() != CompileStage::visitModule) {
-        Diagnostics::reportError(Diagnostics::errorFileImportShouldAtTopOfSourceFile);
+        diagnostics->reportError(ErrorLevel::failure, Diagnostics::errorFileImportShouldAtTopOfSourceFile);
         return nullptr;
     }
     

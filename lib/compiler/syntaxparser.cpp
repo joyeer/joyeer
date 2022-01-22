@@ -2,10 +2,11 @@
 #include "joyeer/diagnostic/diagnostic.h"
 #include <cassert>
 
-SyntaxParser::SyntaxParser(const SourceFile::Ptr& sourcefile):
+SyntaxParser::SyntaxParser(CompileContext::Ptr context, const SourceFile::Ptr& sourcefile):
 sourcefile(sourcefile) {
     iterator = sourcefile->tokens.begin();
     endIterator = sourcefile->tokens.end();
+    diagnostics = context->diagnostics;
 }
 
 ModuleDecl::Ptr SyntaxParser::parse() {
@@ -13,7 +14,6 @@ ModuleDecl::Ptr SyntaxParser::parse() {
     while(iterator != endIterator) {
         std::shared_ptr<Node> decl = tryParseStmt();
         if(decl == nullptr) {
-            Diagnostics::reportError("[Error]");
             return nullptr; 
         }
 
@@ -68,13 +68,13 @@ Node::Ptr SyntaxParser::tryParseFuncDecl() {
 
     auto identifier = tryParseIdentifierExpr();
     if(identifier == nullptr) {
-        Diagnostics::reportError("[Error] Function except a name");
+        diagnostics->reportError(ErrorLevel::failure, "[Error] Function except a name");
         return nullptr;
     }
 
     auto parameterClause = tryParseParameterClause();
     if(parameterClause == nullptr) {
-        Diagnostics::reportError("[Error] Function except a parameters");
+        diagnostics->reportError(ErrorLevel::failure, "[Error] Function except a parameters");
         return nullptr;
     }
 
@@ -82,7 +82,7 @@ Node::Ptr SyntaxParser::tryParseFuncDecl() {
     
     auto codeBlock = tryParseStmtsBlock();
     if(codeBlock == nullptr) {
-        Diagnostics::reportError("[Error] Function except code block");
+        diagnostics->reportError(ErrorLevel::failure, "[Error] Function except code block");
         return nullptr;
     }
     
@@ -101,7 +101,7 @@ Node::Ptr SyntaxParser::tryParseConstructorDecl() {
 
     auto codeBlock = tryParseStmtsBlock();
     if(codeBlock == nullptr) {
-        Diagnostics::reportError("Error");
+        diagnostics->reportError(ErrorLevel::failure, "Error");
         return nullptr;
     }
     
@@ -115,7 +115,7 @@ Node::Ptr SyntaxParser::tryParseFileImportStatement() {
     
     auto literal = tryParseLiteral();
     if(literal == nullptr || literal->kind != stringLiteral) {
-        Diagnostics::reportError("Error");
+        diagnostics->reportError(ErrorLevel::failure, "Error");
     }
     
     return std::make_shared<ImportStmt>(literal);
@@ -138,12 +138,12 @@ Node::Ptr SyntaxParser::tryParseParameterClause() {
         
         if( i > 0) {
             if(identifier == nullptr && comma != nullptr) {
-                Diagnostics::reportError("Error");
+                diagnostics->reportError(ErrorLevel::failure, "Error");
                 return nullptr; //TODO: report an grammar error
             }
             
             if(identifier != nullptr && comma == nullptr ) {
-                Diagnostics::reportError("Error");
+                diagnostics->reportError(ErrorLevel::failure, "Error");
                 return nullptr; //TODO: report an grammar error
             }
         }
@@ -158,7 +158,7 @@ Node::Ptr SyntaxParser::tryParseParameterClause() {
     }
     
     if(tryEat(TokenKind::punctuation, Punctuations::CLOSE_ROUND_BRACKET) == nullptr) {
-        Diagnostics::reportError("Error");
+        diagnostics->reportError(ErrorLevel::failure, "Error");
         return nullptr;
     }
     
@@ -172,7 +172,7 @@ Node::Ptr SyntaxParser::tryParseConstDecl() {
 
     auto pattern = tryParsePattern();
     if (pattern == nullptr) {
-        Diagnostics::reportError("Error");
+        diagnostics->reportError(ErrorLevel::failure, "Error");
         return nullptr; 
     }
     
@@ -180,7 +180,7 @@ Node::Ptr SyntaxParser::tryParseConstDecl() {
     if(tryEat(TokenKind::operators, Operators::EQUALS) != nullptr) {
         initializer = tryParseExpr();
         if(initializer == nullptr) {
-            Diagnostics::reportError("[Error] declaration must have initializer");
+            diagnostics->reportError(ErrorLevel::failure, "[Error] declaration must have initializer");
         }
     }
     return std::make_shared<VarDecl>(pattern, initializer);
@@ -193,14 +193,14 @@ Node::Ptr SyntaxParser::tryParseVarDecl() {
 
     Pattern::Ptr pattern = tryParsePattern();
     if (pattern == nullptr) {
-        Diagnostics::reportError("[Error]");
+        diagnostics->reportError(ErrorLevel::failure, "[Error]");
        return nullptr; //TODO: report an syntax Error
     }
     Node::Ptr initializer = nullptr;
     if(tryEat(TokenKind::operators, Operators::EQUALS) != nullptr) {
         initializer = tryParseExpr();
         if(initializer == nullptr) {
-            Diagnostics::reportError("[Error] declaration must have initializer");
+            diagnostics->reportError(ErrorLevel::failure, "[Error] declaration must have initializer");
         }
     }
     
@@ -214,12 +214,12 @@ Node::Ptr SyntaxParser::tryParseClassDecl() {
 
     auto className = tryEat(TokenKind::identifier);
     if (className == nullptr ) {
-        Diagnostics::reportError("[Error]");
+        diagnostics->reportError(ErrorLevel::failure, "[Error]");
         return nullptr;
     }
 
     if (tryEat(TokenKind::punctuation, Punctuations::OPEN_CURLY_BRACKET) == nullptr) {
-        Diagnostics::reportError("[Error]");
+        diagnostics->reportError(ErrorLevel::failure, "[Error]");
         return nullptr;
     }
 
@@ -233,7 +233,7 @@ Node::Ptr SyntaxParser::tryParseClassDecl() {
     }
     
     if (tryEat(TokenKind::punctuation, Punctuations::CLOSE_CURLY_BRACKET) == nullptr) {
-        Diagnostics::reportError("[Error]");
+        diagnostics->reportError(ErrorLevel::failure, "[Error]");
         return nullptr;
     }
 
@@ -257,7 +257,7 @@ StmtsBlock::Ptr SyntaxParser::tryParseStmtsBlock() {
     }
     
     if (tryEat(TokenKind::punctuation, Punctuations::CLOSE_CURLY_BRACKET) == nullptr) {
-        Diagnostics::reportError("Error");
+        diagnostics->reportError(ErrorLevel::failure, "Error");
         return nullptr; 
     }
     
@@ -305,18 +305,18 @@ Node::Ptr SyntaxParser::tryParseLoopStmt() {
 
     auto pattern = tryParsePattern();
     if(pattern == nullptr) {
-        Diagnostics::reportError("Error");
+        diagnostics->reportError(ErrorLevel::failure, "Error");
         return nullptr; // TODO: report an error;
     }
 
     if(tryEat(TokenKind::keyword, Keywords::IN) == nullptr) {
-        Diagnostics::reportError("Error");
+        diagnostics->reportError(ErrorLevel::failure, "Error");
         return nullptr; // TODO: report a grammar error
     }
 
     auto expr = tryParseExpr();
     if(expr == nullptr) {
-        Diagnostics::reportError("Error");
+        diagnostics->reportError(ErrorLevel::failure, "Error");
     }
 
     auto codeBlock = tryParseStmtsBlock();
@@ -331,13 +331,13 @@ Node::Ptr SyntaxParser::tryparseWhileStmt() {
     
     auto expr = tryParseExpr();
     if(expr == nullptr) {
-        Diagnostics::reportError("Error");
+        diagnostics->reportError(ErrorLevel::failure, "Error");
         return nullptr;
     }
     
     auto block = tryParseStmtsBlock();
     if(block == nullptr) {
-        Diagnostics::reportError("Error");
+        diagnostics->reportError(ErrorLevel::failure, "Error");
         return nullptr;
     }
     
@@ -407,7 +407,7 @@ Node::Ptr SyntaxParser::tryParseTypeAnnotation() {
     
     auto type = tryParseType();
     if(type == nullptr ) {
-        Diagnostics::reportError("Error");
+        diagnostics->reportError(ErrorLevel::failure, "Error");
         return nullptr;
     }
     return type;
@@ -444,7 +444,7 @@ Node::Ptr SyntaxParser::tryParseTypeArray() {
     
     auto type = tryParseType();
     if( type == nullptr) {
-        Diagnostics::reportError("Error");
+        diagnostics->reportError(ErrorLevel::failure, "Error");
     }
     
     if(tryEat(TokenKind::punctuation, Punctuations::CLOSE_SQUARE_BRACKET) == nullptr) {
@@ -484,7 +484,7 @@ std::shared_ptr<Node> SyntaxParser::tryParseBinaryExpr() {
     if(assignmentOperator != nullptr) {
         std::shared_ptr<Node> prefixExpr = tryParseExpr();
         if(prefixExpr == nullptr) {
-            Diagnostics::reportError("Error");
+            diagnostics->reportError(ErrorLevel::failure, "Error");
             return nullptr;
         }
         return std::make_shared<AssignExpr>(prefixExpr);
@@ -494,7 +494,7 @@ std::shared_ptr<Node> SyntaxParser::tryParseBinaryExpr() {
     if(binaryOperator != nullptr) {
         std::shared_ptr<Node> prefixExpr = tryParsePrefixExpr();
         if(prefixExpr == nullptr) {
-            Diagnostics::reportError("Error");
+            diagnostics->reportError(ErrorLevel::failure, "Error");
             return nullptr;
         }
         return std::make_shared<BinaryExpr>(binaryOperator, prefixExpr);
@@ -577,7 +577,7 @@ Node::Ptr SyntaxParser::tryParseMemberAccessExpr(Node::Ptr postfixExpr) {
     
     auto identifierExpr = tryParseIdentifierExpr();
     if(identifierExpr == nullptr) {
-        Diagnostics::reportError("[Error]");
+        diagnostics->reportError(ErrorLevel::failure, "[Error]");
         return nullptr;
     }
     
@@ -605,7 +605,7 @@ Node::Ptr SyntaxParser::tryParseFuncCallExpr(Node::Ptr postfixExpr) {
             
             auto arguCall = tryParseArguCallExpr();
             if(arguCall == nullptr) {
-                Diagnostics::reportError("[Error]");
+                diagnostics->reportError(ErrorLevel::failure, "[Error]");
                 return nullptr; //TODO: Report a grammar error
             }
             
@@ -614,7 +614,7 @@ Node::Ptr SyntaxParser::tryParseFuncCallExpr(Node::Ptr postfixExpr) {
     }
     
     if(tryEat(TokenKind::punctuation, Punctuations::CLOSE_ROUND_BRACKET) == nullptr) {
-        Diagnostics::reportError("[Error]");
+        diagnostics->reportError(ErrorLevel::failure, "[Error]");
         return nullptr; // TODO: report an grammar error
     }
     
@@ -630,12 +630,12 @@ Node::Ptr SyntaxParser::tryParseSubscriptExpr(Node::Ptr postfixExpr) {
     }
     auto expr = tryParseExpr();
     if(expr == nullptr) {
-        Diagnostics::reportError("[Error] in array access");
+        diagnostics->reportError(ErrorLevel::failure, "[Error] in array access");
         return nullptr;
     }
     
     if(tryEat(punctuation, Punctuations::CLOSE_SQUARE_BRACKET) == nullptr) {
-        Diagnostics::reportError("[Error] in array access");
+        diagnostics->reportError(ErrorLevel::failure, "[Error] in array access");
         return nullptr;
     }
     
@@ -650,13 +650,13 @@ ArguCallExpr::Ptr SyntaxParser::tryParseArguCallExpr() {
     }
     
     if(tryEat(TokenKind::punctuation, Punctuations::COLON) == nullptr) {
-        Diagnostics::reportError("[Error]");
+        diagnostics->reportError(ErrorLevel::failure, "[Error]");
         return nullptr; //TODO: report an grammar error
     }
     
     auto expr = tryParseExpr();
     if(expr == nullptr) {
-        Diagnostics::reportError("[Error]");
+        diagnostics->reportError(ErrorLevel::failure, "[Error]");
         return nullptr; // TODO: report a grammar error
     }
     
@@ -699,7 +699,7 @@ Node::Ptr SyntaxParser::tryParseSelfExpr() {
     
     auto identifier = tryParseIdentifierExpr();
     if(identifier == nullptr) {
-        Diagnostics::reportError("[Error]");
+        diagnostics->reportError(ErrorLevel::failure, "[Error]");
         return nullptr; //TODO: Report n error
     }
     return std::shared_ptr<Node>(new SelfExpr(identifier));
@@ -729,7 +729,7 @@ Node::Ptr SyntaxParser::tryParseArrayOrDictLiteralExpr() {
     // parse the empty dictory literal case - [:]
     if (tryEat(TokenKind::punctuation, Punctuations::COLON)) {
         if(tryEat(TokenKind::punctuation, Punctuations::CLOSE_SQUARE_BRACKET) == nullptr) {
-            Diagnostics::reportError("[Error] Dict literal except expression here");
+            diagnostics->reportError(ErrorLevel::failure, "[Error] Dict literal except expression here");
         }
         return std::make_shared<DictLiteralExpr>(dictItems);
     }
@@ -741,7 +741,7 @@ Node::Ptr SyntaxParser::tryParseArrayOrDictLiteralExpr() {
     if(tryEat(TokenKind::punctuation, Punctuations::COLON)) {
         valueItem = tryParseExpr();
         if(valueItem == nullptr) {
-            Diagnostics::reportError("[Error] Dict literal except expression here");
+            diagnostics->reportError(ErrorLevel::failure,"[Error] Dict literal except expression here");
             return nullptr;
         }
         isDict = true;
@@ -762,18 +762,18 @@ Node::Ptr SyntaxParser::tryParseArrayOrDictLiteralExpr() {
             
             keyItem = tryParseExpr();
             if(keyItem == nullptr) {
-                Diagnostics::reportError("[Error] Array literal except expression here");
+                diagnostics->reportError(ErrorLevel::failure, "[Error] Array literal except expression here");
                 break;
             }
             
             if(isDict) {
                 if(tryEat(TokenKind::punctuation, Punctuations::COLON) == nullptr) {
-                    Diagnostics::reportError("[Error] Dict literal except expression here");
+                    diagnostics->reportError(ErrorLevel::failure, "[Error] Dict literal except expression here");
                     break;
                 }
                 valueItem = tryParseExpr();
                 if(valueItem == nullptr) {
-                    Diagnostics::reportError("[Error] Dict literal except expression here");
+                    diagnostics->reportError(ErrorLevel::failure, "[Error] Dict literal except expression here");
                     break;
                 }
             }
@@ -788,7 +788,7 @@ Node::Ptr SyntaxParser::tryParseArrayOrDictLiteralExpr() {
     
 
     if(tryEat(TokenKind::punctuation, Punctuations::CLOSE_SQUARE_BRACKET) == nullptr) {
-        Diagnostics::reportError("[Error] Array literal except expression here");
+        diagnostics->reportError(ErrorLevel::failure, "[Error] Array literal except expression here");
     }
     
     if(isDict) {
@@ -806,12 +806,12 @@ Node::Ptr SyntaxParser::tryParseParenthesizedExpr() {
 
     std::shared_ptr<Node> expr = tryParseExpr();
     if(expr == nullptr) {
-        Diagnostics::reportError("[Error] Parenthesized expr error 1");
+        diagnostics->reportError(ErrorLevel::failure, "[Error] Parenthesized expr error 1");
         return nullptr;
     }
 
     if(tryEat(TokenKind::punctuation, Punctuations::CLOSE_ROUND_BRACKET) == nullptr) {
-        Diagnostics::reportError("[Error] Parenthesized expr error 2");
+        diagnostics->reportError(ErrorLevel::failure, "[Error] Parenthesized expr error 2");
         return nullptr; 
     }
 

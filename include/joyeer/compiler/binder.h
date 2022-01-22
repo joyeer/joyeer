@@ -53,6 +53,7 @@ protected:
 private:
     CompileContext::Ptr context;
     CompilerService* compiler;
+    Diagnostics* diagnostics;
 };
 
 #endif

@@ -1,11 +1,11 @@
 #include "driver.h"
 #include "joyeer/vm/isolate.h"
 
-Driver::Driver(CommandLineArguments::Ptr arguments):arguments(arguments) {
+Driver::Driver(Diagnostics* diagnostics, CommandLineArguments::Ptr arguments):arguments(arguments) {
 
     vm = new InterpretedIsolatedVM();
 
-    compiler = new CompilerService(arguments);
+    compiler = new CompilerService(diagnostics, arguments);
     compiler->strings = vm->strings;
     compiler->types = vm->types;
 

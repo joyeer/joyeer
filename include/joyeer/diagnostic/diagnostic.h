@@ -13,8 +13,10 @@ enum ErrorLevel {
 };
 
 struct ErrorMessage {
+    ErrorMessage(ErrorLevel level, const char* message, int lineAt, int columnAt);
+
     ErrorLevel level;
-    std::string message;
+    const char* message;
     int lineAt;
     int columnAt;
 };
@@ -23,6 +25,7 @@ struct ErrorMessage {
 
 struct Diagnostics {
 
+    explicit Diagnostics(): errors() {};
     /**
      * Lex error
      */
@@ -35,8 +38,9 @@ struct Diagnostics {
     DIAGNOSTICS_ERROR_MESSAGE(success,                                          "success!")
 
     void reportError(ErrorLevel level, int lineAt, int columnAt, const char* error, ...);
+    void reportError(ErrorLevel level, const char* error);
 
-    std::vector<ErrorMessage> errors {};
+    std::vector<ErrorMessage> errors;
     
 };
 
