@@ -2,6 +2,7 @@
 #include "joyeer/vm/isolate.h"
 
 Driver::Driver(Diagnostics* diagnostics, CommandLineArguments::Ptr arguments):arguments(arguments) {
+    this->diagnostics = diagnostics;
 
     vm = new InterpretedIsolatedVM();
 
@@ -15,5 +16,10 @@ Driver::Driver(Diagnostics* diagnostics, CommandLineArguments::Ptr arguments):ar
 
 void Driver::run() {
     auto module = compiler->run(arguments->inputfile);
-    ((InterpretedIsolatedVM*)vm)->run(module);
+    if(diagnostics->errors.size() == 0) {
+        ((InterpretedIsolatedVM*)vm)->run(module);
+    } else {
+        diagnostics->printErrors();
+    }
+
 }

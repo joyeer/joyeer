@@ -1,5 +1,5 @@
 #include "joyeer/diagnostic/diagnostic.h"
-#include <memory>
+#include <iostream>
 
 ErrorMessage::ErrorMessage(ErrorLevel level, const char* error, int lineAt, int columnAt):
 level(level),
@@ -19,3 +19,12 @@ void Diagnostics::reportError(ErrorLevel level, const char* error) {
     errors.push_back(e);
 }
 
+void Diagnostics::printErrors() {
+    for(auto error: errors) {
+        printError(error);
+    }
+}
+
+void Diagnostics::printError(ErrorMessage &error) {
+    std::cout << error.message << std::endl;
+}

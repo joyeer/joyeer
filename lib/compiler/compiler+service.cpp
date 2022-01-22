@@ -65,20 +65,20 @@ ModuleClass* CompilerService::compile(const SourceFile::Ptr& sourcefile) {
     // syntax analyze
     SyntaxParser syntaxParser(context, sourcefile);
     auto block = syntaxParser.parse();
-    debugPrinter.print("compiler-parse-stage", block);
     CHECK_ERROR_RETURN_NULL
-    
+    debugPrinter.print("compiler-parse-stage", block);
+
     // Detect for kind creating
     Binder binder(context);
     binder.visit(block);
-    debugPrinter.print("compiler-binding-stage", block);
     CHECK_ERROR_RETURN_NULL
-    
+    debugPrinter.print("compiler-binding-stage", block);
+
     // verify the types
     TypeChecker typeChecker(context);
     typeChecker.visit(std::static_pointer_cast<Node>(block));
-    debugPrinter.print("compiler-typechecker-stage", block);
     CHECK_ERROR_RETURN_NULL
+    debugPrinter.print("compiler-typechecker-stage", block);
 
     // generate IR code
     IRGen irGen(context);

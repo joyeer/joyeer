@@ -15,6 +15,7 @@ private:
     CompilerService* compiler;
     IsolateVM* vm;
     CommandLineArguments::Ptr arguments;
+    Diagnostics* diagnostics;
 };
 
 #endif

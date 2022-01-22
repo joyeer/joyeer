@@ -40,6 +40,12 @@ struct Diagnostics {
     void reportError(ErrorLevel level, int lineAt, int columnAt, const char* error, ...);
     void reportError(ErrorLevel level, const char* error);
 
+    // print the error into consoles
+    void printErrors();
+
+    // print the error message
+    void printError(ErrorMessage& error);
+
     std::vector<ErrorMessage> errors;
     
 };
