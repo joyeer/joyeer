@@ -11,12 +11,17 @@ columnAt(columnAt) {
 
 void Diagnostics::reportError(ErrorLevel level, const char* errorFormat, ...) {
 
+
+    char* string;
     va_list args;
 
     va_start(args, errorFormat);
-    reportError(level, -1, -1, errorFormat, args);
+    vasprintf(&string, errorFormat, args);
     va_end(args);
 
+    ErrorMessage e(level, string, -1, -1);
+
+    errors.push_back(e);
 }
 
 void Diagnostics::reportError(ErrorLevel level, int lineAt, int columnAt, const char* errorFormat, ...) {
