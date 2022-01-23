@@ -26,19 +26,24 @@ struct ErrorMessage {
 struct Diagnostics {
 
     explicit Diagnostics(): errors() {};
+
+    DIAGNOSTICS_ERROR_MESSAGE(errorFileImportShouldAtTopOfSourceFile,           "`import` should be presented at the begin of source file")
+    DIAGNOSTICS_ERROR_MESSAGE(errorNoSuchFileOrDirectory,                       "no such file or directory:")
+
     /**
      * Lex error
      */
+    DIAGNOSTICS_ERROR_MESSAGE(errorOctalNumberFormat,                           "Octal number only contains 0,1,2,3,4,5,6,7")
 
     /**
      * Syntax errors
      */
-    DIAGNOSTICS_ERROR_MESSAGE(errorFileImportShouldAtTopOfSourceFile,           "`import` should be presented at the begin of source file")
-    DIAGNOSTICS_ERROR_MESSAGE(errorNoSuchFileOrDirectory,                       "no such file or directory:")
+
+    DIAGNOSTICS_ERROR_MESSAGE(errorCannotFindFunction,                          "Cannot find '%s' in scope")
     DIAGNOSTICS_ERROR_MESSAGE(success,                                          "success!")
 
+    void reportError(ErrorLevel level, const char* error, ...);
     void reportError(ErrorLevel level, int lineAt, int columnAt, const char* error, ...);
-    void reportError(ErrorLevel level, const char* error);
 
     // print the error into consoles
     void printErrors();

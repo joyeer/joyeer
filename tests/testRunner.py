@@ -12,6 +12,11 @@ class JoyeerTestCase(unittest.TestCase):
         f = open(sourceCodeResult, 'r')
         exceptedResult = f.read()
         f.close()
+
+        print("##########")
+        print(result)
+        print("##########")
+        print(exceptedResult)
         self.assertEqual(result, exceptedResult)
 
 if __name__ == '__main__':

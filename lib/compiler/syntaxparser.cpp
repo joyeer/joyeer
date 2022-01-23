@@ -1,8 +1,9 @@
 #include "joyeer/compiler/syntaxparser.h"
 #include "joyeer/diagnostic/diagnostic.h"
 #include <cassert>
+#include <utility>
 
-SyntaxParser::SyntaxParser(CompileContext::Ptr context, const SourceFile::Ptr& sourcefile):
+SyntaxParser::SyntaxParser(const CompileContext::Ptr& context, const SourceFile::Ptr& sourcefile):
 sourcefile(sourcefile) {
     iterator = sourcefile->tokens.begin();
     endIterator = sourcefile->tokens.end();
@@ -587,7 +588,7 @@ Node::Ptr SyntaxParser::tryParseMemberAccessExpr(Node::Ptr postfixExpr) {
 Node::Ptr SyntaxParser::tryParseFuncCallExpr(Node::Ptr postfixExpr) {
     auto mark = iterator;
     
-    auto identifier = postfixExpr;
+    auto identifier = std::move(postfixExpr);
     
     if(tryEat(TokenKind::punctuation, Punctuations::OPEN_ROUND_BRACKET) == nullptr) {
         iterator = mark;
@@ -603,7 +604,7 @@ Node::Ptr SyntaxParser::tryParseFuncCallExpr(Node::Ptr postfixExpr) {
                 break;
             }
             
-            auto arguCall = tryParseArguCallExpr();
+            arguCall = tryParseArguCallExpr();
             if(arguCall == nullptr) {
                 diagnostics->reportError(ErrorLevel::failure, "[Error]");
                 return nullptr; //TODO: Report a grammar error

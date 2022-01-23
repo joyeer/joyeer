@@ -47,10 +47,10 @@ void LexParser::parse(const SourceFile::Ptr& sourceFile) {
                 }
                 switch (*iterator) {
                     case '0': case '1': case '2': case '3': case '4': case '5': case '6': case '7':
-                        break;
                         parseOctalLiteral(iterator);
+                        break;
                     case '8': case '9':
-                        diagnostics->reportError(ErrorLevel::failure, "Octal number only contains 0,1,2,3,4,5,6,7");
+                        diagnostics->reportError(ErrorLevel::failure, (int)lineNumber, (int)(iterator - lineStartAtPosition), Diagnostics::errorOctalNumberFormat);
                         break;
                     default:
                         auto token = std::make_shared<Token>(TokenKind::decimalLiteral, "0", lineNumber, iterator - lineStartAtPosition);
@@ -186,9 +186,10 @@ void LexParser::parseOctalLiteral(std::string::const_iterator startAt) {
     while (iterator < endIterator) {
         switch (*iterator) {
             case '0': case '1': case '2': case '3': case '4': case '5': case '6': case '7':
+                iterator ++;
                 break;
             case '8': case '9':
-                diagnostics->reportError(ErrorLevel::failure, "Octal number only contains 0,1,2,3,4,5,6,7");
+                diagnostics->reportError(ErrorLevel::failure, (int)lineNumber, (int)(startAt - lineStartAtPosition), Diagnostics::errorOctalNumberFormat);
                 goto label;
             default:
                 goto label;
@@ -220,7 +221,7 @@ void LexParser::parseNumberLiteral(std::string::const_iterator startAt) {
   bool hasFraction = false;
   if(*iterator == '.') {
     iterator ++ ;
-    std::string::const_iterator fractionStartIterator = iterator;          
+    std::string::const_iterator fractionStartIterator = iterator;
     while(iterator != endIterator ) {
       switch (*iterator ++)
       {
@@ -245,7 +246,7 @@ void LexParser::parseNumberLiteral(std::string::const_iterator startAt) {
 }
 
 void LexParser::parseHexLiteral(std::string::const_iterator startAt) {
-
+    assert(false);
 }
 
 void LexParser::parseOperator(std::string::const_iterator startIterator) {
@@ -303,7 +304,7 @@ void LexParser::parseStringLiteral() {
         if(*iterator == '\\') {
             iterator ++;
             if(iterator == endIterator) {
-                diagnostics->reportError(ErrorLevel::failure, "[Error] except character after \"");
+                diagnostics->reportError(ErrorLevel::failure, (int)lineNumber, (int)(iterator - lineStartAtPosition), "[Error] except character after \"");
                 return;
             }
         } else if (*iterator == '\"') {

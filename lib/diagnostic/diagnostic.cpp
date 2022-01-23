@@ -9,15 +9,30 @@ columnAt(columnAt) {
 
 }
 
-void Diagnostics::reportError(ErrorLevel level, int lineAt, int columnAt, const char* error, ...) {
-    ErrorMessage e(level, error, -1, -1);
+void Diagnostics::reportError(ErrorLevel level, const char* errorFormat, ...) {
+
+    va_list args;
+
+    va_start(args, errorFormat);
+    reportError(level, -1, -1, errorFormat, args);
+    va_end(args);
+
+}
+
+void Diagnostics::reportError(ErrorLevel level, int lineAt, int columnAt, const char* errorFormat, ...) {
+
+    char* string;
+    va_list args;
+
+    va_start(args, errorFormat);
+    vasprintf(&string, errorFormat, args);
+    va_end(args);
+
+    ErrorMessage e(level, string, lineAt, columnAt);
+
     errors.push_back(e);
 }
 
-void Diagnostics::reportError(ErrorLevel level, const char* error) {
-    ErrorMessage e(level, error, -1, -1);
-    errors.push_back(e);
-}
 
 void Diagnostics::printErrors() {
     for(auto error: errors) {
@@ -26,5 +41,5 @@ void Diagnostics::printErrors() {
 }
 
 void Diagnostics::printError(ErrorMessage &error) {
-    std::cout << error.message << std::endl;
+    std::cout << "SyntaxError(line: " << error.lineAt << "):\n    " << error.message << std::endl;
 }

@@ -9,7 +9,7 @@
 
 class ClassLoader {
 public:
-    ClassLoader(IsolateVM* vm);
+    explicit ClassLoader(IsolateVM* vm);
 
     void load(Class* klass);
 private:

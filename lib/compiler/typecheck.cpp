@@ -128,7 +128,8 @@ Node::Ptr TypeChecker::visitFuncCallExpr(const FuncCallExpr::Ptr &decl) {
     auto symbol = context->lookup(name);
 
     if(symbol == nullptr) {
-        diagnostics->reportError(ErrorLevel::failure, "[Error]Cannot ");
+        diagnostics->reportError(ErrorLevel::failure, Diagnostics::errorCannotFindFunction, name.c_str());
+        return decl;
     }
 
     decl->funcTypeSlot = symbol->typeSlot;

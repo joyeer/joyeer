@@ -8,7 +8,7 @@
 class SyntaxParser
 {
 public:
-    SyntaxParser(CompileContext::Ptr context, const SourceFile::Ptr& sourcefile);
+    SyntaxParser(const CompileContext::Ptr& context, const SourceFile::Ptr& sourcefile);
     ModuleDecl::Ptr parse();
 
 private:
