@@ -53,7 +53,7 @@ ModuleClass* CompilerService::compile(const SourceFile::Ptr& sourcefile) {
     auto debugfile = sourcefile->getAbstractLocation() + ".dump.yml";
     NodeDebugPrinter debugPrinter(debugfile);
 
-    auto context= std::make_shared<CompileContext>(diagnostics, options, globalSymbols);
+    auto context= std::make_shared<CompileContext>(diagnostics, globalSymbols);
     context->sourcefile = sourcefile;
     context->compiler = this;
     

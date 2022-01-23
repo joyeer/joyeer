@@ -26,7 +26,7 @@ class CompileContext {
 public:
     typedef std::shared_ptr<CompileContext> Ptr;
     
-    CompileContext(Diagnostics* diagnostics, CommandLineArguments::Ptr options, const SymbolTable::Ptr& globalSymTable);
+    CompileContext(Diagnostics* diagnostics, const SymbolTable::Ptr& globalSymTable);
 
     void visit(CompileStage stage, const Node::Ptr& node, const std::function<void(void)>& visit);
 
@@ -60,8 +60,6 @@ protected:
     
     // stage of compiling status, the last element of stages present the current stage
     std::vector<CompileStage> stages;
-
-    CommandLineArguments::Ptr options;
     
 };
 

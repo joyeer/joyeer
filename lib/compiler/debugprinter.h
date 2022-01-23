@@ -117,7 +117,10 @@ protected:
     }
 
     Node::Ptr visit(const ClassDecl::Ptr& decl) override {
-        assert(false);
+        output << "varDecl:";
+        DEBUG_BLOCK_START
+        output << "name" ;
+        DEBUG_BLOCK_END
         return decl;
     }
 

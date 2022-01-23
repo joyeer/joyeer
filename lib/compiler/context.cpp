@@ -6,8 +6,7 @@
 #include <memory>
 #include <utility>
 
-CompileContext::CompileContext(Diagnostics* diagnostics, CommandLineArguments::Ptr options, const SymbolTable::Ptr& globalSymTable):
-options(std::move(options)) {
+CompileContext::CompileContext(Diagnostics* diagnostics, const SymbolTable::Ptr& globalSymTable){
     symbols.push_back(globalSymTable);
     this->diagnostics = diagnostics;
 }

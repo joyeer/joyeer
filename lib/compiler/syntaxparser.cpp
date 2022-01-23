@@ -322,7 +322,7 @@ Node::Ptr SyntaxParser::tryParseLoopStmt() {
 
     auto codeBlock = tryParseStmtsBlock();
 
-    return std::shared_ptr<Node>(std::make_shared<ForInStmt>(pattern, expr, codeBlock));
+    return std::make_shared<ForInStmt>(pattern, expr, codeBlock);
 }
 
 Node::Ptr SyntaxParser::tryparseWhileStmt() {
