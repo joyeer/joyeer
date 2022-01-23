@@ -1,0 +1,2 @@
+SyntaxError(line: -1):
+    Cannot find 'functiondesntexisting(message:)' in scope
