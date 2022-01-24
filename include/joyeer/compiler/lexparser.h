@@ -20,6 +20,7 @@ private:
     void pushOperator(TokenKind kind, std::string op, std::string::const_iterator startIterator);
     void parseOperator(std::string::const_iterator startIterator);
     void parsePunctuation(std::string::const_iterator startIterator);
+    void parseCppComment();
 
 private:
     std::string::const_iterator iterator;

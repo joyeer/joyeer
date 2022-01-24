@@ -1,0 +1,4 @@
+// 'nil' cannot initialize specified type 'Int'
+var index:Int = nil
+
+var index2 = nil

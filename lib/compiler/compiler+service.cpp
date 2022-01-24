@@ -50,7 +50,7 @@ SourceFile::Ptr CompilerService::findSourceFile(const std::string &path, const s
 
 ModuleClass* CompilerService::compile(const SourceFile::Ptr& sourcefile) {
 
-    auto debugfile = sourcefile->getAbstractLocation() + ".dump.yml";
+    auto debugfile = sourcefile->getAbstractLocation() + ".xdump.yml";
     NodeDebugPrinter debugPrinter(debugfile);
 
     auto context= std::make_shared<CompileContext>(diagnostics, globalSymbols);

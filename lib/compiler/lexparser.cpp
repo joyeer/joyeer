@@ -61,6 +61,10 @@ void LexParser::parse(const SourceFile::Ptr& sourceFile) {
                 
                 break;
             case '/':
+                if (iterator != endIterator && *iterator == '/') {
+                    parseCppComment();
+                    continue;
+                }
                 parseOperator(iterator - 1);
                 break;
             case '=':
@@ -317,4 +321,10 @@ void LexParser::parseStringLiteral() {
     const std::string identifier(startAt, iterator - 1);
     auto stringLiteral = std::make_shared<Token>(TokenKind::stringLiteral, identifier, lineNumber, iterator - startAt);
     sourcefile->tokens.push_back(stringLiteral);
+}
+
+void LexParser::parseCppComment() {
+    while(iterator != endIterator && *iterator != '\n') {
+        iterator ++;
+    }
 }
