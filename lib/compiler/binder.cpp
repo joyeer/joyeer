@@ -29,8 +29,6 @@ Node::Ptr Binder::visit(const ModuleDecl::Ptr& decl) {
     context->compiler->declare(module);
     decl->typeSlot = module->slot;
 
-    decl->recursiveUpdate();
-
     context->visit(CompileStage::visitModule, decl, [decl, this]() {
         auto statements = std::vector<Node::Ptr>();
         for(const auto& statement : decl->statements) {
@@ -70,9 +68,7 @@ Node::Ptr Binder::visit(const FuncDecl::Ptr& decl) {
     auto symtable = context->curSymTable();
 
     auto funcSimpleName = decl->getSimpleName();
-    auto declaringClassDecl = decl->getDeclaringClassDecl();
-    assert(declaringClassDecl != nullptr);
-    
+
     // check if the function name duplicated
     if(symtable->find(funcSimpleName) != nullptr) {
         diagnostics->reportError(ErrorLevel::failure, "[Error] Duplicate function name");
