@@ -17,6 +17,10 @@ protected:
     Node::Ptr visit(const TypeIdentifier::Ptr& decl) override;
     Node::Ptr visit(const FuncCallExpr::Ptr& decl) override;
 
+    // Types
+    Node::Ptr visit(const ArrayType::Ptr& decl) override;
+    Node::Ptr visit(const OptionalType::Ptr& decl) override;
+
     // FuncCallExpr visitor
     Node::Ptr visit(const MemberFuncCallExpr::Ptr& decl) override;
     Node::Ptr visitDictFuncCallExpr(const FuncCallExpr::Ptr& decl);
@@ -46,7 +50,6 @@ protected:
     Node::Ptr visit(const MemberAccessExpr::Ptr& decl) override;
     Node::Ptr visit(const MemberAssignExpr::Ptr& decl) override;
     Node::Ptr visit(const SubscriptExpr::Ptr& decl) override;
-    Node::Ptr visit(const ArrayType::Ptr& decl) override;
     Node::Ptr visit(const ImportStmt::Ptr& decl) override;
 
     Type* typeOf(const Node::Ptr& node);

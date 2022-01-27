@@ -53,7 +53,16 @@ keyType(std::move(keyType)),
 valueType(std::move(valueType)) {
 }
 
-////////////////////////////////////////////////
-// FuncCallExpr
-////////////////////////////////////////////////
+/**
+ * OptionalType implementation
+ */
 
+OptionalType::OptionalType(Node::Ptr type, bool required):
+Node(SyntaxKind::optionalType),
+type(std::move(type)),
+required(required) {
+}
+
+std::string OptionalType::getSimpleName() {
+    return "Optional<" + type->getSimpleName() + ">";
+}

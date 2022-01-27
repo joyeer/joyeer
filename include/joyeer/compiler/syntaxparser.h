@@ -43,7 +43,7 @@ private:
     StmtsBlock::Ptr tryParseStmtsBlock();
     Node::Ptr tryParseStmt();
     Node::Ptr tryParseLoopStmt();
-    Node::Ptr tryparseWhileStmt();
+    Node::Ptr tryParseWhileStmt();
     Node::Ptr tryParseBranchStmt();
     Node::Ptr tryParseIfStmt();
     Node::Ptr tryParseReturnStmt();
@@ -57,6 +57,7 @@ private:
     Node::Ptr tryParseTypeIdentifier();
     Node::Ptr tryParseTypeArray();
     Node::Ptr tryParseType();
+    Node::Ptr tryParseOptionalType(const Node::Ptr& type);
 
     ////////////////////////////////////////////////////////////////////////////
     // Expressions

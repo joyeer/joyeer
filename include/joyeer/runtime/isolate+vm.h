@@ -19,12 +19,13 @@ struct IsolateVM {
     StringResTable* strings { new StringResTable() };
     TypeResTable* types { new TypeResTable() };
 
+    Type* getType(BuildIns type);
+
     GC* gc;
 
     ArrayClass* arrayClass = nullptr;
     DictClass* dictClass = nullptr;
     DictEntry* dictEntryClass = nullptr;
-    Optional* optionalClass = nullptr;
     StringClass* stringClass = nullptr;
     StringBuilderClass* stringBuilderClass = nullptr;
 };

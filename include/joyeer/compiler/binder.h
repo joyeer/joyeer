@@ -22,6 +22,7 @@ protected:
     Node::Ptr visit(const ClassDecl::Ptr& classDecl) override;
     Node::Ptr visit(const VarDecl::Ptr& varDecl) override;
     Node::Ptr visit(const TypeIdentifier::Ptr& decl) override;
+    Node::Ptr visit(const OptionalType::Ptr& decl) override;
     Node::Ptr visit(const FuncCallExpr::Ptr& decl) override;
     Node::Ptr visit(const MemberFuncCallExpr::Ptr& decl) override;
     Node::Ptr visit(const ArguCallExpr::Ptr& decl) override;

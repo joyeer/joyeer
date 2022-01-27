@@ -69,8 +69,9 @@ Variable *Function::getParamByIndex(int index) {
 // Optional implementation
 //------------------------------------------------
 
-Optional::Optional():
-Type("Optional", ValueType::Any) {
+Optional::Optional(const std::string& name, Slot typeSlot):
+Type(name, ValueType::Optional),
+wrappedTypeSlot(typeSlot) {
 }
 
 intptr_t Optional::allocate(IsolateVM *vm, Int value) {

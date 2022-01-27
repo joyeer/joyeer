@@ -9,16 +9,18 @@
 Value Global_$_print(Executor* executor, Arguments *args) {
     auto wrappedObj = args->getArgument(0);
     auto head = reinterpret_cast<ObjectHead*>(wrappedObj);
-    auto type = executor->vm->types->operator[](head->typeSlot);
+    auto vm = executor->vm;
+    auto type = vm->types->operator[](head->typeSlot);
     switch (type->kind) {
         case ValueType::Int: {
-
-            auto value = executor->vm->optionalClass->intValue(wrappedObj);
+            auto optionalInt = (Optional*)vm->getType(BuildIns::Object_Optional_Int);
+            auto value = optionalInt->intValue(wrappedObj);
             printf("%lld\n", value);
         }
             break;
         case ValueType::Bool: {
-            auto value = executor->vm->optionalClass->boolValue(wrappedObj);
+            auto optionalBool = (Optional*)vm->getType(BuildIns::Object_Optional_Bool);
+            auto value = optionalBool->boolValue(wrappedObj);
             if(value) {
                 printf("true\n");
             } else {
@@ -43,21 +45,22 @@ Value Global_$_print(Executor* executor, Arguments *args) {
 
 Value Global_$_autoWrapping_Int(Executor* executor, Arguments* args) {
     auto value = args->getArgument(0);
-
-    auto wrapped = executor->vm->optionalClass->allocate(executor->vm,(Int)value);
+    auto optionalInt = (Optional*)executor->vm->getType(BuildIns::Object_Optional_Int);
+    auto wrapped = optionalInt->allocate(executor->vm,(Int)value);
     return wrapped;
 }
 
 Value Global_$_autoWrapping_Bool(Executor* executor, Arguments* args) {
     auto value = args->getArgument(0);
-
-    auto wrapped = executor->vm->optionalClass->allocate(executor->vm, (Bool)value);
+    auto optionalBool = (Optional*)executor->vm->getType(BuildIns::Object_Optional_Int);
+    auto wrapped = optionalBool->allocate(executor->vm, (Bool)value);
     return wrapped;
 }
 
 Value Global_$_autoUnwrapping_Int(Executor* executor, Arguments* args) {
     auto value = args->getArgument(0);
-    return executor->vm->optionalClass->intValue(value);
+    auto optionalInt = (Optional*)executor->vm->getType(BuildIns::Object_Optional_Int);
+    return optionalInt->intValue(value);
 }
 
 Value Array_$$_get(Executor* executor, Arguments *args) {

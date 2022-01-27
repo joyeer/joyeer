@@ -178,6 +178,20 @@ SymbolTable::Ptr CompilerService::getExportingSymbolTable(int typeSlot) {
 #define END_DECLARE_CLASS(type) \
     }
 
+
+#define BEGIN_DECLARE_OPTIONAL(type, originalTypeSlot) \
+    {                                                 \
+        auto symtable = std::make_shared<SymbolTable>(); \
+        auto name =  "Optional<" + getType(originalTypeSlot)->name + ">";\
+        auto typeClass = new Optional(name, (int)(originalTypeSlot));  \
+        declare(typeClass);                           \
+        globalSymbols->insert(std::make_shared<Symbol>(SymbolFlag::klass, typeClass->name, typeClass->slot)); \
+        assert((size_t)(type) == typeClass->slot);       \
+        exportingSymbolTableOfClasses.insert({ typeClass->slot, symtable });
+
+#define END_DECLARE_OPTIONAL }
+
+
 void CompilerService::bootstrap() {
 
 
@@ -202,11 +216,14 @@ void CompilerService::bootstrap() {
     END_DECLARE_FUNC()
 
     BEGIN_DECLARE_FUNC(BuildIns::Func_AutoUnwrapping_Int, "autoUnwrapping(int:)", ValueType::Int, Global_$_autoUnwrapping_Int)
-        DECLARE_FUNC_PARM("int", BuildIns::Object_Optional)
+        DECLARE_FUNC_PARM("int", BuildIns::Object_Optional_Int)
     END_DECLARE_FUNC()
 
-    BEGIN_DECLARE_CLASS(BuildIns::Object_Optional, Optional)
-    END_DECLARE_CLASS(BuildIns::Object_Optional)
+    BEGIN_DECLARE_OPTIONAL(BuildIns::Object_Optional_Int, ValueType::Int)
+    END_DECLARE_OPTIONAL
+
+    BEGIN_DECLARE_OPTIONAL(BuildIns::Object_Optional_Bool, ValueType::Bool)
+    END_DECLARE_OPTIONAL
 
     // Declare build-in classes and its members
     BEGIN_DECLARE_CLASS(BuildIns::Object_Array, ArrayClass)

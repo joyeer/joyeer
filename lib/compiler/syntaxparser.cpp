@@ -291,7 +291,7 @@ Node::Ptr SyntaxParser::tryParseStmt() {
         return returnStatement;
     }
     
-    auto whileStatement = tryparseWhileStmt();
+    auto whileStatement = tryParseWhileStmt();
     if(whileStatement != nullptr) {
         return whileStatement;
     }
@@ -325,7 +325,7 @@ Node::Ptr SyntaxParser::tryParseLoopStmt() {
     return std::make_shared<ForInStmt>(pattern, expr, codeBlock);
 }
 
-Node::Ptr SyntaxParser::tryparseWhileStmt() {
+Node::Ptr SyntaxParser::tryParseWhileStmt() {
     if(tryEat(TokenKind::keyword, Keywords::WHILE) == nullptr) {
         return nullptr;
     }
@@ -419,15 +419,27 @@ Node::Ptr SyntaxParser::tryParseType() {
     Node::Ptr type = nullptr;
     type = tryParseTypeIdentifier();
     if(type != nullptr) {
-        return type;
+        return tryParseOptionalType(type);
     }
     
     type = tryParseTypeArray();
     if(type != nullptr) {
-        return type;
+        return tryParseOptionalType(type);
     }
     
     return nullptr;
+}
+
+Node::Ptr SyntaxParser::tryParseOptionalType(const Node::Ptr &type) {
+    if(tryEat(TokenKind::operators, Operators::QUESTION)) {
+        return std::make_shared<OptionalType>(type, false);
+    }
+
+    if(tryEat(TokenKind::operators, Operators::POINT)) {
+        return std::make_shared<OptionalType>(type, true);
+    }
+
+    return type;
 }
 
 Node::Ptr SyntaxParser::tryParseTypeIdentifier() {
@@ -480,8 +492,8 @@ Node::Ptr SyntaxParser::tryParseExpr() {
     return std::make_shared<Expr>(expr, binaries);
 }
 
-std::shared_ptr<Node> SyntaxParser::tryParseBinaryExpr() {
-    std::shared_ptr<Token> assignmentOperator = tryEat(TokenKind::operators, Operators::EQUALS);
+Node::Ptr SyntaxParser::tryParseBinaryExpr() {
+    auto assignmentOperator = tryEat(TokenKind::operators, Operators::EQUALS);
     if(assignmentOperator != nullptr) {
         std::shared_ptr<Node> prefixExpr = tryParseExpr();
         if(prefixExpr == nullptr) {
@@ -503,7 +515,7 @@ std::shared_ptr<Node> SyntaxParser::tryParseBinaryExpr() {
     return nullptr;
 }
 
-std::shared_ptr<Node> SyntaxParser::tryParsePrefixExpr() {
+Node::Ptr SyntaxParser::tryParsePrefixExpr() {
     auto op = tryParseOperatorExpr();
     
     auto postfixExpr = tryParsePostfixExpr();

@@ -499,6 +499,7 @@ void IRGen::autoWrapping(int srcTypeSlot, int destTypeSlot) {
             case ValueType::String:
             case ValueType::Class:
             case ValueType::Any:
+            case ValueType::Optional:
                 // if source type is Any, not wrapping occurring.
                 break;
             default:

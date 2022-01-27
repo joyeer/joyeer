@@ -175,6 +175,14 @@ Node::Ptr Binder::visit(const VarDecl::Ptr& decl) {
     return decl;
 }
 
+Node::Ptr Binder::visit(const OptionalType::Ptr& decl) {
+    if(decl->required) {
+        return decl->type;
+    }
+
+    return decl;
+}
+
 Node::Ptr Binder::visit(const FuncCallExpr::Ptr& decl) {
     
     if(decl->identifier->kind == SyntaxKind::memberAccessExpr) {

@@ -72,7 +72,8 @@ enum class BuildIns : uint16_t {
     Func_AutoWrapping_Bool,
     Func_AutoUnwrapping_Int,
 
-    Object_Optional,
+    Object_Optional_Int,
+    Object_Optional_Bool,
 
     Object_Array,
     Object_Array_Func_size,
@@ -238,7 +239,9 @@ struct Optional : public Type {
         Value wrappedValue {};
     };
 
-    explicit Optional();
+    Slot wrappedTypeSlot;
+
+    explicit Optional(const std::string& name, Slot wrappedTypeSlot);
 
     intptr_t allocate(IsolateVM* vm, Int value);
     intptr_t allocate(IsolateVM* vm, Bool value);

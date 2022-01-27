@@ -198,7 +198,8 @@ Node::Ptr TypeChecker::visit(const VarDecl::Ptr& decl) {
         decl->pattern = std::static_pointer_cast<Pattern>(visit(decl->pattern));
     });
 
-    if(verifyIfAssignExpressionIsLegal(decl->pattern, decl->initializer) == false) {
+    // type verification
+    if(!verifyIfAssignExpressionIsLegal(decl->pattern, decl->initializer)) {
         return decl;
     }
 
@@ -238,6 +239,18 @@ Node::Ptr TypeChecker::visit(const VarDecl::Ptr& decl) {
             assert(false);
     }
 
+    return decl;
+}
+
+Node::Ptr TypeChecker::visit(const OptionalType::Ptr &decl) {
+    auto name = decl->getSimpleName();
+    auto symbol = context->lookup(name);
+    if(symbol == nullptr) {
+        diagnostics->reportError(ErrorLevel::failure, -1, -1, Diagnostics::errorCannotFindType, name.c_str());
+        return decl;
+    }
+
+    decl->typeSlot = symbol->typeSlot;
     return decl;
 }
 
@@ -699,14 +712,6 @@ bool TypeChecker::verifyIfAssignExpressionIsLegal(const Node::Ptr &left, const N
             return false;
         }
     }
-
-    if(left->typeSlot == compiler->getType(ValueType::Any)->slot) {
-        //
-        if(right->typeSlot == compiler->getType(BuildIns::Object_Optional)->slot) {
-
-        }
-    }
-
 
     // rule 3: if right is nil
 

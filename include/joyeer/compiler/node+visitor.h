@@ -7,6 +7,10 @@ struct NodeVisitor {
 protected:
     virtual Node::Ptr visit(const Node::Ptr& node);
 
+    // Types
+    virtual Node::Ptr visit(const ArrayType::Ptr& decl) = 0;
+    virtual Node::Ptr visit(const OptionalType::Ptr& decl) = 0;
+
     // Expression
     virtual Node::Ptr visit(const Expr::Ptr& decl) = 0;
     virtual Node::Ptr visit(const FuncCallExpr::Ptr& decl) = 0;
@@ -31,7 +35,6 @@ protected:
     virtual Node::Ptr visit(const IfStmt::Ptr& decl) = 0;
     virtual Node::Ptr visit(const WhileStmt::Ptr& decl) = 0;
     virtual Node::Ptr visit(const ReturnStmt::Ptr& decl) = 0;
-    virtual Node::Ptr visit(const ArrayType::Ptr& decl) = 0;
     virtual Node::Ptr visit(const ImportStmt::Ptr& decl) = 0;
 
     // Declarations

@@ -138,6 +138,18 @@ protected:
         return decl;
     }
 
+    Node::Ptr visit(const OptionalType::Ptr& decl) override {
+        output << "optionalType:";
+        DEBUG_BLOCK_START
+        output << "type:" ;
+        DEBUG_BLOCK_START
+            NodeVisitor::visit(decl->type);
+        DEBUG_BLOCK_END
+        output << "required: " << (decl->required ? "true": "false");
+        DEBUG_BLOCK_END
+        return decl;
+    }
+
     Node::Ptr visit(const TypeIdentifier::Ptr& decl) override {
         output << "kind:";
         DEBUG_BLOCK_START
@@ -548,7 +560,7 @@ protected:
         return decl;
     }
 
-    void print(const std::vector<Type*> types) {
+    void print(const std::vector<Type*>& types) {
         output << "types:";
 
         auto i = 0;
@@ -560,38 +572,41 @@ protected:
             newline();
             switch (tf->kind) {
                 case ValueType::Module:
-                    output << "kind: Module" ;
+                    output << "type: Module" ;
                     newline();
                     print((ModuleClass*)(tf));
                     break;
                 case ValueType::Nil:
-                    output << "kind: Nil" ;
+                    output << "type: Nil" ;
                     break;
                 case ValueType::Bool:
                     output << "kind: Boolean" ;
                     break;
                 case ValueType::Int:
-                    output << "kind: Integer";
+                    output << "type: Integer";
                     break;
                 case ValueType::Void:
-                    output << "kind: Void";
+                    output << "type: Void";
                     break;
                 case ValueType::Any:
-                    output << "kind: Any";
+                    output << "type: Any";
                     break;
                 case ValueType::Class:
-                    output << "kind: Class";
+                    output << "type: Class";
                     break;
                 case ValueType::Func:
-                    output << "kind: Func";
+                    output << "type: Func";
                     newline();
                     print((Function*)(tf));
                     break;
                 case ValueType::Unspecified:
-                    output << "kind: Unspecified";
+                    output << "type: Unspecified";
                     break;
                 case ValueType::String:
-                    output << "kind: String";
+                    output << "type: String";
+                    break;
+                case ValueType::Optional:
+                    output << "type: optional";
                     break;
                 default:
                     assert(false);

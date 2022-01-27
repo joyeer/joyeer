@@ -16,6 +16,7 @@ enum class SyntaxKind {
     type,
     arrayType,
     dictType,
+    optionalType,
     pattern,
 
     varDecl,
@@ -144,6 +145,18 @@ struct DictType : Node {
 
     DictType(Node::Ptr keyType, Node::Ptr valueType);
 
+};
+
+struct OptionalType: Node {
+    using Ptr = std::shared_ptr<OptionalType>;
+
+    Node::Ptr type;
+
+    bool required;
+
+    OptionalType(Node::Ptr type, bool required);
+
+    std::string getSimpleName() override;
 };
 
 struct Pattern : public Node {
