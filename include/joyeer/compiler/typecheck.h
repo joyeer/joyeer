@@ -66,6 +66,14 @@ protected:
     Type* typeOf(const PrefixExpr::Ptr& node);
     Type* typeOf(const PostfixExpr::Ptr& node);
 
+    // verify that assignment expressions is legal
+    // left = right => expression
+    bool verifyIfAssignExpressionIsLegal(const Node::Ptr& left, const Node::Ptr& right);
+
+    // verify that Arithmetic expression is legal
+    // left op(+-*/...) right
+    bool verifyIfArithmeticExpressionIsLegal(const Node::Ptr& left, const Node::Ptr& right);
+
     CompileContext::Ptr context;
     CompilerService* compiler;
     Diagnostics* diagnostics;

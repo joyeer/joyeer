@@ -183,6 +183,13 @@ Node::Ptr TypeChecker::visit(const VarDecl::Ptr& decl) {
     auto symbol = context->lookup(simpleName);
 
     assert(decl->typeSlot == -1);
+
+    // e.g. var index, without initializer and type, report an error
+    if(decl->initializer == nullptr && decl->pattern->typeExpr == nullptr) {
+        diagnostics->reportError(ErrorLevel::failure, -1, -1, Diagnostics::errorVarDeclMissingAnnotation);
+        return decl;
+    }
+
     if(decl->initializer != nullptr) {
         decl->initializer = visit(decl->initializer);
     }
@@ -191,10 +198,16 @@ Node::Ptr TypeChecker::visit(const VarDecl::Ptr& decl) {
         decl->pattern = std::static_pointer_cast<Pattern>(visit(decl->pattern));
     });
 
+    if(verifyIfAssignExpressionIsLegal(decl->pattern, decl->initializer) == false) {
+        return decl;
+    }
+
     // if the pattern specify the Types, VarDecl will follow the pattern
     auto patternType = compiler->getType(decl->pattern->typeSlot);
     if(patternType->kind == ValueType::Unspecified) {
-        decl->typeSlot = decl->initializer->typeSlot;
+        if(decl->initializer != nullptr) {
+            decl->typeSlot = decl->initializer->typeSlot;
+        }
     } else {
         // follow the initializer expression's typedef
         decl->typeSlot = decl->pattern->typeSlot;
@@ -664,4 +677,38 @@ Type* TypeChecker::typeOf(const PrefixExpr::Ptr& node) {
 
 Type* TypeChecker::typeOf(const PostfixExpr::Ptr& node) {
     return typeOf(node->expr);
+}
+
+bool TypeChecker::verifyIfAssignExpressionIsLegal(const Node::Ptr &left, const Node::Ptr &right) {
+
+    // rule 1: if left not specific the type, always, the right's type is assigned to left
+    if(left->typeSlot == compiler->getType(ValueType::Unspecified)->slot) {
+        // var i = nil
+        if(right->typeSlot == compiler->getType(ValueType::Nil)->slot) {
+            diagnostics->reportError(ErrorLevel::failure, -1, -1, Diagnostics::errorNilRequireContextualType);
+            return false;
+        }
+        return true;
+    }
+
+    // rule 2: if right type is nil
+    if(right->typeSlot == compiler->getType(ValueType::Nil)->slot) {
+        auto leftType = compiler->getType(left->typeSlot);
+        if(leftType->kind != ValueType::Optional) {
+            diagnostics->reportError(ErrorLevel::failure, -1, -1, Diagnostics::errorNilCannotInitializeSpecifiedType, leftType->name.c_str());
+            return false;
+        }
+    }
+
+    if(left->typeSlot == compiler->getType(ValueType::Any)->slot) {
+        //
+        if(right->typeSlot == compiler->getType(BuildIns::Object_Optional)->slot) {
+
+        }
+    }
+
+
+    // rule 3: if right is nil
+
+    return true;
 }

@@ -3,7 +3,6 @@ add_joyeer_library(JoyeerRuntime STATIC
         arguments.cpp
         bytecode.cpp
         descriptor.cpp
-        ../diagnostic/diagnostic.cpp
         gc.cpp
         heaps.cpp
         isolate+vm.cpp

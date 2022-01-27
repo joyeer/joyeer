@@ -53,13 +53,14 @@ constexpr int kBoolSize = sizeof (Bool);
 // Value Types
 enum class ValueType : uint8_t {
     Nil = 0x00,
+    Unspecified,
     Void,
     Int,
     Bool,
-    Unspecified,
     Any,
     String,
     RESOLVED_PRIMARY_TYPE_COUNT [[maybe_unused]],
+    Optional,
     Module,
     Class,
     Func
@@ -408,12 +409,6 @@ struct DictClass : public Class {
         Int bucketSize = 0;
         Value buckets[0];
     };
-
-    constexpr static int kDictCapacityOffset = kObjectHeadOffset + kValueSize;
-    constexpr static int kDictSizeOffset = kDictCapacityOffset + kValueSize;
-    constexpr static int kDictBucketCountOffset = kDictSizeOffset + kValueSize;
-    constexpr static int kDictBucketSlotOffset = kDictBucketCountOffset + kValueSize;
-
 
     explicit DictClass();
 

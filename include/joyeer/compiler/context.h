@@ -47,9 +47,9 @@ public:
     SourceFile::Ptr sourcefile = nullptr;
     
     // The global compiler service
-    CompilerService* compiler;
+    CompilerService* compiler = nullptr;
 
-    Diagnostics* diagnostics;
+    Diagnostics* diagnostics = nullptr;
 
 protected:
     // Symbol Tables in parsing stack, basics, once dive into next AST, will push symbol table into stack

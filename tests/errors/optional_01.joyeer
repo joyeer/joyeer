@@ -1,4 +1,10 @@
-// 'nil' cannot initialize specified type 'Int'
-var index:Int = nil
+// Type annotation missing in variable declaration
+var index
 
-var index2 = nil
+// nil requires a contextual type
+var index1 = nil
+
+// 'nil' cannot initialize specified type 'Int'
+var index2:Int = nil
+
+
