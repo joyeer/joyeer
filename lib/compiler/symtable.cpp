@@ -13,6 +13,8 @@ std::string debugStringOfSymbolFlag(SymbolFlag flag) {
             return "field";
         case SymbolFlag::klass:
             return "class";
+        case SymbolFlag::constructor:
+            return "constructor";
         default:
             assert(false);
     }
@@ -52,4 +54,12 @@ Symbol::Ptr SymbolTable::find(const std::string& name) const {
     }
     
     return nullptr;
+}
+
+std::unordered_map<std::string, Symbol::Ptr>::const_iterator SymbolTable::begin() {
+    return symbols.begin();
+}
+
+std::unordered_map<std::string, Symbol::Ptr>::const_iterator SymbolTable::end() {
+    return symbols.end();
 }

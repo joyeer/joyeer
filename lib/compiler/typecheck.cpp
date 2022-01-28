@@ -28,6 +28,14 @@ Node::Ptr TypeChecker::visit(const ModuleDecl::Ptr& node) {
     return node;
 }
 
+
+Node::Ptr TypeChecker::visit(const ClassDecl::Ptr& node) {
+    context->visit(CompileStage::visitClassDecl, node->members, [this, node]() {
+        node->members = std::static_pointer_cast<StmtsBlock>(visit(node->members));
+    });
+    return node;
+}
+
 Node::Ptr TypeChecker::visit(const FuncDecl::Ptr& decl) {
 
     context->visit(CompileStage::visitFuncDecl, decl, [this, decl]() {
@@ -221,7 +229,6 @@ Node::Ptr TypeChecker::visit(const VarDecl::Ptr& decl) {
     auto declType = context->curDeclType();
     auto variableType = new Variable(simpleName);
     variableType->typeSlot = symbol->typeSlot;
-    variableType->parentSlot = declType->slot;
     switch (declType->kind) {
         case ValueType::Func: {
             auto funcType = (Function*)declType;
@@ -423,12 +430,7 @@ Node::Ptr TypeChecker::visit(const ArguCallExpr::Ptr& node) {
     return node;
 }
 
-Node::Ptr TypeChecker::visit(const ClassDecl::Ptr& node) {
-    context->visit(CompileStage::visitClassDecl, node->members, [this, node]() {
-        node->members = std::static_pointer_cast<StmtsBlock>(visit(node->members));
-    });
-    return node;
-}
+
 
 Node::Ptr TypeChecker::visit(const SelfExpr::Ptr& node) {
     if(node->identifier != nullptr) {

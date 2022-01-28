@@ -161,7 +161,6 @@ struct Variable {
     // the debugger name's variable/field
     const std::string name;
 
-    int parentSlot = -1; // Variable's parentTypeSlot Type, e.g. Class/ModuleClass/Function
     int typeSlot = -1; // Variable's type
     int loc = -1;
 
@@ -176,7 +175,7 @@ struct Variable {
         return (accessFlags & AccessFlag::Static) == AccessFlag::Static;
     }
 
-    explicit Variable(std::string  name): name(std::move(name)) {}
+    explicit Variable(std::string name): name(std::move(name)) {}
 
     int getSize() {
         return kValueSize;
@@ -184,7 +183,7 @@ struct Variable {
 };
 
 
-enum FuncTypeKind : uint8_t {
+enum FuncType : uint8_t {
     C_Func, // function implemented in C native
     C_CInit, // class constructor implemented in C native
     VM_Func, // function implemented in VM bytecodes
@@ -199,7 +198,7 @@ typedef Value (*CFunction)(Executor* executor, Argument* argument);
 // Represent Function kind (include class's function kind)
 struct Function : Type {
 
-    FuncTypeKind funcKind;
+    FuncType funcType;
 
     // localVars contains all function params at begin of the array
     int paramCount = 0;
@@ -255,6 +254,12 @@ struct Optional : public Type {
 
 
 struct Class : public Type {
+
+    struct ClassData {
+        ObjectHead head {};
+        Value data[0];
+    };
+
     constexpr static int kObjectHeadOffset = 0;
 
     // Class static memory area in GC heap
@@ -271,6 +276,8 @@ struct Class : public Type {
     explicit Class(const std::string& name);
 
     virtual intptr_t allocate(IsolateVM* vm);
+
+    int getSize();
 
     // get static fields size
     [[nodiscard]] size_t getStaticSize() const {

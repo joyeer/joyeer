@@ -7,6 +7,7 @@
 
 enum class SymbolFlag : uint16_t {
     func = 1,
+    constructor,
     var,
     field,
     klass,
@@ -54,6 +55,8 @@ public:
     // find symbol by a given name
     [[nodiscard]] Symbol::Ptr find(const std::string& name) const;
 
+    std::unordered_map<std::string, Symbol::Ptr>::const_iterator begin();
+    std::unordered_map<std::string, Symbol::Ptr>::const_iterator end();
 private:
     friend class NodeDebugPrinter;
     std::unordered_map<std::string, Symbol::Ptr> symbols;

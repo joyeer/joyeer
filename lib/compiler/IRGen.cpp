@@ -63,7 +63,7 @@ ModuleClass* IRGen::emit(const ModuleDecl::Ptr& decl) {
 
     // wrap module initializer code into a V Function
     auto moduleInitializer = new Function(decl->getSimpleName(), true);
-    moduleInitializer->funcKind = FuncTypeKind::VM_Func;
+    moduleInitializer->funcType = FuncType::VM_Func;
     moduleInitializer->bytecodes = writer.getBytecodes();
     compiler->declare(moduleInitializer);
 
@@ -76,7 +76,8 @@ void IRGen::emit(const FuncCallExpr::Ptr& funcCallExpr) {
     assert(funcCallExpr->funcTypeSlot != -1);
     auto func = (Function*)(compiler->getType(funcCallExpr->funcTypeSlot));
     assert(func != nullptr);
-    if(func->funcKind == FuncTypeKind::C_CInit) {
+
+    if(func->funcType == FuncType::C_CInit || func->funcType == FuncType::VM_CInit) {
         writer.write(Bytecode(OP_NEW, func->returnTypeSlot));
     }
 

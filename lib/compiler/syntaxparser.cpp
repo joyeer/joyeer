@@ -20,8 +20,10 @@ ModuleDecl::Ptr SyntaxParser::parse() {
 
         decls.push_back(decl);
     }
-    auto descriptor = std::make_shared<ModuleDescriptor>(sourcefile->getLocation());
-    return std::make_shared<ModuleDecl>(descriptor, decls);
+
+    auto module = std::make_shared<ModuleDecl>(decls);
+    module->filename = sourcefile->getLocation();
+    return module;
 }
 
 ////////////////////////////////////////////////////////////////////////////
@@ -126,7 +128,7 @@ Node::Ptr SyntaxParser::tryParseParameterClause() {
     if (tryEat(TokenKind::punctuation, Punctuations::OPEN_ROUND_BRACKET) == nullptr) {
         return nullptr;
     }
-    // parse the parameters declaration in function
+    // parse the parameters' declaration in function
     std::vector<Pattern::Ptr> parameters;
     int i = 0 ;
     while(true) {

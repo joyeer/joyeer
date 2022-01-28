@@ -50,18 +50,57 @@ Node::Ptr Binder::visit(const ClassDecl::Ptr& decl) {
         return decl;
     }
 
-    auto objectType = new Class(name);
-    context->compiler->declare(objectType);
+    auto klass = new Class(name);
+    context->compiler->declare(klass);
+    decl->typeSlot = klass->slot;
 
-    auto symbol = std::make_shared<Symbol>(SymbolFlag::klass, name, objectType->slot);
+    auto symbol = std::make_shared<Symbol>(SymbolFlag::klass, name, klass->slot);
     symtable->insert(symbol);
 
-    decl->symtable = context->curSymTable();
     context->visit(CompileStage::visitClassDecl, decl, [this, decl]() {
         decl->members = std::static_pointer_cast<StmtsBlock>(visit(decl->members));
     });
 
+    // check weather have class constructor
+    processClassConstructors(decl);
+
     return decl;
+}
+
+void Binder::processClassConstructors(const ClassDecl::Ptr& decl) {
+    bool hasConstructor = false;
+    for(const auto & iterator : *decl->symtable) {
+        auto symbol = iterator.second;
+        if(symbol->flag == SymbolFlag::constructor) {
+            hasConstructor = true;
+            break;
+        }
+    };
+
+    if(!hasConstructor) {
+        auto constructorName = decl->getSimpleName() + "()";
+        auto func = new Function(constructorName, false);
+        compiler->declare(func);
+
+        func->funcType = FuncType::VM_CInit;
+        func->returnTypeSlot = decl->typeSlot;
+
+        // declare self
+        auto self = new Variable("self");
+        self->typeSlot = decl->typeSlot;
+        self->loc = 0;
+
+        func->localVars.push_back(self);
+        func->paramCount += 1;
+
+
+        assert(func->returnTypeSlot != -1);
+
+        auto symtable = context->curSymTable();
+        auto symbol = std::make_shared<Symbol>(SymbolFlag::constructor, constructorName, func->slot);
+        symtable->insert(symbol);
+    }
+
 }
 
 Node::Ptr Binder::visit(const FuncDecl::Ptr& decl) {
@@ -72,7 +111,7 @@ Node::Ptr Binder::visit(const FuncDecl::Ptr& decl) {
     // check if the function name duplicated
     if(symtable->find(funcSimpleName) != nullptr) {
         diagnostics->reportError(ErrorLevel::failure, "[Error] Duplicate function name");
-        return nullptr;
+        return decl;
     }
 
     // define Function

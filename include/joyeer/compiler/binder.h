@@ -51,6 +51,8 @@ protected:
     Node::Ptr visit(const ArrayType::Ptr& decl) override;
     Node::Ptr visit(const ImportStmt::Ptr& decl) override;
 
+    void processClassConstructors(const ClassDecl::Ptr& decl);
+
 private:
     CompileContext::Ptr context;
     CompilerService* compiler;

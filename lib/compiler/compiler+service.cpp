@@ -126,7 +126,7 @@ SymbolTable::Ptr CompilerService::getExportingSymbolTable(int typeSlot) {
     {                                                                \
         auto func = new Function(descriptor, true);                  \
         declare(func);                                               \
-        func->funcKind = FuncTypeKind::C_Func;                       \
+        func->funcType = FuncType::C_Func;                       \
         func->cFunction = (CFunction)&(cFuncImpl);                   \
         func->returnTypeSlot = (int)(retTypeSlot);                   \
         func->paramCount = 0;
@@ -134,7 +134,6 @@ SymbolTable::Ptr CompilerService::getExportingSymbolTable(int typeSlot) {
 #define DECLARE_FUNC_PARM(name, type) \
     {                                 \
         auto variable = new Variable(name); \
-        variable->parentSlot = func->slot;  \
         variable->typeSlot = (int)(type);   \
         variable->loc = func->paramCount;   \
         func->localVars.push_back(variable);\
@@ -156,7 +155,7 @@ SymbolTable::Ptr CompilerService::getExportingSymbolTable(int typeSlot) {
 #define DECLARE_CLASS_FUNC(name, typeSlot, cParamCount, cFuncImpl) \
     {                                                              \
         auto func = new Function(name, false);                     \
-        func->funcKind = FuncTypeKind::C_Func;                     \
+        func->funcType = FuncType::C_Func;                     \
         func->paramCount = cParamCount;                            \
         func->cFunction = (CFunction)&(cFuncImpl);                 \
         func->returnTypeSlot = (int)(typeSlot);                    \
@@ -167,7 +166,7 @@ SymbolTable::Ptr CompilerService::getExportingSymbolTable(int typeSlot) {
 #define DECLARE_CLASS_INIT(name, typeSlot, cParamCount, cFuncImpl) \
     {                                                              \
         auto func = new Function(name, false);                     \
-        func->funcKind = FuncTypeKind::C_CInit;                    \
+        func->funcType = FuncType::C_CInit;                    \
         func->paramCount = cParamCount;                            \
         func->cFunction = (CFunction)&(cFuncImpl);                 \
         func->returnTypeSlot = (int)(typeSlot);                    \

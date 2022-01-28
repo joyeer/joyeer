@@ -619,7 +619,7 @@ protected:
 
     void print(Function* func) {
         output<< "name: " << func->name;
-        if(func->funcKind == VM_Func && func->bytecodes->size > 0 ) {
+        if(func->funcType == VM_Func && func->bytecodes->size > 0 ) {
             newline();
             output << "bytecodes:";
             DEBUG_BLOCK_START

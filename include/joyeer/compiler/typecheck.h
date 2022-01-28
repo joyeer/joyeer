@@ -11,13 +11,16 @@ public:
     Node::Ptr visit(const Node::Ptr& node) override;
 
 protected:
+    // Type declaration
     Node::Ptr visit(const ModuleDecl::Ptr& decl) override;
     Node::Ptr visit(const ClassDecl::Ptr& classDecl) override;
+    Node::Ptr visit(const FuncDecl::Ptr& decl) override;
+
     Node::Ptr visit(const VarDecl::Ptr& varDecl) override;
     Node::Ptr visit(const TypeIdentifier::Ptr& decl) override;
     Node::Ptr visit(const FuncCallExpr::Ptr& decl) override;
 
-    // Types
+    // Type annotation
     Node::Ptr visit(const ArrayType::Ptr& decl) override;
     Node::Ptr visit(const OptionalType::Ptr& decl) override;
 
@@ -40,7 +43,6 @@ protected:
     Node::Ptr visit(const IfStmt::Ptr& decl) override;
     Node::Ptr visit(const WhileStmt::Ptr& decl) override;
     Node::Ptr visit(const StmtsBlock::Ptr& decl) override;
-    Node::Ptr visit(const FuncDecl::Ptr& decl) override;
     Node::Ptr visit(const ParameterClause::Ptr& decl) override;
     Node::Ptr visit(const Pattern::Ptr& decl) override;
     Node::Ptr visit(const ReturnStmt::Ptr& decl) override;

@@ -13,7 +13,7 @@ public:
     SourceFile(const std::string& workingDirectory, const std::string& path);
     
     // get .joyeer file's relative locationInParent against the working directory
-    [[nodiscard]] const std::string& getLocation() const {
+    [[nodiscard]] std::string getLocation() const {
         return pathInWorkingDirectory;
     }
     

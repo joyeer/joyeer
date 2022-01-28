@@ -53,7 +53,7 @@ Function::Function(const std::string &name, bool isStatic) :
         Type(name, ValueType::Func),
         isStatic(isStatic),
         cFunction(nullptr),
-        funcKind(FuncTypeKind::VM_Func) {
+        funcType(FuncType::VM_Func) {
 }
 
 int Function::getLocalVarCount() const {
@@ -115,7 +115,7 @@ Bool Optional::boolValue(intptr_t objAddr) {
     return optionalObj->wrappedValue;
 }
 
-//------------------------------------------------
+//------------/------------------------------------
 // Class implementation
 //------------------------------------------------
 
@@ -124,8 +124,17 @@ Class::Class(const std::string &name):
 }
 
 intptr_t Class::allocate(IsolateVM *vm) {
-    assert(false);
-    return 0;
+    int size = getSize();
+    intptr_t addr = vm->gc->allocate(this, sizeof(ClassData) + size);
+    return addr;
+}
+
+int Class::getSize() {
+    int size = 0;
+    for(const auto& field: instanceFields) {
+        size += field->getSize();
+    }
+    return size;
 }
 
 //------------------------------------------------
@@ -144,7 +153,7 @@ ModuleClass::ModuleClass(const std::string &name) :
 intptr_t StringClass::allocate(IsolateVM *vm, int typeSlot) {
 
     auto rawString = (*vm->strings)[typeSlot];
-    auto objAddr = vm->gc->allocate(this, (int)(rawString.size() + kIntSize + sizeof(ObjectHead) + kIntSize));
+    auto objAddr = vm->gc->allocate(this, (int)(rawString.size() + sizeof(StringData)));
     auto stringObj = reinterpret_cast<StringData*>(objAddr);
     stringObj->head.typeSlot = (Int)ValueType::String;
     stringObj->length = static_cast<Int>(rawString.size());
@@ -289,7 +298,7 @@ void ArrayClass::set(intptr_t object, Value index, Value value) {
 //------------------------------------------------
 
 DictClass::DictClass():
-Class(std::string("Array")) {
+Class(std::string("Dict")) {
 
 }
 

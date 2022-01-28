@@ -447,12 +447,13 @@ void InterpretedExecutor::execute(const Function *function) {
 
     push(savedFP, FuncCallFrame::size());
 
-    switch (function->funcKind) {
-        case FuncTypeKind::C_Func:
-        case FuncTypeKind::C_CInit:
+    switch (function->funcType) {
+        case FuncType::C_Func:
+        case FuncType::C_CInit:
             invokeCFunction(function);
             break;
-        case FuncTypeKind::VM_Func:
+        case FuncType::VM_CInit:
+        case FuncType::VM_Func:
             invokeVFunction(function);
             break;
         default:

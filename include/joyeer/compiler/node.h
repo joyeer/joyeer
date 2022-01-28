@@ -82,8 +82,6 @@ struct Node : std::enable_shared_from_this<Node> {
 
 protected:
     explicit Node(SyntaxKind kind);
-
-    VID vid = -1;
 };
 
 struct IdentifierExpr : public Node {
@@ -601,7 +599,7 @@ public:
     using Ptr = std::shared_ptr<ModuleDecl>;
 
 public:
-    ModuleDecl(const ModuleDescriptor::Ptr& descriptor, std::vector<Node::Ptr>& statements) :
+    explicit ModuleDecl(std::vector<Node::Ptr>& statements) :
             StmtsBlock(statements) {
         kind = SyntaxKind::module;
         assert(symtable != nullptr);
