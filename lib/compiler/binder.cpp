@@ -46,7 +46,8 @@ Node::Ptr Binder::visit(const ClassDecl::Ptr& decl) {
     auto name = decl->getSimpleName();
     
     if(symtable->find(name) != nullptr) {
-        diagnostics->reportError(ErrorLevel::failure, "[Error] duplicate class name");
+        diagnostics->reportError(ErrorLevel::failure, -1, -1 , Diagnostics::errorInvalidRedeclaration, name.c_str());
+        return decl;
     }
 
     auto objectType = new Class(name);
@@ -56,8 +57,7 @@ Node::Ptr Binder::visit(const ClassDecl::Ptr& decl) {
     symtable->insert(symbol);
 
     decl->symtable = context->curSymTable();
-    bool hasCustomizedConstructor = false;
-    context->visit(CompileStage::visitClassDecl, decl, [this, decl, symtable, &hasCustomizedConstructor]() {
+    context->visit(CompileStage::visitClassDecl, decl, [this, decl]() {
         decl->members = std::static_pointer_cast<StmtsBlock>(visit(decl->members));
     });
 
