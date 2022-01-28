@@ -29,11 +29,14 @@ Node::Ptr TypeChecker::visit(const ModuleDecl::Ptr& node) {
 }
 
 
-Node::Ptr TypeChecker::visit(const ClassDecl::Ptr& node) {
-    context->visit(CompileStage::visitClassDecl, node->members, [this, node]() {
-        node->members = std::static_pointer_cast<StmtsBlock>(visit(node->members));
+Node::Ptr TypeChecker::visit(const ClassDecl::Ptr& decl) {
+    context->visit(CompileStage::visitClassDecl, decl->members, [this, decl]() {
+        decl->members = std::static_pointer_cast<StmtsBlock>(visit(decl->members));
     });
-    return node;
+
+    compiler->exportClassDecl(decl);
+
+    return decl;
 }
 
 Node::Ptr TypeChecker::visit(const FuncDecl::Ptr& decl) {
@@ -465,10 +468,18 @@ Node::Ptr TypeChecker::visit(const DictLiteralExpr::Ptr& node) {
 Node::Ptr TypeChecker::visit(const MemberAccessExpr::Ptr& node) {
     node->callee = visit(node->callee);
 
-    context->visit(CompileStage::visitMemberAccess, node->member, [this, node](){
+    assert(node->callee->typeSlot);
+    auto symtable = compiler->getExportingSymbolTable(node->callee->typeSlot);
+    assert(symtable != nullptr);
 
+    context->symbols.push_back(symtable);
+    context->visit(CompileStage::visitMemberAccess, node->callee, [this, node](){
         node->member = visit(node->member);
     });
+    context->symbols.pop_back();
+
+    node->typeSlot = node->member->typeSlot;
+
     return node;
 }
 

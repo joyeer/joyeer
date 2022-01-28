@@ -27,6 +27,9 @@ public:
     // get specific type's exporting symbol table
     SymbolTable::Ptr getExportingSymbolTable(int typeSlot);
 
+    // export ClassDecl's Symbol table
+    void exportClassDecl(const ClassDecl::Ptr& decl);
+
 private:
     friend class IRGen;
     friend class IsolateVM;

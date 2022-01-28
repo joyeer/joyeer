@@ -192,6 +192,9 @@ Node::Ptr Binder::visit(const VarDecl::Ptr& decl) {
         case ValueType::Func:
             flag = SymbolFlag::var;
             break;
+        case ValueType::Class:
+            flag = SymbolFlag::field;
+            break;
         default:
             assert(false);
     }
@@ -290,6 +293,7 @@ Node::Ptr Binder::visit(const IdentifierExpr::Ptr& decl) {
             }
         }
             return decl;
+        case CompileStage::visitMemberAccess:
         case CompileStage::visitVarDecl:
         case CompileStage::visitFuncNameDecl:
             return decl;
@@ -549,7 +553,10 @@ Node::Ptr Binder::visit(const DictLiteralExpr::Ptr& decl) {
 
 Node::Ptr Binder::visit(const MemberAccessExpr::Ptr& decl) {
     decl->callee = visit(decl->callee);
-    decl->member = visit(decl->member);
+    context->visit(CompileStage::visitMemberAccess, decl->callee, [this, decl] {
+        decl->member = visit(decl->member);
+    });
+
     return decl;
 }
 
