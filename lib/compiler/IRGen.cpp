@@ -117,7 +117,9 @@ void IRGen::emit(const FuncDecl::Ptr& node) {
     }
 
     context->visit(CompileStage::visitFuncDecl, node, [node, &generator](){
-        generator.emit(node->codeBlock);
+        for(const auto& s: node->statements) {
+            generator.emit(s);
+        }
     });
 
     auto bytecodes = generator.writer.getBytecodes();

@@ -547,23 +547,22 @@ struct ClassDecl : public Node {
 
 
 // Represent a Function in Ast tree.
-struct FuncDecl : public Node {
+struct FuncDecl : public StmtsBlock {
 public:
     using Ptr = std::shared_ptr<FuncDecl>;
 
     Node::Ptr identifier = nullptr;               //IdentifierExpr
     Node::Ptr parameterClause;
-    Node::Ptr codeBlock;
     Node::Ptr returnType = nullptr;
     bool isConstructor = false;
     Symbol::Ptr  symbol;
 
-    FuncDecl(Node::Ptr identifier, Node::Ptr parameterClause, Node::Ptr returnType, Node::Ptr codeBlock) :
-            Node(SyntaxKind::funcDecl),
+    FuncDecl(Node::Ptr identifier, Node::Ptr parameterClause, Node::Ptr returnType, StmtsBlock::Ptr stmts) :
+            StmtsBlock(stmts->statements),
             identifier(std::move(identifier)),
             parameterClause(std::move(parameterClause)),
-            returnType(std::move(returnType)),
-            codeBlock(std::move(codeBlock)) {
+            returnType(std::move(returnType)) {
+        kind = SyntaxKind::funcDecl;
         symtable = std::make_shared<SymbolTable>();
     }
 

@@ -409,7 +409,11 @@ protected:
         }
 
         newline();
-        NodeVisitor::visit(decl->codeBlock);
+
+        for(const auto& statement: decl->statements) {
+            NodeVisitor::visit(statement);
+            newline();
+        }
 
         decTab();
         return decl;

@@ -69,7 +69,12 @@ Node::Ptr TypeChecker::visit(const FuncDecl::Ptr& decl) {
             funcType->localVars.push_back(variable);
         }
 
-        decl->codeBlock = visit(decl->codeBlock);
+        // visit FuncDecl statements
+        std::vector<Node::Ptr> statements;
+        for(const auto& s: decl->statements) {
+            statements.push_back(visit(s));
+        }
+        decl->statements = statements;
     });
 
     return decl;
@@ -300,6 +305,7 @@ Node::Ptr TypeChecker::visit(const IdentifierExpr::Ptr& node) {
         case CompileStage::visitModule:
         case CompileStage::visitExpr:
         case CompileStage::visitCodeBlock:
+        case CompileStage::visitFuncDecl:
         case CompileStage::visitMemberAccess: {
             auto symbol = context->lookup(name);
             if(symbol == nullptr) {

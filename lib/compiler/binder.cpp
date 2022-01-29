@@ -151,19 +151,24 @@ Node::Ptr Binder::visit(const FuncDecl::Ptr& decl) {
         if(decl->returnType != nullptr) {
             decl->returnType = visit(decl->returnType);
         }
-        
-        decl->codeBlock = visit(decl->codeBlock);
+
+        // visit FuncDecl statements
+        std::vector<Node::Ptr> statements;
+        for(const auto& s: decl->statements) {
+            statements.push_back(visit(s));
+        }
+        decl->statements = statements;
+
 
         // check the function return statement
         if(decl->returnType == nullptr) {
-            auto statements = std::static_pointer_cast<StmtsBlock>(decl->codeBlock);
-            if( !statements->statements.empty() ) {
-                auto lastStatement = statements->statements.back();
+            if( !decl->statements.empty() ) {
+                auto lastStatement = decl->statements.back();
                 if(lastStatement->kind != SyntaxKind::returnStmt) {
-                    statements->statements.push_back(std::make_shared<ReturnStmt>(nullptr));
+                    decl->statements.push_back(std::make_shared<ReturnStmt>(nullptr));
                 }
             } else {
-                statements->statements.push_back(std::make_shared<ReturnStmt>(nullptr));
+                decl->statements.push_back(std::make_shared<ReturnStmt>(nullptr));
             }
 
         }
@@ -217,9 +222,11 @@ Node::Ptr Binder::visit(const VarDecl::Ptr& decl) {
         case CompileStage::visitModule:
             symbol->isStatic = true;
             break;
+        case CompileStage::visitFuncDecl:
         case CompileStage::visitCodeBlock:
             symbol->isStatic = false;
             break;
+
         default:
             assert(false);
     }
