@@ -53,6 +53,9 @@ protected:
 
     void processClassConstructors(const ClassDecl::Ptr& decl);
 
+    // process class member func, e.g. self symbols
+    void processClassMemberFunc(const ClassDecl::Ptr& klassDecl, const FuncDecl::Ptr& funcDecl);
+
 private:
     CompileContext::Ptr context;
     CompilerService* compiler;

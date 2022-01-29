@@ -81,7 +81,7 @@ void Binder::processClassConstructors(const ClassDecl::Ptr& decl) {
     };
 
     if(!hasConstructor) {
-        auto defaultConstructor = FuncDecl::makeDefaultConstructor();
+        auto defaultConstructor = FuncDecl::makeDefaultConstructor(decl);
         context->visit(CompileStage::visitClassDecl, decl, [this, decl, &defaultConstructor]() {
             decl->members->statements.push_back(visit(defaultConstructor));
         });
@@ -303,6 +303,7 @@ Node::Ptr Binder::visit(const IdentifierExpr::Ptr& decl) {
             }
         }
             return decl;
+        case CompileStage::visitFuncDecl:
         case CompileStage::visitMemberAccess:
         case CompileStage::visitVarDecl:
         case CompileStage::visitFuncNameDecl:
@@ -597,4 +598,10 @@ Node::Ptr Binder::visit(const ImportStmt::Ptr& decl) {
     //
 
     return decl;
+}
+
+void Binder::processClassMemberFunc(const ClassDecl::Ptr &klassDecl, const FuncDecl::Ptr &funcDecl) {
+    auto symbol = std::make_shared<Symbol>(SymbolFlag::var, Keywords::SELF, 0);
+    symbol->typeSlot = klassDecl->typeSlot;
+    funcDecl->symtable->insert(symbol);
 }

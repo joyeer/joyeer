@@ -525,6 +525,27 @@ struct ReturnStmt : Node {
  *  Decl Section
  *********************************************************/
 
+struct ClassDecl : public Node {
+    using Ptr = std::shared_ptr<ClassDecl>;
+
+    Token::Ptr name = nullptr;
+    StmtsBlock::Ptr members;
+
+
+    ClassDecl(Token::Ptr name, StmtsBlock::Ptr members) :
+            Node(SyntaxKind::classDecl),
+            name(std::move(name)),
+            members(std::move(members)) {
+        symtable = std::make_shared<SymbolTable>();
+    }
+
+    std::string getSimpleName() override {
+        return name->rawValue;
+    }
+
+};
+
+
 // Represent a Function in Ast tree.
 struct FuncDecl : public Node {
 public:
@@ -547,10 +568,10 @@ public:
     }
 
     // make a default constructor
-    static Ptr makeDefaultConstructor();
+    static Ptr makeDefaultConstructor(const ClassDecl::Ptr& decl);
 
     // create a Constructor FuncDecl
-    static Ptr makeConstructor(const Node::Ptr& parameterClause, const StmtsBlock::Ptr& stmts);
+    static Ptr makeConstructor(const Node::Ptr& parameterClause, const Node::Ptr& returnType, const StmtsBlock::Ptr& stmts);
 
     // return func name
     std::string getSimpleName() override {
@@ -571,27 +592,6 @@ public:
         ss << DescriptorConstants::ParenthesisClose;
 
         return ss.str();
-    }
-
-};
-
-
-struct ClassDecl : public Node {
-    using Ptr = std::shared_ptr<ClassDecl>;
-
-    Token::Ptr name = nullptr;
-    StmtsBlock::Ptr members;
-
-
-    ClassDecl(Token::Ptr name, StmtsBlock::Ptr members) :
-            Node(SyntaxKind::classDecl),
-            name(std::move(name)),
-            members(std::move(members)) {
-        symtable = std::make_shared<SymbolTable>();
-    }
-
-    std::string getSimpleName() override {
-        return name->rawValue;
     }
 
 };
