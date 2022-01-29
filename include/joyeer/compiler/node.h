@@ -534,6 +534,8 @@ public:
     Node::Ptr parameterClause;
     Node::Ptr codeBlock;
     Node::Ptr returnType = nullptr;
+    bool isConstructor = false;
+    Symbol::Ptr  symbol;
 
     FuncDecl(Node::Ptr identifier, Node::Ptr parameterClause, Node::Ptr returnType, Node::Ptr codeBlock) :
             Node(SyntaxKind::funcDecl),
@@ -544,11 +546,11 @@ public:
         symtable = std::make_shared<SymbolTable>();
     }
 
+    // make a default constructor
+    static Ptr makeDefaultConstructor();
+
     // create a Constructor FuncDecl
-    static Ptr makeConstructor(const Node::Ptr& parameterClause, const StmtsBlock::Ptr& stmts) {
-        auto decl = std::make_shared<FuncDecl>(nullptr, parameterClause, nullptr, stmts);
-        return decl;
-    }
+    static Ptr makeConstructor(const Node::Ptr& parameterClause, const StmtsBlock::Ptr& stmts);
 
     // return func name
     std::string getSimpleName() override {
@@ -579,6 +581,7 @@ struct ClassDecl : public Node {
 
     Token::Ptr name = nullptr;
     StmtsBlock::Ptr members;
+
 
     ClassDecl(Token::Ptr name, StmtsBlock::Ptr members) :
             Node(SyntaxKind::classDecl),

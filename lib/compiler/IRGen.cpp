@@ -71,6 +71,62 @@ ModuleClass* IRGen::emit(const ModuleDecl::Ptr& decl) {
     return module;
 }
 
+void IRGen::emit(const ClassDecl::Ptr& decl) {
+
+    auto klass = (Class*)compiler->getType(decl->typeSlot);
+
+    IRGen generator(context);
+    context->visit(CompileStage::visitClassDecl, decl->members, [decl, &generator] {
+        for(const auto& member: decl->members->statements) {
+            if(member->kind != SyntaxKind::funcDecl) {
+                generator.emit(member);
+            }
+        }
+    });
+
+    generator.writer.write(Bytecode(OP_RETURN, 0));
+
+    auto defaultClassConstructor = new Function(decl->getSimpleName() + ".<cinit>", true);
+    defaultClassConstructor->funcType = FuncType::VM_CInit;
+    defaultClassConstructor->bytecodes = generator.writer.getBytecodes();
+    compiler->declare(defaultClassConstructor);
+    klass->defaultVMInitializerSlot = defaultClassConstructor->slot;
+
+    context->visit(CompileStage::visitClassDecl, decl->members, [this, decl] {
+        for(const auto& member: decl->members->statements) {
+            if(member->kind == SyntaxKind::funcDecl) {
+                emit(member);
+            }
+        }
+    });
+}
+
+
+void IRGen::emit(const FuncDecl::Ptr& node) {
+
+    auto function = (Function*)compiler->getType(node->typeSlot);
+
+    IRGen generator(context);
+
+    if(node->isConstructor) {
+        // if the FuncDecl is a constructor, call the default init first
+        auto constructorFunc = reinterpret_cast<Function*>(compiler->getType(node->typeSlot));
+        auto klass = (Class*)(compiler->getType(constructorFunc->returnTypeSlot));
+        generator.writer.write(Bytecode(OP_INVOKE, klass->defaultVMInitializerSlot));
+
+    }
+
+    context->visit(CompileStage::visitFuncDecl, node, [node, &generator](){
+        generator.emit(node->codeBlock);
+    });
+
+    auto bytecodes = generator.writer.getBytecodes();
+    assert(bytecodes->size > 0);
+
+    assert(function != nullptr && function->bytecodes  == nullptr);
+    function->bytecodes = bytecodes;
+}
+
 void IRGen::emit(const FuncCallExpr::Ptr& funcCallExpr) {
 
     assert(funcCallExpr->funcTypeSlot != -1);
@@ -399,21 +455,6 @@ void IRGen::emit(const StmtsBlock::Ptr& node) {
     });
 }
 
-void IRGen::emit(const FuncDecl::Ptr& node) {
-
-    auto function = (Function*)compiler->getType(node->typeSlot);
-
-    IRGen generator(context);
-
-    context->visit(CompileStage::visitFuncDecl, node, [node, &generator](){
-        generator.emit(node->codeBlock);
-    });
-
-    auto bytecodes = generator.writer.getBytecodes();
-    
-    assert(function != nullptr && function->bytecodes  == nullptr);
-    function->bytecodes = bytecodes;
-}
 
 void IRGen::emit(const ReturnStmt::Ptr& node) {
     Opcode op = OP_RETURN;
@@ -448,22 +489,16 @@ void IRGen::emit(const DictLiteralExpr::Ptr& node) {
     }
 }
 
-void IRGen::emit(const ClassDecl::Ptr& node) {
-    for(const auto& member: node->members->statements) {
-        if(member->kind == SyntaxKind::funcDecl) {
-            emit(member);
-        }
-    }
-}
+
 
 void IRGen::emit(const MemberAccessExpr::Ptr& node) {
     emit(node->callee);
-    
-//    writer.write({
-//        .opcode = OP_GETFIELD,
-//        .value = node->member->symbol->addressOfField
-//    });
-    assert(false);
+    auto symtable = compiler->getExportingSymbolTable(node->callee->typeSlot);
+
+    auto symbol = symtable->find(node->member->getSimpleName());
+    assert(symbol != nullptr);
+
+    writer.write(Bytecode(OP_GETFIELD, symbol->locationInParent));
 }
 
 void IRGen::emit(const SubscriptExpr::Ptr& node) {

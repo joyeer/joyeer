@@ -51,7 +51,8 @@ Node::Ptr Binder::visit(const ClassDecl::Ptr& decl) {
     }
 
     auto klass = new Class(name);
-    context->compiler->declare(klass);
+    compiler->declare(klass);
+
     decl->typeSlot = klass->slot;
 
     auto symbol = std::make_shared<Symbol>(SymbolFlag::klass, name, klass->slot);
@@ -63,6 +64,8 @@ Node::Ptr Binder::visit(const ClassDecl::Ptr& decl) {
 
     // check weather have class constructor
     processClassConstructors(decl);
+
+    compiler->exportClassDecl(decl);
 
     return decl;
 }
@@ -78,27 +81,18 @@ void Binder::processClassConstructors(const ClassDecl::Ptr& decl) {
     };
 
     if(!hasConstructor) {
-        auto constructorName = decl->getSimpleName() + "()";
-        auto func = new Function(constructorName, false);
-        compiler->declare(func);
+        auto defaultConstructor = FuncDecl::makeDefaultConstructor();
+        context->visit(CompileStage::visitClassDecl, decl, [this, decl, &defaultConstructor]() {
+            decl->members->statements.push_back(visit(defaultConstructor));
+        });
+    }
 
-        func->funcType = FuncType::VM_CInit;
-        func->returnTypeSlot = decl->typeSlot;
-
-        // declare self
-        auto self = new Variable("self");
-        self->typeSlot = decl->typeSlot;
-        self->loc = 0;
-
-        func->localVars.push_back(self);
-        func->paramCount += 1;
-
-
-        assert(func->returnTypeSlot != -1);
-
-        auto symtable = context->curSymTable();
-        auto symbol = std::make_shared<Symbol>(SymbolFlag::constructor, constructorName, func->slot);
-        symtable->insert(symbol);
+    auto symtable = context->curSymTable();
+    for(const auto& iterator: *decl->symtable) {
+        auto symbol = iterator.second;
+        if(symbol->flag == SymbolFlag::constructor) {
+            symtable->insert(symbol);
+        }
     }
 
 }
@@ -107,6 +101,11 @@ Node::Ptr Binder::visit(const FuncDecl::Ptr& decl) {
     auto symtable = context->curSymTable();
 
     auto funcSimpleName = decl->getSimpleName();
+
+    if(decl->isConstructor) {
+        auto typeName = context->curDeclType()->name;
+        funcSimpleName.replace(0, 4, typeName);
+    }
 
     // check if the function name duplicated
     if(symtable->find(funcSimpleName) != nullptr) {
@@ -123,8 +122,14 @@ Node::Ptr Binder::visit(const FuncDecl::Ptr& decl) {
         funcType->isStatic = true;
     }
 
+    if( decl->isConstructor) {
+        funcType->funcType = FuncType::VM_CInit;
+        funcType->returnTypeSlot = context->curDeclType()->slot;
+    }
+
+    auto symbolFlag = decl->isConstructor ? SymbolFlag::constructor : SymbolFlag::func;
     // prepare the symbol, register the symbol into parentTypeSlot
-    auto symbol = std::make_shared<Symbol>(SymbolFlag::func, funcSimpleName, funcType->slot);
+    auto symbol = std::make_shared<Symbol>(symbolFlag, funcSimpleName, funcType->slot);
     symtable->insert(symbol);
     
     // visit func declaration
@@ -142,7 +147,7 @@ Node::Ptr Binder::visit(const FuncDecl::Ptr& decl) {
                 decl->parameterClause = visit(decl->parameterClause);
             }
         });
-        
+
         if(decl->returnType != nullptr) {
             decl->returnType = visit(decl->returnType);
         }
@@ -152,10 +157,15 @@ Node::Ptr Binder::visit(const FuncDecl::Ptr& decl) {
         // check the function return statement
         if(decl->returnType == nullptr) {
             auto statements = std::static_pointer_cast<StmtsBlock>(decl->codeBlock);
-            auto lastStatement = statements->statements.back();
-            if(lastStatement->kind != SyntaxKind::returnStmt) {
+            if( !statements->statements.empty() ) {
+                auto lastStatement = statements->statements.back();
+                if(lastStatement->kind != SyntaxKind::returnStmt) {
+                    statements->statements.push_back(std::make_shared<ReturnStmt>(nullptr));
+                }
+            } else {
                 statements->statements.push_back(std::make_shared<ReturnStmt>(nullptr));
             }
+
         }
     });
     

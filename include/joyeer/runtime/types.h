@@ -267,6 +267,7 @@ struct Class : public Type {
 
     // static initializer slot
     Slot staticInitializerSlot = -1;
+    Slot defaultVMInitializerSlot = -1;
 
     IsolateVM* vm = nullptr;
 

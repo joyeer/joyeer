@@ -30,11 +30,10 @@ Node::Ptr TypeChecker::visit(const ModuleDecl::Ptr& node) {
 
 
 Node::Ptr TypeChecker::visit(const ClassDecl::Ptr& decl) {
+
     context->visit(CompileStage::visitClassDecl, decl->members, [this, decl]() {
         decl->members = std::static_pointer_cast<StmtsBlock>(visit(decl->members));
     });
-
-    compiler->exportClassDecl(decl);
 
     return decl;
 }
@@ -44,16 +43,18 @@ Node::Ptr TypeChecker::visit(const FuncDecl::Ptr& decl) {
     context->visit(CompileStage::visitFuncDecl, decl, [this, decl]() {
         auto funcType = context->curFuncType();
 
-        if(decl->returnType == nullptr) {
-            // no return
-            funcType->returnTypeSlot = compiler->getType(ValueType::Void)->slot;
-        } else {
-            decl->returnType = visit(decl->returnType);
-            funcType->returnTypeSlot = decl->returnType->typeSlot;
-            assert(funcType->returnTypeSlot != -1);
+        if(funcType->funcType != FuncType::VM_CInit && funcType->funcType != FuncType::C_CInit) {
+            // if not a class constructor, analyze it's return type
+            if(decl->returnType == nullptr) {
+                // no return
+                funcType->returnTypeSlot = compiler->getType(ValueType::Void)->slot;
+            } else {
+                decl->returnType = visit(decl->returnType);
+                funcType->returnTypeSlot = decl->returnType->typeSlot;
+                assert(funcType->returnTypeSlot != -1);
+            }
         }
-
-        // visit parameters decls
+                // visit parameters decls
         context->visit(CompileStage::visitFuncParamDecl, decl->parameterClause, [this, decl]() {
             decl->parameterClause = visit(decl->parameterClause);
         });
@@ -69,9 +70,6 @@ Node::Ptr TypeChecker::visit(const FuncDecl::Ptr& decl) {
         }
 
         decl->codeBlock = visit(decl->codeBlock);
-
-
-
     });
 
     return decl;
@@ -468,7 +466,7 @@ Node::Ptr TypeChecker::visit(const DictLiteralExpr::Ptr& node) {
 Node::Ptr TypeChecker::visit(const MemberAccessExpr::Ptr& node) {
     node->callee = visit(node->callee);
 
-    assert(node->callee->typeSlot);
+    assert(node->callee->typeSlot != -1);
     auto symtable = compiler->getExportingSymbolTable(node->callee->typeSlot);
     assert(symtable != nullptr);
 

@@ -35,6 +35,8 @@ struct Interpreter {
     }
 
     [[maybe_unused]] void run() {
+        assert(bytecodes != nullptr);
+        assert(bytecodes->bytecodes != nullptr);
 loop:
         auto bytecode = *(Bytecode *)(bytecodes->bytecodes + cp);
 
@@ -170,6 +172,8 @@ loop:
 
     inline void Handle_GETFIELD(Bytecode bytecode) {
         assert(OP_FROM_BYTECODE(bytecode) == OP_GETFIELD);
+        auto object = pop();
+        auto fieldOffset = VALUE_FROM_BYTECODE(bytecode);
         assert(false);
     }
 

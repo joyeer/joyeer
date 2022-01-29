@@ -1,8 +1,6 @@
 class A {
-    var i = 0
-    var j = 10
+    var i = 1
 }
 
 var a = A()
 print(message: a.i)
-print(message: a.j)

@@ -60,3 +60,24 @@ required(required) {
 std::string OptionalType::getSimpleName() {
     return "Optional<" + type->getSimpleName() + ">";
 }
+
+//-------------------------------------
+//FuncDecl implementation
+//-------------------------------------
+
+FuncDecl::Ptr FuncDecl::makeDefaultConstructor() {
+    auto parameterClause = std::make_shared<ParameterClause>( std::vector<Pattern::Ptr>());
+    auto stmts = std::make_shared<StmtsBlock>(std::vector<Node::Ptr>());
+    return makeConstructor(parameterClause, stmts);
+}
+
+// create a Constructor FuncDecl
+FuncDecl::Ptr FuncDecl::makeConstructor(const Node::Ptr& parameterClause, const StmtsBlock::Ptr& stmts) {
+    auto token = std::make_shared<Token>(TokenKind::identifier, "init", -1, -1);
+    auto nameIdentifier = std::make_shared<IdentifierExpr>(token);
+    auto decl = std::make_shared<FuncDecl>(nameIdentifier, parameterClause, nullptr, stmts);
+    decl->isConstructor = true;
+    return decl;
+}
+
+
