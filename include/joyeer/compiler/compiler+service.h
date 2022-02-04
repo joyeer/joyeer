@@ -12,7 +12,7 @@ public:
     void bootstrap();
 
     // return the entry file module
-    ModuleClass* run(const std::string& inputFile);
+    ModuleClass* compile(const std::string& inputFile);
 
     // register a kind
     int declare(Type* type);

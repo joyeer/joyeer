@@ -23,7 +23,7 @@ CompilerService::CompilerService(Diagnostics* diagnostics, CommandLineArguments:
     this->diagnostics = diagnostics;
 }
 
-ModuleClass* CompilerService::run(const std::string& inputFile) {
+ModuleClass* CompilerService::compile(const std::string& inputFile) {
     auto sourcefile = findSourceFile(inputFile);
     return compile(sourcefile);
 }
@@ -66,19 +66,19 @@ ModuleClass* CompilerService::compile(const SourceFile::Ptr& sourcefile) {
     SyntaxParser syntaxParser(context, sourcefile);
     auto block = syntaxParser.parse();
     CHECK_ERROR_RETURN_NULL
-    debugPrinter.print("compiler-parse-stage", block);
+    debugPrinter.print("parsing-stage", block);
 
     // gen the type from source code
     TypeGen typeGen(context);
     typeGen.visit(block);
     CHECK_ERROR_RETURN_NULL
-    debugPrinter.print("compiler-typegen-stage", block);
+    debugPrinter.print("typegen-stage", block);
 
-    // verify the types
-    TypeBinding typeChecker(context);
-    typeChecker.visit(std::static_pointer_cast<Node>(block));
+    // binding the types
+    TypeBinding typeBinding(context);
+    typeBinding.visit(std::static_pointer_cast<Node>(block));
     CHECK_ERROR_RETURN_NULL
-    debugPrinter.print("compiler-typechecker-stage", block);
+    debugPrinter.print("typebinding-stage", block);
 
     // generate IR code
     IRGen irGen(context);
@@ -86,7 +86,7 @@ ModuleClass* CompilerService::compile(const SourceFile::Ptr& sourcefile) {
     CHECK_ERROR_RETURN_NULL
 
     // debug print the types after IR code generated
-    debugPrinter.print("compiler-IRGEN-stage", types->types);
+    debugPrinter.print("IRGEN-stage", types->types);
 
     debugPrinter.close();
 
