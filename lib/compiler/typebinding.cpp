@@ -1,21 +1,21 @@
-#include "joyeer/compiler/typecheck.h"
+#include "joyeer/compiler/typebinding.h"
 #include "joyeer/diagnostic/diagnostic.h"
 #include "joyeer/runtime/types.h"
 #include "joyeer/compiler/compiler+service.h"
 #include <cassert>
 #include <utility>
 
-TypeChecker::TypeChecker(CompileContext::Ptr context):
+TypeBinding::TypeBinding(CompileContext::Ptr context):
 context(std::move(context)) {
     compiler = this->context->compiler;
     diagnostics = this->context->diagnostics;
 }
 
-Node::Ptr TypeChecker::visit(const Node::Ptr& node) {
+Node::Ptr TypeBinding::visit(const Node::Ptr& node) {
     return NodeVisitor::visit(node);
 }
 
-Node::Ptr TypeChecker::visit(const ModuleDecl::Ptr& node) {
+Node::Ptr TypeBinding::visit(const ModuleDecl::Ptr& node) {
     
     context->visit(CompileStage::visitModule, node, [this, node](){
         auto statements = std::vector<Node::Ptr>();
@@ -29,7 +29,7 @@ Node::Ptr TypeChecker::visit(const ModuleDecl::Ptr& node) {
 }
 
 
-Node::Ptr TypeChecker::visit(const ClassDecl::Ptr& decl) {
+Node::Ptr TypeBinding::visit(const ClassDecl::Ptr& decl) {
 
     context->visit(CompileStage::visitClassDecl, decl->members, [this, decl]() {
         decl->members = std::static_pointer_cast<StmtsBlock>(visit(decl->members));
@@ -38,7 +38,7 @@ Node::Ptr TypeChecker::visit(const ClassDecl::Ptr& decl) {
     return decl;
 }
 
-Node::Ptr TypeChecker::visit(const FuncDecl::Ptr& decl) {
+Node::Ptr TypeBinding::visit(const FuncDecl::Ptr& decl) {
 
     context->visit(CompileStage::visitFuncDecl, decl, [this, decl]() {
         auto funcType = context->curFuncType();
@@ -79,7 +79,7 @@ Node::Ptr TypeChecker::visit(const FuncDecl::Ptr& decl) {
     return decl;
 }
 
-Node::Ptr TypeChecker::visit(const FuncCallExpr::Ptr& decl) {
+Node::Ptr TypeBinding::visit(const FuncCallExpr::Ptr& decl) {
 
     if (decl->identifier->kind == SyntaxKind::dictLiteralExpr) {
         return visitDictFuncCallExpr(decl);
@@ -90,7 +90,7 @@ Node::Ptr TypeChecker::visit(const FuncCallExpr::Ptr& decl) {
     }
 }
 
-Node::Ptr TypeChecker::visitArrayFuncCallExpr(const FuncCallExpr::Ptr &decl) {
+Node::Ptr TypeBinding::visitArrayFuncCallExpr(const FuncCallExpr::Ptr &decl) {
     assert(decl->identifier->kind == SyntaxKind::arrayLiteralExpr);
     visit(decl->identifier);
     auto arrayLiteral = std::static_pointer_cast<ArrayLiteralExpr>(decl->identifier);
@@ -106,7 +106,7 @@ Node::Ptr TypeChecker::visitArrayFuncCallExpr(const FuncCallExpr::Ptr &decl) {
     return decl;
 }
 
-Node::Ptr TypeChecker::visitDictFuncCallExpr(const FuncCallExpr::Ptr &decl) {
+Node::Ptr TypeBinding::visitDictFuncCallExpr(const FuncCallExpr::Ptr &decl) {
     assert(decl->identifier->kind == SyntaxKind::dictLiteralExpr);
     decl->identifier = visit(decl->identifier);
     auto dictLiteral = std::static_pointer_cast<DictLiteralExpr>(decl->identifier);
@@ -133,7 +133,7 @@ Node::Ptr TypeChecker::visitDictFuncCallExpr(const FuncCallExpr::Ptr &decl) {
     return decl;
 }
 
-Node::Ptr TypeChecker::visitFuncCallExpr(const FuncCallExpr::Ptr &decl) {
+Node::Ptr TypeBinding::visitFuncCallExpr(const FuncCallExpr::Ptr &decl) {
     assert(decl->identifier->kind != SyntaxKind::dictLiteralExpr);
     assert(decl->identifier->kind != SyntaxKind::arrayLiteralExpr);
 
@@ -159,7 +159,7 @@ Node::Ptr TypeChecker::visitFuncCallExpr(const FuncCallExpr::Ptr &decl) {
 }
 
 
-Node::Ptr TypeChecker::visit(const MemberFuncCallExpr::Ptr& node) {
+Node::Ptr TypeBinding::visit(const MemberFuncCallExpr::Ptr& node) {
     visit(node->callee);
     
     auto typeSlot = node->callee->typeSlot;
@@ -189,7 +189,7 @@ Node::Ptr TypeChecker::visit(const MemberFuncCallExpr::Ptr& node) {
     return node;
 }
 
-Node::Ptr TypeChecker::visit(const VarDecl::Ptr& decl) {
+Node::Ptr TypeBinding::visit(const VarDecl::Ptr& decl) {
 
     auto simpleName = decl->getSimpleName();
     auto symtable = context->curSymTable();
@@ -254,7 +254,7 @@ Node::Ptr TypeChecker::visit(const VarDecl::Ptr& decl) {
     return decl;
 }
 
-Node::Ptr TypeChecker::visit(const OptionalType::Ptr &decl) {
+Node::Ptr TypeBinding::visit(const OptionalType::Ptr &decl) {
     auto name = decl->getSimpleName();
     auto symbol = context->lookup(name);
     if(symbol == nullptr) {
@@ -266,7 +266,7 @@ Node::Ptr TypeChecker::visit(const OptionalType::Ptr &decl) {
     return decl;
 }
 
-Node::Ptr TypeChecker::visit(const ParameterClause::Ptr& node) {
+Node::Ptr TypeBinding::visit(const ParameterClause::Ptr& node) {
 
     auto parameters = std::vector<Pattern::Ptr>();
     for(const auto& param: node->parameters) {
@@ -285,7 +285,7 @@ Node::Ptr TypeChecker::visit(const ParameterClause::Ptr& node) {
     return node;
 }
 
-Node::Ptr TypeChecker::visit(const Pattern::Ptr& node) {
+Node::Ptr TypeBinding::visit(const Pattern::Ptr& node) {
     if(node->typeExpr != nullptr) {
         context->visit(CompileStage::visitPatternType, node, [this, node]{
             node->typeExpr = visit(node->typeExpr);
@@ -300,7 +300,7 @@ Node::Ptr TypeChecker::visit(const Pattern::Ptr& node) {
     return node;
 }
 
-Node::Ptr TypeChecker::visit(const IdentifierExpr::Ptr& node) {
+Node::Ptr TypeBinding::visit(const IdentifierExpr::Ptr& node) {
     auto name = node->getSimpleName();
     switch (context->curStage()) {
         case CompileStage::visitModule:
@@ -331,7 +331,7 @@ Node::Ptr TypeChecker::visit(const IdentifierExpr::Ptr& node) {
     return node;
 }
 
-Node::Ptr TypeChecker::visit(const TypeIdentifier::Ptr& node) {
+Node::Ptr TypeBinding::visit(const TypeIdentifier::Ptr& node) {
     auto simpleName = node->getSimpleName();
     auto symbol = context->lookup(simpleName);
     if(symbol == nullptr) {
@@ -343,7 +343,7 @@ Node::Ptr TypeChecker::visit(const TypeIdentifier::Ptr& node) {
     return node;
 }
 
-Node::Ptr TypeChecker::visit(const StmtsBlock::Ptr& node) {
+Node::Ptr TypeBinding::visit(const StmtsBlock::Ptr& node) {
     assert(node->symtable != nullptr);
 
     context->visit(CompileStage::visitCodeBlock, node, [this, node]() {
@@ -356,7 +356,7 @@ Node::Ptr TypeChecker::visit(const StmtsBlock::Ptr& node) {
     return node;
 }
 
-Node::Ptr TypeChecker::visit(const ReturnStmt::Ptr& decl) {
+Node::Ptr TypeBinding::visit(const ReturnStmt::Ptr& decl) {
     if(decl->expr != nullptr) {
         decl->expr = visit(decl->expr);
     }
@@ -364,7 +364,7 @@ Node::Ptr TypeChecker::visit(const ReturnStmt::Ptr& decl) {
     return decl;
 }
 
-Node::Ptr TypeChecker::visit(const Expr::Ptr& node) {
+Node::Ptr TypeBinding::visit(const Expr::Ptr& node) {
     context->visit(CompileStage::visitExpr, node, [this, node]() {
         auto nodes = std::vector<Node::Ptr>();
         for(const auto& n: node->nodes) {
@@ -378,7 +378,7 @@ Node::Ptr TypeChecker::visit(const Expr::Ptr& node) {
 }
 
 
-Node::Ptr TypeChecker::visit(const LiteralExpr::Ptr& node) {
+Node::Ptr TypeBinding::visit(const LiteralExpr::Ptr& node) {
     switch(node->literal->kind) {
         case TokenKind::decimalLiteral:
             node->typeSlot = compiler->getType(ValueType::Int)->slot;
@@ -398,18 +398,18 @@ Node::Ptr TypeChecker::visit(const LiteralExpr::Ptr& node) {
     return node;
 }
 
-Node::Ptr TypeChecker::visit(const AssignExpr::Ptr& node) {
+Node::Ptr TypeBinding::visit(const AssignExpr::Ptr& node) {
     node->left = visit(node->left);
     node->expr = visit(node->expr);
     return node;
 }
 
-Node::Ptr TypeChecker::visit(const ParenthesizedExpr::Ptr& node) {
+Node::Ptr TypeBinding::visit(const ParenthesizedExpr::Ptr& node) {
     node->expr = visit(node->expr);
     return node;
 }
 
-Node::Ptr TypeChecker::visit(const IfStmt::Ptr& node) {
+Node::Ptr TypeBinding::visit(const IfStmt::Ptr& node) {
     node->condition = visit(node->condition);
     
     context->visit(CompileStage::visitCodeBlock, node->ifCodeBlock, [this, node](){
@@ -425,7 +425,7 @@ Node::Ptr TypeChecker::visit(const IfStmt::Ptr& node) {
     return node;
 }
 
-Node::Ptr TypeChecker::visit(const WhileStmt::Ptr& node) {
+Node::Ptr TypeBinding::visit(const WhileStmt::Ptr& node) {
     node->expr = visit(node->expr);
     
     context->visit(CompileStage::visitCodeBlock, node->codeBlock, [this, node]() {
@@ -434,7 +434,7 @@ Node::Ptr TypeChecker::visit(const WhileStmt::Ptr& node) {
     return node;
 }
 
-Node::Ptr TypeChecker::visit(const ArguCallExpr::Ptr& node) {
+Node::Ptr TypeBinding::visit(const ArguCallExpr::Ptr& node) {
     node->expr = visit(node->expr);
     node->typeSlot = node->expr->typeSlot;
     assert(node->typeSlot > -1);
@@ -443,14 +443,14 @@ Node::Ptr TypeChecker::visit(const ArguCallExpr::Ptr& node) {
 
 
 
-Node::Ptr TypeChecker::visit(const SelfExpr::Ptr& node) {
+Node::Ptr TypeBinding::visit(const SelfExpr::Ptr& node) {
     if(node->identifier != nullptr) {
         node->identifier = std::static_pointer_cast<IdentifierExpr>(visit(node->identifier));
     }
     return node;
 }
 
-Node::Ptr TypeChecker::visit(const ArrayLiteralExpr::Ptr& node) {
+Node::Ptr TypeBinding::visit(const ArrayLiteralExpr::Ptr& node) {
     node->typeSlot = compiler->getType(BuildIns::Object_Array)->slot;
     auto items = std::vector<Node::Ptr>();
     for(const auto& item: node->items) {
@@ -460,7 +460,7 @@ Node::Ptr TypeChecker::visit(const ArrayLiteralExpr::Ptr& node) {
     return node;
 }
 
-Node::Ptr TypeChecker::visit(const DictLiteralExpr::Ptr& node) {
+Node::Ptr TypeBinding::visit(const DictLiteralExpr::Ptr& node) {
     node->typeSlot = compiler->getType(BuildIns::Object_Dict)->slot;
     auto items = std::vector<std::tuple<Node::Ptr, Node::Ptr>>();
     for(auto item: node->items) {
@@ -473,7 +473,7 @@ Node::Ptr TypeChecker::visit(const DictLiteralExpr::Ptr& node) {
     return node;
 }
 
-Node::Ptr TypeChecker::visit(const MemberAccessExpr::Ptr& node) {
+Node::Ptr TypeBinding::visit(const MemberAccessExpr::Ptr& node) {
     node->callee = visit(node->callee);
 
     assert(node->callee->typeSlot != -1);
@@ -491,11 +491,11 @@ Node::Ptr TypeChecker::visit(const MemberAccessExpr::Ptr& node) {
     return node;
 }
 
-Node::Ptr TypeChecker::visit(const MemberAssignExpr::Ptr& node) {
+Node::Ptr TypeBinding::visit(const MemberAssignExpr::Ptr& node) {
     return node;
 }
 
-Node::Ptr TypeChecker::visit(const SubscriptExpr::Ptr& node) {
+Node::Ptr TypeBinding::visit(const SubscriptExpr::Ptr& node) {
     node->identifier = visit(node->identifier);
     node->indexExpr = visit(node->indexExpr);
 
@@ -516,20 +516,20 @@ Node::Ptr TypeChecker::visit(const SubscriptExpr::Ptr& node) {
     return node;
 }
 
-Node::Ptr TypeChecker::visit(const ArrayType::Ptr& node) {
+Node::Ptr TypeBinding::visit(const ArrayType::Ptr& node) {
     node->valueType = visit(node->valueType);
     node->typeSlot = compiler->getType(BuildIns::Object_Array)->slot;
     return node;
 }
 
-Node::Ptr TypeChecker::visit(const PrefixExpr::Ptr& node) {
+Node::Ptr TypeBinding::visit(const PrefixExpr::Ptr& node) {
     node->expr = visit(node->expr);
     node->typeSlot = node->expr->typeSlot;
     assert(node->typeSlot > -1);
     return node;
 }
 
-Node::Ptr TypeChecker::visit(const PostfixExpr::Ptr &node) {
+Node::Ptr TypeBinding::visit(const PostfixExpr::Ptr &node) {
     node->expr = visit(node->expr);
     if(node->op->token->rawValue == "!") {
         node->typeSlot = node->expr->typeSlot;
@@ -539,19 +539,19 @@ Node::Ptr TypeChecker::visit(const PostfixExpr::Ptr &node) {
     return node;
 }
 
-Node::Ptr TypeChecker::visit(const ImportStmt::Ptr& node) {
+Node::Ptr TypeBinding::visit(const ImportStmt::Ptr& node) {
     return node;
 }
 
-Node::Ptr TypeChecker::visit(const  BinaryExpr::Ptr& decl) {
+Node::Ptr TypeBinding::visit(const  BinaryExpr::Ptr& decl) {
     assert(false);
 }
 
-Node::Ptr TypeChecker::visit(const OperatorExpr::Ptr& decl) {
+Node::Ptr TypeBinding::visit(const OperatorExpr::Ptr& decl) {
     return decl;
 }
 
-Type* TypeChecker::typeOf(const Node::Ptr& node) {
+Type* TypeBinding::typeOf(const Node::Ptr& node) {
     switch (node->kind) {
         case SyntaxKind::identifierExpr:
             assert(node->typeSlot != -1);
@@ -591,7 +591,7 @@ Type* TypeChecker::typeOf(const Node::Ptr& node) {
     }
 }
 
-Type* TypeChecker::typeOf(const Expr::Ptr& node) {
+Type* TypeBinding::typeOf(const Expr::Ptr& node) {
     assert(node->binaries.empty());
     assert(node->prefix == nullptr);
     
@@ -622,7 +622,7 @@ Type* TypeChecker::typeOf(const Expr::Ptr& node) {
     return stack.top();
 }
 
-Type* TypeChecker::typeOf(const LiteralExpr::Ptr& node) {
+Type* TypeBinding::typeOf(const LiteralExpr::Ptr& node) {
     switch(node->literal->kind) {
         case booleanLiteral:
             return context->compiler->getType(ValueType::Bool);
@@ -637,14 +637,14 @@ Type* TypeChecker::typeOf(const LiteralExpr::Ptr& node) {
     }
 }
 
-Type* TypeChecker::typeOf(const FuncCallExpr::Ptr& node) {
+Type* TypeBinding::typeOf(const FuncCallExpr::Ptr& node) {
     auto funcName = node->getSimpleName();
     auto symbol = context->lookup(funcName);
     assert(symbol->flag == SymbolFlag::func);
     return compiler->getType(symbol->typeSlot);
 }
 
-Type* TypeChecker::typeOf(const MemberFuncCallExpr::Ptr& node) {
+Type* TypeBinding::typeOf(const MemberFuncCallExpr::Ptr& node) {
     assert(node->funcTypeSlot != -1);
     auto funcType = (Function*)( compiler->getType(node->funcTypeSlot));
     auto type = compiler->getType(funcType->returnTypeSlot);
@@ -652,31 +652,31 @@ Type* TypeChecker::typeOf(const MemberFuncCallExpr::Ptr& node) {
     return type;
 }
 
-Type* TypeChecker::typeOf(const ParenthesizedExpr::Ptr& node) {
+Type* TypeBinding::typeOf(const ParenthesizedExpr::Ptr& node) {
     return typeOf(node->expr);
 }
 
-Type* TypeChecker::typeOf(const SelfExpr::Ptr& node) {
+Type* TypeBinding::typeOf(const SelfExpr::Ptr& node) {
     return typeOf(node->identifier);
 }
 
-Type* TypeChecker::typeOf(const Pattern::Ptr& node) {
+Type* TypeBinding::typeOf(const Pattern::Ptr& node) {
     if(node->typeSlot == -1) {
         return compiler->getType(ValueType::Any);
     }
     return typeOf(node->typeExpr);
 }
 
-Type* TypeChecker::typeOf(const TypeIdentifier::Ptr& node) {
+Type* TypeBinding::typeOf(const TypeIdentifier::Ptr& node) {
     assert(node->typeSlot != -1);
     return compiler->getType(node->typeSlot);
 }
 
-Type* TypeChecker::typeOf(const DictLiteralExpr::Ptr& node) {
+Type* TypeBinding::typeOf(const DictLiteralExpr::Ptr& node) {
     assert(false);
 }
 
-Type* TypeChecker::typeOf(const ArrayLiteralExpr::Ptr& node) {
+Type* TypeBinding::typeOf(const ArrayLiteralExpr::Ptr& node) {
     Type* previousType = nullptr;
     for(const auto& item: node->items) {
         auto type = typeOf(item);
@@ -693,27 +693,27 @@ Type* TypeChecker::typeOf(const ArrayLiteralExpr::Ptr& node) {
     return previousType;
 }
 
-Type* TypeChecker::typeOf(const MemberAccessExpr::Ptr& node) {
+Type* TypeBinding::typeOf(const MemberAccessExpr::Ptr& node) {
     return typeOf(node->member);
 }
 
-Type* TypeChecker::typeOf(const SubscriptExpr::Ptr& node) {
+Type* TypeBinding::typeOf(const SubscriptExpr::Ptr& node) {
     return typeOf(node->identifier);
 }
 
-Type* TypeChecker::typeOf(const ArrayType::Ptr& node) {
+Type* TypeBinding::typeOf(const ArrayType::Ptr& node) {
     assert(false);
 }
 
-Type* TypeChecker::typeOf(const PrefixExpr::Ptr& node) {
+Type* TypeBinding::typeOf(const PrefixExpr::Ptr& node) {
     return typeOf(node->expr);
 }
 
-Type* TypeChecker::typeOf(const PostfixExpr::Ptr& node) {
+Type* TypeBinding::typeOf(const PostfixExpr::Ptr& node) {
     return typeOf(node->expr);
 }
 
-bool TypeChecker::verifyIfAssignExpressionIsLegal(const Node::Ptr &left, const Node::Ptr &right) {
+bool TypeBinding::verifyIfAssignExpressionIsLegal(const Node::Ptr &left, const Node::Ptr &right) {
 
     // rule 1: if left not specific the type, always, the right's type is assigned to left
     if(left->typeSlot == compiler->getType(ValueType::Unspecified)->slot) {

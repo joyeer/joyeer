@@ -1,6 +1,5 @@
 
 add_joyeer_library(JoyeerCompiler STATIC
-        binder.cpp
         compiler+service.cpp
         context.cpp
         lexparser.cpp
@@ -12,6 +11,7 @@ add_joyeer_library(JoyeerCompiler STATIC
         symtable.cpp
         syntaxparser.cpp
         token.cpp
-        typecheck.cpp
+        typegen.cpp
+        typebinding.cpp
         )
 

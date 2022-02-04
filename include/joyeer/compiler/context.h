@@ -52,7 +52,7 @@ public:
     Diagnostics* diagnostics = nullptr;
 
 protected:
-    friend class TypeChecker;
+    friend class TypeBinding;
 
     // Symbol Tables in parsing stack, basics, once dive into next AST, will push symbol table into stack
     std::vector<SymbolTable::Ptr> symbols;

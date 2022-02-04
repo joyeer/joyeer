@@ -1,5 +1,5 @@
-#ifndef __joyeer_compiler_syntax_binder_h__
-#define __joyeer_compiler_syntax_binder_h__
+#ifndef __joyeer_compiler_syntax_typegen_h__
+#define __joyeer_compiler_syntax_typegen_h__
 
 
 #include "joyeer/compiler/node+visitor.h"
@@ -10,10 +10,10 @@ struct SourceFile;
 
 // Bind all types and symbols during analyzing AST tree
 // Reduce the expression's depth level
-class Binder: public NodeVisitor {
+class TypeGen: public NodeVisitor {
 public:
     
-    explicit Binder(CompileContext::Ptr context);
+    explicit TypeGen(CompileContext::Ptr context);
     
     Node::Ptr visit(const ModuleDecl::Ptr& decl) override;
 protected:

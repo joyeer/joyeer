@@ -1,8 +1,8 @@
 #include "joyeer/compiler/compiler+service.h"
 
 #include "joyeer/compiler/lexparser.h"
-#include "joyeer/compiler/binder.h"
-#include "joyeer/compiler/typecheck.h"
+#include "joyeer/compiler/typegen.h"
+#include "joyeer/compiler/typebinding.h"
 #include "joyeer/compiler/syntaxparser.h"
 #include "joyeer/compiler/IRGen.h"
 #include "debugprinter.h"
@@ -68,14 +68,14 @@ ModuleClass* CompilerService::compile(const SourceFile::Ptr& sourcefile) {
     CHECK_ERROR_RETURN_NULL
     debugPrinter.print("compiler-parse-stage", block);
 
-    // Detect for kind creating
-    Binder binder(context);
-    binder.visit(block);
+    // gen the type from source code
+    TypeGen typeGen(context);
+    typeGen.visit(block);
     CHECK_ERROR_RETURN_NULL
-    debugPrinter.print("compiler-binding-stage", block);
+    debugPrinter.print("compiler-typegen-stage", block);
 
     // verify the types
-    TypeChecker typeChecker(context);
+    TypeBinding typeChecker(context);
     typeChecker.visit(std::static_pointer_cast<Node>(block));
     CHECK_ERROR_RETURN_NULL
     debugPrinter.print("compiler-typechecker-stage", block);

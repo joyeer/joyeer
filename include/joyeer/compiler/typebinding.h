@@ -1,12 +1,12 @@
-#ifndef __joyeer_compiler_typecheck_h__
-#define __joyeer_compiler_typecheck_h__
+#ifndef __joyeer_compiler_typebinding_h__
+#define __joyeer_compiler_typebinding_h__
 
 #include "joyeer/compiler/context.h"
 #include "joyeer/compiler/node+visitor.h"
 
-class TypeChecker : public NodeVisitor {
+class TypeBinding : public NodeVisitor {
 public:
-    explicit TypeChecker(CompileContext::Ptr context);
+    explicit TypeBinding(CompileContext::Ptr context);
 
     Node::Ptr visit(const Node::Ptr& node) override;
 
@@ -84,4 +84,4 @@ protected:
     Diagnostics* diagnostics;
 };
 
-#endif
+#endif // __joyeer_compiler_typebinding_h__
