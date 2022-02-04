@@ -28,6 +28,7 @@ void IRGen::emit(const Node::Ptr& node) {
         NODE_EMIT(SyntaxKind::stmtsBlock, StmtsBlock)
         NODE_EMIT(SyntaxKind::ifStmt, IfStmt)
         NODE_EMIT(SyntaxKind::expr, Expr)
+        NODE_EMIT(SyntaxKind::selfExpr, SelfExpr)
         NODE_EMIT(SyntaxKind::prefixExpr, PrefixExpr)
         NODE_EMIT(SyntaxKind::postfixExpr, PostfixExpr)
         NODE_EMIT(SyntaxKind::identifierExpr, IdentifierExpr)
@@ -374,6 +375,10 @@ void IRGen::emit(const Expr::Ptr& node) {
             emit(n);
         }
     }
+}
+
+void IRGen::emit(const SelfExpr::Ptr& decl) {
+    writer.write(Bytecode(OP_OLOAD, 0));
 }
 
 void IRGen::emit(const OperatorExpr::Ptr& node) {

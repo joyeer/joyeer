@@ -412,6 +412,8 @@ struct SelfExpr : Node {
             identifier(std::move(identifier)) {
     }
 
+    static Ptr create();
+
 };
 
 struct SubscriptExpr : Node {
@@ -519,6 +521,7 @@ struct ReturnStmt : Node {
             expr(std::move(expr)) {
     }
 
+
 };
 
 /********************************************************
@@ -555,43 +558,25 @@ public:
     Node::Ptr parameterClause;
     Node::Ptr returnType = nullptr;
     bool isConstructor = false;
+    bool isStatic = false;
     Symbol::Ptr  symbol;
 
-    FuncDecl(Node::Ptr identifier, Node::Ptr parameterClause, Node::Ptr returnType, StmtsBlock::Ptr stmts) :
-            StmtsBlock(stmts->statements),
-            identifier(std::move(identifier)),
-            parameterClause(std::move(parameterClause)),
-            returnType(std::move(returnType)) {
-        kind = SyntaxKind::funcDecl;
-        symtable = std::make_shared<SymbolTable>();
-    }
+    FuncDecl(Node::Ptr identifier, Node::Ptr parameterClause, Node::Ptr returnType, StmtsBlock::Ptr stmts);
+
+    // bind self symbol
+    void bindClass(const ClassDecl::Ptr& decl);
 
     // make a default constructor
-    static Ptr makeDefaultConstructor(const ClassDecl::Ptr& decl);
+    static Ptr createDefaultConstructor();
 
     // create a Constructor FuncDecl
-    static Ptr makeConstructor(const Node::Ptr& parameterClause, const Node::Ptr& returnType, const StmtsBlock::Ptr& stmts);
+    static Ptr createConstructor(const Node::Ptr& parameterClause, const Node::Ptr& returnType, const StmtsBlock::Ptr& stmts);
 
     // return func name
-    std::string getSimpleName() override {
-        std::stringstream ss;
+    std::string getSimpleName() override ;
 
-        // basis name
-        if (identifier != nullptr) {
-            ss << identifier->getSimpleName();
-        }
-
-        // parameters
-        ss << DescriptorConstants::ParenthesisOpen;
-        if (parameterClause) {
-            for (const auto& p: std::static_pointer_cast<ParameterClause>(parameterClause)->parameters) {
-                ss << p->getSimpleName() << DescriptorConstants::Colon;
-            }
-        }
-        ss << DescriptorConstants::ParenthesisClose;
-
-        return ss.str();
-    }
+    // get constructor simple name
+    std::string getConstructorSimpleName(const ClassDecl::Ptr& decl) ;
 
 };
 

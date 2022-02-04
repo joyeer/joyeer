@@ -80,14 +80,19 @@ void Binder::processClassConstructors(const ClassDecl::Ptr& decl) {
         }
     };
 
+    auto symtable = context->curSymTable();
     if(!hasConstructor) {
-        auto defaultConstructor = FuncDecl::makeDefaultConstructor(decl);
+        auto defaultConstructor = FuncDecl::createDefaultConstructor();
+        defaultConstructor->bindClass(decl);
+        auto name = defaultConstructor->getConstructorSimpleName(decl);
+        auto symbol = std::make_shared<Symbol>(SymbolFlag::constructor, name, decl->typeSlot);
+        symtable->insert(symbol);
         context->visit(CompileStage::visitClassDecl, decl, [this, decl, &defaultConstructor]() {
             decl->members->statements.push_back(visit(defaultConstructor));
         });
     }
 
-    auto symtable = context->curSymTable();
+
     for(const auto& iterator: *decl->symtable) {
         auto symbol = iterator.second;
         if(symbol->flag == SymbolFlag::constructor) {
@@ -102,11 +107,6 @@ Node::Ptr Binder::visit(const FuncDecl::Ptr& decl) {
 
     auto funcSimpleName = decl->getSimpleName();
 
-    if(decl->isConstructor) {
-        auto typeName = context->curDeclType()->name;
-        funcSimpleName.replace(0, 4, typeName);
-    }
-
     // check if the function name duplicated
     if(symtable->find(funcSimpleName) != nullptr) {
         diagnostics->reportError(ErrorLevel::failure, "[Error] Duplicate function name");
@@ -118,13 +118,12 @@ Node::Ptr Binder::visit(const FuncDecl::Ptr& decl) {
     compiler->declare(funcType);
     decl->typeSlot = funcType->slot;
 
-    if( context->curDeclType()->kind == ValueType::Module) {
-        funcType->isStatic = true;
+    if(decl->isConstructor) {
+        funcType->funcType = FuncType::VM_CInit;
     }
 
-    if( decl->isConstructor) {
-        funcType->funcType = FuncType::VM_CInit;
-        funcType->returnTypeSlot = context->curDeclType()->slot;
+    if( context->curDeclType()->kind == ValueType::Module) {
+        funcType->isStatic = true;
     }
 
     auto symbolFlag = decl->isConstructor ? SymbolFlag::constructor : SymbolFlag::func;
@@ -142,7 +141,7 @@ Node::Ptr Binder::visit(const FuncDecl::Ptr& decl) {
         });
         
         // start to process function parameters
-        context->visit(CompileStage::visitFuncParamDecl, decl->parameterClause, [this, decl]() {
+        context->visit(CompileStage::visitPatternType, decl->parameterClause, [this, decl]() {
             if(decl->parameterClause != nullptr) {
                 decl->parameterClause = visit(decl->parameterClause);
             }
@@ -173,7 +172,6 @@ Node::Ptr Binder::visit(const FuncDecl::Ptr& decl) {
 
         }
     });
-    
     return decl;
 }
 
@@ -293,7 +291,7 @@ Node::Ptr Binder::visit(const IdentifierExpr::Ptr& decl) {
     auto name = decl->getSimpleName();
 
     switch (context->curStage()) {
-        case CompileStage::visitFuncParamDecl: {
+        case CompileStage::visitPatternType: {
             // verify the func declaration's parameter duplicated name
             auto table = context->curSymTable();
             if(table->find(name) != nullptr) {

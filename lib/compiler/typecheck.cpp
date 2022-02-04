@@ -43,7 +43,7 @@ Node::Ptr TypeChecker::visit(const FuncDecl::Ptr& decl) {
     context->visit(CompileStage::visitFuncDecl, decl, [this, decl]() {
         auto funcType = context->curFuncType();
 
-        if(funcType->funcType != FuncType::VM_CInit && funcType->funcType != FuncType::C_CInit) {
+        if(funcType->funcType != FuncType::C_CInit) {
             // if not a class constructor, analyze it's return type
             if(decl->returnType == nullptr) {
                 // no return
@@ -54,10 +54,9 @@ Node::Ptr TypeChecker::visit(const FuncDecl::Ptr& decl) {
                 assert(funcType->returnTypeSlot != -1);
             }
         }
-                // visit parameters decls
-        context->visit(CompileStage::visitFuncParamDecl, decl->parameterClause, [this, decl]() {
-            decl->parameterClause = visit(decl->parameterClause);
-        });
+
+        // visit parameters decls
+        decl->parameterClause = visit(decl->parameterClause);
 
         assert(funcType->paramCount == 0);
 
@@ -287,9 +286,11 @@ Node::Ptr TypeChecker::visit(const ParameterClause::Ptr& node) {
 }
 
 Node::Ptr TypeChecker::visit(const Pattern::Ptr& node) {
-    node->identifier = std::static_pointer_cast<IdentifierExpr>(visit(node->identifier));
     if(node->typeExpr != nullptr) {
-        node->typeExpr = visit(node->typeExpr);
+        context->visit(CompileStage::visitPatternType, node, [this, node]{
+            node->typeExpr = visit(node->typeExpr);
+        });
+
         node->typeSlot = node->typeExpr->typeSlot;
     } else {
         node->typeSlot = compiler->getType(ValueType::Unspecified)->slot;
@@ -306,7 +307,8 @@ Node::Ptr TypeChecker::visit(const IdentifierExpr::Ptr& node) {
         case CompileStage::visitExpr:
         case CompileStage::visitCodeBlock:
         case CompileStage::visitFuncDecl:
-        case CompileStage::visitMemberAccess: {
+        case CompileStage::visitMemberAccess:
+        case CompileStage::visitPatternType:{
             auto symbol = context->lookup(name);
             if(symbol == nullptr) {
                 diagnostics->reportError(ErrorLevel::failure, "[TODO][Error] Cannot find variable");
@@ -316,9 +318,11 @@ Node::Ptr TypeChecker::visit(const IdentifierExpr::Ptr& node) {
             node->typeSlot =symbol->typeSlot;
         }
             break;
-        case CompileStage::visitAssignExpr:
-        case CompileStage::visitFuncParamDecl:
         case CompileStage::visitVarDecl:
+
+        case CompileStage::visitAssignExpr:
+
+
             // nothing to do
             break;
         default:

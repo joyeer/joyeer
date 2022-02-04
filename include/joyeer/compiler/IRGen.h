@@ -19,6 +19,7 @@ protected:
     void emit(const ArguCallExpr::Ptr& node);
     void emit(const LiteralExpr::Ptr& node);
     void emit(const VarDecl::Ptr& node);
+    void emit(const SelfExpr::Ptr& decl);
     void emit(const PrefixExpr::Ptr& node);
     void emit(const PostfixExpr::Ptr& node);
     void emit(const IdentifierExpr::Ptr& node);
