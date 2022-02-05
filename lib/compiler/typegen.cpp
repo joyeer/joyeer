@@ -91,12 +91,26 @@ void TypeGen::processClassConstructors(const ClassDecl::Ptr& decl) {
         }
     };
 
-    auto defaultClassConstructor = new Function(decl->getSimpleName() + ".<cinit>", true);
-    defaultClassConstructor->funcType = FuncType::VM_CInit;
-    compiler->declare(defaultClassConstructor);
+    // build default <init> function
+    auto defaultCInit = new Function(decl->getSimpleName() + ".<cinit>", true);
+    {
+        defaultCInit->funcType = FuncType::VM_CInit;
+        defaultCInit->paramCount = 1;
+        // set self variable
+        auto selfVariable = new Variable("self");
+        selfVariable->typeSlot = decl->typeSlot;
+        selfVariable->loc = 0;
+        defaultCInit->localVars.push_back(selfVariable);
+
+        // set the return type slot
+        defaultCInit->returnTypeSlot = decl->typeSlot;
+
+        compiler->declare(defaultCInit);
+    }
+
     auto klass = context->curClassType();
     assert(klass != nullptr);
-    klass->defaultVMInitializerSlot = defaultClassConstructor->slot;
+    klass->defaultInitializerSlot = defaultCInit->slot;
 
     auto symtable = context->curSymTable();
     if(!hasConstructor) {

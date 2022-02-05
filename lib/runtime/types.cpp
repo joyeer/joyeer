@@ -123,6 +123,10 @@ Value Class::ClassData::getField(int index) {
     return ((Value*)data)[index];
 }
 
+void Class::ClassData::putField(int index, Value newValue) {
+    ((Value*)data)[index] = newValue;
+}
+
 Class::Class(const std::string &name):
     Type(name, ValueType::Class){
 }
@@ -146,6 +150,13 @@ Value Class::getField(intptr_t objAddr, int fieldIndex) {
     assert(fieldIndex < instanceFields.size());
     return klassObj->getField(fieldIndex);
 }
+
+void Class::putField(intptr_t objAddr, int fieldIndex, Value newValue) {
+    auto klassObj = reinterpret_cast<ClassData*>(objAddr);
+    assert(fieldIndex < instanceFields.size());
+    klassObj->putField(fieldIndex, newValue);
+}
+
 
 //------------------------------------------------
 // Module implementation

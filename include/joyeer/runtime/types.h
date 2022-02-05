@@ -260,6 +260,7 @@ struct Class : public Type {
         Value data[0];
 
         Value getField(int index);
+        void putField(int index, Value newValue);
     };
 
     constexpr static int kObjectHeadOffset = 0;
@@ -269,7 +270,7 @@ struct Class : public Type {
 
     // static initializer slot
     Slot staticInitializerSlot = -1;
-    Slot defaultVMInitializerSlot = -1;
+    Slot defaultInitializerSlot = -1;
 
     IsolateVM* vm = nullptr;
 
@@ -293,6 +294,7 @@ struct Class : public Type {
 
     // get object's field value
     Value getField(intptr_t objAddr, int fieldIndex);
+    void putField(intptr_t objAddr, int fieldIndex, Value newValue);
 };
 
 struct ModuleClass : public Class {

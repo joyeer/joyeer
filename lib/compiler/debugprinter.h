@@ -623,6 +623,22 @@ protected:
 
     void print(Function* func) {
         output<< "name: " << func->name;
+        newline();
+        output << "param-count: " << func->paramCount;
+        if (func->localVars.size() > 0) {
+            newline();
+            output << "local-vars:";
+            for(auto i = 0 ; i < func->localVars.size(); i ++ ) {
+                newline();
+                output << "-";
+                DEBUG_BLOCK_START
+                    output << "name: " << func->localVars[i]->name;
+                DEBUG_BLOCK_END
+            }
+        }
+        newline();
+        output << "return-type-slot: " << func->returnTypeSlot;
+
         if((func->funcType == VM_Func || func->funcType == VM_CInit) && func->bytecodes != nullptr ) {
             newline();
             output << "bytecodes:";

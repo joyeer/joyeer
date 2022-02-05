@@ -167,7 +167,13 @@ loop:
 
     inline void Handle_PUTFIELD(Bytecode bytecode) {
         assert(OP_FROM_BYTECODE(bytecode) == OP_PUTFIELD);
-        assert(false);
+        auto fieldOffset = VALUE_FROM_BYTECODE(bytecode);
+        auto object = pop();
+        auto value = pop();
+        auto objectHead = (ObjectHead *) object;
+        auto classTypeSlot = objectHead->typeSlot;
+        auto klass = (Class*)(*executor->vm->types)[classTypeSlot];
+        klass->putField(object, fieldOffset, value);
     }
 
     inline void Handle_GETFIELD(Bytecode bytecode) {

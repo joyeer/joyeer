@@ -86,8 +86,9 @@ void IRGen::emit(const ClassDecl::Ptr& decl) {
     });
 
     // default Class.<init>'s bytecodes
-    generator.writer.write(Bytecode(OP_RETURN, 0));
-    auto defaultCInitConstructor = (Function*)compiler->getType(klass->defaultVMInitializerSlot);
+    generator.writer.write(Bytecode(OP_OLOAD, 0));
+    generator.writer.write(Bytecode(OP_IRETURN, -1));
+    auto defaultCInitConstructor = (Function*)compiler->getType(klass->defaultInitializerSlot);
     defaultCInitConstructor->bytecodes = generator.writer.getBytecodes();
 
     context->visit(CompileStage::visitClassDecl, decl, [this, decl] {
@@ -110,8 +111,8 @@ void IRGen::emit(const FuncDecl::Ptr& node) {
         // if the FuncDecl is a constructor, call the default init first
         auto constructorFunc = reinterpret_cast<Function*>(compiler->getType(node->typeSlot));
         auto klass = (Class*)(compiler->getType(constructorFunc->returnTypeSlot));
-        generator.writer.write(Bytecode(OP_INVOKE, klass->defaultVMInitializerSlot));
-
+        generator.writer.write(Bytecode(OP_INVOKE, klass->defaultInitializerSlot));
+        generator.writer.write(Bytecode(OP_POP, -1));
     }
 
     context->visit(CompileStage::visitFuncDecl, node, [node, &generator](){
@@ -207,7 +208,9 @@ void IRGen::emit(const VarDecl::Ptr& node) {
             if(symbol->isStatic) {
                 writer.write(Bytecode(OP_PUTSTATIC, symbol->parentTypeSlot, symbol->locationInParent));
             } else {
-                writer.write(Bytecode(OP_OLOAD, -1));
+                // load *self* from first parameter
+                writer.write(Bytecode(OP_OLOAD, 0));
+                writer.write(Bytecode(OP_PUTFIELD, symbol->locationInParent));
             }
         }
             break;
@@ -464,10 +467,12 @@ void IRGen::emit(const ReturnStmt::Ptr& node) {
     Opcode op = OP_RETURN;
     if(node->expr != nullptr) {
         emit(node->expr);
-        op = OP_IRETURN;
+        writer.write(Bytecode(OP_IRETURN, -1));
+    } else {
+        writer.write(Bytecode(OP_RETURN, -1));
     }
     
-    writer.write(Bytecode(op, -1));
+
 }
 
 void IRGen::emit(const ArrayLiteralExpr::Ptr& node) {

@@ -1,6 +1,9 @@
 class A {
     var i = 1
+    var j = 100
 }
 
 var a = A()
 print(message: a.i)
+print(message: a.j)
+
