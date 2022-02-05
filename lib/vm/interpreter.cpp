@@ -174,8 +174,13 @@ loop:
         assert(OP_FROM_BYTECODE(bytecode) == OP_GETFIELD);
         auto object = pop();
         auto fieldOffset = VALUE_FROM_BYTECODE(bytecode);
-        assert(false);
+
+        auto klass = (Class *) object;
+        auto value = klass->getField(object, (int)fieldOffset);
+        push(value);
     }
+
+
 
     inline void Handle_PUTSTATIC(Bytecode bytecode) {
         assert(OP_FROM_BYTECODE(bytecode) == OP_PUTSTATIC);

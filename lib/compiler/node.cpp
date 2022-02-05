@@ -147,11 +147,11 @@ std::string FuncDecl::getSimpleName() {
     return ss.str();
 }
 
-std::string FuncDecl::getConstructorSimpleName(const ClassDecl::Ptr& decl) {
+std::string FuncDecl::getSimpleConstructorName(const std::string& name) {
     std::stringstream ss;
 
     // basis name
-    ss << decl->getSimpleName();
+    ss << name;
 
     // parameters
     ss << DescriptorConstants::ParenthesisOpen;

@@ -35,6 +35,7 @@ symbols() {
 
 bool SymbolTable::insert(const Symbol::Ptr& symbol) {
     if(symbols.find(symbol->name) != symbols.end()) {
+        assert(false);
         return false;
     }
 

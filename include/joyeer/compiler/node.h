@@ -576,7 +576,7 @@ public:
     std::string getSimpleName() override ;
 
     // get constructor simple name
-    std::string getConstructorSimpleName(const ClassDecl::Ptr& decl) ;
+    std::string getSimpleConstructorName(const std::string& className) ;
 
 };
 

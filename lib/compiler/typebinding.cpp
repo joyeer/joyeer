@@ -146,7 +146,7 @@ Node::Ptr TypeBinding::visitFuncCallExpr(const FuncCallExpr::Ptr &decl) {
     }
 
     decl->funcTypeSlot = symbol->typeSlot;
-    auto funcType = (Function*)compiler->getType(decl->funcTypeSlot);
+    auto funcType = reinterpret_cast<Function*>(compiler->getType(decl->funcTypeSlot));
     assert(funcType != nullptr && funcType->returnTypeSlot != -1);
     decl->typeSlot = funcType->returnTypeSlot;
 
@@ -315,7 +315,7 @@ Node::Ptr TypeBinding::visit(const IdentifierExpr::Ptr& node) {
             }
             assert(symbol->typeSlot != -1);
             assert(node->typeSlot == -1);
-            node->typeSlot =symbol->typeSlot;
+            node->typeSlot = symbol->typeSlot;
         }
             break;
         case CompileStage::visitVarDecl:

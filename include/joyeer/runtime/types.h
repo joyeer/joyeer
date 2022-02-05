@@ -258,6 +258,8 @@ struct Class : public Type {
     struct ClassData {
         ObjectHead head {};
         Value data[0];
+
+        Value getField(int index);
     };
 
     constexpr static int kObjectHeadOffset = 0;
@@ -288,6 +290,9 @@ struct Class : public Type {
         }
         return size;
     }
+
+    // get object's field value
+    Value getField(intptr_t objAddr, int fieldIndex);
 };
 
 struct ModuleClass : public Class {

@@ -84,19 +84,15 @@ void TypeGen::processClassConstructors(const ClassDecl::Ptr& decl) {
     if(!hasConstructor) {
         auto defaultConstructor = FuncDecl::createDefaultConstructor();
         defaultConstructor->bindClass(decl);
-        auto name = defaultConstructor->getConstructorSimpleName(decl);
-        auto symbol = std::make_shared<Symbol>(SymbolFlag::constructor, name, decl->typeSlot);
-        symtable->insert(symbol);
         context->visit(CompileStage::visitClassDecl, decl, [this, decl, &defaultConstructor]() {
             decl->members->statements.push_back(visit(defaultConstructor));
         });
     }
 
-
-    for(const auto& iterator: *decl->symtable) {
-        auto symbol = iterator.second;
-        if(symbol->flag == SymbolFlag::constructor) {
-            symtable->insert(symbol);
+    // all ClassDecl's constructors should be exported as Symbol
+    for(const auto& symbol : *decl->symtable ) {
+        if(symbol.second->flag == SymbolFlag::constructor) {
+            symtable->insert(symbol.second);
         }
     }
 
@@ -106,6 +102,11 @@ Node::Ptr TypeGen::visit(const FuncDecl::Ptr& decl) {
     auto symtable = context->curSymTable();
 
     auto funcSimpleName = decl->getSimpleName();
+
+    if(decl->isConstructor) {
+        auto classType = context->curDeclType();
+        funcSimpleName = decl->getSimpleConstructorName(classType->name);
+    }
 
     // check if the function name duplicated
     if(symtable->find(funcSimpleName) != nullptr) {
@@ -127,6 +128,7 @@ Node::Ptr TypeGen::visit(const FuncDecl::Ptr& decl) {
     }
 
     auto symbolFlag = decl->isConstructor ? SymbolFlag::constructor : SymbolFlag::func;
+
     // prepare the symbol, register the symbol into parentTypeSlot
     auto symbol = std::make_shared<Symbol>(symbolFlag, funcSimpleName, funcType->slot);
     symtable->insert(symbol);

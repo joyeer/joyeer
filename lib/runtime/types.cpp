@@ -119,6 +119,10 @@ Bool Optional::boolValue(intptr_t objAddr) {
 // Class implementation
 //------------------------------------------------
 
+Value Class::ClassData::getField(int index) {
+    return ((Value*)data)[index];
+}
+
 Class::Class(const std::string &name):
     Type(name, ValueType::Class){
 }
@@ -135,6 +139,12 @@ int Class::getSize() {
         size += field->getSize();
     }
     return size;
+}
+
+Value Class::getField(intptr_t objAddr, int fieldIndex) {
+    auto klassObj = reinterpret_cast<ClassData*>(objAddr);
+    assert(fieldIndex < instanceFields.size());
+    return klassObj->getField(fieldIndex);
 }
 
 //------------------------------------------------
