@@ -43,6 +43,8 @@ public:
     // return the current Function in the stack
     [[nodiscard]] Function* curFuncType() const;
 
+    Class* curClassType() const;
+
     // the current parsing source file
     SourceFile::Ptr sourcefile = nullptr;
     

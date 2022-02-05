@@ -83,3 +83,15 @@ Function* CompileContext::curFuncType() const {
 
     return nullptr;
 }
+
+Class* CompileContext::curClassType() const {
+    for (auto iterator = types.rbegin(); iterator != types.rend(); iterator ++) {
+        auto typeSlot = *iterator;
+        auto type = compiler->getType(typeSlot);
+        if(type->kind == ValueType::Class) {
+            return (Class*)(type);
+        }
+    }
+
+    return nullptr;
+}

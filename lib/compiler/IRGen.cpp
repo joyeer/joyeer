@@ -85,13 +85,10 @@ void IRGen::emit(const ClassDecl::Ptr& decl) {
         }
     });
 
+    // default Class.<init>'s bytecodes
     generator.writer.write(Bytecode(OP_RETURN, 0));
-
-    auto defaultClassConstructor = new Function(decl->getSimpleName() + ".<cinit>", true);
-    defaultClassConstructor->funcType = FuncType::VM_CInit;
-    defaultClassConstructor->bytecodes = generator.writer.getBytecodes();
-    compiler->declare(defaultClassConstructor);
-    klass->defaultVMInitializerSlot = defaultClassConstructor->slot;
+    auto defaultCInitConstructor = (Function*)compiler->getType(klass->defaultVMInitializerSlot);
+    defaultCInitConstructor->bytecodes = generator.writer.getBytecodes();
 
     context->visit(CompileStage::visitClassDecl, decl, [this, decl] {
         for(const auto& member: decl->statements) {

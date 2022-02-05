@@ -61,13 +61,20 @@ Node::Ptr TypeGen::visit(const ClassDecl::Ptr& decl) {
     context->visit(CompileStage::visitClassDecl, decl, [this, decl]() {
         std::vector<Node::Ptr> statements{};
         for(auto const& statement: decl->statements) {
-            statements.push_back(statement);
+            statements.push_back(visit(statement));
         }
         decl->statements = statements;
+
+        // check weather have class constructor
+        processClassConstructors(decl);
     });
 
-    // check weather have class constructor
-    processClassConstructors(decl);
+    // all ClassDecl's constructors should be exported as Symbol
+    for(const auto& entry : *decl->symtable ) {
+        if(entry.second->flag == SymbolFlag::constructor) {
+            symtable->insert(entry.second);
+        }
+    }
 
     compiler->exportClassDecl(decl);
 
@@ -84,21 +91,21 @@ void TypeGen::processClassConstructors(const ClassDecl::Ptr& decl) {
         }
     };
 
+    auto defaultClassConstructor = new Function(decl->getSimpleName() + ".<cinit>", true);
+    defaultClassConstructor->funcType = FuncType::VM_CInit;
+    compiler->declare(defaultClassConstructor);
+    auto klass = context->curClassType();
+    assert(klass != nullptr);
+    klass->defaultVMInitializerSlot = defaultClassConstructor->slot;
+
     auto symtable = context->curSymTable();
     if(!hasConstructor) {
         auto defaultConstructor = FuncDecl::createDefaultConstructor();
         defaultConstructor->bindClass(decl);
-        context->visit(CompileStage::visitClassDecl, decl, [this, decl, &defaultConstructor]() {
-            decl->statements.push_back(visit(defaultConstructor));
-        });
+        decl->statements.push_back(visit(defaultConstructor));
     }
 
-    // all ClassDecl's constructors should be exported as Symbol
-    for(const auto& symbol : *decl->symtable ) {
-        if(symbol.second->flag == SymbolFlag::constructor) {
-            symtable->insert(symbol.second);
-        }
-    }
+
 
 }
 
@@ -108,7 +115,7 @@ Node::Ptr TypeGen::visit(const FuncDecl::Ptr& decl) {
     auto funcSimpleName = decl->getSimpleName();
 
     if(decl->isConstructor) {
-        auto classType = context->curDeclType();
+        auto classType = context->curClassType();
         funcSimpleName = decl->getSimpleConstructorName(classType->name);
     }
 
@@ -226,11 +233,13 @@ Node::Ptr TypeGen::visit(const VarDecl::Ptr& decl) {
         case CompileStage::visitModule:
             symbol->isStatic = true;
             break;
+        case CompileStage::visitClassDecl:
+            symbol->isStatic = false; // TODO: update after introduce static field
+            break;
         case CompileStage::visitFuncDecl:
         case CompileStage::visitCodeBlock:
             symbol->isStatic = false;
             break;
-
         default:
             assert(false);
     }

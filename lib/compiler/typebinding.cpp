@@ -34,7 +34,7 @@ Node::Ptr TypeBinding::visit(const ClassDecl::Ptr& decl) {
     context->visit(CompileStage::visitClassDecl, decl, [this, decl]() {
         std::vector<Node::Ptr> statements{};
         for(auto const& statement: decl->statements) {
-            statements.push_back(statement);
+            statements.push_back(visit(statement));
         }
         decl->statements = statements;
     });
@@ -82,6 +82,79 @@ Node::Ptr TypeBinding::visit(const FuncDecl::Ptr& decl) {
 
     return decl;
 }
+
+
+Node::Ptr TypeBinding::visit(const VarDecl::Ptr& decl) {
+
+    auto simpleName = decl->getSimpleName();
+    auto symtable = context->curSymTable();
+    auto symbol = context->lookup(simpleName);
+
+    assert(decl->typeSlot == -1);
+
+    // e.g. var index, without initializer and type, report an error
+    if(decl->initializer == nullptr && decl->pattern->typeExpr == nullptr) {
+        diagnostics->reportError(ErrorLevel::failure, -1, -1, Diagnostics::errorVarDeclMissingAnnotation);
+        return decl;
+    }
+
+    if(decl->initializer != nullptr) {
+        decl->initializer = visit(decl->initializer);
+    }
+
+    context->visit(CompileStage::visitVarDecl, decl, [this, decl]() {
+        decl->pattern = std::static_pointer_cast<Pattern>(visit(decl->pattern));
+    });
+
+    // type verification
+    if(!verifyIfAssignExpressionIsLegal(decl->pattern, decl->initializer)) {
+        return decl;
+    }
+
+    // if the pattern specify the Types, VarDecl will follow the pattern
+    auto patternType = compiler->getType(decl->pattern->typeSlot);
+    if(patternType->kind == ValueType::Unspecified) {
+        if(decl->initializer != nullptr) {
+            decl->typeSlot = decl->initializer->typeSlot;
+        }
+    } else {
+        // follow the initializer expression's typedef
+        decl->typeSlot = decl->pattern->typeSlot;
+    }
+
+    assert(decl->typeSlot != -1);
+    // Update the Variable's type base on declaration
+    symbol->typeSlot = decl->typeSlot;
+
+    auto declType = context->curDeclType();
+    auto variableType = new Variable(simpleName);
+    variableType->typeSlot = symbol->typeSlot;
+    switch (declType->kind) {
+        case ValueType::Func: {
+            auto funcType = (Function*)declType;
+            symbol->locationInParent = funcType->getLocalVarCount();
+            funcType->localVars.push_back(variableType);
+        }
+            break;
+        case ValueType::Module: {
+            auto module = (ModuleClass*)declType;
+            symbol->locationInParent = module->staticFields.size();
+            module->staticFields.push_back(variableType);
+        }
+            break;
+        case ValueType::Class: {
+            auto klass = (Class*)declType;
+            symbol->locationInParent = klass->instanceFields.size();
+            klass->instanceFields.push_back(variableType);
+        }
+            break;
+        default:
+            assert(false);
+    }
+
+    return decl;
+}
+
 
 Node::Ptr TypeBinding::visit(const FuncCallExpr::Ptr& decl) {
 
@@ -191,71 +264,6 @@ Node::Ptr TypeBinding::visit(const MemberFuncCallExpr::Ptr& node) {
     }
 
     return node;
-}
-
-Node::Ptr TypeBinding::visit(const VarDecl::Ptr& decl) {
-
-    auto simpleName = decl->getSimpleName();
-    auto symtable = context->curSymTable();
-    auto symbol = context->lookup(simpleName);
-
-    assert(decl->typeSlot == -1);
-
-    // e.g. var index, without initializer and type, report an error
-    if(decl->initializer == nullptr && decl->pattern->typeExpr == nullptr) {
-        diagnostics->reportError(ErrorLevel::failure, -1, -1, Diagnostics::errorVarDeclMissingAnnotation);
-        return decl;
-    }
-
-    if(decl->initializer != nullptr) {
-        decl->initializer = visit(decl->initializer);
-    }
-
-    context->visit(CompileStage::visitVarDecl, decl, [this, decl]() {
-        decl->pattern = std::static_pointer_cast<Pattern>(visit(decl->pattern));
-    });
-
-    // type verification
-    if(!verifyIfAssignExpressionIsLegal(decl->pattern, decl->initializer)) {
-        return decl;
-    }
-
-    // if the pattern specify the Types, VarDecl will follow the pattern
-    auto patternType = compiler->getType(decl->pattern->typeSlot);
-    if(patternType->kind == ValueType::Unspecified) {
-        if(decl->initializer != nullptr) {
-            decl->typeSlot = decl->initializer->typeSlot;
-        }
-    } else {
-        // follow the initializer expression's typedef
-        decl->typeSlot = decl->pattern->typeSlot;
-    }
-
-    assert(decl->typeSlot != -1);
-    // Update the Variable's type base on declaration
-    symbol->typeSlot = decl->typeSlot;
-
-    auto declType = context->curDeclType();
-    auto variableType = new Variable(simpleName);
-    variableType->typeSlot = symbol->typeSlot;
-    switch (declType->kind) {
-        case ValueType::Func: {
-            auto funcType = (Function*)declType;
-            symbol->locationInParent = funcType->getLocalVarCount();
-            funcType->localVars.push_back(variableType);
-        }
-            break;
-        case ValueType::Module: {
-            auto module = (ModuleClass*)declType;
-            symbol->locationInParent = module->staticFields.size();
-            module->staticFields.push_back(variableType);
-        }
-            break;
-        default:
-            assert(false);
-    }
-
-    return decl;
 }
 
 Node::Ptr TypeBinding::visit(const OptionalType::Ptr &decl) {

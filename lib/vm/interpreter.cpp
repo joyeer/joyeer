@@ -160,7 +160,7 @@ loop:
         assert(OP_FROM_BYTECODE(bytecode) == OP_NEW);
 
         auto classTypeSlot = VALUE_FROM_BYTECODE(bytecode);
-        auto klass = static_cast<Class*>((*executor->vm->types)[classTypeSlot]);
+        auto klass = (Class*)(*executor->vm->types)[classTypeSlot];
         auto obj = klass->allocate(executor->vm);
         push(obj);
     }
@@ -175,12 +175,12 @@ loop:
         auto object = pop();
         auto fieldOffset = VALUE_FROM_BYTECODE(bytecode);
 
-        auto klass = (Class *) object;
+        auto objectHead = (ObjectHead *) object;
+        auto classTypeSlot = objectHead->typeSlot;
+        auto klass = (Class*)(*executor->vm->types)[classTypeSlot];
         auto value = klass->getField(object, (int)fieldOffset);
         push(value);
     }
-
-
 
     inline void Handle_PUTSTATIC(Bytecode bytecode) {
         assert(OP_FROM_BYTECODE(bytecode) == OP_PUTSTATIC);
