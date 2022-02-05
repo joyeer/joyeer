@@ -72,6 +72,22 @@ std::string OptionalType::getSimpleName() {
 }
 
 //-------------------------------------
+// ClassDecl implementation
+//-------------------------------------
+
+ClassDecl::ClassDecl(Token::Ptr name, const std::vector<Node::Ptr>& statements) :
+        StmtsBlock(statements),
+        name(std::move(name)) {
+    symtable = std::make_shared<SymbolTable>();
+    kind = SyntaxKind::classDecl;
+}
+
+std::string ClassDecl::getSimpleName() {
+    return name->rawValue;
+}
+
+
+//-------------------------------------
 //FuncDecl implementation
 //-------------------------------------
 

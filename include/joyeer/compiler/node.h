@@ -528,24 +528,14 @@ struct ReturnStmt : Node {
  *  Decl Section
  *********************************************************/
 
-struct ClassDecl : public Node {
+struct ClassDecl : public StmtsBlock {
     using Ptr = std::shared_ptr<ClassDecl>;
 
     Token::Ptr name = nullptr;
-    StmtsBlock::Ptr members;
 
+    ClassDecl(Token::Ptr name, const std::vector<Node::Ptr>& statements);
 
-    ClassDecl(Token::Ptr name, StmtsBlock::Ptr members) :
-            Node(SyntaxKind::classDecl),
-            name(std::move(name)),
-            members(std::move(members)) {
-        symtable = std::make_shared<SymbolTable>();
-    }
-
-    std::string getSimpleName() override {
-        return name->rawValue;
-    }
-
+    std::string getSimpleName() override;
 };
 
 

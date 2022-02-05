@@ -59,7 +59,11 @@ Node::Ptr TypeGen::visit(const ClassDecl::Ptr& decl) {
     symtable->insert(symbol);
 
     context->visit(CompileStage::visitClassDecl, decl, [this, decl]() {
-        decl->members = std::static_pointer_cast<StmtsBlock>(visit(decl->members));
+        std::vector<Node::Ptr> statements{};
+        for(auto const& statement: decl->statements) {
+            statements.push_back(statement);
+        }
+        decl->statements = statements;
     });
 
     // check weather have class constructor
@@ -85,7 +89,7 @@ void TypeGen::processClassConstructors(const ClassDecl::Ptr& decl) {
         auto defaultConstructor = FuncDecl::createDefaultConstructor();
         defaultConstructor->bindClass(decl);
         context->visit(CompileStage::visitClassDecl, decl, [this, decl, &defaultConstructor]() {
-            decl->members->statements.push_back(visit(defaultConstructor));
+            decl->statements.push_back(visit(defaultConstructor));
         });
     }
 

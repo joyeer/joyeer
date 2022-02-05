@@ -77,8 +77,8 @@ void IRGen::emit(const ClassDecl::Ptr& decl) {
     auto klass = (Class*)compiler->getType(decl->typeSlot);
 
     IRGen generator(context);
-    context->visit(CompileStage::visitClassDecl, decl->members, [decl, &generator] {
-        for(const auto& member: decl->members->statements) {
+    context->visit(CompileStage::visitClassDecl, decl, [decl, &generator] {
+        for(const auto& member: decl->statements) {
             if(member->kind != SyntaxKind::funcDecl) {
                 generator.emit(member);
             }
@@ -93,8 +93,8 @@ void IRGen::emit(const ClassDecl::Ptr& decl) {
     compiler->declare(defaultClassConstructor);
     klass->defaultVMInitializerSlot = defaultClassConstructor->slot;
 
-    context->visit(CompileStage::visitClassDecl, decl->members, [this, decl] {
-        for(const auto& member: decl->members->statements) {
+    context->visit(CompileStage::visitClassDecl, decl, [this, decl] {
+        for(const auto& member: decl->statements) {
             if(member->kind == SyntaxKind::funcDecl) {
                 emit(member);
             }

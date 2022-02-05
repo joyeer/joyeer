@@ -240,7 +240,7 @@ Node::Ptr SyntaxParser::tryParseClassDecl() {
         return nullptr;
     }
 
-    return std::make_shared<ClassDecl>(className, std::make_shared<StmtsBlock>(members));
+    return std::make_shared<ClassDecl>(className, members);
 }
 
 StmtsBlock::Ptr SyntaxParser::tryParseStmtsBlock() {

@@ -119,9 +119,9 @@ SymbolTable::Ptr CompilerService::getExportingSymbolTable(int typeSlot) {
 
 void CompilerService::exportClassDecl(const ClassDecl::Ptr &decl) {
     assert(decl->typeSlot != -1);
-    assert(decl->members->symtable != nullptr);
+    assert(decl->symtable != nullptr);
     assert(!exportingSymbolTableOfClasses.contains(decl->typeSlot));
-    exportingSymbolTableOfClasses[decl->typeSlot] = decl->members->symtable;
+    exportingSymbolTableOfClasses[decl->typeSlot] = decl->symtable;
 }
 
 #define DECLARE_TYPE(type, TypeClass) \
