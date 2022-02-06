@@ -321,11 +321,12 @@ void IRGen::emit(const AssignExpr::Ptr& node) {
         emit(node->expr);
         auto memberAccessExpr = std::static_pointer_cast<MemberAccessExpr>(node->left);
         auto identifierExpr = std::static_pointer_cast<IdentifierExpr>(memberAccessExpr->callee);
-//        writer.write({
-//            .opcode = OP_ISTORE,
-//            .value = identifierExpr->symbol->addressOfVariable
-//        });
-        assert(false);
+        emit(identifierExpr);
+
+        auto symbol = context->lookup(identifierExpr->getSimpleName());
+        assert(symbol->flag == SymbolFlag::field);
+
+        writer.write(Bytecode(OP_PUTFIELD, symbol->locationInParent));
     } else if(node->left->kind == SyntaxKind::subscriptExpr) {
         
         auto subscriptExpr = std::static_pointer_cast<SubscriptExpr>(node->left);
