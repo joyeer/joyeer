@@ -115,7 +115,6 @@ void TypeGen::processClassConstructors(const ClassDecl::Ptr& decl) {
     auto symtable = context->curSymTable();
     if(!hasConstructor) {
         auto defaultConstructor = FuncDecl::createDefaultConstructor();
-        defaultConstructor->bindClass(decl);
         decl->statements.push_back(visit(defaultConstructor));
     }
 
@@ -127,6 +126,15 @@ Node::Ptr TypeGen::visit(const FuncDecl::Ptr& decl) {
     auto symtable = context->curSymTable();
 
     auto funcSimpleName = decl->getSimpleName();
+
+    // try to bind class for func
+    switch (context->curStage()) {
+        case CompileStage::visitClassDecl:
+            decl->bindClass(context->curClassType());
+            break;
+        default:
+            break;
+    }
 
     if(decl->isConstructor) {
         auto classType = context->curClassType();
@@ -546,15 +554,14 @@ Node::Ptr TypeGen::visit(const ParameterClause::Ptr& decl) {
 Node::Ptr TypeGen::visit(const Pattern::Ptr& decl) {
     decl->identifier = std::static_pointer_cast<IdentifierExpr>(visit(decl->identifier));
 
-    if(decl->typeExpr != nullptr) {
-        decl->typeExpr = std::static_pointer_cast<TypeIdentifier>(visit(decl->typeExpr));
-        // Pattern's type, binding to Type
-        auto typeSimpleName = decl->typeExpr->getSimpleName();
-        auto symbol = context->lookup(typeSimpleName);
-        if(symbol == nullptr) {
-            diagnostics->reportError(ErrorLevel::failure, "[Bind][Error]cannot find pattern name");
+    if(decl->typeExpr != nullptr && decl->typeExpr->kind == SyntaxKind::optionalType) {
+        auto typeName = decl->typeExpr->getSimpleName();
+        if(context->lookup(typeName) == nullptr) {
+            // for these optional types, dynamically generate Optional<?> type for it.
+            generateOptionalGlobally(std::static_pointer_cast<OptionalType>(decl->typeExpr));
         }
     }
+
     return decl;
 }
 
@@ -638,4 +645,11 @@ void TypeGen::processClassMemberFunc(const ClassDecl::Ptr &klassDecl, const Func
     auto symbol = std::make_shared<Symbol>(SymbolFlag::var, Keywords::SELF, 0);
     symbol->typeSlot = klassDecl->typeSlot;
     funcDecl->symtable->insert(symbol);
+}
+
+void TypeGen::generateOptionalGlobally(const OptionalType::Ptr &optionalType) {
+    auto typeSimpleName = optionalType->type->getSimpleName();
+    auto symbol = context->lookup(typeSimpleName);
+    auto optional = new Optional(optionalType->getSimpleName(), symbol->typeSlot);
+    compiler->registerOptionalTypeGlobally(optional);
 }

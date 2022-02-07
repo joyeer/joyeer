@@ -554,7 +554,7 @@ public:
     FuncDecl(Node::Ptr identifier, Node::Ptr parameterClause, Node::Ptr returnType, StmtsBlock::Ptr stmts);
 
     // bind self symbol
-    void bindClass(const ClassDecl::Ptr& decl);
+    void bindClass(const Class* klass);
 
     // make a default constructor
     static Ptr createDefaultConstructor();

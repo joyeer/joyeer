@@ -302,7 +302,6 @@ Node::Ptr TypeBinding::visit(const Pattern::Ptr& node) {
         context->visit(CompileStage::visitPatternType, node, [this, node]{
             node->typeExpr = visit(node->typeExpr);
         });
-
         node->typeSlot = node->typeExpr->typeSlot;
     } else {
         node->typeSlot = compiler->getType(ValueType::Unspecified)->slot;
@@ -331,10 +330,7 @@ Node::Ptr TypeBinding::visit(const IdentifierExpr::Ptr& node) {
         }
             break;
         case CompileStage::visitVarDecl:
-
         case CompileStage::visitAssignExpr:
-
-
             // nothing to do
             break;
         default:
@@ -737,12 +733,14 @@ bool TypeBinding::verifyIfAssignExpressionIsLegal(const Node::Ptr &left, const N
         return true;
     }
 
-    // rule 2: if right type is nil
-    if(right->typeSlot == compiler->getType(ValueType::Nil)->slot) {
-        auto leftType = compiler->getType(left->typeSlot);
-        if(leftType->kind != ValueType::Optional) {
-            diagnostics->reportError(ErrorLevel::failure, -1, -1, Diagnostics::errorNilCannotInitializeSpecifiedType, leftType->name.c_str());
-            return false;
+    if(right != nullptr) {
+        // rule 2: if right type is nil
+        if(right->typeSlot == compiler->getType(ValueType::Nil)->slot) {
+            auto leftType = compiler->getType(left->typeSlot);
+            if(leftType->kind != ValueType::Optional) {
+                diagnostics->reportError(ErrorLevel::failure, -1, -1, Diagnostics::errorNilCannotInitializeSpecifiedType, leftType->name.c_str());
+                return false;
+            }
         }
     }
 

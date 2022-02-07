@@ -100,7 +100,7 @@ returnType(std::move(returnType)) {
 }
 
 
-void FuncDecl::bindClass(const ClassDecl::Ptr &decl) {
+void FuncDecl::bindClass(const Class* klass) {
     assert(symtable->find(Keywords::SELF) == nullptr);
     // self symbol
 
@@ -109,13 +109,15 @@ void FuncDecl::bindClass(const ClassDecl::Ptr &decl) {
     auto clause = std::static_pointer_cast<ParameterClause>(this->parameterClause);
 
     auto selfIdentifier = std::make_shared<IdentifierExpr>(std::make_shared<Token>(TokenKind::keyword, Keywords::SELF, -1, -1));
-    auto typeIdentifier = std::make_shared<IdentifierExpr>(std::make_shared<Token>(TokenKind::identifier, decl->getSimpleName(), -1, -1));
+    auto typeIdentifier = std::make_shared<IdentifierExpr>(std::make_shared<Token>(TokenKind::identifier, klass->name, -1, -1));
     auto pattern = std::make_shared<Pattern>(selfIdentifier, typeIdentifier);
-    clause->parameters.push_back(pattern);
+    clause->parameters.insert(clause->parameters.begin(), pattern);
     
     // return type is ClassDecl
-    auto token = std::make_shared<Token>(TokenKind::identifier, decl->getSimpleName(), -1, -1);
-    returnType = std::make_shared<IdentifierExpr>(token);
+    if(isConstructor) {
+        auto token = std::make_shared<Token>(TokenKind::identifier, klass->name, -1, -1);
+        returnType = std::make_shared<IdentifierExpr>(token);
+    }
 }
 
 FuncDecl::Ptr FuncDecl::createDefaultConstructor() {
@@ -174,7 +176,7 @@ std::string FuncDecl::getSimpleConstructorName(const std::string& name) {
     if (parameterClause) {
         auto i = 0;
         for (const auto& p: std::static_pointer_cast<ParameterClause>(parameterClause)->parameters) {
-            if(i == 0){
+            if(i++ == 0) {
                 continue;
             }
             ss << p->getSimpleName() << DescriptorConstants::Colon;

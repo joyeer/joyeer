@@ -717,7 +717,7 @@ Node::Ptr SyntaxParser::tryParseSelfExpr() {
         diagnostics->reportError(ErrorLevel::failure, "[Error]");
         return nullptr; //TODO: Report n error
     }
-    return std::shared_ptr<Node>(new SelfExpr(identifier));
+    return std::make_shared<SelfExpr>(identifier);
 }
 
 Node::Ptr SyntaxParser::tryParseLiteralExpr() {

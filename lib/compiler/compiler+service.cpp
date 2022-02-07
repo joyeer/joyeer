@@ -124,10 +124,21 @@ void CompilerService::exportClassDecl(const ClassDecl::Ptr &decl) {
     exportingSymbolTableOfClasses[decl->typeSlot] = decl->symtable;
 }
 
+void CompilerService::registerOptionalTypeGlobally(const Optional *type) {
+    assert(type->slot == -1);
+    assert(globalSymbols->find(type->name) == nullptr);
+    declare((Type*)type);
+    globalSymbols->insert(std::make_shared<Symbol>(SymbolFlag::klass, type->name, type->slot));
+}
+
 #define DECLARE_TYPE(type, TypeClass) \
-    declare(new TypeClass()); \
-    assert((type) == types->types.back()->kind);  \
-    assert((size_t)(type) == (types->types.size() - 1));
+    {                                 \
+        auto typeClass = new TypeClass(); \
+        declare(typeClass);           \
+        assert((type) == types->types.back()->kind); \
+        assert((size_t)(type) == (types->types.size() - 1)); \
+        globalSymbols->insert(std::make_shared<Symbol>(SymbolFlag::klass, typeClass->name, typeClass->slot)); \
+    }
 
 #define BEGIN_DECLARE_FUNC(type, descriptor, retTypeSlot, cFuncImpl) \
     {                                                                \
@@ -255,8 +266,5 @@ void CompilerService::bootstrap() {
 
     auto print = getType(BuildIns::Func_Print);
     globalSymbols->insert(std::make_shared<Symbol>(SymbolFlag::func, print->name, print->slot));
-    globalSymbols->insert(std::make_shared<Symbol>(SymbolFlag::klass, "Int", (int)ValueType::Int));
-    globalSymbols->insert(std::make_shared<Symbol>(SymbolFlag::klass, "Void", (int)ValueType::Void));
-    globalSymbols->insert(std::make_shared<Symbol>(SymbolFlag::klass, "Bool", (int)ValueType::Bool));
 
 }

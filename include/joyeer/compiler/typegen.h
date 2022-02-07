@@ -56,6 +56,9 @@ protected:
     // process class member func, e.g. self symbols
     void processClassMemberFunc(const ClassDecl::Ptr& klassDecl, const FuncDecl::Ptr& funcDecl);
 
+    // generate optional type in global
+    void generateOptionalGlobally(const OptionalType::Ptr& optionalType);
+
 private:
     CompileContext::Ptr context;
     CompilerService* compiler;

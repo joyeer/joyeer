@@ -196,6 +196,12 @@ void IRGen::emit(const LiteralExpr::Ptr& node) {
 }
 
 void IRGen::emit(const VarDecl::Ptr& node) {
+
+    // if not initializer expr, just return
+    if(node->initializer == nullptr) {
+        return;
+    }
+
     emit(node->initializer);
 
     auto symbol = context->lookup(node->getSimpleName());
@@ -255,6 +261,7 @@ void IRGen::emit(const IdentifierExpr::Ptr& node) {
             }
                 break;
             case ValueType::Any:
+            case ValueType::Optional:
             case ValueType::Class: {
                 writer.write(Bytecode(OP_OLOAD, symbol->locationInParent));
             }
@@ -307,16 +314,14 @@ void IRGen::emit(const AssignExpr::Ptr& node) {
     } else if( node->left->kind == SyntaxKind::selfExpr ) {
         emit(node->expr);
         auto selfExpr = std::static_pointer_cast<SelfExpr>(node->left);
+        emit(selfExpr);
         auto function = context->curFuncType();
-        
         writer.write(Bytecode(OP_OLOAD, (int32_t)(function->paramCount - 1)));      // last parameter is the self object
-        
-//        auto addressOfField = selfExpr->identifier->symbol->addressOfField;
-//        writer.write({
-//            .opcode = OP_PUTFIELD,
-//            .value = addressOfField
-//        });
-        assert(false);
+
+        auto symbol = context->lookup(selfExpr->identifier->getSimpleName());
+        assert(symbol->flag == SymbolFlag::field);
+        writer.write(Bytecode(OP_PUTFIELD, symbol->locationInParent));
+
     } else if( node->left->kind == SyntaxKind::memberAccessExpr) {
         emit(node->expr);
         auto memberAccessExpr = std::static_pointer_cast<MemberAccessExpr>(node->left);

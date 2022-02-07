@@ -30,6 +30,9 @@ public:
     // export ClassDecl's Symbol table
     void exportClassDecl(const ClassDecl::Ptr& decl);
 
+    // register an Optional Type in global symbols
+    void registerOptionalTypeGlobally(const Optional* type);
+
 private:
     friend class IRGen;
     friend class IsolateVM;
