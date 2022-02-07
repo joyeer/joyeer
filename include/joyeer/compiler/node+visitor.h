@@ -24,6 +24,7 @@ protected:
     virtual Node::Ptr visit(const BinaryExpr::Ptr& decl) = 0;
     virtual Node::Ptr visit(const OperatorExpr::Ptr& decl) = 0;
     virtual Node::Ptr visit(const ParenthesizedExpr::Ptr& decl) = 0;
+    virtual Node::Ptr visit(const Self::Ptr& decl) = 0;
     virtual Node::Ptr visit(const SelfExpr::Ptr& decl) = 0;
     virtual Node::Ptr visit(const ArrayLiteralExpr::Ptr& decl) = 0;
     virtual Node::Ptr visit(const DictLiteralExpr::Ptr& decl) = 0;

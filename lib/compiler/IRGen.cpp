@@ -28,6 +28,7 @@ void IRGen::emit(const Node::Ptr& node) {
         NODE_EMIT(SyntaxKind::stmtsBlock, StmtsBlock)
         NODE_EMIT(SyntaxKind::ifStmt, IfStmt)
         NODE_EMIT(SyntaxKind::expr, Expr)
+        NODE_EMIT(SyntaxKind::self, Self)
         NODE_EMIT(SyntaxKind::selfExpr, SelfExpr)
         NODE_EMIT(SyntaxKind::prefixExpr, PrefixExpr)
         NODE_EMIT(SyntaxKind::postfixExpr, PostfixExpr)
@@ -111,6 +112,7 @@ void IRGen::emit(const FuncDecl::Ptr& node) {
         // if the FuncDecl is a constructor, call the default init first
         auto constructorFunc = reinterpret_cast<Function*>(compiler->getType(node->typeSlot));
         auto klass = (Class*)(compiler->getType(constructorFunc->returnTypeSlot));
+        generator.writer.write(Bytecode(OP_OLOAD, 0));
         generator.writer.write(Bytecode(OP_INVOKE, klass->defaultInitializerSlot));
         generator.writer.write(Bytecode(OP_POP, -1));
     }
@@ -120,6 +122,11 @@ void IRGen::emit(const FuncDecl::Ptr& node) {
             generator.emit(s);
         }
     });
+
+    if(node->isConstructor) {
+        generator.writer.write(Bytecode(OP_OLOAD, 0));
+        generator.writer.write(Bytecode(OP_ORETURN, 0));
+    }
 
     auto bytecodes = generator.writer.getBytecodes();
     assert(bytecodes->size > 0);
@@ -140,12 +147,14 @@ void IRGen::emit(const FuncCallExpr::Ptr& funcCallExpr) {
 
     context->visit(CompileStage::visitFuncCall, funcCallExpr, [this, funcCallExpr, func](){
 
-        int index = 0;
+        int index = func->isStatic ? 0 : 1;
 
         for(const auto& argument : funcCallExpr->arguments) {
             // emit the passing param argument variable
             emit(argument);
             assert(argument->expr->typeSlot != -1);
+
+            assert(func->getParamByIndex(index)->typeSlot != -1);
             // auto wrapping the passing variable if necessary
             autoWrapping(argument->expr->typeSlot, func->getParamByIndex(index)->typeSlot);
             index ++;
@@ -315,10 +324,9 @@ void IRGen::emit(const AssignExpr::Ptr& node) {
         emit(node->expr);
         auto selfExpr = std::static_pointer_cast<SelfExpr>(node->left);
         emit(selfExpr);
-        auto function = context->curFuncType();
-        writer.write(Bytecode(OP_OLOAD, (int32_t)(function->paramCount - 1)));      // last parameter is the self object
-
-        auto symbol = context->lookup(selfExpr->identifier->getSimpleName());
+        assert(selfExpr->self->typeSlot != -1);
+        auto symtable = compiler->getExportingSymbolTable(selfExpr->self->typeSlot);
+        auto symbol = symtable->find(selfExpr->identifier->getSimpleName());
         assert(symbol->flag == SymbolFlag::field);
         writer.write(Bytecode(OP_PUTFIELD, symbol->locationInParent));
 
@@ -383,6 +391,10 @@ void IRGen::emit(const Expr::Ptr& node) {
     }
 }
 
+void IRGen::emit(const Self::Ptr& decl) {
+    writer.write(Bytecode(OP_OLOAD, 0));
+}
+
 void IRGen::emit(const SelfExpr::Ptr& decl) {
     writer.write(Bytecode(OP_OLOAD, 0));
 }
@@ -397,7 +409,7 @@ void IRGen::emit(const OperatorExpr::Ptr& node) {
             { Operators::MULTIPLY, OP_IMUL },
             { Operators::PERCENTAGE, OP_IREM },
             { Operators::GREATER, OP_ICMP_G },
-            {Operators::GREATER_EQ, OP_ICMP_GE },
+            { Operators::GREATER_EQ, OP_ICMP_GE },
             { Operators::LESS, OP_ICMP_L },
             { Operators::LESS_EQ, OP_ICMP_LE },
             { Operators::NOT_EQUALS, OP_ICMP_NE },
@@ -550,6 +562,7 @@ void IRGen::autoWrapping(int srcTypeSlot, int destTypeSlot) {
             case ValueType::String:
             case ValueType::Class:
             case ValueType::Any:
+            case ValueType::Nil:
             case ValueType::Optional:
                 // if source type is Any, not wrapping occurring.
                 break;

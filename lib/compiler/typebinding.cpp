@@ -62,14 +62,13 @@ Node::Ptr TypeBinding::visit(const FuncDecl::Ptr& decl) {
         // visit parameters decls
         decl->parameterClause = visit(decl->parameterClause);
 
-        assert(funcType->paramCount == 0);
-
         auto parameterClause = std::static_pointer_cast<ParameterClause>(decl->parameterClause);
+        auto paramIndex = 0;
         for(const auto& parameter: parameterClause->parameters) {
-            auto parameterName = parameter->getSimpleName();
-            auto variable = new Variable(parameterName);
-            funcType->paramCount ++;
-            funcType->localVars.push_back(variable);
+            auto paramVar = funcType->getParamByIndex(paramIndex);
+            paramVar->typeSlot = parameter->typeSlot;
+            assert(paramVar->typeSlot != -1);
+            paramIndex ++;
         }
 
         // visit FuncDecl statements
@@ -449,12 +448,22 @@ Node::Ptr TypeBinding::visit(const ArguCallExpr::Ptr& node) {
     return node;
 }
 
+Node::Ptr TypeBinding::visit(const Self::Ptr& decl) {
+    auto symbol = context->lookup(decl->getSimpleName());
+    if(symbol == nullptr) {
+        diagnostics->reportError(ErrorLevel::failure, "self not found", -1, -1);
+    }
 
+    decl->typeSlot = symbol->typeSlot;
+    return decl;
+}
 
 Node::Ptr TypeBinding::visit(const SelfExpr::Ptr& node) {
     if(node->identifier != nullptr) {
         node->identifier = std::static_pointer_cast<IdentifierExpr>(visit(node->identifier));
     }
+
+    node->self = std::static_pointer_cast<Self>(visit(node->self));
     return node;
 }
 

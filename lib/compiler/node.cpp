@@ -9,6 +9,38 @@ std::string Node::getSimpleName() {
     return "";
 }
 
+//--------------------------------------------------
+// Self implementation
+//--------------------------------------------------
+
+Self::Self():
+Node(SyntaxKind::self) {
+    token = std::make_shared<Token>(TokenKind::keyword, Keywords::SELF, -1, -1);
+}
+
+Self::Self(const Token::Ptr &token):
+Node(SyntaxKind::self),
+token(token) {
+}
+
+std::string Self::getSimpleName() {
+    return token->rawValue;
+}
+
+//--------------------------------------------------
+// IdentifierExpr implementation
+//--------------------------------------------------
+
+IdentifierExpr::IdentifierExpr(const Token::Ptr& token) :
+        Node(SyntaxKind::identifierExpr),
+        token(token) {
+    assert(token->kind == TokenKind::identifier);
+}
+
+std::string IdentifierExpr::getSimpleName() {
+    return token->rawValue;
+}
+
 OperatorExpr::OperatorExpr(Token::Ptr token):
 Node(SyntaxKind::operatorExpr),
 token(std::move(token)) {
@@ -51,11 +83,12 @@ valueType(std::move(valueType)) {
 // SelfExpr implementation
 //--------------------------------------------------
 
-SelfExpr::Ptr SelfExpr::create() {
-    auto selfToken= std::make_shared<Token>(TokenKind::keyword, Keywords::SELF, -1, -1);
-    auto selfIdentifier = std::make_shared<IdentifierExpr>(selfToken);
-    return std::make_shared<SelfExpr>(selfIdentifier);
+SelfExpr::SelfExpr(const Self::Ptr& self, const IdentifierExpr::Ptr& identifier) :
+        Node(SyntaxKind::selfExpr),
+        self(self),
+        identifier(identifier) {
 }
+
 
 //--------------------------------------------------
 // OptionalType implementation
@@ -108,7 +141,7 @@ void FuncDecl::bindClass(const Class* klass) {
 
     auto clause = std::static_pointer_cast<ParameterClause>(this->parameterClause);
 
-    auto selfIdentifier = std::make_shared<IdentifierExpr>(std::make_shared<Token>(TokenKind::keyword, Keywords::SELF, -1, -1));
+    auto selfIdentifier = std::make_shared<IdentifierExpr>(std::make_shared<Token>(TokenKind::identifier, Keywords::SELF, -1, -1));
     auto typeIdentifier = std::make_shared<IdentifierExpr>(std::make_shared<Token>(TokenKind::identifier, klass->name, -1, -1));
     auto pattern = std::make_shared<Pattern>(selfIdentifier, typeIdentifier);
     clause->parameters.insert(clause->parameters.begin(), pattern);
@@ -129,8 +162,7 @@ FuncDecl::Ptr FuncDecl::createDefaultConstructor() {
      */
     auto parameterClause = std::make_shared<ParameterClause>( std::vector<Pattern::Ptr>());
 
-    auto selfExpr = SelfExpr::create();
-    auto returnStmt = std::make_shared<ReturnStmt>(selfExpr);
+    auto returnStmt = std::make_shared<ReturnStmt>(std::make_shared<Self>());
     auto stmts = std::make_shared<StmtsBlock>( std::vector<Node::Ptr> { returnStmt });
 
     return createConstructor(parameterClause, nullptr, stmts);

@@ -32,6 +32,7 @@ enum class SyntaxKind {
     returnStmt,
     importStmt,
 
+    self,
     expr,
     assignExpr,
     binaryExpr,
@@ -56,7 +57,6 @@ enum class SyntaxKind {
 
 struct Node : std::enable_shared_from_this<Node> {
     using Ptr = std::shared_ptr<Node>;
-    using VID = int;
 
     SyntaxKind kind;
     SymbolTable::Ptr symtable = nullptr;
@@ -84,21 +84,27 @@ protected:
     explicit Node(SyntaxKind kind);
 };
 
+// represent a AST for *self*
+struct Self : public Node {
+    using Ptr = std::shared_ptr<Self>;
+    Token::Ptr token;
+
+    explicit Self();
+    Self(const Token::Ptr& token);
+
+    std::string getSimpleName() override;
+};
+
+// represent a
 struct IdentifierExpr : public Node {
     using Ptr = std::shared_ptr<IdentifierExpr>;
 
     Token::Ptr token;
 
-    explicit IdentifierExpr(Token::Ptr token) :
-            Node(SyntaxKind::identifierExpr),
-            token(std::move(token)) {
-    }
+    explicit IdentifierExpr(const Token::Ptr& token);
 
     // Return identifier's name
-    std::string getSimpleName() override {
-        return token->rawValue;
-    }
-
+    std::string getSimpleName() override;
 };
 
 struct OperatorExpr : Node {
@@ -145,6 +151,7 @@ struct DictType : Node {
 
 };
 
+// represent a Type likes AType?
 struct OptionalType: Node {
     using Ptr = std::shared_ptr<OptionalType>;
 
@@ -402,18 +409,14 @@ struct ParenthesizedExpr : Node {
 
 };
 
+// represent self.someIdentifier expr
 struct SelfExpr : Node {
     using Ptr = std::shared_ptr<SelfExpr>;
 
+    Self::Ptr self;
     IdentifierExpr::Ptr identifier;
 
-    explicit SelfExpr(IdentifierExpr::Ptr identifier) :
-            Node(SyntaxKind::selfExpr),
-            identifier(std::move(identifier)) {
-    }
-
-    static Ptr create();
-
+    SelfExpr(const Self::Ptr& self, const IdentifierExpr::Ptr& identifier);
 };
 
 struct SubscriptExpr : Node {

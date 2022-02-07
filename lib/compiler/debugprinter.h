@@ -454,6 +454,11 @@ protected:
         return decl;
     }
 
+    Node::Ptr visit(const Self::Ptr& decl) override {
+        output << "self";
+        return decl;
+    }
+
     Node::Ptr visit(const SelfExpr::Ptr& decl) override {
         assert(false);
         return decl;
@@ -628,12 +633,9 @@ protected:
         if (func->localVars.size() > 0) {
             newline();
             output << "local-vars:";
-            for(auto i = 0 ; i < func->localVars.size(); i ++ ) {
+            for (auto i = 0 ; i < func->localVars.size(); i ++ ) {
                 newline();
-                output << "-";
-                DEBUG_BLOCK_START
-                    output << "name: " << func->localVars[i]->name;
-                DEBUG_BLOCK_END
+                output << "- name: " << func->localVars[i]->name;
             }
         }
         newline();

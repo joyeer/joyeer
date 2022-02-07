@@ -20,6 +20,7 @@ Node::Ptr NodeVisitor::visit(const Node::Ptr& node) {
         NODE_VISITOR(SyntaxKind::ifStmt,                IfStmt)
         NODE_VISITOR(SyntaxKind::whileStmt,             WhileStmt)
         NODE_VISITOR(SyntaxKind::returnStmt,            ReturnStmt)
+        NODE_VISITOR(SyntaxKind::self,                  Self)
         NODE_VISITOR(SyntaxKind::expr,                  Expr)
         NODE_VISITOR(SyntaxKind::selfExpr,              SelfExpr)
         NODE_VISITOR(SyntaxKind::prefixExpr,            PrefixExpr)

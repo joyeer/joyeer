@@ -1,8 +1,8 @@
 class ListNode {
-    var next: ListNode
+    var next: ListNode?
     var value: Int
 
-    init(next:ListNode, value: Int) {
+    init(next: ListNode?, value: Int) {
         self.next = next
         self.value = value
     }
@@ -16,10 +16,10 @@ var listB = ListNode(next: nil, value: 3)
 listB = ListNode(next: listB, value: 1)
 listB = ListNode(next: listB, value: 7)
 
-func addTwoNumber(listA: ListNode, listB: ListNode): ListNode {
+func addTwoNumber(listA: ListNode?, listB: ListNode?): ListNode {
     
-    var result: ListNode = nil
-    var root = nil
+    var result: ListNode? = nil
+    var root: ListNode? = nil
     var currentA = listA
     var currentB = listB
 
@@ -83,6 +83,7 @@ func addTwoNumber(listA: ListNode, listB: ListNode): ListNode {
 }
 
 var result = addTwoNumber(listA: listA, listB: listB)
+
 while result != nil {
     print(message: result.value)
     result = result.next

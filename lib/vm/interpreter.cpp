@@ -392,7 +392,8 @@ loop:
 
     inline void Handle_ORETURN(Bytecode bytecode) {
         assert(OP_FROM_BYTECODE(bytecode) == OP_ORETURN);
-        assert(false);
+        auto value = pop();
+        FuncCallFrame::setReturnValue(executor->getCurrentFrame(), value);
     }
 
     inline void Handle_ONEWARRAY(Bytecode bytecode) {

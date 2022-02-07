@@ -704,12 +704,15 @@ Node::Ptr SyntaxParser::tryParsePrimaryExpr() {
 }
 
 Node::Ptr SyntaxParser::tryParseSelfExpr() {
-    if(tryEat(TokenKind::keyword, Keywords::SELF) == nullptr) {
+    auto selfToken = tryEat(TokenKind::keyword, Keywords::SELF);
+    if(selfToken == nullptr) {
         return nullptr;
     }
-    
+
+    auto self = std::make_shared<Self>(selfToken);
+
     if(tryEat(TokenKind::punctuation, Punctuations::DOT) == nullptr) {
-        return std::shared_ptr<Node>(new SelfExpr(nullptr));
+        return self;
     }
     
     auto identifier = tryParseIdentifierExpr();
@@ -717,7 +720,7 @@ Node::Ptr SyntaxParser::tryParseSelfExpr() {
         diagnostics->reportError(ErrorLevel::failure, "[Error]");
         return nullptr; //TODO: Report n error
     }
-    return std::make_shared<SelfExpr>(identifier);
+    return std::make_shared<SelfExpr>(self, identifier);
 }
 
 Node::Ptr SyntaxParser::tryParseLiteralExpr() {

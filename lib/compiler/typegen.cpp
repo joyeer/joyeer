@@ -167,7 +167,7 @@ Node::Ptr TypeGen::visit(const FuncDecl::Ptr& decl) {
     symtable->insert(symbol);
     
     // visit func declaration
-    context->visit(CompileStage::visitFuncDecl, decl, [this, decl]() {
+    context->visit(CompileStage::visitFuncDecl, decl, [this, funcType, decl]() {
         // start to process function name
         context->visit(CompileStage::visitFuncNameDecl, decl->identifier, [this, decl]() {
             if(decl->identifier != nullptr) {
@@ -182,8 +182,13 @@ Node::Ptr TypeGen::visit(const FuncDecl::Ptr& decl) {
             }
         });
 
-        if(decl->returnType != nullptr) {
-            decl->returnType = visit(decl->returnType);
+        // generate parameter types
+        auto parameterClause = std::static_pointer_cast<ParameterClause>(decl->parameterClause);
+        for(const auto& parameter: parameterClause->parameters) {
+            auto parameterName = parameter->getSimpleName();
+            auto variable = new Variable(parameterName);
+            funcType->paramCount ++;
+            funcType->localVars.push_back(variable);
         }
 
         // visit FuncDecl statements
@@ -196,6 +201,7 @@ Node::Ptr TypeGen::visit(const FuncDecl::Ptr& decl) {
 
         // check the function return statement
         if(decl->returnType == nullptr) {
+
             if( !decl->statements.empty() ) {
                 auto lastStatement = decl->statements.back();
                 if(lastStatement->kind != SyntaxKind::returnStmt) {
@@ -204,7 +210,8 @@ Node::Ptr TypeGen::visit(const FuncDecl::Ptr& decl) {
             } else {
                 decl->statements.push_back(std::make_shared<ReturnStmt>(nullptr));
             }
-
+        } else {
+            decl->returnType = visit(decl->returnType);
         }
     });
     return decl;
@@ -573,6 +580,10 @@ Node::Ptr TypeGen::visit(const ReturnStmt::Ptr& decl) {
     if(decl->expr != nullptr) {
         decl->expr = visit(decl->expr);
     }
+    return decl;
+}
+
+Node::Ptr TypeGen::visit(const Self::Ptr& decl) {
     return decl;
 }
 

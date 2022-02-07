@@ -46,6 +46,7 @@ protected:
     Node::Ptr visit(const ParameterClause::Ptr& decl) override;
     Node::Ptr visit(const Pattern::Ptr& decl) override;
     Node::Ptr visit(const ReturnStmt::Ptr& decl) override;
+    Node::Ptr visit(const Self::Ptr& decl) override;
     Node::Ptr visit(const SelfExpr::Ptr& decl) override;
     Node::Ptr visit(const ArrayLiteralExpr::Ptr& decl) override;
     Node::Ptr visit(const DictLiteralExpr::Ptr& decl) override;

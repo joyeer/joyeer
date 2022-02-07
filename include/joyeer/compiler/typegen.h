@@ -19,6 +19,8 @@ public:
 protected:
     // recursive bind down node
     Node::Ptr visit(const Node::Ptr& node) override;
+
+    // Declaration section
     Node::Ptr visit(const ClassDecl::Ptr& classDecl) override;
     Node::Ptr visit(const VarDecl::Ptr& varDecl) override;
     Node::Ptr visit(const TypeIdentifier::Ptr& decl) override;
@@ -27,10 +29,14 @@ protected:
     Node::Ptr visit(const MemberFuncCallExpr::Ptr& decl) override;
     Node::Ptr visit(const ArguCallExpr::Ptr& decl) override;
     Node::Ptr visit(const LiteralExpr::Ptr& decl) override;
+
+    // Expression section
+    Node::Ptr visit(const Expr::Ptr& decl) override;
     Node::Ptr visit(const PrefixExpr::Ptr& decl) override;
     Node::Ptr visit(const PostfixExpr::Ptr& decl) override;
+    Node::Ptr visit(const Self::Ptr& decl) override;
+    Node::Ptr visit(const SelfExpr::Ptr& decl) override;
     Node::Ptr visit(const IdentifierExpr::Ptr& decl) override;
-    Node::Ptr visit(const Expr::Ptr& decl) override;
     Node::Ptr visit(const AssignExpr::Ptr& decl) override;
     Node::Ptr visit(const BinaryExpr::Ptr& decl) override;
     Node::Ptr visit(const OperatorExpr::Ptr& decl) override;
@@ -42,7 +48,6 @@ protected:
     Node::Ptr visit(const ParameterClause::Ptr& decl) override;
     Node::Ptr visit(const Pattern::Ptr& decl) override;
     Node::Ptr visit(const ReturnStmt::Ptr& decl) override;
-    Node::Ptr visit(const SelfExpr::Ptr& decl) override;
     Node::Ptr visit(const ArrayLiteralExpr::Ptr& decl) override;
     Node::Ptr visit(const DictLiteralExpr::Ptr& decl) override;
     Node::Ptr visit(const MemberAccessExpr::Ptr& decl) override;
