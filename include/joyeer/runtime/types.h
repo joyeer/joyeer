@@ -250,6 +250,7 @@ struct Optional : public Type {
 
     Int intValue(intptr_t objAddr);
     Bool boolValue(intptr_t objAddr);
+
 };
 
 

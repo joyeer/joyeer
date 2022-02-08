@@ -444,7 +444,6 @@ Node::Ptr TypeBinding::visit(const WhileStmt::Ptr& node) {
 Node::Ptr TypeBinding::visit(const ArguCallExpr::Ptr& node) {
     node->expr = visit(node->expr);
     node->typeSlot = node->expr->typeSlot;
-    assert(node->typeSlot > -1);
     return node;
 }
 
@@ -494,6 +493,21 @@ Node::Ptr TypeBinding::visit(const MemberAccessExpr::Ptr& node) {
     node->callee = visit(node->callee);
 
     assert(node->callee->typeSlot != -1);
+    auto calleeType = compiler->getType(node->callee->typeSlot);
+    if(calleeType->kind == ValueType::Optional) {
+        auto optionalType = (Optional*)calleeType;
+        auto wrappedType = compiler->getType((int)optionalType->wrappedTypeSlot);
+        // report an error
+        diagnostics->reportError(
+                ErrorLevel::failure,
+                Diagnostics::errorOptionalAccessWithoutUnwrapping,
+                wrappedType->name.c_str(),
+                node->member->getSimpleName().c_str(),
+                wrappedType->name.c_str()
+                );
+        return node;
+    }
+
     auto symtable = compiler->getExportingSymbolTable(node->callee->typeSlot);
     assert(symtable != nullptr);
 

@@ -45,6 +45,7 @@ struct Diagnostics {
     DIAGNOSTICS_ERROR_MESSAGE(errorNilRequireContextualType,                    "'nil' requires a contextual type")
     DIAGNOSTICS_ERROR_MESSAGE(errorNilCannotInitializeSpecifiedType,            "'nil' cannot initialize specified type '%s'")
     DIAGNOSTICS_ERROR_MESSAGE(errorInvalidRedeclaration,                        "Invalid redeclaration of %s")
+    DIAGNOSTICS_ERROR_MESSAGE(errorOptionalAccessWithoutUnwrapping,             "value of optional type '%s?' must be unwrapped to refer to member '%s' of wrapped base type '%s'")
     DIAGNOSTICS_ERROR_MESSAGE(success,                                          "success!")
 
 
