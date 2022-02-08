@@ -30,5 +30,8 @@ Joyeer is a general purpose programming language, which inspired by Swift.
 
 #### Examples
 
-- [quick sort in joyeer]: /tests/leetcode/quick_sort.joyeer
-- [more language examples]: /test/basis
+- [Quick Sort in joyeer][].
+- [More language examples][].
+  
+[quick sort in joyeer]: /tests/leetcode/quick_sort.joyeer
+[more language examples]: /tests/
