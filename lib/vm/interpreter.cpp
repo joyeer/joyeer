@@ -459,6 +459,8 @@ void InterpretedExecutor::execute(const ModuleClass *module) {
 void InterpretedExecutor::execute(const Function *function) {
 
     auto paramCount = function->paramCount;
+    auto frame = &stack[sp];
+    FuncCallFrame::set(frame, 0, function->slot);
 
     auto savedFP = sp;
 

@@ -1,0 +1,10 @@
+stack-frames-count: 3
+--------------------------
+stack: 2
+type: FUNC_CALL
+--------------------------
+stack: 1
+type: FUNC_CALL
+--------------------------
+stack: 0
+type: MODULE

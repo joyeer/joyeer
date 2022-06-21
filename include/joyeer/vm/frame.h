@@ -18,6 +18,8 @@ struct ModuleEntryFrame;
 
 // Base class for all Frame
 struct StackFrame {
+    constexpr static int kReturnValueOffset = 0;
+    constexpr static int kFrameTypeOffset = kValueSize;
 
     enum Type {
         NO_FRAME_TYPE = -1,
@@ -25,6 +27,7 @@ struct StackFrame {
         NUMBER_OF_FRAME_TYPES
     };
 
+    static StackFrame::Type getFrameType(FramePtr framePtr);
 };
 
 #undef DECLARE_TYPE
@@ -48,8 +51,6 @@ struct StackFrame {
  */
 
 struct FuncCallFrame : public StackFrame {
-    constexpr static int kReturnValueOffset = 0;
-    constexpr static int kFrameTypeOffset = kValueSize;
     constexpr static int kMethodSlotOffset = kFrameTypeOffset + kValueSize;
     constexpr static int kFuncCallFrameSize = kMethodSlotOffset + kValueSize;
 
@@ -90,8 +91,6 @@ struct FuncCallFrame : public StackFrame {
  */
 
 struct ModuleEntryFrame : public StackFrame {
-    constexpr static int kReturnValueOffset = 0;
-    constexpr static int kFrameTypeOffset = kValueSize;
     constexpr static int kModuleSlotOffset = kFrameTypeOffset + kValueSize;
     constexpr static int kModuleEntryFrameSize = kModuleSlotOffset + kValueSize;
 
@@ -105,14 +104,6 @@ struct ModuleEntryFrame : public StackFrame {
 
     static Value getReturnValue(FramePtr frame) {
         return *(Value*)(frame + kReturnValueOffset);
-    }
-
-    static StackFrame::Type getFrameType(FramePtr frame) {
-        return (StackFrame::Type)(*(Value*)(frame + kFrameTypeOffset));
-    }
-
-    static StackFrame::Type getFrameType() {
-        return StackFrame::MODULE;
     }
 };
 

@@ -68,6 +68,8 @@ enum class BuildIns : uint16_t {
     Func_autoWrapping_Class,
     Func_autoUnwrapping,
 
+    Func_debugPrintCurrentStackFrames,
+
     Object_Optional_Int,
     Object_Optional_Bool,
 

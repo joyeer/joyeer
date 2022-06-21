@@ -4,6 +4,10 @@
 
 #include "joyeer/vm/frame.h"
 
+StackFrame::Type StackFrame::getFrameType(FramePtr framePtr) {
+    return (StackFrame::Type)(*(Value*)(framePtr + kFrameTypeOffset));
+}
+
 int FuncCallFrame::size() {
     return kMethodSlotOffset;
 }

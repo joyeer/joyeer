@@ -248,6 +248,10 @@ void CompilerService::bootstrap() {
         DECLARE_FUNC_PARM("value", BuildIns::Object_Optional_Int)
     END_DECLARE_FUNC()
 
+    BEGIN_DECLARE_FUNC(BuildIns::Func_debugPrintCurrentStackFrames, "debugPrintCurrentStackFrames()", ValueType::Void,
+                       Global_$_debugPrintCurrentStackFrames)
+    END_DECLARE_FUNC()
+
     BEGIN_DECLARE_OPTIONAL(BuildIns::Object_Optional_Int, ValueType::Int)
     END_DECLARE_OPTIONAL
 

@@ -9,6 +9,11 @@
 
 constexpr int kStackMaxSize = 1024 * 1024 * 4; // 4M intptr_t;
 
+struct StackFrameSnapshot {
+    AddressPtr fp = 0;
+    AddressPtr sp = 0;
+};
+
 struct Executor {
 
     AddressPtr fp = 0;
@@ -17,6 +22,12 @@ struct Executor {
 
     std::vector<Slot> frames {};
     char stack[kStackMaxSize] {};
+
+    // return current stack frame numbers
+    size_t getStackFrameCount() const;
+
+    // return stack frame snapshot
+    StackFrameSnapshot getStackFrameSnapshot(int index) const;
 
 };
 
