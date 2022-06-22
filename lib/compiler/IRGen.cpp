@@ -65,7 +65,7 @@ ModuleClass* IRGen::emit(const ModuleDecl::Ptr& decl) {
     writer.write(Bytecode(OP_RETURN,0));
 
     // wrap module initializer code into a V Function
-    auto moduleInitializer = new Function(decl->getSimpleName(), true);
+    auto moduleInitializer = new Function(decl->getSimpleName() + "#<module-init>()" , true);
     moduleInitializer->funcType = FuncType::VM_Func;
     moduleInitializer->bytecodes = writer.getBytecodes();
     compiler->declare(moduleInitializer);

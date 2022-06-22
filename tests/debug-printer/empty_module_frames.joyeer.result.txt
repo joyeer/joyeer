@@ -1,10 +1,13 @@
-stack-frames-count: 3
---------------------------
-stack: 2
-type: FUNC_CALL
---------------------------
-stack: 1
-type: FUNC_CALL
---------------------------
-stack: 0
-type: MODULE
+|stack-frames-count: 3
+|--------------------------
+|stack: 2
+|type: FUNC_CALL
+|name: debugPrintCurrentStackFrames()
+|--------------------------
+|stack: 1
+|type: FUNC_CALL
+|name: empty_module_frames#<module-init>()
+|--------------------------
+|stack: 0
+|type: MODULE
+|name: empty_module_frames
