@@ -24,10 +24,10 @@ struct Executor {
     char stack[kStackMaxSize] {};
 
     // return current stack frame numbers
-    size_t getStackFrameCount() const;
+    [[nodiscard]] size_t getStackFrameCount() const;
 
     // return stack frame snapshot
-    StackFrameSnapshot getStackFrameSnapshot(int index) const;
+    [[nodiscard]] StackFrameSnapshot getStackFrameSnapshot(int index) const;
 
 };
 

@@ -9,9 +9,17 @@ StackFrame::Type StackFrame::getFrameType(FramePtr framePtr) {
 }
 
 int FuncCallFrame::size() {
-    return kMethodSlotOffset;
+    return kFuncCallFrameSize;
+}
+
+Slot FuncCallFrame::getMethodSlot(FramePtr framePtr) {
+    return *(Slot*)(framePtr + kMethodSlotOffset);
 }
 
 int ModuleEntryFrame::size() {
     return kModuleEntryFrameSize;
+}
+
+Slot ModuleEntryFrame::getModuleSlot(FramePtr framePtr) {
+    return *(Slot*)(framePtr + kModuleSlotOffset);
 }

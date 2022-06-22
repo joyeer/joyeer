@@ -4,6 +4,22 @@
 #include "joyeer/vm/frame.h"
 
 
+void debugPrintModuleEntryFrame(Executor* executor, FramePtr framePtr) {
+    printf("type: MODULE\n");
+    auto moduleSlot = ModuleEntryFrame::getModuleSlot(framePtr);
+    auto moduleClass = executor->vm->getType(moduleSlot);
+    assert(moduleClass->kind == ValueType::Module);
+    printf("name: %s\n", moduleClass->name.c_str());
+}
+
+void debugPrintFuncCallFrame(Executor* executor, FramePtr framePtr) {
+    printf("type: FUNC_CALL\n");
+    auto methodSlot = FuncCallFrame::getMethodSlot(framePtr);
+    auto methodClass = executor->vm->getType(methodSlot);
+    assert(methodClass->kind == ValueType::Func );
+    printf("name: %s\n", methodClass->name.c_str());
+}
+
 Value Global_$_debugPrintCurrentStackFrames(Executor* executor, Arguments* arguments) {
 
     auto totalFrameCount = executor->getStackFrameCount();
@@ -14,13 +30,14 @@ Value Global_$_debugPrintCurrentStackFrames(Executor* executor, Arguments* argum
         printf("--------------------------\n");
         printf("stack: %ld\n", index);
         auto frameSnapshot = executor->getStackFrameSnapshot(index);
-        auto frameType = StackFrame::getFrameType(frameSnapshot.fp + executor->stack);
+        auto framePtr = frameSnapshot.fp + executor->stack;
+        auto frameType = StackFrame::getFrameType(framePtr);
         switch (frameType) {
             case StackFrame::Type::MODULE:
-                printf("type: MODULE\n");
+                debugPrintModuleEntryFrame(executor, framePtr);
                 break;
             case StackFrame::Type::FUNC_CALL:
-                printf("type: FUNC_CALL\n");
+                debugPrintFuncCallFrame(executor, framePtr);
                 break;
             default:
                 assert(false);

@@ -62,13 +62,15 @@ struct FuncCallFrame : public StackFrame {
         *(Value*)(frame + kMethodSlotOffset) = methodSlot ;
     }
 
+    static Slot getMethodSlot(FramePtr framePtr);
+
     // Return the local variable in stack
     static Value getLocalVar(FramePtr frame, Slot slot) {
-        return *(Value*)(frame + kFuncCallFrameSize - kValueSize + slot * kValueSize);
+        return *(Value*)(frame + kFuncCallFrameSize + slot * kValueSize);
     }
 
     static void setLocalVar(FramePtr frame, Slot slot, Value newValue) {
-        *(Value*)(frame + kFuncCallFrameSize - kValueSize + slot * kValueSize) = newValue;
+        *(Value*)(frame + kFuncCallFrameSize + slot * kValueSize) = newValue;
     }
 
     static void setReturnValue(FramePtr frame, Value newValue) {
@@ -101,6 +103,8 @@ struct ModuleEntryFrame : public StackFrame {
         *(Value*)(frame + kFrameTypeOffset) = StackFrame::Type::MODULE ;
         *(Value*)(frame + kModuleSlotOffset) = moduleSlot ;
     }
+
+    static Slot getModuleSlot(FramePtr framePtr);
 
     static Value getReturnValue(FramePtr frame) {
         return *(Value*)(frame + kReturnValueOffset);
