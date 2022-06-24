@@ -11,6 +11,7 @@
 constexpr size_t kPageSize = 256 * 1024;
 constexpr size_t kMaxPageNumberInSingleSpace = 1024 * 1024; // the max number of page in one single space
 constexpr AddressPtr kInvalid = -1;
+constexpr AddressPtr kNull = 0;
 
 
 // the default page size : 256k

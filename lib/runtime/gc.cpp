@@ -9,7 +9,7 @@ AddressPtr GC::allocate(MemoryArea area, Class *klass) {
     if(area == MemoryArea::Permanent) {
         return allocateForStatic(klass);
     } else {
-//        return reinterpret_cast<intptr_t>(allocateForDynamic(klass));
+        assert(false);
     }
 
     assert(false);
@@ -25,6 +25,9 @@ AddressPtr GC::allocate(Type *type, size_t size) {
 
 AddressPtr GC::allocateForStatic(Class *klass) {
     size_t size = klass->getStaticSize();
+    if( size == 0) {
+        return kNull;
+    }
     auto address = heap->allocate(size);
     return address;
 }
