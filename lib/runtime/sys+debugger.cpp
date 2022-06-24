@@ -47,3 +47,35 @@ Value Global_$_debugPrintCurrentStackFrames(Executor* executor, Arguments* argum
 
     return 0;
 }
+
+//---------------------------------------------------------------------------------------------------------
+
+void debugPrintSpaceInformation(Space* space) {
+    printf("|total pages: %lu\n", space->pages.size());
+}
+
+void debugPrintGCHeapInformation(Executor* executor) {
+    auto* heap = executor->vm->gc->heap;
+    printf("|----- Heap statistics ------\n");
+    printf("|total memory: %zu\n", heap->getTotalMemory());
+    printf("|used memory: %zu\n", heap->getUsedMemory());
+    printf("|free memory: %zu\n", heap->getFreeMemory());
+    printf("|- static space -------------\n");
+    debugPrintSpaceInformation(heap->spaces[kStaticSpace]);
+    printf("|- new generation space -----\n");
+    debugPrintSpaceInformation(heap->spaces[kNewSpace]);
+    printf("|- old gen space ------------\n");
+    debugPrintSpaceInformation(heap->spaces[kOldSpace]);
+}
+
+
+Value Global_$_debugPrintSystemMemorySnapshot(Executor* executor, Arguments* arguments) {
+    debugPrintGCHeapInformation(executor);
+    return 0;
+}
+
+//---------------------------------------------------------------------------------------------------------
+
+Value Global_$_debugPrintObjectGraph(Executor* executor, Arguments* arguments) {
+    return 0;
+}

@@ -12,7 +12,7 @@ enum MemoryArea : uint8_t {
     Dynamic
 };
 
-class GC {
+struct GC {
 public:
     AddressPtr allocate(MemoryArea area, Class* klass);
     AddressPtr allocate(Type* type, size_t size);
@@ -20,7 +20,7 @@ public:
     static Value read(AddressPtr memory, int offset);
 private:
     AddressPtr allocateForStatic(Class* klass);
-private:
+public:
     Heap* heap { new Heap() };
 };
 

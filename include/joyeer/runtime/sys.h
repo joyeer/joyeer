@@ -13,7 +13,12 @@ Value Global_$_autoWrapping_Bool(Executor* executor, Arguments* args);
 Value Global_$_autoWrapping_Class(Executor* executor, Arguments* args);
 Value Global_$_autoUnwrapping(Executor* executor, Arguments* args);
 
+// debug print the current stack frames
 Value Global_$_debugPrintCurrentStackFrames(Executor* executor, Arguments* args);
+// debug print the system memory snapshot
+Value Global_$_debugPrintSystemMemorySnapshot(Executor* executor, Arguments* args);
+// debug print the object graph
+Value Global_$_debugPrintObjectGraph(Executor* executor, Arguments* args);
 
 Value Array_$$_get(Executor* executor, Arguments* args);
 Value Array_$$_set(Executor* executor, Arguments* args);

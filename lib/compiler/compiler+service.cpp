@@ -13,7 +13,7 @@
 
 
 #define CHECK_ERROR_RETURN_NULL \
-    if(diagnostics->errors.size() != 0) { \
+    if(!diagnostics->errors.empty()) { \
         return nullptr; \
     }
 
@@ -248,8 +248,22 @@ void CompilerService::bootstrap() {
         DECLARE_FUNC_PARM("value", BuildIns::Object_Optional_Int)
     END_DECLARE_FUNC()
 
-    BEGIN_DECLARE_FUNC(BuildIns::Func_debugPrintCurrentStackFrames, "debugPrintCurrentStackFrames()", ValueType::Void,
+    BEGIN_DECLARE_FUNC(BuildIns::Func_debugPrintCurrentStackFrames,
+                       "debugPrintCurrentStackFrames()",
+                       ValueType::Void,
                        Global_$_debugPrintCurrentStackFrames)
+    END_DECLARE_FUNC()
+
+    BEGIN_DECLARE_FUNC(BuildIns::Func_debugPrintSystemMemorySnapshot,
+                       "debugPrintSystemMemorySnapshot()",
+                       ValueType::Void,
+                       Global_$_debugPrintSystemMemorySnapshot)
+    END_DECLARE_FUNC()
+
+    BEGIN_DECLARE_FUNC(BuildIns::Func_debugPrintObjectGraph,
+                        "debugPrintObjectGraph()",
+                        ValueType::Void,
+                        Global_$_debugPrintObjectGraph)
     END_DECLARE_FUNC()
 
     BEGIN_DECLARE_OPTIONAL(BuildIns::Object_Optional_Int, ValueType::Int)

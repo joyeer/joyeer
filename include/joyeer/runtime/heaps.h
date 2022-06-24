@@ -20,6 +20,10 @@ struct Page {
     AddressPtr used = 0;
 
     [[nodiscard]] AddressPtr allocate(size_t size);
+
+    [[nodiscard]] size_t getTotalMemory() const;
+    [[nodiscard]] size_t getUsedMemory() const;
+    [[nodiscard]] size_t getFreeMemory() const;
 };
 
 
@@ -31,6 +35,11 @@ struct Space {
     AddressPtr allocate(size_t size) {
         return pages[cur]->allocate(size);
     }
+
+    [[nodiscard]] size_t getTotalMemory() const;
+    [[nodiscard]] size_t getUsedMemory() const;
+    [[nodiscard]] size_t getFreeMemory() const;
+
 };
 
 constexpr static int kStaticSpace = 0;
@@ -56,6 +65,10 @@ struct Heap {
         auto address = SPACE(kNewSpace)->allocate(size);
         return address;
     }
+
+    [[nodiscard]] size_t getTotalMemory() const;
+    [[nodiscard]] size_t getUsedMemory() const;
+    [[nodiscard]] size_t getFreeMemory() const;
 };
 
 
