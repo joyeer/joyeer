@@ -14,4 +14,6 @@ target_link_libraries(joyeer
         JoyeerRuntime
         JoyeerCompiler
         JoyeerVM
+        ZLIB::ZLIB
+        ${LLVM_LIBS}
 )

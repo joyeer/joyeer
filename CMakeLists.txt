@@ -16,7 +16,6 @@ list(APPEND CMAKE_MODULE_PATH
 
 # enable the testing
 enable_testing()
-enable_language(CXX)
 
 # Use C++20.
 set(CMAKE_CXX_STANDARD 20)
@@ -39,11 +38,21 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${JOYEER_BIN_OUTPUT_INTDIR})
 
 include(addJoyeer)
 
+# include LLVM configuration
+find_package(LLVM REQUIRED HINTS
+    "${LLVM_CMAKE_PATH}")
+list(APPEND CMAKE_MODULE_PATH ${LLVM_DIR})
+
 # include headers
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
+include_directories("${LLVM_BINARY_DIR}/include"
+    "${LLVM_INCLUDE_DIR}")
 include_directories(
     ${JOYEER_INCLUDE_DIR}
 )
+
+link_directories("${LLVM_LIBRARY_DIR}")
+llvm_map_components_to_libnames(LLVM_LIBS Core Support native)
 
 add_subdirectory(lib)
 add_subdirectory(tests)
