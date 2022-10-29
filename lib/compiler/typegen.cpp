@@ -26,7 +26,7 @@ Node::Ptr TypeGen::visit(const Node::Ptr& node) {
 Node::Ptr TypeGen::visit(const ModuleDecl::Ptr& decl) {
     // register Module
 
-    auto module = new ModuleClass(decl->getSimpleName());
+    auto module = new ModuleUnit(decl->getSimpleName());
     context->compiler->declare(module);
     decl->typeSlot = module->slot;
 
@@ -243,7 +243,7 @@ Node::Ptr TypeGen::visit(const VarDecl::Ptr& decl) {
         diagnostics->reportError(ErrorLevel::failure, "[Error] duplicate variable name");
     }
 
-    // if the closest declaration type, is the ModuleClass/Class,
+    // if the closest declaration type, is the ModuleUnit/Class,
     // the variable will be treated as field in Symbol
     auto declType = context->curDeclType();
     auto flag = SymbolFlag::var;

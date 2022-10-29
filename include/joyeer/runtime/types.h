@@ -6,8 +6,9 @@
 #define __joyeer_runtime_types_h__
 
 #include <cstdlib>
-#include <string>
-#include <vector>
+
+#include <llvm/IR/LLVMContext.h>
+#include <llvm/IR/Module.h>
 
 struct Bytecodes;
 struct Arguments;
@@ -155,7 +156,7 @@ struct UnspecifiedType: Type {
 ;
 
 // Variable for Field/LocalVariable declarations
-// will be used in Class/ModuleClass/Function
+// will be used in Class/ModuleUnit/Function
 struct Variable {
 
     // the debugger name's variable/field
@@ -299,9 +300,9 @@ struct Class : public Type {
     void putField(AddressPtr objAddr, int fieldIndex, Value newValue);
 };
 
-struct ModuleClass : public Class {
+struct ModuleUnit : public Class {
 
-    explicit ModuleClass(const std::string& name);
+    explicit ModuleUnit(const std::string& name);
 };
 
 

@@ -9,11 +9,12 @@
 #include "joyeer/runtime/types.h"
 #include "joyeer/runtime/sys.h"
 
+#include <llvm/IR/LLVMContext.h>
+#include <llvm/Support/TargetSelect.h>
 #include <utility>
 
-
 #define CHECK_ERROR_RETURN_NULL \
-    if(diagnostics->errors.size() != 0) { \
+    if(!diagnostics->errors.empty()) { \
         return nullptr; \
     }
 
@@ -21,9 +22,14 @@ CompilerService::CompilerService(Diagnostics* diagnostics, CommandLineArguments:
         options(std::move(opts)) {
     globalSymbols = std::make_shared<SymbolTable>();
     this->diagnostics = diagnostics;
+
+    // initialize the LLVM
+    llvm::InitializeNativeTarget();
+    llvm::InitializeNativeTargetAsmPrinter();
+
 }
 
-ModuleClass* CompilerService::compile(const std::string& inputFile) {
+ModuleUnit* CompilerService::compile(const std::string& inputFile) {
     auto sourcefile = findSourceFile(inputFile);
     return compile(sourcefile);
 }
@@ -50,7 +56,7 @@ SourceFile::Ptr CompilerService::findSourceFile(const std::string &path, const s
 }
 
 
-ModuleClass* CompilerService::compile(const SourceFile::Ptr& sourcefile) {
+ModuleUnit* CompilerService::compile(const SourceFile::Ptr& sourcefile) {
 
     auto debugfile = sourcefile->getAbstractLocation() + ".xdump.yml";
     NodeDebugPrinter debugPrinter(debugfile);

@@ -17,7 +17,7 @@ struct InterpretedExecutor : public Executor {
     explicit InterpretedExecutor(IsolateVM* vm);
 
     // execute a Module
-    void execute(const ModuleClass* module);
+    void execute(const ModuleUnit* module);
 
     // execute a Method
     void execute(const Function* method);

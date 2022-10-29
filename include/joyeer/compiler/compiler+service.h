@@ -12,7 +12,7 @@ public:
     void bootstrap();
 
     // return the entry file module
-    ModuleClass* compile(const std::string& inputFile);
+    ModuleUnit* compile(const std::string& inputFile);
 
     // register a kind
     int declare(Type* type);
@@ -39,7 +39,7 @@ private:
     friend class Driver;
 
     // Compile an SourceFile
-    ModuleClass* compile(const SourceFile::Ptr& sourcefile);
+    ModuleUnit* compile(const SourceFile::Ptr& sourcefile);
 
     SourceFile::Ptr findSourceFile(const std::string& path, const std::string& relativeFolder = "");
 

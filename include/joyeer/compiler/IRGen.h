@@ -10,7 +10,7 @@ class IRGen {
 public:
     explicit IRGen(CompileContext::Ptr context);
 
-    ModuleClass* emit(const ModuleDecl::Ptr& block);
+    ModuleUnit* emit(const ModuleDecl::Ptr& block);
     
 protected:
     void emit(const Node::Ptr& node);

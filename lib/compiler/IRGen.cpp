@@ -53,9 +53,9 @@ void IRGen::emit(const Node::Ptr& node) {
     }
 }
 
-ModuleClass* IRGen::emit(const ModuleDecl::Ptr& decl) {
+ModuleUnit* IRGen::emit(const ModuleDecl::Ptr& decl) {
 
-    auto module = (ModuleClass*)(compiler->getType(decl->typeSlot));
+    auto module = (ModuleUnit*)(compiler->getType(decl->typeSlot));
     context->visit(CompileStage::visitModule, decl, [this, decl]() {
         for(const auto& member: decl->statements) {
             emit(member);

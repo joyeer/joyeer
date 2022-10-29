@@ -30,7 +30,7 @@ struct Symbol {
     SymbolFlag flag;
     std::string name;
 
-    // typeSlot of ModuleClass/Function/Class
+    // typeSlot of ModuleUnit/Function/Class
     int typeSlot:32 = -1;
 
     // the parentTypeSlot type's slot

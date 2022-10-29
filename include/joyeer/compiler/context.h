@@ -38,7 +38,7 @@ public:
     
     SymbolTable::Ptr curSymTable() ;
 
-    // Return the Top declarations Types - ModuleClass/Function/Class
+    // Return the Top declarations Types - ModuleUnit/Function/Class
     [[nodiscard]] Type*  curDeclType() const ;
 
     // return the current Function in the stack

@@ -142,7 +142,7 @@ Node::Ptr TypeBinding::visit(const VarDecl::Ptr& decl) {
         }
             break;
         case ValueType::Module: {
-            auto module = (ModuleClass*)declType;
+            auto module = (ModuleUnit*)declType;
             symbol->locationInParent = module->staticFields.size();
             module->staticFields.push_back(variableType);
         }

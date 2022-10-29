@@ -181,7 +181,7 @@ void Class::putField(AddressPtr objAddr, int fieldIndex, Value newValue) {
 // Module implementation
 //------------------------------------------------
 
-ModuleClass::ModuleClass(const std::string &name) :
+ModuleUnit::ModuleUnit(const std::string &name) :
         Class(name) {
     kind = ValueType::Module;
 }

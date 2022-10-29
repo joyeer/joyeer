@@ -11,7 +11,7 @@
 #include "joyeer/compiler/compiler+service.h"
 
 struct InterpretedIsolatedVM : public IsolateVM {
-    void run(ModuleClass* module);
+    void run(ModuleUnit* module);
 };
 
 #endif //__joyeer_vm_isolate_h__

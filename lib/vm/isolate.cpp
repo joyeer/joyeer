@@ -6,7 +6,7 @@
 #include "joyeer/vm/interpreter.h"
 #include "joyeer/runtime/loader.h"
 
-void InterpretedIsolatedVM::run(ModuleClass *module) {
+void InterpretedIsolatedVM::run(ModuleUnit *module) {
     ClassLoader loader(this);
     loader.load(module);
 

@@ -445,7 +445,7 @@ InterpretedExecutor::InterpretedExecutor(IsolateVM *vm) {
     this->vm = vm;
 }
 
-void InterpretedExecutor::execute(const ModuleClass *module) {
+void InterpretedExecutor::execute(const ModuleUnit *module) {
     auto savedFP = sp;
     auto frame = &stack[sp];
     ModuleEntryFrame::set(frame, 0, module->slot);

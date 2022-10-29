@@ -619,7 +619,7 @@ protected:
                 case ValueType::Module:
                     output << "type: Module" ;
                     newline();
-                    print((ModuleClass*)(tf));
+                    print((ModuleUnit*)(tf));
                     break;
                 case ValueType::Nil:
                     output << "type: Nil" ;
@@ -664,7 +664,7 @@ protected:
 
     void print(Function* func, const std::vector<Type*>& types);
 
-    void print(ModuleClass* module) {
+    void print(ModuleUnit* module) {
         output << "name: " << module->name;
         newline();
         output << "staticInitializer: " << module->staticInitializerSlot;
