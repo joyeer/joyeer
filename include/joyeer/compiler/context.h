@@ -44,7 +44,7 @@ public:
     // return the current Function in the stack
     [[nodiscard]] Function* curFuncType() const;
 
-    Class* curClassType() const;
+    [[nodiscard]] Class* curClassType() const;
 
     // the current parsing source file
     SourceFile::Ptr sourcefile = nullptr;
@@ -56,6 +56,8 @@ public:
 
 protected:
     friend class TypeBinding;
+    friend class CompilerService;
+    friend class IRGen;
 
     // Symbol Tables in parsing stack, basics, once dive into next AST, will push symbol table into stack
     std::vector<SymbolTable::Ptr> symbols;
@@ -65,6 +67,9 @@ protected:
     
     // stage of compiling status, the last element of stages present the current stage
     std::vector<CompileStage> stages;
+
+    // LLVM context
+    llvm::LLVMContext* llvmContext;
     
 };
 

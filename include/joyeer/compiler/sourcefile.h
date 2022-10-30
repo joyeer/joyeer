@@ -33,7 +33,7 @@ public:
     // lexer parsing result: token list
     std::vector<Token::Ptr> tokens;
 
-    ModuleUnit* moduleClass;
+    ModuleUnit* moduleUnit;
     
 protected:
     // the path relative to the working directory

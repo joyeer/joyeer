@@ -10,7 +10,9 @@
 #include "joyeer/runtime/sys.h"
 
 #include <llvm/IR/LLVMContext.h>
+#include <llvm/IR/Module.h>
 #include <llvm/Support/TargetSelect.h>
+
 #include <utility>
 
 #define CHECK_ERROR_RETURN_NULL \
@@ -30,6 +32,7 @@ CompilerService::CompilerService(Diagnostics* diagnostics, CommandLineArguments:
 }
 
 ModuleUnit* CompilerService::compile(const std::string& inputFile) {
+
     auto sourcefile = findSourceFile(inputFile);
     return compile(sourcefile);
 }
@@ -64,7 +67,8 @@ ModuleUnit* CompilerService::compile(const SourceFile::Ptr& sourcefile) {
     auto context= std::make_shared<CompileContext>(diagnostics, globalSymbols);
     context->sourcefile = sourcefile;
     context->compiler = this;
-    
+    context->llvmContext = &llvmContext;
+
     // lex structure analyze
     LexParser lexParser(context);
     lexParser.parse(sourcefile);
@@ -90,7 +94,7 @@ ModuleUnit* CompilerService::compile(const SourceFile::Ptr& sourcefile) {
 
     // generate IR code
     IRGen irGen(context);
-    sourcefile->moduleClass = irGen.emit(block);
+    sourcefile->moduleUnit = irGen.emit(block);
     CHECK_ERROR_RETURN_NULL
 
     // debug print the types after IR code generated
@@ -98,7 +102,7 @@ ModuleUnit* CompilerService::compile(const SourceFile::Ptr& sourcefile) {
 
     debugPrinter.close();
 
-    return sourcefile->moduleClass;
+    return sourcefile->moduleUnit;
 }
 
 int CompilerService::declare(Type* type) {

@@ -5,7 +5,6 @@
 #include "joyeer/vm/interpreter.h"
 #include "joyeer/runtime/bytecode.h"
 #include "joyeer/runtime/types.h"
-#include "joyeer/compiler/debugprinter.h"
 #include <iostream>
 
 struct Interpreter;

@@ -11,7 +11,7 @@ public:
     // initialize the pre-define TypeDefs
     void bootstrap();
 
-    // return the entry file module
+    //  return the entry file module
     ModuleUnit* compile(const std::string& inputFile);
 
     // register a kind
@@ -58,5 +58,8 @@ private:
     std::unordered_map<Slot, SymbolTable::Ptr> exportingSymbolTableOfClasses;
 
     Diagnostics* diagnostics;
+
+    // LLVM Context
+    llvm::LLVMContext llvmContext{};
 };
 #endif

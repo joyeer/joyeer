@@ -56,6 +56,11 @@ void IRGen::emit(const Node::Ptr& node) {
 ModuleUnit* IRGen::emit(const ModuleDecl::Ptr& decl) {
 
     auto module = (ModuleUnit*)(compiler->getType(decl->typeSlot));
+
+    // setup LLVM module
+    llvm::StringRef name(decl->filename);
+    module->llvmModule = new llvm::Module(name, *(context->llvmContext));
+
     context->visit(CompileStage::visitModule, decl, [this, decl]() {
         for(const auto& member: decl->statements) {
             emit(member);

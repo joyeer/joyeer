@@ -303,6 +303,8 @@ struct Class : public Type {
 struct ModuleUnit : public Class {
 
     explicit ModuleUnit(const std::string& name);
+
+    llvm::Module* llvmModule;
 };
 
 
