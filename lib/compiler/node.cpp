@@ -174,6 +174,14 @@ void FuncDecl::bindClass(const Class* klass) {
     }
 }
 
+FuncDecl::Ptr FuncDecl::createStaticConstructor() {
+
+    auto parameterClause = std::make_shared<ParameterClause>( std::vector<Pattern::Ptr>() );
+    auto stmts = std::make_shared<StmtsBlock>( std::vector<Node::Ptr> {} );
+
+    return createConstructor(true, parameterClause, nullptr, stmts);
+}
+
 FuncDecl::Ptr FuncDecl::createDefaultConstructor() {
     /**
      * default constructor looks like follow code:
@@ -184,15 +192,16 @@ FuncDecl::Ptr FuncDecl::createDefaultConstructor() {
     auto parameterClause = std::make_shared<ParameterClause>( std::vector<Pattern::Ptr>());
 
     auto stmts = std::make_shared<StmtsBlock>( std::vector<Node::Ptr> {  });
-    return createConstructor(parameterClause, nullptr, stmts);
+    return createConstructor(false, parameterClause, nullptr, stmts);
 }
 
 // create a Constructor FuncDecl
-FuncDecl::Ptr FuncDecl::createConstructor( const Node::Ptr& parameterClause, const Node::Ptr& returnType, const StmtsBlock::Ptr& stmts) {
+FuncDecl::Ptr FuncDecl::createConstructor(bool isStatic, const Node::Ptr& parameterClause, const Node::Ptr& returnType, const StmtsBlock::Ptr& stmts) {
     auto token = std::make_shared<Token>(TokenKind::identifier, "init", -1, -1);
     auto nameIdentifier = std::make_shared<IdentifierExpr>(token);
     auto decl = std::make_shared<FuncDecl>(nameIdentifier, parameterClause, returnType, stmts);
     decl->isConstructor = true;
+    decl->isStatic = isStatic;
     return decl;
 }
 

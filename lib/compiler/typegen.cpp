@@ -37,7 +37,10 @@ Node::Ptr TypeGen::visit(const ModuleDecl::Ptr& decl) {
         }
         decl->statements = statements;
     });
-    
+
+    // transfer Module's top level statement into module static initializer
+    transformModuleTopStmtToModuleInitFunc(decl);
+
     return decl;
 }
 
@@ -675,6 +678,24 @@ Node::Ptr TypeGen::visit(const ImportStmt::Ptr& decl) {
     //
 
     return decl;
+}
+
+void TypeGen::transformModuleTopStmtToModuleInitFunc(const ModuleDecl::Ptr &decl) {
+
+    // create FuncDecl for Module initializer
+    auto moduleInitFuncDecl = FuncDecl::createStaticConstructor();
+
+    std::vector<Node::Ptr> statements;
+    for(const auto& statement : decl->statements) {
+        if(statement->isDeclNode()) {
+            statements.push_back(statement);
+        } else {
+            moduleInitFuncDecl->statements.push_back(statement);
+        }
+    }
+
+    decl->statements = statements;
+    decl->staticConstructor = moduleInitFuncDecl;
 }
 
 Node::Ptr TypeGen::processClassMemberFunc(const FuncDecl::Ptr &decl) {

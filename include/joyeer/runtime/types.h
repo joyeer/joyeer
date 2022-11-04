@@ -9,6 +9,8 @@
 
 #include <llvm/IR/LLVMContext.h>
 #include <llvm/IR/Module.h>
+#include <llvm/IR/Function.h>
+#include <llvm/IR/Type.h>
 
 struct Bytecodes;
 struct Arguments;
@@ -219,6 +221,9 @@ struct Function : Type {
 
     // get param decl
     Variable* getParamByIndex(int index);
+
+    llvm::FunctionType* llvmFunctionType;
+    llvm::Function* llvmFunction;
 };
 
 

@@ -108,7 +108,7 @@ Node::Ptr SyntaxParser::tryParseConstructorDecl() {
         return nullptr;
     }
     
-    return FuncDecl::createConstructor(parameterClause, nullptr, codeBlock);
+    return FuncDecl::createConstructor(false, parameterClause, nullptr, codeBlock);
 }
 
 Node::Ptr SyntaxParser::tryParseFileImportStatement() {

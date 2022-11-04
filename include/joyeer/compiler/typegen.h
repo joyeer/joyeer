@@ -58,6 +58,9 @@ protected:
     Node::Ptr visit(const ArrayType::Ptr& decl) override;
     Node::Ptr visit(const ImportStmt::Ptr& decl) override;
 
+    // transform ModuleDecl's all top level statements into Initializer function
+    void transformModuleTopStmtToModuleInitFunc(const ModuleDecl::Ptr& decl);
+
     void processClassConstructors(const ClassDecl::Ptr& decl);
 
     // process class member func, e.g. self

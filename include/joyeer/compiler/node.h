@@ -591,11 +591,14 @@ public:
     // bind self symbol
     void bindClass(const Class* klass);
 
+    // create a static default constructor
+    static Ptr createStaticConstructor();
+
     // make a default constructor
     static Ptr createDefaultConstructor();
 
     // create a Constructor FuncDecl
-    static Ptr createConstructor(const Node::Ptr& parameterClause, const Node::Ptr& returnType, const StmtsBlock::Ptr& stmts);
+    static Ptr createConstructor(bool isStatic, const Node::Ptr& parameterClause, const Node::Ptr& returnType, const StmtsBlock::Ptr& stmts);
 
     // return func name
     std::string getSimpleName() override ;
@@ -611,6 +614,9 @@ public:
     using Ptr = std::shared_ptr<ModuleDecl>;
 
 public:
+    // ModuleDecl's static constructor
+    FuncDecl::Ptr staticConstructor = nullptr;
+
     explicit ModuleDecl(std::vector<Node::Ptr>& statements) :
             StmtsBlock(statements) {
         kind = SyntaxKind::module;

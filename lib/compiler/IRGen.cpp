@@ -1,6 +1,7 @@
 #include "joyeer/compiler/IRGen.h"
 #include "joyeer/diagnostic/diagnostic.h"
 #include "joyeer/compiler/compiler+service.h"
+#include <llvm/IR/Function.h>
 
 ////////////////////////////////////////////////////////
 // IRGen
@@ -55,7 +56,14 @@ void IRGen::emit(const Node::Ptr& node) {
 
 ModuleUnit* IRGen::emit(const ModuleDecl::Ptr& decl) {
 
+    auto moduleInitFuncName = decl->getSimpleName();
     auto module = (ModuleUnit*)(compiler->getType(decl->typeSlot));
+
+    // Build LLVM static module initializer function
+    auto llvmModuleInitFuncType = llvm::FunctionType::get(llvm::Type::getVoidTy(*context->llvmContext), {}, false);
+    auto llvmFunc = llvm::Function::Create(llvmModuleInitFuncType, llvm::Function::ExternalLinkage, moduleInitFuncName, module->llvmModule);
+
+    auto llvmFuncBlock = llvm::BasicBlock::Create(*context->llvmContext, "EntryBlock", llvmFunc);
 
     // setup LLVM module
     llvm::StringRef name(decl->filename);
@@ -70,12 +78,15 @@ ModuleUnit* IRGen::emit(const ModuleDecl::Ptr& decl) {
     writer.write(Bytecode(OP_RETURN,0));
 
     // wrap module initializer code into a V Function
-    auto moduleInitializer = new Function(decl->getSimpleName(), true);
-    moduleInitializer->funcType = FuncType::VM_Func;
-    moduleInitializer->bytecodes = writer.getBytecodes();
-    compiler->declare(moduleInitializer);
+    auto moduleInitFunc = new Function(decl->getSimpleName(), true);
+    moduleInitFunc->funcType = FuncType::VM_Func;
+    moduleInitFunc->bytecodes = writer.getBytecodes();
+    moduleInitFunc->llvmFunctionType = llvmModuleInitFuncType;
+    moduleInitFunc->llvmFunction = llvmFunc;
 
-    module->staticInitializerSlot = moduleInitializer->slot;
+    compiler->declare(moduleInitFunc);
+
+    module->staticInitializerSlot = moduleInitFunc->slot;
     return module;
 }
 
