@@ -15,3 +15,8 @@ add_joyeer_library(JoyeerCompiler STATIC
         typebinding.cpp
         )
 
+target_link_libraries(JoyeerCompiler
+        JoyeerDiagnostic
+        JoyeerRuntime
+        ${LLVM_LIBS}
+)

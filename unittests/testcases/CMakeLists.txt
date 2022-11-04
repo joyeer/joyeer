@@ -10,6 +10,7 @@ TARGET_LINK_LIBRARIES(UnitTests
         JoyeerRuntime
         JoyeerCompiler
         JoyeerVM
+        ${LLVM_LIBS}
         )
 
 add_test(NAME UnitTests COMMAND UnitTests)

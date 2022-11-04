@@ -10,10 +10,7 @@ add_dependencies(joyeer JoyeerVM)
 add_dependencies(joyeer JoyeerDiagnostic)
 
 target_link_libraries(joyeer
-        JoyeerDiagnostic
-        JoyeerRuntime
         JoyeerCompiler
         JoyeerVM
-        ZLIB::ZLIB
         ${LLVM_LIBS}
 )
