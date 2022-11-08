@@ -30,6 +30,8 @@ Node::Ptr TypeBinding::visit(const ModuleDecl::Ptr& node) {
         }
         node->statements =  statements;
     });
+
+    node->staticConstructor = std::static_pointer_cast<FuncDecl>(visit(node->staticConstructor));
     
     return node;
 }

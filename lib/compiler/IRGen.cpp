@@ -65,14 +65,19 @@ ModuleUnit* IRGen::emit(const ModuleDecl::Ptr& decl) {
 
     auto llvmFuncBlock = llvm::BasicBlock::Create(*context->llvmContext, "EntryBlock", llvmFunc);
 
+
     // setup LLVM module
     llvm::StringRef name(decl->filename);
     module->llvmModule = new llvm::Module(name, *(context->llvmContext));
 
     context->visit(CompileStage::visitModule, decl, [this, decl]() {
+
         for(const auto& member: decl->statements) {
             emit(member);
         }
+
+        // visit the static constructor of Module
+        emit(decl->staticConstructor);
     });
 
     writer.write(Bytecode(OP_RETURN,0));

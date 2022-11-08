@@ -33,7 +33,7 @@ Node::Ptr TypeGen::visit(const ModuleDecl::Ptr& decl) {
     context->visit(CompileStage::visitModule, decl, [decl, this]() {
         auto statements = std::vector<Node::Ptr>();
         for(const auto& statement : decl->statements) {
-            statements.push_back(NodeVisitor::visit(statement));
+            statements.push_back(visit(statement));
         }
         decl->statements = statements;
     });
@@ -696,6 +696,19 @@ void TypeGen::transformModuleTopStmtToModuleInitFunc(const ModuleDecl::Ptr &decl
 
     decl->statements = statements;
     decl->staticConstructor = moduleInitFuncDecl;
+
+    // build default static constructor <SInit> function
+    auto defaultSInit = new Function(decl->getSimpleName() + ".<SInit>", true);
+    {
+        defaultSInit->funcType = FuncType::VM_SInit;
+        defaultSInit->paramCount = 0;
+
+        // set the return type slot
+        defaultSInit->returnTypeSlot = decl->typeSlot;
+
+        compiler->declare(defaultSInit);
+        decl->staticConstructor->typeSlot = defaultSInit->slot;
+    }
 }
 
 Node::Ptr TypeGen::processClassMemberFunc(const FuncDecl::Ptr &decl) {

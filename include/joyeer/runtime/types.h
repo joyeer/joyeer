@@ -191,6 +191,7 @@ enum FuncType : uint8_t {
     C_CInit, // class constructor implemented in C native
     VM_Func, // function implemented in VM bytecodes
     VM_CInit, // class constructor implemented in VM bytecodes
+    VM_SInit, // class static constructor implemented in bytecodes
 };
 
 struct Executor;
