@@ -470,6 +470,7 @@ void InterpretedExecutor::execute(const Function *function) {
             break;
         case FuncType::VM_CInit:
         case FuncType::VM_Func:
+        case FuncType::VM_SInit:
             invokeVFunction(function);
             break;
         default:

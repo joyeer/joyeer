@@ -66,6 +66,7 @@ ModuleUnit* IRGen::emit(const ModuleDecl::Ptr& decl) {
     auto llvmFuncBlock = llvm::BasicBlock::Create(*context->llvmContext, "EntryBlock", llvmFunc);
 
 
+
     // setup LLVM module
     llvm::StringRef name(decl->filename);
     module->llvmModule = new llvm::Module(name, *(context->llvmContext));
@@ -89,9 +90,10 @@ ModuleUnit* IRGen::emit(const ModuleDecl::Ptr& decl) {
     moduleInitFunc->llvmFunctionType = llvmModuleInitFuncType;
     moduleInitFunc->llvmFunction = llvmFunc;
 
+
     compiler->declare(moduleInitFunc);
 
-    module->staticInitializerSlot = moduleInitFunc->slot;
+    module->staticInitializerSlot = decl->staticConstructor->typeSlot;
     return module;
 }
 
@@ -130,7 +132,7 @@ void IRGen::emit(const FuncDecl::Ptr& node) {
 
     IRGen generator(context);
 
-    if(node->isConstructor) {
+    if(node->isConstructor && !node->isStatic) {
         // if the FuncDecl is a constructor, call the default init first
         auto constructorFunc = reinterpret_cast<Function*>(compiler->getType(node->typeSlot));
         auto klass = (Class*)(compiler->getType(constructorFunc->returnTypeSlot));

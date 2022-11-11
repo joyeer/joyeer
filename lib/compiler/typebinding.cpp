@@ -29,10 +29,10 @@ Node::Ptr TypeBinding::visit(const ModuleDecl::Ptr& node) {
             statements.push_back(visit(statement));
         }
         node->statements =  statements;
+
+        node->staticConstructor = std::static_pointer_cast<FuncDecl>(visit(node->staticConstructor));
     });
 
-    node->staticConstructor = std::static_pointer_cast<FuncDecl>(visit(node->staticConstructor));
-    
     return node;
 }
 
@@ -330,6 +330,7 @@ Node::Ptr TypeBinding::visit(const IdentifierExpr::Ptr& node) {
             auto symbol = context->lookup(name);
             if(symbol == nullptr) {
                 diagnostics->reportError(ErrorLevel::failure, "[TODO][Error] Cannot find variable");
+                break;
             }
             assert(symbol->typeSlot != -1);
             assert(node->typeSlot == -1);
