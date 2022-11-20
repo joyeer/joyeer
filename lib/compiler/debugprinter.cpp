@@ -68,7 +68,7 @@ void NodeDebugPrinter::print(Function *func, const std::vector<Type*>& types)  {
     newline();
     output << "return-type-slot: " << func->returnTypeSlot;
 
-    if((func->funcType == VM_Func || func->funcType == VM_CInit) && func->bytecodes != nullptr ) {
+    if((func->funcType == VM_Func || func->funcType == VM_CInit || func->funcType == VM_SInit) && func->bytecodes != nullptr ) {
         newline();
         output << "bytecodes:";
         DEBUG_BLOCK_START

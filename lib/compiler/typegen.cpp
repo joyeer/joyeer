@@ -694,6 +694,10 @@ void TypeGen::transformModuleTopStmtToModuleInitFunc(const ModuleDecl::Ptr &decl
         }
     }
 
+    // insert return statement at end
+    moduleInitFuncDecl->statements.push_back(std::make_shared<ReturnStmt>(nullptr));
+
+
     decl->statements = statements;
     decl->staticConstructor = moduleInitFuncDecl;
 

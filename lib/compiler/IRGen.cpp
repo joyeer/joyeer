@@ -147,7 +147,7 @@ void IRGen::emit(const FuncDecl::Ptr& node) {
         }
     });
 
-    if(node->isConstructor) {
+    if(node->isConstructor && !node->isStatic) {
         generator.writer.write(Bytecode(OP_OLOAD, 0));
         generator.writer.write(Bytecode(OP_ORETURN, 0));
     }
