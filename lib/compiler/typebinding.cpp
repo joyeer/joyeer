@@ -75,12 +75,8 @@ Node::Ptr TypeBinding::visit(const FuncDecl::Ptr& decl) {
             paramIndex ++;
         }
 
-        // visit FuncDecl statements
-        std::vector<Node::Ptr> statements;
-        for(const auto& s: decl->statements) {
-            statements.push_back(visit(s));
-        }
-        decl->statements = statements;
+        // visit FuncDecl's bodyD
+        decl->body = std::static_pointer_cast<StmtsBlock>(visit(decl->body));
     });
 
     return decl;

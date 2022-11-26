@@ -131,9 +131,7 @@ void IRGen::emit(const FuncDecl::Ptr& node) {
     }
 
     context->visit(CompileStage::visitFuncDecl, node, [node, &generator](){
-        for(const auto& s: node->statements) {
-            generator.emit(s);
-        }
+        generator.emit(node->body);
     });
 
     if(node->isConstructor && !node->isStatic) {

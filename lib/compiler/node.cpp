@@ -145,11 +145,11 @@ std::string ClassDecl::getSimpleName() {
 //-------------------------------------
 
 FuncDecl::FuncDecl(Node::Ptr identifier, Node::Ptr parameterClause, Node::Ptr returnType, StmtsBlock::Ptr stmts) :
-StmtsBlock(stmts->statements),
+Node(SyntaxKind::funcDecl),
 identifier(std::move(identifier)),
 parameterClause(std::move(parameterClause)),
-returnType(std::move(returnType)) {
-    kind = SyntaxKind::funcDecl;
+returnType(std::move(returnType)),
+body(std::move(stmts)) {
 }
 
 

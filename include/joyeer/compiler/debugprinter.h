@@ -414,11 +414,7 @@ protected:
         }
 
         newline();
-
-        for(const auto& statement: decl->statements) {
-            NodeVisitor::visit(statement);
-            newline();
-        }
+        visit(decl->body);
 
         decTab();
         return decl;

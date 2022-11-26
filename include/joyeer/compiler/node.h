@@ -588,7 +588,7 @@ struct ClassDecl : public Node {
 
 
 // Represent a Function in Ast tree.
-struct FuncDecl : public StmtsBlock {
+struct FuncDecl : public Node {
 public:
     using Ptr = std::shared_ptr<FuncDecl>;
 
@@ -598,6 +598,8 @@ public:
     bool isConstructor = false;
     bool isStatic = false;
     Symbol::Ptr  symbol;
+
+    StmtsBlock::Ptr body;
 
     FuncDecl(Node::Ptr identifier, Node::Ptr parameterClause, Node::Ptr returnType, StmtsBlock::Ptr stmts);
 
