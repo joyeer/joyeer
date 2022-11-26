@@ -110,7 +110,7 @@ int CompilerService::declare(Type* type) {
     return type->slot;
 }
 
-Type* CompilerService::getType(int address) {
+Type* CompilerService::getType(Slot address) {
     assert(address >= 0 && address < types->types.size());
     return (*types)[address];
 }

@@ -63,13 +63,13 @@ protected:
     std::vector<SymbolTable::Ptr> symbols;
 
     // the parsing stack
-    std::vector<int> types;
+    std::vector<Slot> types;
     
     // stage of compiling status, the last element of stages present the current stage
     std::vector<CompileStage> stages;
 
     // LLVM context
-    llvm::LLVMContext* llvmContext;
+    llvm::LLVMContext* llvmContext{};
     
 };
 

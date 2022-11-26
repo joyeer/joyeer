@@ -84,8 +84,33 @@ struct Node : std::enable_shared_from_this<Node> {
         }
     }
 
+    // detect if the Node is Function/Class etc Type
+    bool isTypeDeclNode() const {
+        switch (kind) {
+            case SyntaxKind::funcDecl:
+            case SyntaxKind::classDecl:
+                return true;
+            default:
+                return false;
+        }
+    }
+
 protected:
     explicit Node(SyntaxKind kind);
+};
+
+// StmtsBlock represent an { ... } code block
+struct StmtsBlock : Node {
+    using Ptr = std::shared_ptr<StmtsBlock>;
+
+    std::vector<Node::Ptr> statements;
+
+    explicit StmtsBlock(std::vector<Node::Ptr> statements) :
+            Node(SyntaxKind::stmtsBlock),
+            statements(std::move(statements)) {
+        symtable = std::make_shared<SymbolTable>();
+    }
+
 };
 
 // represent a AST for *self*
@@ -485,19 +510,6 @@ struct ImportStmt : Node {
 
 };
 
-// StmtsBlock represent an { ... } code block
-struct StmtsBlock : Node {
-    using Ptr = std::shared_ptr<StmtsBlock>;
-
-    std::vector<Node::Ptr> statements;
-
-    explicit StmtsBlock(std::vector<Node::Ptr> statements) :
-            Node(SyntaxKind::stmtsBlock),
-            statements(std::move(statements)) {
-        symtable = std::make_shared<SymbolTable>();
-    }
-
-};
 
 // For In statement
 struct ForInStmt : Node {

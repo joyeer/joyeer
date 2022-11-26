@@ -121,9 +121,6 @@ void TypeGen::processClassConstructors(const ClassDecl::Ptr& decl) {
         auto defaultConstructor = FuncDecl::createDefaultConstructor();
         decl->statements.push_back(visit(defaultConstructor));
     }
-
-
-
 }
 
 Node::Ptr TypeGen::visit(const FuncDecl::Ptr& decl) {
@@ -687,7 +684,7 @@ void TypeGen::transformModuleTopStmtToModuleInitFunc(const ModuleDecl::Ptr &decl
 
     std::vector<Node::Ptr> statements;
     for(const auto& statement : decl->statements) {
-        if(statement->isDeclNode()) {
+        if(statement->isTypeDeclNode()) {
             statements.push_back(statement);
         } else {
             moduleInitFuncDecl->statements.push_back(statement);

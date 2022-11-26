@@ -18,7 +18,7 @@ public:
     int declare(Type* type);
 
     // get a Types base on a given typeSlot/position
-    Type* getType(int address);
+    Type* getType(Slot address);
 
     Type* getType(ValueType valueType);
 
