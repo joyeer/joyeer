@@ -103,11 +103,7 @@ void IRGen::emit(const ClassDecl::Ptr& decl) {
 
     IRGen generator(context);
     context->visit(CompileStage::visitClassDecl, decl, [decl, &generator] {
-        for(const auto& member: decl->statements) {
-            if(member->kind != SyntaxKind::funcDecl) {
-                generator.emit(member);
-            }
-        }
+        generator.emit(decl->body);
     });
 
     // default Class.<init>'s bytecodes
@@ -116,13 +112,6 @@ void IRGen::emit(const ClassDecl::Ptr& decl) {
     auto defaultCInitConstructor = (Function*)compiler->getType(klass->defaultInitializerSlot);
     defaultCInitConstructor->bytecodes = generator.writer.getBytecodes();
 
-    context->visit(CompileStage::visitClassDecl, decl, [this, decl] {
-        for(const auto& member: decl->statements) {
-            if(member->kind == SyntaxKind::funcDecl) {
-                emit(member);
-            }
-        }
-    });
 }
 
 

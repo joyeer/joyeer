@@ -36,19 +36,9 @@ Node::Ptr NodeDebugPrinter::visit(const ClassDecl::Ptr& decl) {
     DEBUG_BLOCK_START
     output << "class-name: " << decl->getSimpleName();
     newline();
-    output << "statements:";
+    output << "body:";
     DEBUG_BLOCK_START
-    auto i = 0;
-    for(const auto& statement: decl->statements) {
-        if(i > 0) {
-            newline();
-        }
-        output << "- ";
-        NodeVisitor::visit(statement);
-        i++;
-    }
-
-    DEBUG_BLOCK_END
+    visit(decl->body);
     DEBUG_BLOCK_END
     return decl;
 }

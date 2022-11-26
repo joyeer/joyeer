@@ -129,11 +129,10 @@ std::string OptionalType::getSimpleName() {
 // ClassDecl implementation
 //-------------------------------------
 
-ClassDecl::ClassDecl(Token::Ptr name, const std::vector<Node::Ptr>& statements) :
-        StmtsBlock(statements),
-        name(std::move(name)) {
-    symtable = std::make_shared<SymbolTable>();
-    kind = SyntaxKind::classDecl;
+ClassDecl::ClassDecl(Token::Ptr name, const StmtsBlock::Ptr & body) :
+        Node(SyntaxKind::classDecl),
+        name(std::move(name)),
+        body(body) {
 }
 
 std::string ClassDecl::getSimpleName() {

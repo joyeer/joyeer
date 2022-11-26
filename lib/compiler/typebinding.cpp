@@ -40,11 +40,7 @@ Node::Ptr TypeBinding::visit(const ModuleDecl::Ptr& node) {
 Node::Ptr TypeBinding::visit(const ClassDecl::Ptr& decl) {
 
     context->visit(CompileStage::visitClassDecl, decl, [this, decl]() {
-        std::vector<Node::Ptr> statements{};
-        for(auto const& statement: decl->statements) {
-            statements.push_back(visit(statement));
-        }
-        decl->statements = statements;
+        decl->body = std::static_pointer_cast<StmtsBlock>(visit(decl->body));
     });
 
     return decl;
