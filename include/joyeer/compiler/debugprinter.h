@@ -100,22 +100,7 @@ protected:
         DEBUG_BLOCK_START
         output << "simple-name: " << escapeString(decl->getSimpleName());
         newline();
-        print(decl->symtable);
-        if(decl->statements.size() > 0) {
-            newline();
-            output << "members:";
-            DEBUG_BLOCK_START
-            auto i = 0;
-            for(const auto& member : decl->statements) {
-                if(i > 0) {
-                    newline();
-                }
-                output << "- ";
-                NodeVisitor::visit(member);
-                i ++;
-            }
-            DEBUG_BLOCK_END
-        }
+        visit(decl->body);
         DEBUG_BLOCK_END
         
         return decl;

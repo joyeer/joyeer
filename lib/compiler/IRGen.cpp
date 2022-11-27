@@ -73,9 +73,7 @@ ModuleUnit* IRGen::emit(const ModuleDecl::Ptr& decl) {
 
     context->visit(CompileStage::visitModule, decl, [this, decl]() {
 
-        for(const auto& member: decl->statements) {
-            emit(member);
-        }
+        emit(decl->body);
 
         // visit the static constructor of Module
         emit(decl->staticConstructor);

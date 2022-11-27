@@ -624,7 +624,7 @@ public:
 };
 
 // Represent an Module in Ast tree, each xxx.joyeer file is a file module
-class ModuleDecl : public StmtsBlock {
+class ModuleDecl : public Node {
 public:
     using Ptr = std::shared_ptr<ModuleDecl>;
 
@@ -632,10 +632,11 @@ public:
     // ModuleDecl's static constructor
     FuncDecl::Ptr staticConstructor = nullptr;
 
-    explicit ModuleDecl(std::vector<Node::Ptr>& statements) :
-            StmtsBlock(statements) {
-        kind = SyntaxKind::module;
-        assert(symtable != nullptr);
+    StmtsBlock::Ptr body;
+
+    explicit ModuleDecl(const StmtsBlock::Ptr& body) :
+            Node(SyntaxKind::module),
+            body(body){
     }
 
     std::string filename;
