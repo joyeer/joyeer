@@ -30,12 +30,14 @@ Node::Ptr TypeGen::visit(const ModuleDecl::Ptr& decl) {
     context->compiler->declare(module);
     decl->typeSlot = module->slot;
 
+    // transfer Module's top level statement into module static initializer
+    transformModuleTopStmtToModuleInitFunc(decl);
+
     context->visit(CompileStage::visitModule, decl, [decl, this]() {
+        decl->defaultStaticInitFuncDecl = std::static_pointer_cast<FuncDecl>(visit(decl->defaultStaticInitFuncDecl));
         decl->body = std::static_pointer_cast<StmtsBlock>(visit(decl->body));
     });
 
-    // transfer Module's top level statement into module static initializer
-    transformModuleTopStmtToModuleInitFunc(decl);
 
     return decl;
 }
@@ -128,9 +130,11 @@ Node::Ptr TypeGen::visit(const FuncDecl::Ptr& decl) {
             break;
     }
 
-    if(decl->isConstructor) {
-        auto classType = context->curClassType();
-        funcSimpleName = decl->getSimpleConstructorName(classType->name);
+    if(decl->isConstructor ) { // TODO: need to revisit this logic here
+        if(context->curStage() == CompileStage::visitClassDecl) {
+            auto classType = context->curClassType();
+            funcSimpleName = decl->getSimpleConstructorName(classType->name);
+        }
     }
 
     // check if the function name duplicated
@@ -144,7 +148,7 @@ Node::Ptr TypeGen::visit(const FuncDecl::Ptr& decl) {
     compiler->declare(funcType);
     decl->typeSlot = funcType->slot;
 
-    if(decl->isConstructor) {
+    if(decl->isConstructor && !decl->isStatic) {
         funcType->funcType = FuncType::VM_CInit;
     }
 
@@ -677,12 +681,12 @@ void TypeGen::transformModuleTopStmtToModuleInitFunc(const ModuleDecl::Ptr &decl
         }
     }
 
-    // insert return statement at end
+    // insert return statement at end of the module static initializer
     moduleInitFuncDecl->body->statements.push_back(std::make_shared<ReturnStmt>(nullptr));
 
 
     decl->body->statements = statements;
-    decl->staticConstructor = moduleInitFuncDecl;
+    decl->defaultStaticInitFuncDecl = moduleInitFuncDecl;
 
     // build default static constructor <SInit> function
     auto defaultSInit = new Function(decl->getSimpleName() + ".<SInit>", true);
@@ -694,7 +698,7 @@ void TypeGen::transformModuleTopStmtToModuleInitFunc(const ModuleDecl::Ptr &decl
         defaultSInit->returnTypeSlot = decl->typeSlot;
 
         compiler->declare(defaultSInit);
-        decl->staticConstructor->typeSlot = defaultSInit->slot;
+        decl->defaultStaticInitFuncDecl->typeSlot = defaultSInit->slot;
     }
 }
 

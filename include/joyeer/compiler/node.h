@@ -629,14 +629,15 @@ public:
     using Ptr = std::shared_ptr<ModuleDecl>;
 
 public:
-    // ModuleDecl's static constructor
-    FuncDecl::Ptr staticConstructor = nullptr;
+    // ModuleDecl's default static constructor
+    FuncDecl::Ptr defaultStaticInitFuncDecl = nullptr;
 
+    // ModuleDecl's body which contains all Class/Func declarations
     StmtsBlock::Ptr body;
 
     explicit ModuleDecl(const StmtsBlock::Ptr& body) :
             Node(SyntaxKind::module),
-            body(body){
+            body(body) {
     }
 
     std::string filename;

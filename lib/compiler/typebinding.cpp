@@ -25,7 +25,7 @@ Node::Ptr TypeBinding::visit(const ModuleDecl::Ptr& node) {
     
     context->visit(CompileStage::visitModule, node, [this, node](){
         node->body = std::static_pointer_cast<StmtsBlock>(node->body);
-        node->staticConstructor = std::static_pointer_cast<FuncDecl>(visit(node->staticConstructor));
+        node->defaultStaticInitFuncDecl = std::static_pointer_cast<FuncDecl>(visit(node->defaultStaticInitFuncDecl));
     });
 
     return node;

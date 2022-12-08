@@ -101,6 +101,10 @@ protected:
         output << "simple-name: " << escapeString(decl->getSimpleName());
         newline();
         visit(decl->body);
+        if(decl->defaultStaticInitFuncDecl != nullptr) {
+            newline();
+            visit(decl->defaultStaticInitFuncDecl);
+        }
         DEBUG_BLOCK_END
         
         return decl;

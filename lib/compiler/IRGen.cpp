@@ -65,8 +65,6 @@ ModuleUnit* IRGen::emit(const ModuleDecl::Ptr& decl) {
 
     auto llvmFuncBlock = llvm::BasicBlock::Create(*context->llvmContext, "EntryBlock", llvmFunc);
 
-
-
     // setup LLVM module
     llvm::StringRef name(decl->filename);
     module->llvmModule = new llvm::Module(name, *(context->llvmContext));
@@ -76,22 +74,10 @@ ModuleUnit* IRGen::emit(const ModuleDecl::Ptr& decl) {
         emit(decl->body);
 
         // visit the static constructor of Module
-        emit(decl->staticConstructor);
+        emit(decl->defaultStaticInitFuncDecl);
     });
 
-    writer.write(Bytecode(OP_RETURN,0));
-
-    // wrap module initializer code into a V Function
-    auto moduleInitFunc = new Function(decl->getSimpleName(), true);
-    moduleInitFunc->funcType = FuncType::VM_Func;
-    moduleInitFunc->bytecodes = writer.getBytecodes();
-    moduleInitFunc->llvmFunctionType = llvmModuleInitFuncType;
-    moduleInitFunc->llvmFunction = llvmFunc;
-
-
-    compiler->declare(moduleInitFunc);
-
-    module->staticInitializerSlot = decl->staticConstructor->typeSlot;
+    module->staticInitializerSlot = decl->defaultStaticInitFuncDecl->typeSlot;
     return module;
 }
 
