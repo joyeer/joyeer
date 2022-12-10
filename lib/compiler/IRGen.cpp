@@ -271,7 +271,8 @@ void IRGen::emit(const IdentifierExpr::Ptr& node) {
     if(symbol->flag  == SymbolFlag::var) {
         auto typeOfVariable = context->compiler->getType(symbol->typeSlot);
         switch (typeOfVariable->kind) {
-            case ValueType::Int: {
+            case ValueType::Int:
+            case ValueType::Bool: {
                 writer.write(Bytecode(OP_ILOAD, symbol->locationInParent));
             }
                 break;
