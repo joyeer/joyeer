@@ -22,10 +22,12 @@ Node::Ptr TypeBinding::visit(const Node::Ptr& node) {
 }
 
 Node::Ptr TypeBinding::visit(const ModuleDecl::Ptr& node) {
-    
-    context->visit(CompileStage::visitModule, node, [this, node](){
-        node->body = std::static_pointer_cast<StmtsBlock>(node->body);
-        node->defaultStaticInitFuncDecl = std::static_pointer_cast<FuncDecl>(visit(node->defaultStaticInitFuncDecl));
+    context->visit(CompileStage::visitModule, node, [node, this](){
+        std::vector<Node::Ptr> stmts {};
+        for(auto& statement: node->statements ) {
+            stmts.push_back(visit(statement));
+        }
+        node->statements = stmts;
     });
 
     return node;
@@ -47,7 +49,7 @@ Node::Ptr TypeBinding::visit(const FuncDecl::Ptr& decl) {
         auto funcType = context->curFuncType();
 
         if(funcType->funcType != FuncType::C_CInit) {
-            // if not a class constructor, analyze it's return type
+            // if not a class constructor, analyze it's return typeD
             if(decl->returnType == nullptr) {
                 // no return
                 funcType->returnTypeSlot = compiler->getType(ValueType::Void)->slot;

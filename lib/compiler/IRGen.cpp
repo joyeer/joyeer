@@ -71,10 +71,8 @@ ModuleUnit* IRGen::emit(const ModuleDecl::Ptr& decl) {
 
     context->visit(CompileStage::visitModule, decl, [this, decl]() {
 
-        emit(decl->body);
+        emit(std::static_pointer_cast<StmtsBlock>(decl));
 
-        // visit the static constructor of Module
-        emit(decl->defaultStaticInitFuncDecl);
     });
 
     module->staticInitializerSlot = decl->defaultStaticInitFuncDecl->typeSlot;

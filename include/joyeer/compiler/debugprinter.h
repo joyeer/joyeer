@@ -100,11 +100,7 @@ protected:
         DEBUG_BLOCK_START
         output << "simple-name: " << escapeString(decl->getSimpleName());
         newline();
-        visit(decl->body);
-        if(decl->defaultStaticInitFuncDecl != nullptr) {
-            newline();
-            visit(decl->defaultStaticInitFuncDecl);
-        }
+        visit(std::static_pointer_cast<StmtsBlock>(decl));
         DEBUG_BLOCK_END
         
         return decl;

@@ -33,9 +33,13 @@ Node::Ptr TypeGen::visit(const ModuleDecl::Ptr& decl) {
     // transfer Module's top level statement into module static initializer
     transformModuleTopStmtToModuleInitFunc(decl);
 
-    context->visit(CompileStage::visitModule, decl, [decl, this]() {
-        decl->defaultStaticInitFuncDecl = std::static_pointer_cast<FuncDecl>(visit(decl->defaultStaticInitFuncDecl));
-        decl->body = std::static_pointer_cast<StmtsBlock>(visit(decl->body));
+    std::vector<Node::Ptr> statements {};
+
+    context->visit(CompileStage::visitModule, decl, [decl, this, &statements]() {
+        for(const auto& statement : decl->statements) {
+            statements.push_back(visit(statement));
+        }
+        decl->statements = statements;
     });
 
 
@@ -673,7 +677,7 @@ void TypeGen::transformModuleTopStmtToModuleInitFunc(const ModuleDecl::Ptr &decl
     auto moduleInitFuncDecl = FuncDecl::createStaticConstructor();
 
     std::vector<Node::Ptr> statements;
-    for(const auto& statement : decl->body->statements) {
+    for(const auto& statement : decl->statements) {
         if(statement->isTypeDeclNode()) {
             statements.push_back(statement);
         } else {
@@ -685,8 +689,10 @@ void TypeGen::transformModuleTopStmtToModuleInitFunc(const ModuleDecl::Ptr &decl
     moduleInitFuncDecl->body->statements.push_back(std::make_shared<ReturnStmt>(nullptr));
 
 
-    decl->body->statements = statements;
+    decl->statements = statements;
     decl->defaultStaticInitFuncDecl = moduleInitFuncDecl;
+    // module default static init func is also part of the ModuleDecls's statements
+    decl->statements.push_back(decl->defaultStaticInitFuncDecl);
 
     // build default static constructor <SInit> function
     auto defaultSInit = new Function(decl->getSimpleName() + ".<SInit>", true);

@@ -20,9 +20,8 @@ ModuleDecl::Ptr SyntaxParser::parse() {
 
         decls.push_back(decl);
     }
-
-    auto body = std::make_shared<StmtsBlock>(decls);
-    auto module = std::make_shared<ModuleDecl>(body);
+    
+    auto module = std::make_shared<ModuleDecl>(decls);
     module->filename = sourcefile->getLocation();
     return module;
 }
