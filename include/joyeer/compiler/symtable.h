@@ -38,6 +38,9 @@ struct Symbol {
 
     int locationInParent:16 = -1;
 
+    // only available for symbol's type is local variable or class field variable
+    Variable::Ptr variable = nullptr;
+
     bool isStatic = false;
 
     Symbol(SymbolFlag flag, std::string  name, int address);

@@ -161,6 +161,8 @@ struct UnspecifiedType: Type {
 // will be used in Class/ModuleUnit/Function
 struct Variable {
 
+    using Ptr = std::shared_ptr<Variable>;
+
     // the debugger name's variable/field
     const std::string name;
 

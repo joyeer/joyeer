@@ -68,6 +68,9 @@ protected:
     // stage of compiling status, the last element of stages present the current stage
     std::vector<CompileStage> stages;
 
+    // { ... } is a scope which contains symbols and variables
+    std::vector<StmtsBlock::Ptr> scopes;
+
     // LLVM context
     llvm::LLVMContext* llvmContext{};
     

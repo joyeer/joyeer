@@ -95,15 +95,25 @@ struct Node : std::enable_shared_from_this<Node> {
         }
     }
 
+    // determine weather the Node is a StmtBlock
+    virtual bool isStmtBlock() const {
+        return false;
+    }
+
 protected:
     explicit Node(SyntaxKind kind);
 };
 
 // StmtsBlock represent an { ... } code block
-struct StmtsBlock : Node {
+struct StmtsBlock : public Node {
     using Ptr = std::shared_ptr<StmtsBlock>;
 
     std::vector<Node::Ptr> statements;
+
+    // all local variable under this block { ... }
+    std::vector<Variable::Ptr> localVariables {};
+    // all static local variable under this block { ... }
+    std::vector<Variable::Ptr> localStaticVariables {};
 
     explicit StmtsBlock(std::vector<Node::Ptr> statements) :
             Node(SyntaxKind::stmtsBlock),
@@ -111,6 +121,10 @@ struct StmtsBlock : Node {
         symtable = std::make_shared<SymbolTable>();
     }
 
+    // inherited docs
+    bool isStmtBlock() const override {
+        return true;
+    }
 };
 
 // represent a AST for *self*

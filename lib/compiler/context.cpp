@@ -19,6 +19,10 @@ SymbolTable::Ptr CompileContext::curSymTable() {
 void CompileContext::visit(CompileStage stage, const Node::Ptr& node, const std::function<void()>& visit) {
     stages.push_back(stage);
 
+    if(node->isStmtBlock()) {
+        scopes.push_back(std::dynamic_pointer_cast<StmtsBlock>(node));
+    }
+
     if(node != nullptr && node->symtable) {
         symbols.push_back(node->symtable);
     }
@@ -36,6 +40,10 @@ void CompileContext::visit(CompileStage stage, const Node::Ptr& node, const std:
 
     if(node != nullptr && node->typeSlot != -1 && (node->isDeclNode() || node->kind == SyntaxKind::stmtsBlock)) {
         types.pop_back();
+    }
+
+    if(node->isStmtBlock()) {
+        scopes.pop_back();
     }
 
     assert(stage == stages.back());
