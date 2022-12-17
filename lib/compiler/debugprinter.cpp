@@ -38,7 +38,10 @@ Node::Ptr NodeDebugPrinter::visit(const ClassDecl::Ptr& decl) {
     newline();
     output << "body:";
     DEBUG_BLOCK_START
-    visit(decl->body);
+    for(const auto& stmt: decl->statements) {
+        newline();
+        NodeVisitor::visit(stmt);
+    }
     DEBUG_BLOCK_END
     return decl;
 }

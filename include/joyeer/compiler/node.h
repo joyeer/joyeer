@@ -594,13 +594,12 @@ struct ReturnStmt : Node {
  *  Decl Section
  *********************************************************/
 
-struct ClassDecl : public Node {
+struct ClassDecl : public StmtsBlock {
     using Ptr = std::shared_ptr<ClassDecl>;
 
     Token::Ptr name = nullptr;
-    StmtsBlock::Ptr body; // class declaration body
 
-    ClassDecl(Token::Ptr name, const StmtsBlock::Ptr& body);
+    ClassDecl(Token::Ptr name, const std::vector<Node::Ptr>& statments);
 
     std::string getSimpleName() override;
 };

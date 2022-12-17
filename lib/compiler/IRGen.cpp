@@ -85,7 +85,9 @@ void IRGen::emit(const ClassDecl::Ptr& decl) {
 
     IRGen generator(context);
     context->visit(CompileStage::visitClassDecl, decl, [decl, &generator] {
-        generator.emit(decl->body);
+        for(const auto& stmt: decl->statements) {
+            generator.emit(stmt);
+        }
     });
 
     // default Class.<init>'s bytecodes
