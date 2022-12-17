@@ -144,7 +144,7 @@ std::string ClassDecl::getSimpleName() {
 //-------------------------------------
 
 FuncDecl::FuncDecl(Node::Ptr identifier, Node::Ptr parameterClause, Node::Ptr returnType, const std::vector<Node::Ptr>& stmts) :
-StmtsBlock(stmts),
+StmtsBlock(SyntaxKind::funcDecl, stmts),
 identifier(std::move(identifier)),
 parameterClause(std::move(parameterClause)),
 returnType(std::move(returnType)) {

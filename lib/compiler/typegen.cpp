@@ -19,10 +19,6 @@ TypeGen::TypeGen(CompileContext::Ptr context):
     diagnostics = this->context->diagnostics;
 }
 
-Node::Ptr TypeGen::visit(const Node::Ptr& node) {
-    return NodeVisitor::visit(node);
-}
-
 Node::Ptr TypeGen::visit(const ModuleDecl::Ptr& decl) {
     // register Module
 
@@ -37,7 +33,7 @@ Node::Ptr TypeGen::visit(const ModuleDecl::Ptr& decl) {
 
     context->visit(CompileStage::visitModule, decl, [decl, this, &statements]() {
         for(const auto& statement : decl->statements) {
-            statements.push_back(visit(statement));
+            statements.push_back(NodeVisitor::visit(statement));
         }
         decl->statements = statements;
     });
@@ -176,14 +172,14 @@ Node::Ptr TypeGen::visit(const FuncDecl::Ptr& decl) {
         // start to process function name
         context->visit(CompileStage::visitFuncNameDecl, decl->identifier, [this, decl]() {
             if(decl->identifier != nullptr) {
-                decl->identifier = visit(decl->identifier);
+                decl->identifier = NodeVisitor::visit(decl->identifier);
             }
         });
         
         // start to process function parameters
         context->visit(CompileStage::visitPatternType, decl->parameterClause, [this, decl]() {
             if(decl->parameterClause != nullptr) {
-                decl->parameterClause = visit(decl->parameterClause);
+                decl->parameterClause = NodeVisitor::visit(decl->parameterClause);
             }
         });
 
@@ -199,7 +195,7 @@ Node::Ptr TypeGen::visit(const FuncDecl::Ptr& decl) {
         // visit FuncDecl statements
         std::vector<Node::Ptr> statements;
         for(const auto& stmt: decl->statements) {
-            statements.push_back(visit(stmt));
+            statements.push_back(NodeVisitor::visit(stmt));
         }
         decl->statements = statements;
 
@@ -214,7 +210,7 @@ Node::Ptr TypeGen::visit(const FuncDecl::Ptr& decl) {
                 decl->statements.push_back(std::make_shared<ReturnStmt>(nullptr));
             }
         } else {
-            decl->returnType = visit(decl->returnType);
+            decl->returnType = NodeVisitor::visit(decl->returnType);
         }
     });
 
@@ -229,7 +225,7 @@ Node::Ptr TypeGen::visit(const FuncDecl::Ptr& decl) {
 Node::Ptr TypeGen::visit(const VarDecl::Ptr& decl) {
 
     if(decl->initializer != nullptr) {
-        decl->initializer = visit(decl->initializer);
+        decl->initializer = NodeVisitor::visit(decl->initializer);
     }
 
     context->visit(CompileStage::visitVarDecl, decl, [this, decl]() {
@@ -313,13 +309,13 @@ Node::Ptr TypeGen::visit(const FuncCallExpr::Ptr& decl) {
 }
 
 Node::Ptr TypeGen::visit(const MemberFuncCallExpr::Ptr& decl) {
-    decl->callee = visit(decl->callee);
-    decl->member = visit(decl->member);
+    decl->callee = NodeVisitor::visit(decl->callee);
+    decl->member = NodeVisitor::visit(decl->member);
     return decl;
 }
 
 Node::Ptr TypeGen::visit(const ArguCallExpr::Ptr& decl) {
-    decl->expr = visit(decl->expr);
+    decl->expr = NodeVisitor::visit(decl->expr);
     
     return decl;
 }
@@ -329,13 +325,13 @@ Node::Ptr TypeGen::visit(const LiteralExpr::Ptr& decl) {
 }
 
 Node::Ptr TypeGen::visit(const PrefixExpr::Ptr& decl) {
-    decl->expr = visit(decl->expr);
+    decl->expr = NodeVisitor::visit(decl->expr);
     return decl;
 }
 
 Node::Ptr TypeGen::visit(const PostfixExpr::Ptr& decl) {
     decl->op = std::static_pointer_cast<OperatorExpr>(visit(decl->op));
-    decl->expr = visit(decl->expr);
+    decl->expr = NodeVisitor::visit(decl->expr);
 
     auto op = decl->op->token->rawValue;
     if (op == Operators::POINT) {
@@ -364,7 +360,7 @@ Node::Ptr TypeGen::visit(const IdentifierExpr::Ptr& decl) {
             // verify the func declaration's parameter duplicated name
             auto table = context->curSymTable();
             if(table->find(name) != nullptr) {
-                diagnostics->reportError(ErrorLevel::failure, "[Error] duplicate variable declaration in function");
+                    diagnostics->reportError(ErrorLevel::failure, "[Error] duplicate variable declaration in function");
                 return nullptr;
             }
             return decl;
@@ -393,29 +389,29 @@ Node::Ptr TypeGen::visit(const Expr::Ptr& decl) {
     // If binary is assignment
     if(decl->binaries.size() == 1 && decl->binaries[0]->kind == SyntaxKind::assignExpr) {
         if(decl->prefix->kind == SyntaxKind::identifierExpr) {
-            auto identifier = std::static_pointer_cast<IdentifierExpr>(visit(decl->prefix));
-            auto assignmentExpr = std::static_pointer_cast<AssignExpr>(visit(decl->binaries[0]));
+            auto identifier = std::static_pointer_cast<IdentifierExpr>(NodeVisitor::visit(decl->prefix));
+            auto assignmentExpr = std::static_pointer_cast<AssignExpr>(NodeVisitor::visit(decl->binaries[0]));
             assignmentExpr->left = identifier;
             return assignmentExpr;
         }
         
         if(decl->prefix->kind == SyntaxKind::selfExpr) {
-            auto selfExpr = std::static_pointer_cast<SelfExpr>(visit(decl->prefix));
-            auto assignmentExpr = std::static_pointer_cast<AssignExpr>(visit(decl->binaries[0]));
+            auto selfExpr = std::static_pointer_cast<SelfExpr>(NodeVisitor::visit(decl->prefix));
+            auto assignmentExpr = std::static_pointer_cast<AssignExpr>(NodeVisitor::visit(decl->binaries[0]));
             assignmentExpr->left = selfExpr;
             return assignmentExpr;
         }
         
         if(decl->prefix->kind == SyntaxKind::memberAccessExpr) {
-            auto memberAccessExpr = std::static_pointer_cast<MemberAccessExpr>(visit(decl->prefix));
-            auto assignmentExpr = std::static_pointer_cast<AssignExpr>(visit(decl->binaries[0]));
+            auto memberAccessExpr = std::static_pointer_cast<MemberAccessExpr>(NodeVisitor::visit(decl->prefix));
+            auto assignmentExpr = std::static_pointer_cast<AssignExpr>(NodeVisitor::visit(decl->binaries[0]));
             assignmentExpr->left = memberAccessExpr;
             return assignmentExpr;
         }
         
         if(decl->prefix->kind == SyntaxKind::subscriptExpr) {
-            auto subscriptExpr = std::static_pointer_cast<SubscriptExpr>(visit(decl->prefix));
-            auto assignmentExpr = std::static_pointer_cast<AssignExpr>(visit(decl->binaries[0]));
+            auto subscriptExpr = std::static_pointer_cast<SubscriptExpr>(NodeVisitor::visit(decl->prefix));
+            auto assignmentExpr = std::static_pointer_cast<AssignExpr>(NodeVisitor::visit(decl->binaries[0]));
             assignmentExpr->left = subscriptExpr;
             return assignmentExpr;
         }
@@ -427,12 +423,12 @@ Node::Ptr TypeGen::visit(const Expr::Ptr& decl) {
     
     // visit sub nodes first;
     if(decl->prefix != nullptr) {
-        decl->prefix = visit(decl->prefix);
+        decl->prefix = NodeVisitor::visit(decl->prefix);
     }
     
     std::vector<Node::Ptr> binaries;
     for(const auto& n: decl->binaries) {
-        binaries.push_back(visit(n));
+        binaries.push_back(NodeVisitor::visit(n));
     }
     decl->binaries = binaries;
     
@@ -514,12 +510,12 @@ Node::Ptr TypeGen::visit(const Expr::Ptr& decl) {
 }
 
 Node::Ptr TypeGen::visit(const AssignExpr::Ptr& decl) {
-    decl->expr = visit(decl->expr);
+    decl->expr = NodeVisitor::visit(decl->expr);
     return decl;
 }
 
 Node::Ptr TypeGen::visit(const BinaryExpr::Ptr& decl) {
-    decl->expr = visit(decl->expr);
+    decl->expr = NodeVisitor::visit(decl->expr);
     return decl;
 }
 
@@ -533,22 +529,22 @@ Node::Ptr TypeGen::visit(const ParenthesizedExpr::Ptr& decl) {
         return visit(n);
     }
     
-    decl->expr = visit(decl->expr);
+    decl->expr = NodeVisitor::visit(decl->expr);
     return decl;
 }
 
 Node::Ptr TypeGen::visit(const IfStmt::Ptr& decl) {
-    decl->condition = visit(decl->condition);
-    decl->ifCodeBlock = std::static_pointer_cast<StmtsBlock>(visit(decl->ifCodeBlock));
+    decl->condition = NodeVisitor::visit(decl->condition);
+    decl->ifCodeBlock = std::static_pointer_cast<StmtsBlock>(NodeVisitor::visit(decl->ifCodeBlock));
     if(decl->elseCodeBlock != nullptr) {
-        decl->elseCodeBlock = std::static_pointer_cast<StmtsBlock>(visit(decl->elseCodeBlock));
+        decl->elseCodeBlock = std::static_pointer_cast<StmtsBlock>(NodeVisitor::visit(decl->elseCodeBlock));
     }
     return decl;
 }
 
 Node::Ptr TypeGen::visit(const WhileStmt::Ptr& decl) {
-    decl->expr = visit(decl->expr);
-    decl->codeBlock = visit(decl->codeBlock);
+    decl->expr = NodeVisitor::visit(decl->expr);
+    decl->codeBlock = NodeVisitor::visit(decl->codeBlock);
     return decl;
 }
 
@@ -558,7 +554,7 @@ Node::Ptr TypeGen::visit(const StmtsBlock::Ptr& decl) {
     context->visit(CompileStage::visitCodeBlock, decl,[decl, this]() {
         std::vector<Node::Ptr> statements;
         for(const auto& s: decl->statements) {
-            statements.push_back(visit(s));
+            statements.push_back(NodeVisitor::visit(s));
         }
         decl->statements = statements;
     });
@@ -604,7 +600,7 @@ Node::Ptr TypeGen::visit(const TypeIdentifier::Ptr& decl) {
 
 Node::Ptr TypeGen::visit(const ReturnStmt::Ptr& decl) {
     if(decl->expr != nullptr) {
-        decl->expr = visit(decl->expr);
+        decl->expr = NodeVisitor::visit(decl->expr);
     }
     return decl;
 }
@@ -623,7 +619,7 @@ Node::Ptr TypeGen::visit(const SelfExpr::Ptr& decl) {
 Node::Ptr TypeGen::visit(const ArrayLiteralExpr::Ptr& decl) {
     std::vector<Node::Ptr> result;
     for(const auto& item: decl->items) {
-        result.push_back(visit(item));
+        result.push_back(NodeVisitor::visit(item));
     }
     decl->items = result;
     return decl;
@@ -632,8 +628,8 @@ Node::Ptr TypeGen::visit(const ArrayLiteralExpr::Ptr& decl) {
 Node::Ptr TypeGen::visit(const DictLiteralExpr::Ptr& decl) {
     std::vector<std::tuple<Node::Ptr, Node::Ptr>> result;
     for(auto item: decl->items) {
-        auto keyItem = visit(std::get<0>(item));
-        auto valueItem = visit(std::get<1>(item));
+        auto keyItem = NodeVisitor::visit(std::get<0>(item));
+        auto valueItem = NodeVisitor::visit(std::get<1>(item));
         result.emplace_back(keyItem , valueItem);
     }
     decl->items = result;
@@ -641,9 +637,9 @@ Node::Ptr TypeGen::visit(const DictLiteralExpr::Ptr& decl) {
 }
 
 Node::Ptr TypeGen::visit(const MemberAccessExpr::Ptr& decl) {
-    decl->callee = visit(decl->callee);
+    decl->callee = NodeVisitor::visit(decl->callee);
     context->visit(CompileStage::visitMemberAccess, decl->callee, [this, decl] {
-        decl->member = visit(decl->member);
+        decl->member = NodeVisitor::visit(decl->member);
     });
 
     return decl;
@@ -654,14 +650,14 @@ Node::Ptr TypeGen::visit(const MemberAssignExpr::Ptr& decl) {
 }
 
 Node::Ptr TypeGen::visit(const SubscriptExpr::Ptr& decl) {
-    decl->identifier = visit(decl->identifier);
-    decl->indexExpr = visit(decl->indexExpr);
+    decl->identifier = NodeVisitor::visit(decl->identifier);
+    decl->indexExpr = NodeVisitor::visit(decl->indexExpr);
     
     return decl;
 }
 
 Node::Ptr TypeGen::visit(const ArrayType::Ptr& decl) {
-    decl->valueType = visit(decl->valueType);
+    decl->valueType = NodeVisitor::visit(decl->valueType);
     return decl;
 }
 

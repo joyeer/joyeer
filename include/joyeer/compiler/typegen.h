@@ -17,8 +17,6 @@ public:
     
     Node::Ptr visit(const ModuleDecl::Ptr& decl) override;
 protected:
-    // recursive bind down node
-    Node::Ptr visit(const Node::Ptr& node) override;
 
     // Declaration section
     Node::Ptr visit(const ClassDecl::Ptr& classDecl) override;

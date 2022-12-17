@@ -63,7 +63,6 @@ struct Node : std::enable_shared_from_this<Node> {
     using Ptr = std::shared_ptr<Node>;
 
     SyntaxKind kind;
-    SymbolTable::Ptr symtable = nullptr;
 
     // represent the Node's Type, only available in Expr Node
     Slot typeSlot = -1;
@@ -110,6 +109,8 @@ struct StmtsBlock : public Node {
 
     std::vector<Node::Ptr> statements;
 
+    SymbolTable::Ptr symtable = std::make_shared<SymbolTable>();
+
     // all local variable under this block { ... }
     std::vector<Variable::Ptr> localVariables {};
     // all static local variable under this block { ... }
@@ -118,7 +119,6 @@ struct StmtsBlock : public Node {
     explicit StmtsBlock(std::vector<Node::Ptr> statements) :
             Node(SyntaxKind::stmtsBlock),
             statements(std::move(statements)) {
-        symtable = std::make_shared<SymbolTable>();
     }
 
     explicit StmtsBlock(SyntaxKind kind, const std::vector<Node::Ptr>& stmts):
