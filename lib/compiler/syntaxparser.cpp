@@ -89,7 +89,7 @@ Node::Ptr SyntaxParser::tryParseFuncDecl() {
         return nullptr;
     }
     
-    return std::make_shared<FuncDecl>(identifier, parameterClause, returnType, codeBlock);
+    return std::make_shared<FuncDecl>(identifier, parameterClause, returnType, codeBlock->statements);
 }
 
 Node::Ptr SyntaxParser::tryParseConstructorDecl() {

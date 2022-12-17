@@ -399,7 +399,11 @@ protected:
         }
 
         newline();
-        visit(decl->body);
+        for(const auto& stmt : decl->statements) {
+            DEBUG_BLOCK_START
+            NodeVisitor::visit(stmt);
+            DEBUG_BLOCK_END
+        }
 
         decTab();
         return decl;

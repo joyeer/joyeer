@@ -193,18 +193,21 @@ Node::Ptr TypeGen::visit(const FuncDecl::Ptr& decl) {
         }
 
         // visit FuncDecl statements
-        decl->body = std::static_pointer_cast<StmtsBlock>(visit(decl->body));
-
+        std::vector<Node::Ptr> statements;
+        for(const auto& stmt: decl->statements) {
+            statements.push_back(visit(stmt));
+        }
+        decl->statements = statements;
 
         // check the function return statement
         if(decl->returnType == nullptr) {
-            if( !decl->body->statements.empty() ) {
-                auto lastStatement = decl->body->statements.back();
+            if( !decl->statements.empty() ) {
+                auto lastStatement = decl->statements.back();
                 if(lastStatement->kind != SyntaxKind::returnStmt) {
-                    decl->body->statements.push_back(std::make_shared<ReturnStmt>(nullptr));
+                    decl->statements.push_back(std::make_shared<ReturnStmt>(nullptr));
                 }
             } else {
-                decl->body->statements.push_back(std::make_shared<ReturnStmt>(nullptr));
+                decl->statements.push_back(std::make_shared<ReturnStmt>(nullptr));
             }
         } else {
             decl->returnType = visit(decl->returnType);
@@ -681,12 +684,12 @@ void TypeGen::transformModuleTopStmtToModuleInitFunc(const ModuleDecl::Ptr &decl
         if(statement->isTypeDeclNode()) {
             statements.push_back(statement);
         } else {
-            moduleInitFuncDecl->body->statements.push_back(statement);
+            moduleInitFuncDecl->statements.push_back(statement);
         }
     }
 
     // insert return statement at end of the module static initializer
-    moduleInitFuncDecl->body->statements.push_back(std::make_shared<ReturnStmt>(nullptr));
+    moduleInitFuncDecl->statements.push_back(std::make_shared<ReturnStmt>(nullptr));
 
 
     decl->statements = statements;
@@ -729,7 +732,12 @@ void TypeGen::generateOptionalGlobally(const OptionalType::Ptr &optionalType) {
 Node::Ptr TypeGenSelfForMemberFunc::visit(const FuncDecl::Ptr& decl) {
     assert(decl->isStatic == false);
     context->visit(CompileStage::visitFuncDecl, decl, [decl, this] {
-        decl->body = std::static_pointer_cast<StmtsBlock>(decl->body);
+        std::vector<Node::Ptr> statements;
+        for(const auto& stmt: decl->statements) {
+            statements.push_back(NodeVisitor::visit(stmt));
+        }
+
+        decl->statements = statements;
     });
 
     return decl;

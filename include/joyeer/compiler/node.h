@@ -121,6 +121,11 @@ struct StmtsBlock : public Node {
         symtable = std::make_shared<SymbolTable>();
     }
 
+    explicit StmtsBlock(SyntaxKind kind, const std::vector<Node::Ptr>& stmts):
+        Node(kind),
+        statements(stmts) {
+    }
+
     // inherited docs
     bool isStmtBlock() const override {
         return true;
@@ -602,7 +607,7 @@ struct ClassDecl : public Node {
 
 
 // Represent a Function in Ast tree.
-struct FuncDecl : public Node {
+struct FuncDecl : public StmtsBlock {
 public:
     using Ptr = std::shared_ptr<FuncDecl>;
 
@@ -613,9 +618,7 @@ public:
     bool isStatic = false;
     Symbol::Ptr  symbol;
 
-    StmtsBlock::Ptr body;
-
-    FuncDecl(Node::Ptr identifier, Node::Ptr parameterClause, Node::Ptr returnType, StmtsBlock::Ptr stmts);
+    FuncDecl(Node::Ptr identifier, Node::Ptr parameterClause, Node::Ptr returnType, const std::vector<Node::Ptr>& stmts);
 
     // bind self symbol
     void bindClass(const Class* klass);

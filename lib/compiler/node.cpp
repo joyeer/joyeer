@@ -144,12 +144,12 @@ std::string ClassDecl::getSimpleName() {
 //FuncDecl implementation
 //-------------------------------------
 
-FuncDecl::FuncDecl(Node::Ptr identifier, Node::Ptr parameterClause, Node::Ptr returnType, StmtsBlock::Ptr stmts) :
-Node(SyntaxKind::funcDecl),
+FuncDecl::FuncDecl(Node::Ptr identifier, Node::Ptr parameterClause, Node::Ptr returnType, const std::vector<Node::Ptr>& stmts) :
+StmtsBlock(stmts),
 identifier(std::move(identifier)),
 parameterClause(std::move(parameterClause)),
-returnType(std::move(returnType)),
-body(std::move(stmts)) {
+returnType(std::move(returnType)) {
+
 }
 
 
@@ -198,7 +198,7 @@ FuncDecl::Ptr FuncDecl::createDefaultConstructor() {
 FuncDecl::Ptr FuncDecl::createConstructor(bool isStatic, const Node::Ptr& parameterClause, const Node::Ptr& returnType, const StmtsBlock::Ptr& stmts) {
     auto token = std::make_shared<Token>(TokenKind::identifier, "init", -1, -1);
     auto nameIdentifier = std::make_shared<IdentifierExpr>(token);
-    auto decl = std::make_shared<FuncDecl>(nameIdentifier, parameterClause, returnType, stmts);
+    auto decl = std::make_shared<FuncDecl>(nameIdentifier, parameterClause, returnType, stmts->statements);
     decl->isConstructor = true;
     decl->isStatic = isStatic;
     return decl;
