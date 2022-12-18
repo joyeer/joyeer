@@ -599,7 +599,7 @@ struct ClassDecl : public StmtsBlock {
 
     Token::Ptr name = nullptr;
 
-    ClassDecl(Token::Ptr name, const std::vector<Node::Ptr>& statments);
+    ClassDecl(Token::Ptr name, const std::vector<Node::Ptr>& stmts);
 
     std::string getSimpleName() override;
 };

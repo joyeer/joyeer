@@ -87,7 +87,7 @@ ModuleUnit* CompilerService::compile(const SourceFile::Ptr& sourcefile) {
 
     // binding the types
     TypeBinding typeBinding(context);
-    typeBinding.visit(std::static_pointer_cast<Node>(block));
+    typeBinding.visit(block);
     CHECK_ERROR_RETURN_NULL
     debugPrinter.print("typebinding-stage", block);
 

@@ -17,15 +17,11 @@ context(std::move(context)) {
     diagnostics = this->context->diagnostics;
 }
 
-Node::Ptr TypeBinding::visit(const Node::Ptr& node) {
-    return NodeVisitor::visit(node);
-}
-
 Node::Ptr TypeBinding::visit(const ModuleDecl::Ptr& node) {
     context->visit(CompileStage::visitModule, node, [node, this](){
         std::vector<Node::Ptr> stmts {};
         for(auto& statement: node->statements ) {
-            stmts.push_back(visit(statement));
+            stmts.push_back(NodeVisitor::visit(statement));
         }
         node->statements = stmts;
     });
@@ -39,7 +35,7 @@ Node::Ptr TypeBinding::visit(const ClassDecl::Ptr& decl) {
     context->visit(CompileStage::visitClassDecl, decl, [this, decl]() {
         std::vector<Node::Ptr> statements;
         for(const auto& stmt: decl->statements) {
-            statements.push_back(visit(stmt));
+            statements.push_back(NodeVisitor::visit(stmt));
         }
         decl->statements = statements;
     });
@@ -58,14 +54,14 @@ Node::Ptr TypeBinding::visit(const FuncDecl::Ptr& decl) {
                 // no return
                 funcType->returnTypeSlot = compiler->getType(ValueType::Void)->slot;
             } else {
-                decl->returnType = visit(decl->returnType);
+                decl->returnType = NodeVisitor::visit(decl->returnType);
                 funcType->returnTypeSlot = decl->returnType->typeSlot;
                 assert(funcType->returnTypeSlot != -1);
             }
         }
 
         // visit parameters decls
-        decl->parameterClause = visit(decl->parameterClause);
+        decl->parameterClause = NodeVisitor::visit(decl->parameterClause);
 
         auto parameterClause = std::static_pointer_cast<ParameterClause>(decl->parameterClause);
         auto paramIndex = 0;
@@ -79,7 +75,7 @@ Node::Ptr TypeBinding::visit(const FuncDecl::Ptr& decl) {
         // visit FuncDecl's body
         std::vector<Node::Ptr> statements;
         for(const auto& stmt: decl->statements) {
-            statements.push_back(visit(stmt));
+            statements.push_back(NodeVisitor::visit(stmt));
         }
         decl->statements = statements;
     });
@@ -93,6 +89,7 @@ Node::Ptr TypeBinding::visit(const VarDecl::Ptr& decl) {
     auto simpleName = decl->getSimpleName();
     auto symtable = context->curSymTable();
     auto symbol = context->lookup(simpleName);
+    assert(symbol != nullptr);
 
     assert(decl->typeSlot == -1);
 
@@ -103,7 +100,7 @@ Node::Ptr TypeBinding::visit(const VarDecl::Ptr& decl) {
     }
 
     if(decl->initializer != nullptr) {
-        decl->initializer = visit(decl->initializer);
+        decl->initializer = NodeVisitor::NodeVisitor::visit(decl->initializer);
     }
 
     context->visit(CompileStage::visitVarDecl, decl, [this, decl]() {
@@ -173,7 +170,7 @@ Node::Ptr TypeBinding::visit(const FuncCallExpr::Ptr& decl) {
 
 Node::Ptr TypeBinding::visitArrayFuncCallExpr(const FuncCallExpr::Ptr &decl) {
     assert(decl->identifier->kind == SyntaxKind::arrayLiteralExpr);
-    visit(decl->identifier);
+    NodeVisitor::visit(decl->identifier);
     auto arrayLiteral = std::static_pointer_cast<ArrayLiteralExpr>(decl->identifier);
     if (arrayLiteral->items.size() == 1) {
         auto type = arrayLiteral->items[0];
@@ -189,7 +186,7 @@ Node::Ptr TypeBinding::visitArrayFuncCallExpr(const FuncCallExpr::Ptr &decl) {
 
 Node::Ptr TypeBinding::visitDictFuncCallExpr(const FuncCallExpr::Ptr &decl) {
     assert(decl->identifier->kind == SyntaxKind::dictLiteralExpr);
-    decl->identifier = visit(decl->identifier);
+    decl->identifier = NodeVisitor::visit(decl->identifier);
     auto dictLiteral = std::static_pointer_cast<DictLiteralExpr>(decl->identifier);
     if( dictLiteral->items.size() == 1) {
         auto item = dictLiteral->items[0];
@@ -241,7 +238,7 @@ Node::Ptr TypeBinding::visitFuncCallExpr(const FuncCallExpr::Ptr &decl) {
 
 
 Node::Ptr TypeBinding::visit(const MemberFuncCallExpr::Ptr& node) {
-    visit(node->callee);
+    NodeVisitor::visit(node->callee);
     
     auto typeSlot = node->callee->typeSlot;
     assert(typeSlot != -1);
@@ -304,7 +301,7 @@ Node::Ptr TypeBinding::visit(const ParameterClause::Ptr& node) {
 Node::Ptr TypeBinding::visit(const Pattern::Ptr& node) {
     if(node->typeExpr != nullptr) {
         context->visit(CompileStage::visitPatternType, node, [this, node]{
-            node->typeExpr = visit(node->typeExpr);
+            node->typeExpr = NodeVisitor::visit(node->typeExpr);
         });
         node->typeSlot = node->typeExpr->typeSlot;
     } else {
@@ -362,7 +359,7 @@ Node::Ptr TypeBinding::visit(const StmtsBlock::Ptr& node) {
     context->visit(CompileStage::visitCodeBlock, node, [this, node]() {
         auto statements = std::vector<Node::Ptr>();
         for(const auto& statement: node->statements) {
-            statements.push_back(visit(statement));
+            statements.push_back(NodeVisitor::visit(statement));
         }
         node->statements = statements;
     });
@@ -371,7 +368,7 @@ Node::Ptr TypeBinding::visit(const StmtsBlock::Ptr& node) {
 
 Node::Ptr TypeBinding::visit(const ReturnStmt::Ptr& decl) {
     if(decl->expr != nullptr) {
-        decl->expr = visit(decl->expr);
+        decl->expr = NodeVisitor::visit(decl->expr);
     }
 
     return decl;
@@ -381,7 +378,7 @@ Node::Ptr TypeBinding::visit(const Expr::Ptr& node) {
     context->visit(CompileStage::visitExpr, node, [this, node]() {
         auto nodes = std::vector<Node::Ptr>();
         for(const auto& n: node->nodes) {
-            nodes.push_back(visit(n));
+            nodes.push_back(NodeVisitor::visit(n));
         }
         node->nodes = nodes;
 
@@ -413,26 +410,26 @@ Node::Ptr TypeBinding::visit(const LiteralExpr::Ptr& node) {
 }
 
 Node::Ptr TypeBinding::visit(const AssignExpr::Ptr& node) {
-    node->left = visit(node->left);
-    node->expr = visit(node->expr);
+    node->left = NodeVisitor::visit(node->left);
+    node->expr = NodeVisitor::visit(node->expr);
     return node;
 }
 
 Node::Ptr TypeBinding::visit(const ParenthesizedExpr::Ptr& node) {
-    node->expr = visit(node->expr);
+    node->expr = NodeVisitor::visit(node->expr);
     return node;
 }
 
 Node::Ptr TypeBinding::visit(const IfStmt::Ptr& node) {
-    node->condition = visit(node->condition);
+    node->condition = NodeVisitor::visit(node->condition);
     
     context->visit(CompileStage::visitCodeBlock, node->ifCodeBlock, [this, node](){
-        node->ifCodeBlock = visit(node->ifCodeBlock);
+        node->ifCodeBlock = NodeVisitor::visit(node->ifCodeBlock);
     });
     
     if(node->elseCodeBlock != nullptr) {
         context->visit(CompileStage::visitCodeBlock, node->elseCodeBlock, [this, node](){
-            node->elseCodeBlock = visit(node->elseCodeBlock);
+            node->elseCodeBlock = NodeVisitor::visit(node->elseCodeBlock);
         });
     }
     
@@ -440,16 +437,16 @@ Node::Ptr TypeBinding::visit(const IfStmt::Ptr& node) {
 }
 
 Node::Ptr TypeBinding::visit(const WhileStmt::Ptr& node) {
-    node->expr = visit(node->expr);
+    node->expr = NodeVisitor::visit(node->expr);
     
     context->visit(CompileStage::visitCodeBlock, node->codeBlock, [this, node]() {
-        node->codeBlock = visit(node->codeBlock);
+        node->codeBlock = NodeVisitor::visit(node->codeBlock);
     });
     return node;
 }
 
 Node::Ptr TypeBinding::visit(const ArguCallExpr::Ptr& node) {
-    node->expr = visit(node->expr);
+    node->expr = NodeVisitor::visit(node->expr);
     node->typeSlot = node->expr->typeSlot;
     return node;
 }
@@ -485,7 +482,7 @@ Node::Ptr TypeBinding::visit(const ArrayLiteralExpr::Ptr& node) {
     node->typeSlot = compiler->getType(BuildIns::Object_Array)->slot;
     auto items = std::vector<Node::Ptr>();
     for(const auto& item: node->items) {
-        items.push_back(visit(item));
+        items.push_back(NodeVisitor::visit(item));
     }
     node->items = items;
     return node;
@@ -496,8 +493,8 @@ Node::Ptr TypeBinding::visit(const DictLiteralExpr::Ptr& node) {
     auto items = std::vector<std::tuple<Node::Ptr, Node::Ptr>>();
     for(auto item: node->items) {
         items.emplace_back(
-            visit(std::get<0>(item)),
-            visit(std::get<1>(item))
+                NodeVisitor::visit(std::get<0>(item)),
+                NodeVisitor::visit(std::get<1>(item))
         );
     }
     node->items = items;
@@ -505,7 +502,7 @@ Node::Ptr TypeBinding::visit(const DictLiteralExpr::Ptr& node) {
 }
 
 Node::Ptr TypeBinding::visit(const MemberAccessExpr::Ptr& node) {
-    node->callee = visit(node->callee);
+    node->callee = NodeVisitor::visit(node->callee);
 
     assert(node->callee->typeSlot != -1);
     auto calleeType = compiler->getType(node->callee->typeSlot);
@@ -528,7 +525,7 @@ Node::Ptr TypeBinding::visit(const MemberAccessExpr::Ptr& node) {
 
     context->symbols.push_back(symtable);
     context->visit(CompileStage::visitMemberAccess, node->callee, [this, node](){
-        node->member = visit(node->member);
+        node->member = NodeVisitor::visit(node->member);
     });
     context->symbols.pop_back();
 
@@ -542,8 +539,8 @@ Node::Ptr TypeBinding::visit(const MemberAssignExpr::Ptr& node) {
 }
 
 Node::Ptr TypeBinding::visit(const SubscriptExpr::Ptr& node) {
-    node->identifier = visit(node->identifier);
-    node->indexExpr = visit(node->indexExpr);
+    node->identifier = NodeVisitor::visit(node->identifier);
+    node->indexExpr = NodeVisitor::visit(node->indexExpr);
 
     auto simpleName = node->identifier->getSimpleName();
     auto symbol = context->lookup(simpleName);
@@ -563,20 +560,20 @@ Node::Ptr TypeBinding::visit(const SubscriptExpr::Ptr& node) {
 }
 
 Node::Ptr TypeBinding::visit(const ArrayType::Ptr& node) {
-    node->valueType = visit(node->valueType);
+    node->valueType = NodeVisitor::visit(node->valueType);
     node->typeSlot = compiler->getType(BuildIns::Object_Array)->slot;
     return node;
 }
 
 Node::Ptr TypeBinding::visit(const PrefixExpr::Ptr& node) {
-    node->expr = visit(node->expr);
+    node->expr = NodeVisitor::visit(node->expr);
     node->typeSlot = node->expr->typeSlot;
     assert(node->typeSlot > -1);
     return node;
 }
 
 Node::Ptr TypeBinding::visit(const PostfixExpr::Ptr &node) {
-    node->expr = visit(node->expr);
+    node->expr = NodeVisitor::visit(node->expr);
     if(node->op->token->rawValue == "!") {
         node->typeSlot = node->expr->typeSlot;
     } else {
@@ -586,7 +583,7 @@ Node::Ptr TypeBinding::visit(const PostfixExpr::Ptr &node) {
 }
 
 Node::Ptr TypeBinding::visit(const ForceUnwrappingExpr::Ptr& decl) {
-    decl->wrappedExpr = visit(decl->wrappedExpr);
+    decl->wrappedExpr = NodeVisitor::visit(decl->wrappedExpr);
 
     CHECK_ERROR_RETURN(decl->wrappedExpr->typeSlot)
 

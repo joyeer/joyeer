@@ -4,8 +4,11 @@
 #include "joyeer/compiler/node.h"
 
 struct NodeVisitor {
-protected:
+public:
+    
     virtual Node::Ptr visit(const Node::Ptr& node);
+
+protected:
 
     // Types
     virtual Node::Ptr visit(const ArrayType::Ptr& decl) = 0;

@@ -63,7 +63,7 @@ Node::Ptr TypeGen::visit(const ClassDecl::Ptr& decl) {
     context->visit(CompileStage::visitClassDecl, decl, [this, decl]() {
         std::vector<Node::Ptr> statements;
         for(const auto& stmt: decl->statements) {
-            statements.push_back(stmt);
+            statements.push_back(NodeVisitor::visit(stmt));
         }
         decl->statements = statements;
         // check weather have class constructor
