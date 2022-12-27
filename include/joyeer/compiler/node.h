@@ -130,6 +130,11 @@ struct StmtsBlock : public Node {
     bool isStmtBlock() const override {
         return true;
     }
+
+    // register local variable, the variables could be class fields, local variable or static variable.
+    // 
+    void registerLocalVariable(const Variable::Ptr& variable);
+
 };
 
 // represent a AST for *self*
@@ -615,7 +620,6 @@ public:
     Node::Ptr returnType = nullptr;
     bool isConstructor = false;
     bool isStatic = false;
-    Symbol::Ptr  symbol;
 
     FuncDecl(Node::Ptr identifier, Node::Ptr parameterClause, Node::Ptr returnType, const std::vector<Node::Ptr>& stmts);
 

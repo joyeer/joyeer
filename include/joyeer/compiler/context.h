@@ -32,7 +32,10 @@ public:
     void visit(CompileStage stage, const Node::Ptr& node, const std::function<void(void)>& visit);
 
     [[nodiscard]] CompileStage curStage() const;
-    
+
+    // return the closest StmtsBlock
+    [[nodiscard]] StmtsBlock::Ptr  getClosestStmtsBlock() const;
+
     // look up name's mapped symbol
     Symbol::Ptr lookup(const std::string& name);
     

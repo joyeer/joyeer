@@ -28,6 +28,12 @@ Symbol::Symbol(SymbolFlag flag, std::string name, int address):
         typeSlot(address) {
 }
 
+Symbol::Symbol(SymbolFlag flag, std::string name, Variable::Ptr variable):
+flag(flag),
+name(std::move(name)),
+variable(std::move(variable)) {
+}
+
 /////////////////////////////////////////////////////////////////
 // SymTable
 /////////////////////////////////////////////////////////////////

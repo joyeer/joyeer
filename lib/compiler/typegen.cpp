@@ -235,7 +235,7 @@ Node::Ptr TypeGen::visit(const VarDecl::Ptr& decl) {
     auto pattern = decl->pattern;
     auto symtable = context->curSymTable();
     auto name = pattern->identifier->getSimpleName();
-    
+
     if(symtable->find(name) != nullptr) {
         diagnostics->reportError(ErrorLevel::failure, "[Error] duplicate variable name");
     }
@@ -261,10 +261,16 @@ Node::Ptr TypeGen::visit(const VarDecl::Ptr& decl) {
     auto symbol = std::make_shared<Symbol>(flag, name, compiler->getType(ValueType::Unspecified)->slot);
     symtable->insert(symbol);
     symbol->parentTypeSlot = declType->slot;
+    auto variable = std::make_shared<Variable>(name);
+    symbol->variable = variable;
+
+    auto parentBlock = context->getClosestStmtsBlock();
+    parentBlock->registerLocalVariable(variable);
 
     switch (context->curStage()) {
         case CompileStage::visitModule:
             symbol->isStatic = true;
+            variable->markAsStatic();
             break;
         case CompileStage::visitClassDecl:
             symbol->isStatic = false; // TODO: update after introduce static field

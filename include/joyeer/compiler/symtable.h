@@ -44,6 +44,8 @@ struct Symbol {
     bool isStatic = false;
 
     Symbol(SymbolFlag flag, std::string  name, int address);
+
+    Symbol(SymbolFlag flag, std::string  name, Variable::Ptr variable);
 };
 
 

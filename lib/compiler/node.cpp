@@ -1,12 +1,22 @@
 #include "joyeer/compiler/node.h"
 
 #include <utility>
+#include <memory>
 
 Node::Node(SyntaxKind k): kind(k) {
 }
 
 std::string Node::getSimpleName() {
     return "";
+}
+
+//--------------------------------------------------
+// StmtsBlock implementation
+//--------------------------------------------------
+
+void StmtsBlock::registerLocalVariable(const Variable::Ptr &variable) {
+    auto symbol = std::make_shared<Symbol>(SymbolFlag::var, variable->name, variable);
+    symtable->insert(symbol);
 }
 
 //--------------------------------------------------

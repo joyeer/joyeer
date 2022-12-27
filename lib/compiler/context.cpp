@@ -50,6 +50,11 @@ CompileStage CompileContext::curStage() const {
     return stages.back();
 }
 
+StmtsBlock::Ptr CompileContext::getClosestStmtsBlock() const {
+    assert(!scopes.empty());
+    return scopes.back();
+}
+
 Symbol::Ptr CompileContext::lookup(const std::string &name) {
     for (auto iterator = symbols.rbegin(); iterator != symbols.rend(); iterator ++) {
         auto symtable = *iterator;
