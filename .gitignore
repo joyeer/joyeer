@@ -9,3 +9,4 @@ xcode-build
 cmake-build-debug
 .vs/
 *.code-workspace
+.cache
